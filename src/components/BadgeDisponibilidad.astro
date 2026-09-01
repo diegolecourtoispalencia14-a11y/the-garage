@@ -1,0 +1,31 @@
+---
+interface Props {
+  disponibilidad: 'Disponible' | 'Apartada' | 'Vendida' | string;
+  esMuestra?: boolean;
+}
+
+const { disponibilidad, esMuestra = false } = Astro.props;
+
+const classMap: Record<string, string> = {
+  Disponible: 'badge-disponible',
+  Apartada: 'badge-apartada',
+  Vendida: 'badge-vendida',
+};
+
+const badgeClass = classMap[disponibilidad] || 'badge-disponible';
+---
+
+<div style="display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center;">
+  <span class={`badge ${badgeClass}`}>
+    {disponibilidad === 'Disponible' && '● '}
+    {disponibilidad === 'Apartada' && '⏳ '}
+    {disponibilidad === 'Vendida' && '✓ '}
+    {disponibilidad}
+  </span>
+
+  {esMuestra && (
+    <span class="badge badge-muestra" title="Bicicleta de muestra para visualización">
+      MUESTRA
+    </span>
+  )}
+</div>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="garageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5722"/>
+      <stop offset="100%" stop-color="#FF8A50"/>
+    </linearGradient>
+  </defs>
+  <!-- Bicycle Gear Icon -->
+  <g transform="translate(15, 10)">
+    <circle cx="50" cy="50" r="42" fill="none" stroke="#212529" stroke-width="6" stroke-dasharray="14 6"/>
+    <circle cx="50" cy="50" r="32" fill="#18181B"/>
+    <circle cx="50" cy="50" r="16" fill="url(#garageGrad)"/>
+    <!-- Chainring teeth / spoke accents -->
+    <path d="M 50 22 L 50 78 M 22 50 L 78 50 M 30 30 L 70 70 M 30 70 L 70 30" stroke="#27272A" stroke-width="3"/>
+    <circle cx="50" cy="50" r="8" fill="#FFFFFF"/>
+  </g>
+  <!-- Brand Typography -->
+  <text x="130" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" fill="#18181B" letter-spacing="1">THE GARAGE</text>
+  <text x="132" y="86" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="14" fill="#FF5722" letter-spacing="4">TIENDA DE BICICLETAS • PLAYA DEL CARMEN</text>
+</svg>

@@ -1,0 +1,106 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BotonFlotante from '../components/BotonFlotante.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonicalURL?: string;
+}
+
+const {
+  title = "The Garage | Tienda de Bicicletas en Playa del Carmen • Catálogo e Inventario",
+  description = "Catálogo de bicicletas disponibles en Playa del Carmen. Modelos MTB, Ruta y Urbanas con apartado y entrega en Tulum, Puerto Aventuras, Cancún y toda la Riviera Maya. Consulta por WhatsApp.",
+  image = "/img/the-garage-logo.svg",
+  canonicalURL = Astro.url.href,
+} = Astro.props;
+
+const siteUrl = "https://thegarageplaya.pages.dev";
+const fullImageUrl = new URL(image, siteUrl).href;
+
+const schemaLocalBusiness = {
+  "@context": "https://schema.org",
+  "@type": "BikeStore",
+  "name": "The Garage Bicicletas",
+  "image": fullImageUrl,
+  "telephone": "+52-984-138-1493",
+  "url": siteUrl,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Av. Ich Xeel CASA 19, Cataluña",
+    "addressLocality": "Playa del Carmen",
+    "addressRegion": "Quintana Roo",
+    "postalCode": "77725",
+    "addressCountry": "MX"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 20.6618,
+    "longitude": -87.0874
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:00",
+      "closes": "19:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday"],
+      "opens": "09:00",
+      "closes": "14:00"
+    }
+  ],
+  "priceRange": "$$",
+  "areaServed": [
+    "Playa del Carmen",
+    "Tulum",
+    "Puerto Aventuras",
+    "Akumal",
+    "Cancún",
+    "Valladolid"
+  ]
+};
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={fullImageUrl} />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="The Garage Bicicletas" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={fullImageUrl} />
+
+    <!-- Structured Data Schema -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaLocalBusiness)} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <BotonFlotante />
+  </body>
+</html>

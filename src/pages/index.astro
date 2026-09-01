@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import BiciCard from '../components/BiciCard.astro';
+import Filtros from '../components/Filtros.astro';
+import { getCollection } from 'astro:content';
+
+const bicisEntries = await getCollection('bicis');
+// Sort: Available first, then Apartada, then Vendida
+const orderMap: Record<string, number> = {
+  Disponible: 1,
+  Apartada: 2,
+  Vendida: 3,
+};
+
+const bicis = bicisEntries
+  .map(e => e.data)
+  .sort((a, b) => {
+    const orderA = orderMap[a.disponibilidad] || 99;
+    const orderB = orderMap[b.disponibilidad] || 99;
+    if (orderA !== orderB) return orderA - orderB;
+    return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0);
+  });
+---
+
+<Base
+  title="The Garage | Inventario de Bicicletas en Playa del Carmen y Riviera Maya"
+  description="Explora el inventario disponible de bicicletas de montaña, ruta y urbanas en The Garage (Playa del Carmen). Aparta tu bici o consulta detalles directamente por WhatsApp."
+>
+  <!-- Hero Section -->
+  <section style="background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%); border-bottom: 1px solid var(--border); padding: 3rem 0 2.5rem 0;">
+    <div class="container">
+      <div style="max-width: 780px;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: #FFF7ED; border: 1px solid #FFEDD5; color: #C2410C; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">
+          📍 Cataluña • Playa del Carmen, Q.R.
+        </div>
+        <h1 class="title-xl" style="margin-bottom: 1rem;">
+          Tu próxima bicicleta está en Playa del Carmen.
+        </h1>
+        <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.75rem;">
+          Vitrina en tiempo real de <strong>The Garage</strong>. Revisa los modelos en tienda, checa fotos reales y <strong>aparta o consulta por WhatsApp</strong> en menos de un minuto. Envíos y entregas en toda la Riviera Maya.
+        </p>
+
+        <!-- Value props bar -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; background: #FFFFFF; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <span style="font-size: 1.25rem;">🏪</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--secondary);">Tienda física & prueba de manejo</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.65rem; background: #FFFFFF; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <span style="font-size: 1.25rem;">💬</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--secondary);">Atención directa por WhatsApp</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.65rem; background: #FFFFFF; padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <span style="font-size: 1.25rem;">🚚</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--secondary);">Entrega Tulum, Cancún y Riviera</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Inventory Gallery Section -->
+  <section style="padding: 2.5rem 0 4rem 0;">
+    <div class="container">
+      
+      <!-- Interactive Filter Bar -->
+      <Filtros />
+
+      <!-- Bike Cards Grid -->
+      <div class="bici-grid">
+        {bicis.map((bici, index) => (
+          <BiciCard bici={bici} priority={index === 0} />
+        ))}
+      </div>
+
+      <!-- Bottom Assistance Banner -->
+      <div style="margin-top: 3.5rem; background: linear-gradient(135deg, #18181B 0%, #27272A 100%); color: #FFFFFF; border-radius: var(--radius-lg); padding: 2.5rem 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem; box-shadow: var(--shadow-lg);">
+        <div style="max-width: 600px;">
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">¿Buscas una talla o componente en específico?</h2>
+          <p style="color: #CBD5E1; font-size: 0.95rem; line-height: 1.5;">
+            Recibimos bicicletas nuevas y seminuevas constantemente. Escríbenos directamente a WhatsApp y te decimos qué viene en camino o te apartamos tu modelo ideal.
+          </p>
+        </div>
+        <div>
+          <a
+            href="https://wa.me/529841381493?text=Hola,%20estoy%20buscando%20una%20bicicleta%20y%20me%20gustar%C3%ADa%20asesor%C3%ADa%20personalizada."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp btn-lg"
+          >
+            Hablar con un asesor en WhatsApp
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Base>

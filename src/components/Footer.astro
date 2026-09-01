@@ -1,0 +1,90 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer style="background-color: var(--secondary); color: #94A3B8; padding-top: 3.5rem; padding-bottom: 2.5rem; border-top: 1px solid #27272A; margin-top: 4rem;">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2.5rem; margin-bottom: 3rem;">
+      
+      <!-- Columna 1: Negocio -->
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.4rem; font-weight: 900; color: #FFFFFF; letter-spacing: -0.02em;">THE GARAGE</span>
+        </div>
+        <p style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.25rem; color: #CBD5E1;">
+          Tienda física de bicicletas en Playa del Carmen. Bicicletas de montaña (MTB), ruta, urbanas y eléctricas seleccionadas para rodar en toda la Riviera Maya.
+        </p>
+        <div style="display: flex; gap: 0.75rem;">
+          <a
+            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20visitar%20la%20tienda%20en%20Playa%20del%20Carmen."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp"
+            style="padding: 0.45rem 0.9rem; font-size: 0.85rem;"
+          >
+            Abrir WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <!-- Columna 2: Ubicación & Contacto -->
+      <div>
+        <h3 style="color: #FFFFFF; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+          📍 Visítanos
+        </h3>
+        <p style="font-size: 0.9rem; line-height: 1.6; color: #E2E8F0; margin-bottom: 0.75rem;">
+          <strong>The Garage Bicicletas</strong><br />
+          Av. Ich Xeel CASA 19, Cataluña<br />
+          C.P. 77725 Playa del Carmen, Quintana Roo, México
+        </p>
+        <p style="font-size: 0.85rem; color: #94A3B8;">
+          WhatsApp / Teléfono: <a href="https://wa.me/529841381493" style="color: var(--primary); font-weight: 700;">+52 984 138 1493</a>
+        </p>
+      </div>
+
+      <!-- Columna 3: Horarios de Tienda -->
+      <div>
+        <h3 style="color: #FFFFFF; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+          🕒 Horario de Atención
+        </h3>
+        <ul style="list-style: none; font-size: 0.85rem; line-height: 1.8; color: #CBD5E1;">
+          <li style="display: flex; justify-content: space-between; border-bottom: 1px dashed #27272A; padding: 0.2rem 0;">
+            <span>Lunes – Viernes:</span>
+            <span style="font-weight: 700; color: #FFFFFF;">9:00 a.m. – 7:00 p.m.</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; border-bottom: 1px dashed #27272A; padding: 0.2rem 0;">
+            <span>Sábado:</span>
+            <span style="font-weight: 700; color: #FFFFFF;">9:00 a.m. – 2:00 p.m.</span>
+          </li>
+          <li style="display: flex; justify-content: space-between; padding: 0.2rem 0;">
+            <span>Domingo:</span>
+            <span style="color: #EF4444; font-weight: 700;">Cerrado</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Enlaces Rápidos -->
+      <div>
+        <h3 style="color: #FFFFFF; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+          Enlaces & Cobertura
+        </h3>
+        <ul style="list-style: none; font-size: 0.88rem; line-height: 2;">
+          <li><a href="/" style="color: #CBD5E1; transition: color 0.15s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='#CBD5E1'">Catálogo e Inventario</a></li>
+          <li><a href="/riviera-maya" style="color: #CBD5E1; transition: color 0.15s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='#CBD5E1'">Entregas en Riviera Maya</a></li>
+          <li><a href="/aviso-privacidad" style="color: #CBD5E1; transition: color 0.15s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='#CBD5E1'">Aviso de Privacidad (LFPDPPP)</a></li>
+          <li><a href="/admin" style="color: #64748B; font-size: 0.75rem;">Acceso Administrador</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div style="border-top: 1px solid #27272A; padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: 0.8rem; color: #64748B;">
+      <p>© {year} The Garage Bicicletas. Todos los derechos reservados. Playa del Carmen, Quintana Roo.</p>
+      <div style="display: flex; gap: 1rem;">
+        <a href="/aviso-privacidad" style="color: #94A3B8; text-decoration: underline;">Privacidad</a>
+        <a href="/riviera-maya" style="color: #94A3B8; text-decoration: underline;">Cobertura</a>
+      </div>
+    </div>
+  </div>
+</footer>

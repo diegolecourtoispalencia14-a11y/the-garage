@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <rect width="800" height="800" fill="#F8FAFC"/>
+  <defs>
+    <pattern id="gridGiant" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E2E8F0" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="800" fill="url(#gridGiant)" opacity="0.6"/>
+  <ellipse cx="400" cy="620" rx="300" ry="24" fill="#000000" opacity="0.08"/>
+
+  <!-- Bike Silhouette Graphic (MTB Giant Talon Style) -->
+  <g transform="translate(100, 180) scale(0.75)">
+    <circle cx="150" cy="450" r="140" fill="none" stroke="#1E293B" stroke-width="22"/>
+    <circle cx="150" cy="450" r="115" fill="none" stroke="#94A3B8" stroke-width="3"/>
+    <circle cx="650" cy="450" r="140" fill="none" stroke="#1E293B" stroke-width="22"/>
+    <circle cx="650" cy="450" r="115" fill="none" stroke="#94A3B8" stroke-width="3"/>
+    
+    <circle cx="150" cy="450" r="16" fill="#0F172A"/>
+    <circle cx="650" cy="450" r="16" fill="#0F172A"/>
+    <path d="M 150 310 L 150 590 M 10 450 L 290 450 M 50 350 L 250 550 M 50 550 L 250 350" stroke="#CBD5E1" stroke-width="2"/>
+    <path d="M 650 310 L 650 590 M 510 450 L 790 450 M 550 350 L 750 550 M 550 550 L 750 350" stroke="#CBD5E1" stroke-width="2"/>
+    
+    <circle cx="360" cy="450" r="48" fill="#1E293B"/>
+    <circle cx="360" cy="450" r="28" fill="#64748B"/>
+
+    <!-- Frame Geometry (Giant ALUXX) -->
+    <path d="M 150 450 L 360 450" stroke="#475569" stroke-width="14" stroke-linecap="round"/>
+    <path d="M 150 450 L 330 250" stroke="#475569" stroke-width="14" stroke-linecap="round"/>
+    <path d="M 360 450 L 315 180" stroke="#334155" stroke-width="18" stroke-linecap="round"/>
+    <path d="M 360 450 L 560 200" stroke="#334155" stroke-width="24" stroke-linecap="round"/>
+    <path d="M 330 250 L 560 200" stroke="#475569" stroke-width="18" stroke-linecap="round"/>
+    <path d="M 560 200 L 580 140" stroke="#334155" stroke-width="20" stroke-linecap="round"/>
+    <path d="M 560 200 L 650 450" stroke="#334155" stroke-width="16" stroke-linecap="round"/>
+    <path d="M 605 320 L 650 450" stroke="#94A3B8" stroke-width="14" stroke-linecap="round"/>
+
+    <path d="M 315 180 L 305 130" stroke="#334155" stroke-width="12"/>
+    <path d="M 260 130 Q 320 120 350 135" stroke="#0F172A" stroke-width="18" stroke-linecap="round" fill="none"/>
+
+    <path d="M 580 140 L 560 125 L 530 125" stroke="#1E293B" stroke-width="14" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Spec Watermark Badge -->
+  <g transform="translate(40, 40)">
+    <rect width="180" height="38" rx="8" fill="#475569"/>
+    <text x="90" y="24" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="15" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">GIANT TALON 2</text>
+  </g>
+
+  <g transform="translate(620, 40)">
+    <rect width="140" height="38" rx="8" fill="#EAB308"/>
+    <text x="70" y="24" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" fill="#713F12" text-anchor="middle">APARTADA</text>
+  </g>
+
+  <!-- Sample Watermark Banner -->
+  <g transform="translate(240, 720)">
+    <rect width="320" height="42" rx="21" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5"/>
+    <text x="160" y="26" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="14" fill="#64748B" text-anchor="middle">FOTO DE MUESTRA 1/2</text>
+  </g>
+</svg>

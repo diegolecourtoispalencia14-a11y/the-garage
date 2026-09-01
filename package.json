@@ -1,0 +1,15 @@
+{
+  "name": "the-garage",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Vitrina web de bicicletas para The Garage en Playa del Carmen",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host",
+    "start": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  }
+}

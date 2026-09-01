@@ -1,0 +1,25 @@
+{
+  "id": "specialized-allez-e5",
+  "modelo": "Allez E5 Sport",
+  "marca": "Specialized",
+  "categoria": "Ruta",
+  "precio": 18900,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "54 cm (M)",
+  "color": "Azul Cobalto Brillante",
+  "specs": {
+    "cuadro": "Aluminio E5 Premium con horquilla FACT Carbon",
+    "grupo": "Shimano Sora 2x9 vel.",
+    "frenos": "Disco mecánico dual Axis",
+    "rodada": "700c"
+  },
+  "fotos": [
+    "/img/allez-1.svg",
+    "/img/allez-2.svg"
+  ],
+  "mensajeWhatsApp": "Hola, me interesa la Specialized Allez E5 Sport Seminueva (Talla 54). ¿Sigue disponible para apartarla o agendar prueba?",
+  "destacada": true,
+  "esMuestra": true
+}

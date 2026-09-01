@@ -1,0 +1,71 @@
+backend:
+  name: github
+  repo: diegolecourtoispalencia14-a11y/the-garage
+  branch: main
+  base_url: https://the-garage-oauth.workers.dev # Se conectará con tu Cloudflare Worker gratuito
+
+# Permite probar el panel localmente en tu computadora
+local_backend: true
+
+media_folder: "public/img"
+public_folder: "/img"
+
+# Configuración de interfaz en español y optimizada para móvil
+locale: "es"
+display_url: "https://thegarageplaya.pages.dev"
+
+collections:
+  - name: "bicis"
+    label: "Bicicletas (Inventario)"
+    label_singular: "Bicicleta"
+    folder: "src/content/bicis"
+    create: true
+    slug: "{{id}}"
+    extension: "json"
+    format: "json"
+    summary: "{{marca}} {{modelo}} — {{disponibilidad}} ({{precio}} MXN)"
+    sortable_fields: ["disponibilidad", "precio", "marca"]
+    fields:
+      - { label: "ID único en la web (ej: trek-marlin-5)", name: "id", widget: "string", hint: "Identificador sin espacios ni acentos" }
+      - { label: "Modelo", name: "modelo", widget: "string", hint: "Ej: Marlin 5 Gen 3, Allez E5" }
+      - { label: "Marca", name: "marca", widget: "string", hint: "Ej: Trek, Specialized, Giant, Benotto" }
+      - { label: "Categoría", name: "categoria", widget: "select", options: ["MTB", "Ruta", "Urbana", "Eléctrica", "Infantil"] }
+      - { label: "Precio en pesos (MXN)", name: "precio", widget: "number", value_type: "int" }
+      - { label: "Moneda", name: "moneda", widget: "hidden", default: "MXN" }
+      - { 
+          label: "Disponibilidad (ESTATUS)", 
+          name: "disponibilidad", 
+          widget: "select", 
+          options: [
+            { label: "🟢 Disponible (En tienda para venta)", value: "Disponible" },
+            { label: "🟡 Apartada (Cliente dio anticipo)", value: "Apartada" },
+            { label: "⚪ Vendida (Prueba social, se queda visible)", value: "Vendida" }
+          ],
+          default: "Disponible"
+        }
+      - { label: "Estado físico", name: "estado", widget: "select", options: ["Nueva", "Seminueva"], default: "Nueva" }
+      - { label: "Talla de cuadro", name: "talla", widget: "string", hint: "Ej: M (17.5\"), 54 cm, L (19\")" }
+      - { label: "Color", name: "color", widget: "string", hint: "Ej: Negro / Rojo Lava, Azul Metálico" }
+      - { 
+          label: "Mensaje prellenado para WhatsApp", 
+          name: "mensajeWhatsApp", 
+          widget: "string", 
+          hint: "Ej: Hola, me interesa la Trek Marlin 5 (Talla M). ¿Sigue disponible en tienda?" 
+        }
+      - { label: "¿Destacar en primeros lugares?", name: "destacada", widget: "boolean", default: false, required: false }
+      - { label: "¿Es bicicleta de muestra? (Desmarcar para reales)", name: "esMuestra", widget: "boolean", default: false, required: false }
+      - label: "Especificaciones Técnicas (Opcional)"
+        name: "specs"
+        widget: "object"
+        required: false
+        fields:
+          - { label: "Material del cuadro", name: "cuadro", widget: "string", required: false, hint: "Ej: Aluminio Alpha Silver" }
+          - { label: "Transmisión / Grupo", name: "grupo", widget: "string", required: false, hint: "Ej: Shimano CUES 1x9 vel." }
+          - { label: "Frenos", name: "frenos", widget: "string", required: false, hint: "Ej: Disco hidráulico Tektro" }
+          - { label: "Rodada de llanta", name: "rodada", widget: "string", required: false, hint: "Ej: 29\", 700c, 27.5\"" }
+      - { 
+          label: "Fotos de la bicicleta (Cuadradas 1:1 recomendadas)", 
+          name: "fotos", 
+          widget: "list", 
+          field: { label: "Foto", name: "foto", widget: "image" } 
+        }
