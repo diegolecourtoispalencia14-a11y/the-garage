@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro';
+import BiciCard from '../components/BiciCard.astro';
+import Filtros from '../components/Filtros.astro';
+import { getCollection } from 'astro:content';
+
+const bicisEntries = await getCollection('bicis');
+const orderMap: Record<string, number> = {
+  Disponible: 1,
+  Apartada: 2,
+  Vendida: 3,
+};
+
+const bicis = bicisEntries
+  .map(e => e.data)
+  .sort((a, b) => {
+    const orderA = orderMap[a.disponibilidad] || 99;
+    const orderB = orderMap[b.disponibilidad] || 99;
+    if (orderA !== orderB) return orderA - orderB;
+    return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0);
+  });
+---
+
+<Base
+  title="Catálogo & Inventario Oficial | The Garage Playa del Carmen"
+  description="Inventario de bicicletas nuevas, seminuevas y custom builds disponibles en tienda física en Playa del Carmen. Distribuidores Basso, Merida, Giant, Specialized y Trek."
+>
+  <!-- Header de Catálogo -->
+  <section style="padding: 4rem 0 2.5rem 0; border-bottom: 1px solid var(--border-hairline); background: var(--surface-base);">
+    <div class="container">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem;">
+        <div style="max-width: 680px;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.85rem;">
+            <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-red);">
+              INVENTARIO EN TIENDA FÍSICA
+            </span>
+            <span style="color: var(--border-hairline);">•</span>
+            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+              CATALUÑA CASA 19, PDC
+            </span>
+          </div>
+          <h1 class="title-xl" style="margin-bottom: 0.75rem;">
+            Bicicletas Listas para Rodar.
+          </h1>
+          <p class="subtitle" style="font-size: 1.05rem; line-height: 1.6;">
+            Todas nuestras unidades incluyen <strong>inspección mecánica certificada</strong>, ajuste de tornillería con torquímetro y <strong>1er servicio de reajuste gratis a los 30 días</strong>.
+          </p>
+        </div>
+
+        <a
+          href="https://wa.me/529841381493?text=Hola,%20busco%20una%20bicicleta%20espec%C3%ADfica.%20%C2%BFMe%20pueden%20asesorar?"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-whatsapp"
+          style="padding: 0.75rem 1.5rem; font-size: 0.88rem;"
+        >
+          Asesoría Personalizada por WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtros & Grilla de Productos -->
+  <section style="padding: 3rem 0 6rem 0; background: var(--surface-subtle);">
+    <div class="container">
+      
+      <!-- Toolbar de Filtros -->
+      <div style="margin-bottom: 2.5rem;">
+        <Filtros />
+      </div>
+
+      <!-- Grilla de Bicicletas -->
+      <div class="bici-grid">
+        {bicis.map((bici, index) => (
+          <BiciCard bici={bici} priority={index === 0} />
+        ))}
+      </div>
+
+      <!-- Banner de Pedido Especial / Basso Custom -->
+      <div style="margin-top: 5rem; background: linear-gradient(135deg, #09090B 0%, #18181B 100%); border: 1px solid #27272A; border-radius: var(--radius-lg); padding: 3.5rem 3rem; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div style="max-width: 620px;">
+          <span style="font-size: 0.75rem; font-weight: 800; color: #FB7185; letter-spacing: 0.08em; display: block; margin-bottom: 0.5rem;">
+            🇮🇹 BASSO BIKES ITALIA • CONFIGURACIÓN A MEDIDA
+          </span>
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">
+            ¿Buscas un cuadro o modelo específico?
+          </h2>
+          <p style="color: #A1A1AA; font-size: 0.95rem; line-height: 1.6;">
+            Como distribuidores oficiales de Basso Bikes, podemos cotizar e importar tu cuadro de carbono italiano con la transmisión SRAM/Shimano y ruedas de tu preferencia.
+          </p>
+        </div>
+
+        <a
+          href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20cotizar%20un%20cuadro%20o%20ensamble%20personalizado%20de%20Basso%20Bikes."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-whatsapp"
+          style="padding: 0.85rem 1.75rem; font-size: 0.92rem;"
+        >
+          Cotizar Ensamble a Medida
+        </a>
+      </div>
+
+    </div>
+  </section>
+</Base>
