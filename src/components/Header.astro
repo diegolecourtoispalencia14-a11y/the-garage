@@ -1,41 +1,41 @@
 ---
 ---
 
-<header style="background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;">
-  <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.15rem; padding-bottom: 1.15rem;">
+<header style="background-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-hairline); position: sticky; top: 0; z-index: 100;">
+  <div class="container" style="display: flex; justify-content: space-between; align-items: center; height: 68px;">
     
     <!-- Authentic Brand Logo -->
     <a href="/" style="display: flex; align-items: center;" title="The Garage Bike Experts">
       <img
         src="/img/the-garage-logo.png"
         alt="The Garage Bike Experts - Playa del Carmen"
-        style="height: 42px; width: auto; object-fit: contain;"
+        style="height: 38px; width: auto; object-fit: contain;"
         loading="eager"
       />
     </a>
 
-    <!-- Clean Spacious Nav Links -->
-    <nav style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
-      <a href="/" style="font-size: 0.9rem; font-weight: 600; color: #334155; text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#0F172A'" onmouseout="this.style.color='#334155'">
+    <!-- Clean Typography Nav Links -->
+    <nav style="display: flex; align-items: center; gap: 2.25rem;">
+      <a href="/" class="nav-link">
         Inventario
       </a>
-      <a href="/guia-tallas" style="font-size: 0.9rem; font-weight: 600; color: #334155; text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#0F172A'" onmouseout="this.style.color='#334155'">
-        Calculadora de Talla
+      <a href="/guia-tallas" class="nav-link">
+        Calculadora
       </a>
-      <a href="/comunidad" style="font-size: 0.9rem; font-weight: 600; color: #334155; text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#0F172A'" onmouseout="this.style.color='#334155'">
-        Comunidad &amp; Rodadas
+      <a href="/comunidad" class="nav-link">
+        Comunidad
       </a>
-      <a href="/guias" style="font-size: 0.9rem; font-weight: 600; color: #334155; text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='#0F172A'" onmouseout="this.style.color='#334155'">
-        Guías &amp; Rutas
+      <a href="/guias" class="nav-link">
+        Guías
       </a>
       
-      <!-- Minimalist WhatsApp Button -->
+      <!-- Minimalist Conversion Button -->
       <a
         href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20hacer%20una%20consulta%20sobre%20el%20inventario."
         target="_blank"
         rel="noopener noreferrer"
         class="btn btn-whatsapp"
-        style="padding: 0.6rem 1.25rem; font-size: 0.85rem;"
+        style="padding: 0.55rem 1.15rem; font-size: 0.82rem;"
       >
         <span>WhatsApp</span>
       </a>
@@ -43,3 +43,23 @@
 
   </div>
 </header>
+
+<style>
+  .nav-link {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    letter-spacing: -0.01em;
+  }
+  .nav-link:hover {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .nav-link {
+      display: none;
+    }
+  }
+</style>

@@ -27,10 +27,10 @@ interface Props {
 
 const { bici, priority = false } = Astro.props;
 
-const statusStyles: Record<string, { label: string; bg: string; color: string }> = {
-  Disponible: { label: 'Disponible', bg: '#DCFCE7', color: '#15803D' },
-  Apartada: { label: 'Apartada', bg: '#FEF3C7', color: '#B45309' },
-  Vendida: { label: 'Vendida', bg: '#F1F5F9', color: '#64748B' },
+const statusStyles: Record<string, { label: string; dot: string; color: string; bg: string }> = {
+  Disponible: { label: 'Disponible', dot: '#22C55E', color: '#15803D', bg: '#F0FDF4' },
+  Apartada: { label: 'Apartada', dot: '#F59E0B', color: '#B45309', bg: '#FFFBEB' },
+  Vendida: { label: 'Vendida', dot: '#94A3B8', color: '#64748B', bg: '#F8FAFC' },
 };
 
 const status = statusStyles[bici.disponibilidad] || statusStyles['Disponible'];
@@ -50,8 +50,8 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
   data-estado={bici.estado}
   data-disponibilidad={bici.disponibilidad}
 >
-  <!-- Image Container -->
-  <a href={`/bici/${bici.id}`} class="image-box" title={`Ver ${bici.marca} ${bici.modelo}`}>
+  <!-- Card Visual Media Container -->
+  <a href={`/bici/${bici.id}`} class="media-container" title={`Ver ${bici.marca} ${bici.modelo}`}>
     <img
       src={bici.fotos[0]}
       alt={`${bici.marca} ${bici.modelo}`}
@@ -59,48 +59,45 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
       decoding="async"
     />
     
-    <!-- Status Pill -->
-    <div class="status-badge" style={`background: ${status.bg}; color: ${status.color};`}>
-      <span class="status-dot" style={`background: ${status.color};`}></span>
-      {status.label}
+    <!-- Minimalist Status Dot -->
+    <div class="status-indicator" style={`background: ${status.bg}; color: ${status.color}; border: 1px solid ${status.bg};`}>
+      <span class="status-dot" style={`background: ${status.dot};`}></span>
+      <span>{status.label}</span>
+    </div>
+
+    <!-- Hover Glass Action -->
+    <div class="hover-overlay">
+      <span class="glass-action-btn">
+        Ver Ficha Técnica →
+      </span>
     </div>
   </a>
 
-  <!-- Content Box -->
-  <div class="content-box">
-    <div class="meta-row">
-      <span class="category-text">{bici.categoria} • {bici.talla}</span>
-      <span class="condition-text">{bici.estado}</span>
+  <!-- Metadata Body -->
+  <div class="meta-container">
+    <div class="title-price-row">
+      <h2 class="bike-name">
+        <a href={`/bici/${bici.id}`}>{bici.marca} {bici.modelo}</a>
+      </h2>
+      <span class="bike-price">{precioFormateado}</span>
     </div>
 
-    <h2 class="bike-title">
-      <a href={`/bici/${bici.id}`}>{bici.marca} {bici.modelo}</a>
-    </h2>
-
-    <div class="price-row">
-      <span class="price-amount">{precioFormateado}</span>
-      <span class="currency-label">{bici.moneda}</span>
+    <div class="details-row">
+      <span>{bici.categoria} • Talla {bici.talla}</span>
+      <span>{bici.specs.grupo}</span>
     </div>
 
-    <!-- Clean Tech Specs Summary -->
-    <p class="specs-summary">
-      {bici.specs.grupo} • {bici.specs.rodada}
-    </p>
-
-    <!-- Bottom Actions -->
-    <div class="actions-row">
-      <a href={`/bici/${bici.id}`} class="btn btn-outline" style="flex: 1; padding: 0.65rem 1rem; font-size: 0.85rem;">
-        Ver Ficha
-      </a>
+    <!-- Direct WhatsApp Quick Action -->
+    <div class="card-footer-row">
       {bici.disponibilidad !== 'Vendida' ? (
         <a
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="btn btn-whatsapp"
-          style="flex: 1.2; padding: 0.65rem 1rem; font-size: 0.85rem;"
+          style="width: 100%; padding: 0.6rem 1rem; font-size: 0.82rem;"
         >
-          Apartar
+          Apartar por WhatsApp
         </a>
       ) : (
         <a
@@ -108,9 +105,9 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
           target="_blank"
           rel="noopener noreferrer"
           class="btn btn-outline"
-          style="flex: 1.2; padding: 0.65rem 1rem; font-size: 0.85rem; color: #64748B;"
+          style="width: 100%; padding: 0.6rem 1rem; font-size: 0.82rem; color: var(--text-muted);"
         >
-          Pedir Similar
+          Pedir Bicicleta Similar
         </a>
       )}
     </div>
@@ -120,49 +117,49 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
 <style>
   .card-bici {
     background: #FFFFFF;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    box-shadow: var(--shadow-subtle);
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), border-color 0.25s ease;
   }
 
   .card-bici:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-hairline-hover);
   }
 
-  .image-box {
+  .media-container {
     position: relative;
-    aspect-ratio: 1/1;
-    background: #F8FAFC;
+    aspect-ratio: 1.15 / 1;
+    background: var(--surface-subtle);
     overflow: hidden;
     display: block;
   }
 
-  .image-box img {
+  .media-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.4s var(--ease-spring);
   }
 
-  .card-bici:hover .image-box img {
+  .card-bici:hover .media-container img {
     transform: scale(1.03);
   }
 
-  .status-badge {
+  .status-indicator {
     position: absolute;
-    top: 1rem;
-    left: 1rem;
+    top: 0.85rem;
+    left: 0.85rem;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.3rem 0.7rem;
+    padding: 0.25rem 0.65rem;
     border-radius: var(--radius-full);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     backdrop-filter: blur(8px);
   }
@@ -173,80 +170,80 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     border-radius: 50%;
   }
 
-  .content-box {
-    padding: 1.5rem;
+  .hover-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .card-bici:hover .hover-overlay {
+    opacity: 1;
+  }
+
+  .glass-action-btn {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.55rem 1.15rem;
+    border-radius: var(--radius-full);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+
+  .meta-container {
+    padding: 1.25rem 1.25rem 1.4rem 1.25rem;
     display: flex;
     flex-direction: column;
     flex: 1;
   }
 
-  .meta-row {
+  .title-price-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.4rem;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
   }
 
-  .category-text {
-    font-size: 0.78rem;
+  .bike-name {
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
   }
 
-  .condition-text {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #475569;
+  .bike-name a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.15s ease;
   }
 
-  .bike-title {
+  .bike-name a:hover {
+    color: var(--brand-red);
+  }
+
+  .bike-price {
     font-size: 1.15rem;
     font-weight: 800;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-
-  .bike-title a {
-    color: var(--text-main);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-
-  .bike-title a:hover {
-    color: var(--primary);
-  }
-
-  .price-row {
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .price-amount {
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: var(--text-main);
+    color: var(--text-primary);
     letter-spacing: -0.02em;
+    white-space: nowrap;
   }
 
-  .currency-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
-
-  .specs-summary {
-    font-size: 0.85rem;
-    color: #64748B;
-    margin-bottom: 1.5rem;
-  }
-
-  .actions-row {
-    margin-top: auto;
+  .details-row {
     display: flex;
-    gap: 0.75rem;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.25rem;
+  }
+
+  .card-footer-row {
+    margin-top: auto;
   }
 </style>

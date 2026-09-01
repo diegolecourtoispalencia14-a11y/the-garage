@@ -25,23 +25,23 @@ const bicis = bicisEntries
   title="THE GARAGE • BIKE EXPERTS | Distribuidor Basso & Lee Cougan • Playa del Carmen"
   description="Vitrina oficial de The Garage en Playa del Carmen. Distribuidores oficiales de Basso, Lee Cougan, taller SRAM y comunidad ciclista en la Riviera Maya."
 >
-  <!-- Hero Section - Spacious & Elegant -->
-  <section style="padding: 4.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border); background: #FFFFFF;">
+  <!-- Hero Section Editorial -->
+  <section style="padding: 4.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-hairline); background: var(--surface-base);">
     <div class="container">
-      <div style="max-width: 800px;">
+      <div style="max-width: 840px;">
         
-        <!-- Subtle Origin Badge -->
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
-          <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">
+        <!-- Location & Status Badge -->
+        <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1.25rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">
             Playa del Carmen, Quintana Roo
           </span>
-          <span style="color: var(--border);">•</span>
-          <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary);">
-            Distribuidor Basso &amp; Lee Cougan
+          <span style="color: var(--border-hairline);">•</span>
+          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand-red);">
+            Distribuidor Basso Bikes Italia
           </span>
         </div>
 
-        <h1 class="title-xl" style="margin-bottom: 1.25rem; color: #0F172A;">
+        <h1 class="title-xl" style="margin-bottom: 1.25rem;">
           Bicicletas de clase mundial &amp; taller experto en el Caribe.
         </h1>
         
@@ -49,12 +49,12 @@ const bicis = bicisEntries
           Tienda boutique y taller certificado en Cataluña, Playa del Carmen. Distribuidores oficiales de <strong>Basso Bikes</strong>, servicio mecánico especializado, nutrición <strong>Wayfar</strong> y salidas semanales con <strong>The Garage Ride</strong>.
         </p>
 
-        <!-- Minimalist Action Row -->
+        <!-- Minimalist CTA Group -->
         <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-          <a href="#catalogo" class="btn btn-primary" style="padding: 0.85rem 1.8rem;">
-            Ver Inventario ({bicis.length} disponibles)
+          <a href="#catalogo" class="btn btn-primary">
+            Explorar Inventario ({bicis.length})
           </a>
-          <a href="/guia-tallas" class="btn btn-outline" style="padding: 0.85rem 1.8rem;">
+          <a href="/guia-tallas" class="btn btn-outline">
             Calculadora de Talla →
           </a>
         </div>
@@ -63,38 +63,38 @@ const bicis = bicisEntries
     </div>
   </section>
 
-  <!-- Inventory Gallery Section -->
-  <section id="catalogo" style="padding: 4rem 0 6rem 0; background: var(--bg-subtle);">
+  <!-- Gallery Section -->
+  <section id="catalogo" style="padding: 3.5rem 0 6rem 0; background: var(--surface-subtle);">
     <div class="container">
       
-      <!-- Interactive Filter Bar -->
+      <!-- Recent.design Filter Toolbar -->
       <div style="margin-bottom: 2.5rem;">
         <Filtros />
       </div>
 
-      <!-- Bike Cards Grid -->
+      <!-- High-End Product Grid -->
       <div class="bici-grid">
         {bicis.map((bici, index) => (
           <BiciCard bici={bici} priority={index === 0} />
         ))}
       </div>
 
-      <!-- Minimalist Clean Community Banner -->
-      <div style="margin-top: 5rem; background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 3.5rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; box-shadow: var(--shadow-sm);">
-        <div style="max-width: 600px;">
-          <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #E1306C; display: block; margin-bottom: 0.5rem;">
-            📸 @THEGARAGE.PDC EN INSTAGRAM
+      <!-- Clean Community Callout -->
+      <div style="margin-top: 5rem; background: #FFFFFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); padding: 3rem 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div style="max-width: 580px;">
+          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #E1306C; display: block; margin-bottom: 0.4rem;">
+            📸 @THEGARAGE.PDC EN VIVO
           </span>
-          <h2 class="title-lg" style="color: #0F172A; margin-bottom: 0.5rem;">
+          <h2 class="title-lg" style="margin-bottom: 0.5rem;">
             Comunidad, Rodadas &amp; Vida Ciclista
           </h2>
-          <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6;">
-            Conoce nuestras rodadas de fin de semana, la carrera Clásica 7:30 XCO y trabajos de taller con fotos reales de la comunidad.
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+            Conoce nuestras rodadas de fin de semana, la carrera Clásica 7:30 XCO y trabajos de taller con fotos reales extraídas directamente de Instagram.
           </p>
         </div>
 
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-          <a href="/comunidad" class="btn btn-primary" style="padding: 0.85rem 1.6rem;">
+        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+          <a href="/comunidad" class="btn btn-primary">
             Ver Muro de Comunidad →
           </a>
           <a
@@ -102,7 +102,6 @@ const bicis = bicisEntries
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-outline"
-            style="padding: 0.85rem 1.6rem;"
           >
             Instagram ↗
           </a>

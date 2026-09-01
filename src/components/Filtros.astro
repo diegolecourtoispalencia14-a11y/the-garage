@@ -1,211 +1,120 @@
 ---
+const categorias = [
+  { id: 'todas', label: 'Todos' },
+  { id: 'MTB', label: 'MTB' },
+  { id: 'Ruta', label: 'Ruta' },
+  { id: 'Gravel', label: 'Gravel' },
+  { id: 'Urbana', label: 'Urbana' },
+];
 ---
 
-<div class="filtros-container" style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.4rem; margin-bottom: 2.25rem; box-shadow: var(--shadow-sm);">
-  <div style="display: flex; flex-direction: column; gap: 1.15rem;">
-    
-    <!-- Top row: Search & Live Counter -->
-    <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center;">
-      <div style="flex: 1; min-width: 250px; position: relative;">
-        <input
-          type="text"
-          id="filter-search"
-          placeholder="Buscar por marca, modelo, rodada o componentes..."
-          style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.6rem; border-radius: var(--radius-md); border: 1.5px solid var(--border); font-size: 0.95rem; outline: none; font-weight: 500; transition: all 0.2s ease;"
-          onfocus="this.style.borderColor='var(--secondary)'; this.style.boxShadow='0 0 0 3px rgba(15, 23, 42, 0.08)'"
-          onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none'"
-        />
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 800; color: #0F172A; background: #F1F5F9; padding: 0.5rem 0.9rem; border-radius: var(--radius-full);">
-        <span id="result-count" style="color: var(--primary); font-size: 1rem;">3</span>
-        <span>BICICLETAS EN PISO</span>
-      </div>
-    </div>
-
-    <!-- Category Pill Filter Bar with Mobile Scroll -->
-    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-      <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);">
-        Filtrar por Categoría:
-      </span>
-      <div id="filter-categorias" class="cat-pill-scroll" style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; -webkit-overflow-scrolling: touch;">
-        <button type="button" class="filter-btn active" data-categoria="todas">Todas</button>
-        <button type="button" class="filter-btn" data-categoria="MTB">MTB / Montaña</button>
-        <button type="button" class="filter-btn" data-categoria="Ruta">Ruta</button>
-        <button type="button" class="filter-btn" data-categoria="Urbana">Urbana</button>
-        <button type="button" class="filter-btn" data-categoria="Eléctrica">Eléctrica</button>
-        <button type="button" class="filter-btn" data-categoria="Infantil">Infantil</button>
-      </div>
-    </div>
-
-    <!-- Secondary Filters: Disponibilidad & Estado -->
-    <div style="display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border); align-items: center;">
-      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-        <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">
-          Estatus:
-        </span>
-        <select id="filter-disponibilidad" style="padding: 0.45rem 0.85rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: #F8FAFC; font-size: 0.85rem; font-weight: 700; cursor: pointer; outline: none;">
-          <option value="todas">Todos los estatus</option>
-          <option value="Disponible">🟢 Solo Disponibles</option>
-          <option value="Apartada">🟡 Apartadas</option>
-          <option value="Vendida">⚪ Vendidas</option>
-        </select>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-        <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">
-          Condición:
-        </span>
-        <select id="filter-estado" style="padding: 0.45rem 0.85rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: #F8FAFC; font-size: 0.85rem; font-weight: 700; cursor: pointer; outline: none;">
-          <option value="todos">Nuevas y Seminuevas</option>
-          <option value="Nueva">Nuevas</option>
-          <option value="Seminueva">Seminuevas</option>
-        </select>
-      </div>
-
+<div class="filter-toolbar">
+  <div class="filter-scroll">
+    {categorias.map((cat, idx) => (
       <button
-        id="filter-reset"
         type="button"
-        style="margin-left: auto; background: none; border: none; color: var(--primary); font-size: 0.85rem; font-weight: 800; cursor: pointer; text-decoration: underline;"
+        class={`filter-pill ${idx === 0 ? 'active' : ''}`}
+        data-filter={cat.id}
       >
-        Restablecer
+        {cat.label}
       </button>
-    </div>
+    ))}
+  </div>
 
+  <div class="filter-right-info" id="filter-count-label">
+    Mostrando todas las unidades
   </div>
 </div>
 
-<!-- Empty state container if 0 results match -->
-<div id="no-results" style="display: none; text-align: center; padding: 3.5rem 1.5rem; background: #FFFFFF; border-radius: var(--radius-lg); border: 2px dashed var(--border); margin: 2rem 0;">
-  <div style="font-size: 2.75rem; margin-bottom: 0.75rem;">🔍</div>
-  <h3 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary);">No encontramos bicicletas con esos filtros</h3>
-  <p class="subtitle" style="max-width: 520px; margin: 0 auto 1.5rem;">
-    Escríbenos por WhatsApp qué modelo, talla o presupuesto buscas. Constantemente recibimos inventario nuevo en la tienda de Playa del Carmen.
-  </p>
-  <a
-    href="https://wa.me/529841381493?text=Hola,%20busco%20una%20bicicleta%20espec%C3%ADfica%20que%20no%20encontr%C3%A9%20en%20el%20cat%C3%A1logo.%20%C2%BFTienen%20disponibilidad?"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="btn btn-whatsapp btn-lg"
-    style="display: inline-flex;"
-  >
-    Consultar disponibilidad directa por WhatsApp
-  </a>
-</div>
-
 <style>
-  .filter-btn {
-    padding: 0.5rem 1.1rem;
-    border-radius: var(--radius-full);
-    border: 1.5px solid var(--border);
-    background-color: #F8FAFC;
-    color: #334155;
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  .filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-hairline);
+    flex-wrap: wrap;
   }
-  .filter-btn:hover {
-    background-color: #E2E8F0;
-    border-color: #94A3B8;
+
+  .filter-scroll {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .filter-btn.active {
-    background-color: #0F172A;
-    color: #FFFFFF;
-    border-color: #0F172A;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
-  }
-  .cat-pill-scroll::-webkit-scrollbar {
+  .filter-scroll::-webkit-scrollbar {
     display: none;
   }
-  .cat-pill-scroll {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+  .filter-pill {
+    padding: 0.55rem 1.15rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-hairline);
+    background: #FFFFFF;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s var(--ease-spring);
+    letter-spacing: -0.01em;
+  }
+
+  .filter-pill:hover {
+    border-color: var(--border-hairline-hover);
+    color: var(--text-primary);
+    background: var(--surface-subtle);
+  }
+
+  .filter-pill.active {
+    background: var(--text-primary);
+    color: #FFFFFF;
+    border-color: var(--text-primary);
+  }
+
+  .filter-right-info {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
   }
 </style>
 
 <script>
-  function initFiltros() {
-    const searchInput = document.getElementById('filter-search') as HTMLInputElement | null;
-    const catButtons = document.querySelectorAll<HTMLButtonElement>('#filter-categorias .filter-btn');
-    const dispSelect = document.getElementById('filter-disponibilidad') as HTMLSelectElement | null;
-    const estadoSelect = document.getElementById('filter-estado') as HTMLSelectElement | null;
-    const resetBtn = document.getElementById('filter-reset');
-    const cards = document.querySelectorAll<HTMLElement>('.bici-grid .card');
-    const countEl = document.getElementById('result-count');
-    const noResultsEl = document.getElementById('no-results');
+  function initRecentFilters() {
+    const pills = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+    const cards = document.querySelectorAll<HTMLElement>('.bici-grid .card-bici');
+    const countLabel = document.getElementById('filter-count-label');
 
-    let currentCat = 'todas';
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        pills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
 
-    function applyFilters() {
-      const searchVal = (searchInput?.value || '').toLowerCase().trim();
-      const dispVal = dispSelect?.value || 'todas';
-      const estadoVal = estadoSelect?.value || 'todos';
+        const filter = pill.getAttribute('data-filter') || 'todas';
+        let visibleCount = 0;
 
-      let visibleCount = 0;
+        cards.forEach((card) => {
+          const cat = card.getAttribute('data-categoria');
+          if (filter === 'todas' || cat === filter) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
 
-      cards.forEach((card) => {
-        const cardCat = card.getAttribute('data-categoria') || '';
-        const cardDisp = card.getAttribute('data-disponibilidad') || '';
-        const cardEstado = card.getAttribute('data-estado') || '';
-        const cardSearch = card.getAttribute('data-search') || '';
-
-        const matchCat = currentCat === 'todas' || cardCat === currentCat;
-        const matchDisp = dispVal === 'todas' || cardDisp === dispVal;
-        const matchEstado = estadoVal === 'todos' || cardEstado === estadoVal;
-        const matchSearch = !searchVal || cardSearch.includes(searchVal);
-
-        if (matchCat && matchDisp && matchEstado && matchSearch) {
-          card.style.display = 'flex';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
+        if (countLabel) {
+          countLabel.textContent = `${visibleCount} ${visibleCount === 1 ? 'unidad disponible' : 'unidades disponibles'}`;
         }
       });
-
-      if (countEl) {
-        countEl.textContent = visibleCount.toString();
-      }
-
-      if (noResultsEl) {
-        noResultsEl.style.display = visibleCount === 0 ? 'block' : 'none';
-      }
-    }
-
-    catButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        catButtons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentCat = btn.getAttribute('data-categoria') || 'todas';
-        applyFilters();
-      });
-    });
-
-    searchInput?.addEventListener('input', applyFilters);
-    dispSelect?.addEventListener('change', applyFilters);
-    estadoSelect?.addEventListener('change', applyFilters);
-
-    resetBtn?.addEventListener('click', () => {
-      if (searchInput) searchInput.value = '';
-      if (dispSelect) dispSelect.value = 'todas';
-      if (estadoSelect) estadoSelect.value = 'todos';
-      currentCat = 'todas';
-      catButtons.forEach((b) => {
-        if (b.getAttribute('data-categoria') === 'todas') b.classList.add('active');
-        else b.classList.remove('active');
-      });
-      applyFilters();
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFiltros);
+    document.addEventListener('DOMContentLoaded', initRecentFilters);
   } else {
-    initFiltros();
+    initRecentFilters();
   }
 </script>

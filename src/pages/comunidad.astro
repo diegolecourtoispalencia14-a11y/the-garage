@@ -2,12 +2,12 @@
 import Base from '../layouts/Base.astro';
 
 const stories = [
-  { id: 'basso', name: 'Basso Italia', emoji: '🇮🇹', border: 'linear-gradient(45deg, #009246, #FFFFFF, #CE2B37)', filter: 'arribo' },
-  { id: 'rodadas', name: 'The Garage Ride', emoji: '🌴', border: 'linear-gradient(45deg, #FF3B30, #FF9500)', filter: 'rodada' },
-  { id: 'clasica', name: 'Clásica 7:30', emoji: '🏆', border: 'linear-gradient(45deg, #F59E0B, #D97706)', filter: 'evento' },
-  { id: 'taller', name: 'Taller & SRAM', emoji: '🔧', border: 'linear-gradient(45deg, #64748B, #94A3B8)', filter: 'taller' },
-  { id: 'wayfar', name: 'Wayfar Nutrición', emoji: '⚡', border: 'linear-gradient(45deg, #EA580C, #F97316)', filter: 'lifestyle' },
-  { id: 'bikepacking', name: 'Huellas de Coral', emoji: '🌊', border: 'linear-gradient(45deg, #0284C7, #06B6D4)', filter: 'rodada' }
+  { id: 'basso', name: 'Basso Bikes', emoji: '🇮🇹', filter: 'arribo' },
+  { id: 'rodadas', name: 'The Garage Ride', emoji: '🌴', filter: 'rodada' },
+  { id: 'clasica', name: 'Clásica 7:30', emoji: '🏆', filter: 'evento' },
+  { id: 'taller', name: 'Taller SRAM', emoji: '🔧', filter: 'taller' },
+  { id: 'wayfar', name: 'Wayfar', emoji: '⚡', filter: 'lifestyle' },
+  { id: 'bikepacking', name: 'Huellas de Coral', emoji: '🌊', filter: 'rodada' }
 ];
 
 const posts = [
@@ -19,7 +19,7 @@ const posts = [
     badge: "BASSO BIKES",
     emoji: "🇮🇹",
     titulo: "Basso Bikes Italia — Distribuidor Oficial en Playa del Carmen",
-    descripcion: "Bicicletas de ruta y gravel hechas a mano en Italia. Ingeniería de carbono Torayca, absorción de vibraciones y geometría aerodinámica para rodar asfalto y terracerías de la Riviera.",
+    descripcion: "Bicicletas de ruta y gravel hechas a mano en Italia. Ingeniería de carbono Torayca y geometría aerodinámica para rodar la Riviera.",
     imagen: "/img/instagram/live-ig-thegarage.pdcDG6tlpFv-Pq.jpg",
     specs: ["Handmade in Italy", "Carbono Torayca", "Garantía Oficial"]
   },
@@ -31,7 +31,7 @@ const posts = [
     badge: "SERVICIO TALLER",
     emoji: "🔧",
     titulo: "Ajuste Biomecánico y Calibración en Taller The Garage",
-    descripcion: "Inspección milimétrica de componentes, torque de tornillería y puesta a punto integral para rodar seguro en carretera y senderos técnicos.",
+    descripcion: "Inspección milimétrica de componentes, torque de tornillería y puesta a punto integral para rodar seguro en asfalto y senderos.",
     imagen: "/img/instagram/live-ig-thegarage.pdcDG6tj9DPHSc.jpg",
     specs: ["Calibración Mecánica", "Ajuste de Medidas", "Taller Certificado"]
   },
@@ -43,7 +43,7 @@ const posts = [
     badge: "EQUIPAMIENTO",
     emoji: "👕",
     titulo: "Piel Oficial The Garage — Jerseys & Indumentaria",
-    descripcion: "Ropa técnica diseñada para el calor y humedad del Caribe. Máxima transpirabilidad, bolsillos ergonómicos y ajuste de competencia.",
+    descripcion: "Ropa técnica diseñada para el clima cálido y húmedo del Caribe. Máxima transpirabilidad y ajuste ergonómico.",
     imagen: "/img/instagram/live-ig-thegarage.pdcDG6tjHqvTnn.jpg",
     specs: ["Tela Transpirable", "Corte Pro Fit", "Edición Oficial"]
   },
@@ -55,7 +55,7 @@ const posts = [
     badge: "THE GARAGE RIDE",
     emoji: "🌴",
     titulo: "The Garage Ride — Rodada Grupal en Playa del Carmen",
-    descripcion: "Salidas de fin de semana con la comunidad ciclista local. Rodamos en pelotón con seguridad, barredora, hidratación y el mejor ambiente.",
+    descripcion: "Salidas de fin de semana con la comunidad ciclista local. Rodamos en pelotón con barredora, hidratación y seguridad.",
     imagen: "/img/instagram/live-ig-dennysmsosa27Dcn9XZoRC-3.jpg",
     specs: ["Salida Sabatina", "Todos los Niveles", "Pelotón Seguro"]
   },
@@ -67,7 +67,7 @@ const posts = [
     badge: "ENTRENAMIENTO",
     emoji: "⚡",
     titulo: "Preparación y Rendimiento Ciclista en Pista",
-    descripcion: "Entrenamientos específicos de intervalos, potencia y fondo para llegar en óptimas condiciones a las carreras de la temporada.",
+    descripcion: "Entrenamientos específicos de intervalos, potencia y fondo para llegar en óptimas condiciones a las carreras.",
     imagen: "/img/instagram/live-ig-thegarage.pdcDb9KnkpTWZZ.jpg",
     specs: ["Pista de Atletismo", "Entrenamiento Intervalos", "Rendimiento"]
   },
@@ -103,7 +103,7 @@ const posts = [
     badge: "WAYFAR NUTRITION",
     emoji: "⚡",
     titulo: "Wayfar Hydration — Rendimiento en el Calor del Caribe",
-    descripcion: "Electrolitos y suplementos diseñados para entrenamientos exigentes bajo altas temperaturas y humedad en Quintana Roo.",
+    descripcion: "Electrolitos y suplementos formulados para entrenamientos intensos bajo altas temperaturas y humedad en Quintana Roo.",
     imagen: "/img/instagram/live-ig-rubivalentinaDbqMijGBa2V.jpg",
     specs: ["Sin Azúcar Añadida", "Hidratación Celular", "Disponible en Tienda"]
   },
@@ -159,26 +159,23 @@ const posts = [
 ---
 
 <Base
-  title="Comunidad & Instagram Feed Oficial | The Garage Playa del Carmen"
+  title="Comunidad & Feed Oficial | The Garage Playa del Carmen"
   description="Feed en vivo extraído directamente de @thegarage.pdc. Distribuidores oficiales de Basso, eventos Clásica 7:30 XCO, nutrición Wayfar y rodadas en Playa del Carmen."
 >
   <!-- Instagram Stories Highlights Row -->
-  <section style="background: #0A0A0C; padding: 1.25rem 0; border-bottom: 1px solid #1E293B;">
+  <section style="background: var(--surface-base); padding: 1.25rem 0; border-bottom: 1px solid var(--border-hairline);">
     <div class="container">
-      <div style="display: flex; gap: 1.25rem; overflow-x: auto; padding-bottom: 0.25rem; scrollbar-width: none; -ms-overflow-style: none;" class="stories-track">
+      <div class="stories-track">
         {stories.map((story) => (
           <button
             type="button"
-            class="story-bubble"
+            class="story-item"
             data-filter={story.filter}
-            style="background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; min-width: 72px;"
           >
-            <div style={`width: 58px; height: 58px; border-radius: 50%; padding: 2.5px; background: ${story.border}; box-shadow: 0 0 12px rgba(255,255,255,0.1); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);`}>
-              <div style="width: 100%; height: 100%; border-radius: 50%; background: #141418; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid #0A0A0C;">
-                {story.emoji}
-              </div>
+            <div class="story-circle">
+              <span style="font-size: 1.35rem;">{story.emoji}</span>
             </div>
-            <span style="font-size: 0.7rem; font-weight: 700; color: #CBD5E1; text-align: center; white-space: nowrap;">
+            <span class="story-label">
               {story.name}
             </span>
           </button>
@@ -188,146 +185,119 @@ const posts = [
   </section>
 
   <!-- Editorial Magazine Hero Section -->
-  <section style="background: linear-gradient(180deg, #0A0A0C 0%, #141418 100%); color: #FFFFFF; padding: 3.5rem 0 3rem 0; border-bottom: 1px solid #27272A;">
+  <section style="padding: 4rem 0 3rem 0; border-bottom: 1px solid var(--border-hairline); background: var(--surface-base);">
     <div class="container">
       <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 2rem;">
         
-        <!-- Left: Brand Identity -->
-        <div style="max-width: 680px;">
-          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1.25rem;">
-            <div style="width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid #FF3B30; box-shadow: 0 0 16px rgba(255,59,48,0.3);">
+        <div style="max-width: 700px;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1rem;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--border-hairline);">
               <img src="/img/the-garage-avatar.png" alt="Avatar The Garage" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
             <div>
-              <div style="display: flex; align-items: center; gap: 0.4rem;">
-                <strong style="font-size: 1.05rem; letter-spacing: -0.01em;">thegarage.pdc</strong>
-                <span style="display: inline-flex; width: 16px; height: 16px; border-radius: 50%; background: #0284C7; color: #FFFFFF; font-size: 0.65rem; align-items: center; justify-content: center; font-weight: 900;">✓</span>
-              </div>
-              <span style="font-size: 0.78rem; color: #94A3B8;">Comunidad Ciclista • Playa del Carmen, Q.R.</span>
+              <strong style="font-size: 0.95rem; display: block; letter-spacing: -0.01em;">@thegarage.pdc</strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Comunidad Ciclista • Playa del Carmen</span>
             </div>
           </div>
 
-          <h1 class="title-xl" style="color: #FFFFFF; margin-bottom: 0.85rem; font-weight: 900;">
-            El Punto de Encuentro del Ciclismo en el Caribe.
+          <h1 class="title-xl" style="margin-bottom: 0.85rem;">
+            Comunidad, Rodadas &amp; Eventos en el Caribe.
           </h1>
-          <p class="subtitle" style="color: #CBD5E1; font-size: 1.05rem; line-height: 1.6;">
-            Rodadas sabatinas <strong>The Garage Ride</strong>, la carrera <strong>Clásica 7:30 XCO</strong>, distribución oficial de <strong>Basso Bikes</strong>, taller de alta gama y nutrición <strong>Wayfar</strong>.
+          <p class="subtitle" style="font-size: 1.05rem; line-height: 1.6;">
+            Salidas grupales sabatinas <strong>The Garage Ride</strong>, la carrera <strong>Clásica 7:30 XCO</strong>, distribución oficial de <strong>Basso Bikes</strong> y nutrición deportiva <strong>Wayfar</strong>.
           </p>
         </div>
 
-        <!-- Right: Action Badge & Follow -->
-        <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: flex-start;">
-          <a
-            href="https://www.instagram.com/thegarage.pdc/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn"
-            style="background: linear-gradient(45deg, #F58529, #D62976, #962FBF, #4F5BD5); color: #FFFFFF; padding: 0.85rem 1.75rem; font-size: 0.92rem; box-shadow: 0 4px 20px rgba(214,41,118,0.35);"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
-            <span>Seguir @thegarage.pdc ↗</span>
-          </a>
-          <span style="font-size: 0.75rem; color: #94A3B8; display: inline-flex; align-items: center; gap: 0.35rem;">
-            <span style="width: 6px; height: 6px; border-radius: 50%; background: #22C55E;"></span>
-            Sincronización en vivo con Instagram
-          </span>
-        </div>
+        <a
+          href="https://www.instagram.com/thegarage.pdc/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn"
+          style="background: linear-gradient(45deg, #F58529, #D62976, #962FBF, #4F5BD5); color: #FFFFFF; padding: 0.75rem 1.5rem; font-size: 0.88rem;"
+        >
+          Seguir @thegarage.pdc ↗
+        </a>
 
       </div>
     </div>
   </section>
 
-  <!-- Interactive Feed Section -->
-  <section style="padding: 3rem 0 5rem 0;">
+  <!-- Feed Section with Recent.design Style Grid -->
+  <section style="padding: 3.5rem 0 6rem 0; background: var(--surface-subtle);">
     <div class="container">
       
-      <!-- Interactive Filter Tabs -->
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
-        <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;" id="insta-filters">
-          <button type="button" class="tab-pill active" data-tipo="todas">Todo el Feed ({posts.length})</button>
-          <button type="button" class="tab-pill" data-tipo="rodada">🌴 Rodadas &amp; Bikepacking</button>
-          <button type="button" class="tab-pill" data-tipo="evento">🏆 Eventos &amp; Clásica 7:30</button>
-          <button type="button" class="tab-pill" data-tipo="arribo">🇮🇹 Basso Bikes</button>
-          <button type="button" class="tab-pill" data-tipo="taller">🔧 Taller Mecánico</button>
-          <button type="button" class="tab-pill" data-tipo="lifestyle">⚡ Nutrición &amp; Kits</button>
+      <!-- Filter Toolbar -->
+      <div class="social-toolbar">
+        <div class="social-pills" id="insta-filters">
+          <button type="button" class="tab-pill active" data-tipo="todas">Todos ({posts.length})</button>
+          <button type="button" class="tab-pill" data-tipo="rodada">🌴 Rodadas</button>
+          <button type="button" class="tab-pill" data-tipo="evento">🏆 Eventos</button>
+          <button type="button" class="tab-pill" data-tipo="arribo">🇮🇹 Basso</button>
+          <button type="button" class="tab-pill" data-tipo="taller">🔧 Taller</button>
+          <button type="button" class="tab-pill" data-tipo="lifestyle">⚡ Nutrición</button>
         </div>
-
-        <span style="font-size: 0.8rem; font-weight: 700; color: #64748B;">
-          Mostrando {posts.length} publicaciones
-        </span>
       </div>
 
-      <!-- Social Grid Layout with Ultra-Crisp Cards -->
-      <div class="social-grid">
+      <!-- Recent.design Style Media Grid -->
+      <div class="media-grid">
         {posts.map((post) => (
-          <article class="social-card" data-tipo={post.tipo}>
-            <!-- Card Image Box -->
+          <article class="media-card" data-tipo={post.tipo}>
+            <!-- Image Frame -->
             <a
               href={post.permalink}
               target="_blank"
               rel="noopener noreferrer"
-              class="card-image-link"
-              title="Abrir publicación original en Instagram"
+              class="media-frame"
+              title="Abrir publicación en Instagram"
             >
               <img
                 src={post.imagen}
                 alt={post.titulo}
                 loading="lazy"
               />
-              <div class="card-glass-badge">
+              <div class="media-tag">
                 {post.badge}
               </div>
-              <div class="card-hover-overlay">
-                <span class="overlay-button">
-                  Ver en Instagram ↗
+              <div class="media-hover">
+                <span class="hover-btn">
+                  Abrir en Instagram ↗
                 </span>
               </div>
             </a>
 
-            <!-- Card Content Box -->
-            <div class="card-body">
-              <div class="card-meta">
-                <span class="category-tag">
-                  {post.emoji} {post.categoria}
-                </span>
-                <span class="post-source">@thegarage.pdc</span>
+            <!-- Clean Meta Row -->
+            <div class="media-body">
+              <div class="media-meta">
+                <span class="category-chip">{post.emoji} {post.categoria}</span>
               </div>
 
-              <h2 class="card-title">
+              <h2 class="media-title">
                 {post.titulo}
               </h2>
 
-              <p class="card-desc">
+              <p class="media-desc">
                 {post.descripcion}
               </p>
 
-              <!-- Specs Pills -->
-              <div class="specs-row">
-                {post.specs.map((spec) => (
-                  <span class="spec-pill">✓ {spec}</span>
-                ))}
-              </div>
-
-              <!-- Footer Actions -->
-              <div class="card-footer">
+              <!-- Conversion Actions -->
+              <div class="media-footer">
                 <a
                   href={`https://wa.me/529841381493?text=Hola,%20vi%20la%20publicaci%C3%B3n%20sobre%20${encodeURIComponent(post.titulo)}%20(${post.permalink})%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="btn btn-whatsapp"
-                  style="padding: 0.5rem 1rem; font-size: 0.82rem;"
+                  style="flex: 1; padding: 0.55rem 0.9rem; font-size: 0.8rem;"
                 >
-                  Consultar por WhatsApp
+                  Consultar WhatsApp
                 </a>
                 <a
                   href={post.permalink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="post-link"
+                  class="btn btn-outline"
+                  style="padding: 0.55rem 0.9rem; font-size: 0.8rem;"
                 >
-                  Abrir Post ↗
+                  Post ↗
                 </a>
               </div>
             </div>
@@ -335,307 +305,217 @@ const posts = [
         ))}
       </div>
 
-      <!-- Riders Club Premium Callout -->
-      <div class="club-banner">
-        <div style="max-width: 780px; margin-bottom: 2rem;">
-          <div class="club-badge">
-            🚴 THE GARAGE RIDERS CLUB
-          </div>
-          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.75rem;">
-            Únete a la familia The Garage en Playa del Carmen
-          </h2>
-          <p style="color: #CBD5E1; font-size: 1.05rem; line-height: 1.6;">
-            Salidas grupales todos los fines de semana, entrenamientos para la Clásica 7:30 XCO, soporte de mecánicos y descuentos exclusivos en nutrición Wayfar:
-          </p>
-        </div>
-
-        <div class="club-grid">
-          <div class="club-card">
-            <div class="club-icon">🌴</div>
-            <strong>The Garage Ride</strong>
-            <p>Rodadas sabatinas hacia Cenotes, Tulum y Puerto Aventuras con vehículo barredora.</p>
-          </div>
-          <div class="club-card">
-            <div class="club-icon">🏆</div>
-            <strong>Clásica 7:30 XCO</strong>
-            <p>Inscripciones preferenciales y entrenamientos en el circuito técnico de cross-country.</p>
-          </div>
-          <div class="club-card">
-            <div class="club-icon">⚡</div>
-            <strong>Descuento en Wayfar &amp; SRAM</strong>
-            <p>Electrolitos, geles, refacciones originales y upgrades especializados en taller.</p>
-          </div>
-          <div class="club-card">
-            <div class="club-icon">🔧</div>
-            <strong>1er Mantenimiento Gratis</strong>
-            <p>Reajuste de chicotes, tensión de cadena y tornillería a los 30 días de rodar.</p>
-          </div>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
-          <a
-            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20a%20The%20Garage%20Ride%20y%20conocer%20las%20pr%C3%B3ximas%20fechas%20de%20rodadas."
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-whatsapp btn-lg"
-            style="padding: 0.85rem 1.75rem; font-size: 0.95rem;"
-          >
-            Unirme al Grupo de Rodadas en WhatsApp
-          </a>
-          <a
-            href="/"
-            class="btn"
-            style="background: #FFFFFF; color: #0A0A0C; padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 800;"
-          >
-            Ver Catálogo de Bicicletas →
-          </a>
-        </div>
-      </div>
-
     </div>
   </section>
 </Base>
 
 <style>
-  .story-bubble:hover div {
+  .stories-track {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .stories-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .story-item {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 68px;
+  }
+
+  .story-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-hairline);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s var(--ease-spring), border-color 0.2s ease;
+  }
+  .story-item:hover .story-circle {
     transform: scale(1.08);
+    border-color: var(--text-primary);
+  }
+
+  .story-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  /* Toolbar */
+  .social-toolbar {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  .social-pills {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .social-pills::-webkit-scrollbar {
+    display: none;
   }
 
   .tab-pill {
-    padding: 0.6rem 1.25rem;
+    padding: 0.55rem 1.15rem;
     border-radius: var(--radius-full);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border-hairline);
     background: #FFFFFF;
-    color: #334155;
+    color: var(--text-secondary);
     font-size: 0.85rem;
-    font-weight: 800;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.18s var(--ease-spring);
   }
   .tab-pill:hover {
-    border-color: #0F172A;
-    background: #F8FAFC;
+    border-color: var(--border-hairline-hover);
+    color: var(--text-primary);
   }
   .tab-pill.active {
-    background: #0F172A;
+    background: var(--text-primary);
     color: #FFFFFF;
-    border-color: #0F172A;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+    border-color: var(--text-primary);
   }
 
-  .social-grid {
+  /* Media Grid */
+  .media-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 2rem;
   }
 
-  .social-card {
+  .media-card {
     background: #FFFFFF;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), border-color 0.25s ease;
   }
-  .social-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-xl);
+  .media-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--border-hairline-hover);
   }
 
-  .card-image-link {
+  .media-frame {
     position: relative;
     aspect-ratio: 1/1;
-    background: #0A0A0C;
+    background: var(--surface-subtle);
     overflow: hidden;
     display: block;
   }
-  .card-image-link img {
+  .media-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.4s var(--ease-spring);
   }
-  .social-card:hover .card-image-link img {
-    transform: scale(1.04);
+  .media-card:hover .media-frame img {
+    transform: scale(1.03);
   }
 
-  .card-glass-badge {
+  .media-tag {
     position: absolute;
     bottom: 0.85rem;
     left: 0.85rem;
-    background: rgba(10, 10, 12, 0.8);
+    background: rgba(9, 9, 11, 0.85);
     backdrop-filter: blur(8px);
     color: #FFFFFF;
-    font-size: 0.7rem;
-    font-weight: 800;
+    font-size: 0.68rem;
+    font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 0.3rem 0.65rem;
+    padding: 0.25rem 0.65rem;
     border-radius: var(--radius-full);
-    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
-  .card-hover-overlay {
+  .media-hover {
     position: absolute;
     inset: 0;
-    background: rgba(10, 10, 12, 0.4);
+    background: rgba(0,0,0,0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transition: opacity 0.2s ease;
   }
-  .social-card:hover .card-hover-overlay {
+  .media-card:hover .media-hover {
     opacity: 1;
   }
 
-  .overlay-button {
+  .hover-btn {
     background: #FFFFFF;
-    color: #0A0A0C;
-    font-size: 0.82rem;
-    font-weight: 800;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 700;
     padding: 0.55rem 1.15rem;
     border-radius: var(--radius-full);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   }
 
-  .card-body {
-    padding: 1.4rem;
+  .media-body {
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
     flex: 1;
   }
 
-  .card-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.65rem;
+  .media-meta {
+    margin-bottom: 0.4rem;
   }
-  .category-tag {
-    font-size: 0.72rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #0284C7;
-    letter-spacing: 0.05em;
-  }
-  .post-source {
-    font-size: 0.72rem;
+  .category-chip {
+    font-size: 0.75rem;
     font-weight: 700;
-    color: #94A3B8;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
 
-  .card-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #0A0A0C;
-    line-height: 1.35;
+  .media-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
     margin-bottom: 0.5rem;
   }
 
-  .card-desc {
-    font-size: 0.9rem;
-    color: #475569;
-    line-height: 1.6;
-    margin-bottom: 1.15rem;
-  }
-
-  .specs-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+  .media-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
     margin-bottom: 1.25rem;
   }
-  .spec-pill {
-    font-size: 0.72rem;
-    background: #F1F5F9;
-    color: #334155;
-    padding: 0.2rem 0.55rem;
-    border-radius: 4px;
-    font-weight: 700;
-  }
 
-  .card-footer {
+  .media-footer {
     margin-top: auto;
-    padding-top: 0.85rem;
-    border-top: 1px solid var(--border);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .post-link {
-    font-size: 0.82rem;
-    font-weight: 800;
-    color: #E1306C;
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-  .post-link:hover {
-    color: #BE185D;
-    text-decoration: underline;
-  }
-
-  /* Club Banner */
-  .club-banner {
-    margin-top: 5rem;
-    background: linear-gradient(135deg, #0A0A0C 0%, #18181B 100%);
-    color: #FFFFFF;
-    border-radius: var(--radius-xl);
-    padding: 3.5rem 2.5rem;
-    box-shadow: var(--shadow-xl);
-    border: 1px solid #27272A;
-  }
-  .club-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: rgba(255, 59, 48, 0.15);
-    border: 1px solid #FF3B30;
-    color: #FF6B6B;
-    padding: 0.35rem 0.85rem;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-  .club-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
-    margin-bottom: 2.5rem;
-  }
-  .club-card {
-    background: rgba(255, 255, 255, 0.04);
-    padding: 1.25rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  .club-icon {
-    font-size: 1.75rem;
-    margin-bottom: 0.4rem;
-  }
-  .club-card strong {
-    color: #FFFFFF;
-    font-size: 0.95rem;
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-  .club-card p {
-    color: #94A3B8;
-    font-size: 0.82rem;
-    line-height: 1.5;
+    gap: 0.65rem;
   }
 </style>
 
 <script>
-  function initFilters() {
-    const tabs = document.querySelectorAll<HTMLButtonElement>('.tab-pill');
-    const cards = document.querySelectorAll<HTMLElement>('.social-grid .social-card');
-    const stories = document.querySelectorAll<HTMLButtonElement>('.story-bubble');
+  function initRecentSocialFilters() {
+    const tabs = document.querySelectorAll<HTMLButtonElement>('#insta-filters .tab-pill');
+    const cards = document.querySelectorAll<HTMLElement>('.media-grid .media-card');
+    const stories = document.querySelectorAll<HTMLButtonElement>('.story-item');
 
     function applyFilter(tipo: string) {
       tabs.forEach((t) => {
@@ -667,15 +547,15 @@ const posts = [
       story.addEventListener('click', () => {
         const filter = story.getAttribute('data-filter') || 'todas';
         applyFilter(filter);
-        const grid = document.querySelector('.social-grid');
+        const grid = document.querySelector('.media-grid');
         if (grid) grid.scrollIntoView({ behavior: 'smooth' });
       });
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFilters);
+    document.addEventListener('DOMContentLoaded', initRecentSocialFilters);
   } else {
-    initFilters();
+    initRecentSocialFilters();
   }
 </script>
