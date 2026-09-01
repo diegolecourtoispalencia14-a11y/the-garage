@@ -1,0 +1,26 @@
+{
+  "id": "oferta-relampago-mtb-r29",
+  "modelo": "Oferta Relámpago MTB R29",
+  "marca": "The Garage Sport",
+  "categoria": "MTB",
+  "precio": 7900,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Vendida",
+  "talla": "M (17.5\")",
+  "color": "Negro Brillante",
+  "specs": {
+    "cuadro": "Aluminio hidroformado ligero",
+    "grupo": "Shimano Tourney 2x8 vel.",
+    "frenos": "Disco hidráulico de alta potencia",
+    "rodada": "29\" Kenda"
+  },
+  "fotos": [
+    "/img/bicis/mtb-relampago-1.webp",
+    "/img/bicis/mtb-relampago-2.webp",
+    "/img/bicis/mtb-relampago-3.webp"
+  ],
+  "mensajeWhatsApp": "Hola, vi la Oferta Relámpago MTB R29 de $7,900 que ya se vendió. ¿Tienen otra bicicleta similar disponible en Talla M?",
+  "destacada": true,
+  "esMuestra": false
+}

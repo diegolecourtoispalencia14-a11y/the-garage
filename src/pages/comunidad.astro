@@ -3,48 +3,63 @@ import Base from '../layouts/Base.astro';
 
 const instagramPosts = [
   {
+    id: 'merida-scultura-arribo',
+    categoria: 'Bicicleta en Tienda',
+    tipo: 'arribo',
+    tag: 'Merida Bikes',
+    emoji: '🚴',
+    titulo: 'Merida Scultura 300 Shimano Tiagra 10 vel (Talla S/M)',
+    descripcion: 'Recién llegada a piso de venta. Bicicleta de ruta con cuadro de aluminio ligero y horquilla de carbono FACT. Equipada con grupo completo Shimano Tiagra 2x10 vel. Calibrada y lista para rodar en la carretera.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '158 likes',
+    comentarios: '22 comentarios',
+    badge: 'DISPONIBLE EN TIENDA',
+    imagen: '/img/bicis/merida-scultura-1.webp',
+    specs: ['Shimano Tiagra 2x10 vel.', 'Horquilla Carbono', 'Talla S/M (52 cm)']
+  },
+  {
+    id: 'oferta-relampago-vendida',
+    categoria: 'Prueba Social & Ventas',
+    tipo: 'entrega',
+    tag: 'Oferta Relámpago',
+    emoji: '⚡',
+    titulo: 'Oferta Relámpago MTB R29 $7,900 — VENDIDA en 24 hrs',
+    descripcion: '¡Se fue volando! Bicicleta de montaña R29 talla M con grupo Shimano 2x8 y frenos hidráulicos entregada a su nuevo dueño en Playa del Carmen con revisión mecánica completa.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '214 likes',
+    comentarios: '34 comentarios',
+    badge: '⚪ VENDIDA EN TIENDA',
+    imagen: '/img/bicis/mtb-relampago-1.webp',
+    specs: ['Precio $7,900 MXN', 'Rodada 29"', 'Shimano 2x8 + Hidráulicos']
+  },
+  {
+    id: 'taller-inspeccion-real',
+    categoria: 'Taller Especializado',
+    tipo: 'taller',
+    tag: 'Servicio Mecánico',
+    emoji: '🔧',
+    descripcion: 'Calibración milimétrica de pata de cambio, tensión de cadena y purga de frenos hidráulicos. Toda bicicleta sale de nuestro local en Cataluña probada al 100%.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '112 likes',
+    comentarios: '14 comentarios',
+    badge: 'SERVICIO DE TALLER',
+    imagen: '/img/bicis/mtb-relampago-3.webp',
+    specs: ['Calibración de Cambios', 'Purga Hidráulica', 'Ajuste de Torque']
+  },
+  {
     id: 'basso-palta-gravel',
     categoria: 'Distribuidor Oficial',
     tipo: 'arribo',
     tag: 'Basso Bikes Italia',
     emoji: '🇮🇹',
     titulo: 'Basso Palta Gravel — Ingeniería italiana en Playa del Carmen',
-    descripcion: 'Orgullosos de ser distribuidores oficiales de Basso Bikes en Quintana Roo. La nueva Palta combina absorción de vibraciones, geometría gravel rápida y acabados hechos 100% a mano en Italia para rodar asfalto y terracerías de la Riviera.',
+    descripcion: 'Orgullosos de ser distribuidores oficiales de Basso Bikes en Quintana Roo. Cuadro de carbono Torayca, absorción de vibraciones y geometría gravel para rodar asfalto y terracerías de la Riviera.',
     fecha: 'Publicado en @thegarage.pdc',
     likes: '142 likes',
     comentarios: '18 comentarios',
     badge: 'DISTRIBUIDOR OFICIAL',
     imagen: '/img/real/gravel-basso.jpg',
-    specs: ['Cuadro Carbono Torayca', 'Grupo Campagnolo / SRAM', 'Handmade in Italy']
-  },
-  {
-    id: 'lee-cougan-mtb',
-    categoria: 'Cross Country Pro',
-    tipo: 'arribo',
-    tag: 'Lee Cougan MTB',
-    emoji: '⚡',
-    titulo: 'Lee Cougan Rampaga & Innova — Máquinas de competencia',
-    descripcion: 'Llegaron a piso de venta las dobles suspensión y rígidas de Lee Cougan. Diseñadas para devorar senderos técnicos, subidas explosivas y carreras de XC con el sistema de suspensión Air Blade.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '189 likes',
-    comentarios: '24 comentarios',
-    badge: 'DISTRIBUIDOR OFICIAL',
-    imagen: '/img/real/mtb-lee-cougan.jpg',
-    specs: ['Air Blade Suspension', 'Geometría XC Race', 'Cableado Interno Completo']
-  },
-  {
-    id: 'taller-sram-axs',
-    categoria: 'Taller Especializado',
-    tipo: 'taller',
-    tag: 'SRAM Transmission',
-    emoji: '🔧',
-    descripcion: 'Instalación y calibración milimétrica de transmisión inalámbrica SRAM Eagle AXS T-Type. Cero cables, cambios instantáneos bajo carga máxima y durabilidad total en el clima húmedo de la costa.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '97 likes',
-    comentarios: '12 comentarios',
-    badge: 'SERVICIO DE TALLER',
-    imagen: '/img/real/workshop-sram.jpg',
-    specs: ['SRAM AXS Wireless', 'Montaje Directo al Cuadro', 'Ajuste Electrónico']
+    specs: ['Carbono Torayca', 'Handmade in Italy', 'Gravel & All-Road']
   },
   {
     id: 'rodada-sabado-cenotes',
@@ -62,33 +77,19 @@ const instagramPosts = [
     specs: ['55 km Convivencia', 'PDC - Puerto Aventuras', 'Todos los niveles']
   },
   {
-    id: 'nutricion-wayfar',
-    categoria: 'Nutrición Deportiva',
-    tipo: 'lifestyle',
-    tag: 'Wayfar Nutrition',
+    id: 'taller-sram-axs',
+    categoria: 'Taller Especializado',
+    tipo: 'taller',
+    tag: 'SRAM Transmission',
     emoji: '⚡',
-    titulo: 'Wayfar Hydration & Energy — Nutrición para el calor del Caribe',
-    descripcion: 'Mantenerte hidratado en el calor y humedad de Playa del Carmen es vital para tu rendimiento. Ya tenemos en tienda toda la línea de electrolitos, geles y barras de recuperación Wayfar.',
+    titulo: 'Instalación y Calibración SRAM Eagle AXS T-Type',
+    descripcion: 'Transmisión inalámbrica de última generación. Cero cables, cambios instantáneos bajo carga máxima y durabilidad total en el clima húmedo de la costa.',
     fecha: 'Publicado en @thegarage.pdc',
-    likes: '78 likes',
-    comentarios: '9 comentarios',
-    badge: 'DISPONIBLE EN TIENDA',
-    imagen: '/img/real/nutrition-wayfar.jpg',
-    specs: ['Electrolitos Sin Azúcar', 'Geles de Energía Rápida', 'Proteína Vegana']
-  },
-  {
-    id: 'entrega-custom-build',
-    categoria: 'Entregas & Clientes',
-    tipo: 'entrega',
-    tag: 'Entrega Feliz',
-    emoji: '🎉',
-    descripcion: 'Nueva bicicleta entregada y ajustada a las medidas biomecánicas del cliente en nuestro local de Cataluña. ¡Bienvenido a The Garage Riders! Lista para rodar en la Riviera Maya.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '164 likes',
-    comentarios: '15 comentarios',
-    badge: 'NUEVO RIDER',
-    imagen: '/img/real/bike-road.jpg',
-    specs: ['Ajuste Biomecánico', 'Calibración de Calas', '1er Servicio Incluido']
+    likes: '97 likes',
+    comentarios: '12 comentarios',
+    badge: 'SRAM PRO SHOP',
+    imagen: '/img/real/workshop-sram.jpg',
+    specs: ['SRAM AXS Wireless', 'Montaje Directo al Cuadro', 'Ajuste Electrónico']
   }
 ];
 ---
@@ -97,7 +98,7 @@ const instagramPosts = [
   title="Comunidad Ciclista & Instagram Live | The Garage Playa del Carmen"
   description="Extensión oficial del Instagram @thegarage.pdc. Distribuidores oficiales de Basso, Lee Cougan, taller SRAM y rodadas comunitarias en Playa del Carmen."
 >
-  <!-- Hero Section con Fotografías Reales -->
+  <!-- Hero Section con Fotografías Reales de Tienda -->
   <section style="background: radial-gradient(circle at top right, #F1F5F9 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
     <div class="container">
       <div style="max-width: 840px;">
@@ -159,10 +160,10 @@ const instagramPosts = [
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
         <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;" id="insta-filters">
           <button type="button" class="insta-tab active" data-tipo="todas">Todas las Publicaciones</button>
-          <button type="button" class="insta-tab" data-tipo="arribo">🇮🇹 Basso & Lee Cougan</button>
-          <button type="button" class="insta-tab" data-tipo="rodada">🌴 Rodadas de Comunidad</button>
-          <button type="button" class="insta-tab" data-tipo="taller">🔧 Taller & SRAM</button>
-          <button type="button" class="insta-tab" data-tipo="lifestyle">⚡ Nutrición Wayfar</button>
+          <button type="button" class="insta-tab" data-tipo="arribo">🚴 Nuevos Arribos</button>
+          <button type="button" class="insta-tab" data-tipo="entrega">⚡ Ventas & Ofertas</button>
+          <button type="button" class="insta-tab" data-tipo="taller">🔧 Taller Mecánico</button>
+          <button type="button" class="insta-tab" data-tipo="rodada">🌴 Rodadas del Caribe</button>
         </div>
 
         <a

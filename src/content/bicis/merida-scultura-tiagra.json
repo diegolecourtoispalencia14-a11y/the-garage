@@ -1,0 +1,25 @@
+{
+  "id": "merida-scultura-tiagra",
+  "modelo": "Scultura 300 Shimano Tiagra",
+  "marca": "Merida",
+  "categoria": "Ruta",
+  "precio": 19800,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "S/M (52 cm)",
+  "color": "Azul Metálico",
+  "specs": {
+    "cuadro": "Aluminio Prolite 66 Triple Conificado",
+    "grupo": "Shimano Tiagra 2x10 vel.",
+    "frenos": "Herradura de doble pivote Shimano",
+    "rodada": "700c AlexRims"
+  },
+  "fotos": [
+    "/img/bicis/merida-scultura-1.webp",
+    "/img/bicis/merida-scultura-2.webp"
+  ],
+  "mensajeWhatsApp": "Hola, me interesa la Merida Scultura Shimano Tiagra 10 vel (Talla S/M). ¿Sigue disponible en la tienda de Playa del Carmen?",
+  "destacada": true,
+  "esMuestra": false
+}
