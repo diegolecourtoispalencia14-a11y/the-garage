@@ -1,0 +1,9 @@
+# 📸 CARPETA DE AUTO-PUBLICACIÓN CON IA
+
+Coloca aquí de 1 a 4 fotos de la bicicleta que quieras publicar (tomadas con tu celular o cámara) y haz **doble clic en `auto-publicar-bici.command`**.
+
+La IA:
+1. Recortará y mejorará las fotos a formato cuadrado 1:1.
+2. Identificará los datos de la bicicleta.
+3. Creará la ficha técnica.
+4. Publicará el producto en tu tienda de Cloudflare Pages automáticamente en menos de 45 segundos.
