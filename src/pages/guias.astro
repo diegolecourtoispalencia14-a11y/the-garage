@@ -1,332 +1,136 @@
 ---
 import Base from '../layouts/Base.astro';
+
+const guias = [
+  {
+    slug: "salitre-humedad-caribe",
+    categoria: "Taller & Cirugía",
+    tag: "01 // TALLER & CIRUGÍA",
+    tagColor: "#FB7185",
+    tiempoLectura: "6 min",
+    titulo: "Cómo Proteger tu Bicicleta del Salitre y la Humedad Tropical",
+    resumen: "Corrosión galvánica, la trampa del lavado a presión en rodamientos sellados y selección de lubricantes hidrofóbicos para el clima costero de Quintana Roo.",
+    destacado: "Regla de taller: Lubricación de base húmeda o ceras cerámicas.",
+    url: "/guia/salitre-humedad-caribe"
+  },
+  {
+    slug: "rutas-ciclistas-riviera-maya",
+    categoria: "Rutas & Expedición",
+    tag: "02 // RUTAS & EXPEDICIÓN",
+    tagColor: "#38BDF8",
+    tiempoLectura: "8 min",
+    titulo: "Las 4 Mejores Rutas Ciclistas de MTB, Ruta y Gravel en la Riviera Maya",
+    resumen: "Circuitos de asfalto hacia Puerto Aventuras, singletracks técnicos en Punta Venado, logística del ferry a Cozumel y la Ruta de los Cenotes.",
+    destacado: "Análisis de acotamiento seguro, presiones tubeless y viento costero.",
+    url: "/guia/rutas-ciclistas-riviera-maya"
+  },
+  {
+    slug: "hidratacion-termorregulacion-wayfar",
+    categoria: "Nutrición & Wayfar",
+    tag: "03 // NUTRICIÓN & RENDIMIENTO",
+    tagColor: "#4ADE80",
+    tiempoLectura: "5 min",
+    titulo: "Estrategia de Hidratación y Termorregulación para Rodar bajo 35°C",
+    resumen: "Fisiología del sudor bajo 80% de humedad relativa, prevención de hiponatremia y el protocolo de reposición de electrolitos de Wayfar.",
+    destacado: "Protocolo clínico: 500-750ml con sodio y carbohidratos por hora.",
+    url: "/guia/hidratacion-termorregulacion-wayfar"
+  }
+];
 ---
 
 <Base
-  title="Guías Técnicas, Rutas & Nutrición en el Caribe | The Garage"
-  description="Manuales técnicos redactados por mecánicos certificados en Playa del Carmen: protección anti-salitre, las mejores rutas ciclistas de la Riviera Maya y protocolos de hidratación Wayfar."
+  title="Guías Técnicas & Rutas Ciclistas | The Garage Playa del Carmen"
+  description="Manuales técnicos redactados por mecánicos certificados en Playa del Carmen: protección anti-salitre, las mejores rutas de la Riviera Maya y nutrición Wayfar."
 >
-  <div class="guias-page-wrap">
+  <div class="guias-directory-wrap">
     <div class="container-fluid">
 
       <!-- Header Section -->
-      <section class="guias-header-section">
-        <div class="guias-badges font-mono">
-          <span class="badge-red">[05 // MANUALES TÉCNICOS]</span>
-          <span class="badge-dim">CONOCIMIENTO EDITORIAL DE TALLER</span>
+      <section class="directory-header-section">
+        <div class="directory-badges font-mono">
+          <span class="badge-red">[05 // CONOCIMIENTO TÉCNICO]</span>
+          <span class="badge-dim">CONOCIMIENTO DE TALLER &amp; EXPEDICIÓN</span>
         </div>
         <h1 class="title-xl" style="margin-bottom: 0.75rem;">
-          Guías Técnicas, Rutas &amp; Rendimiento.
+          Guías Técnicas &amp; Rutas para Rodar.
         </h1>
-        <p class="subtitle" style="max-width: 820px;">
-          El ciclismo en el Caribe exige conocimiento especializado: salitre que devora transmisiones, terreno kárstico de selva y 35°C de humedad constante. Aquí compartimos los manuales de ingeniería y experiencia de nuestro taller en Cataluña, Playa del Carmen.
+        <p class="subtitle" style="max-width: 760px;">
+          Manuales de ingeniería, rutas locales y protocolos de hidratación redactados por el equipo técnico de The Garage para rodar con seguridad en el Caribe.
         </p>
       </section>
 
-      <!-- ARTÍCULO 1: TALLER & CIRUGÍA -->
-      <article class="article-master-card" id="guia-salitre">
-        <div class="article-header-strip">
-          <div class="font-mono article-meta-pill">
-            <span class="tag-accent">[01 // TALLER &amp; CIRUGÍA]</span>
-            <span>LECTURA TÉCNICA: 6 MIN</span>
-          </div>
-          <span class="font-mono text-xs text-zinc-400">PLAYA DEL CARMEN, Q.R.</span>
-        </div>
+      <!-- Minimalist Cards Grid -->
+      <section class="directory-grid-section">
+        <div class="directory-cards-grid">
+          {guias.map((item) => (
+            <article class="directory-card-tile">
+              <div>
+                <div class="card-meta-row font-mono">
+                  <span class="card-tag" style={`color: ${item.tagColor};`}>{item.tag}</span>
+                  <span class="card-time">{item.tiempoLectura}</span>
+                </div>
 
-        <h2 class="article-main-title">
-          Cómo Proteger tu Bicicleta del Salitre y la Humedad Tropical
-        </h2>
-        
-        <p class="article-lead">
-          En la Riviera Maya, la combinación de cloruro de sodio ambiental y humedad relativa superior al 80% oxida cadenas, rodamientos y tornillería hasta cuatro veces más rápido que en climas secos. Este es el protocolo oficial de preservación mecánica utilizado en The Garage.
-        </p>
+                <h2 class="card-title">
+                  <a href={item.url}>{item.titulo}</a>
+                </h2>
 
-        <!-- Technical Deep Dive Content -->
-        <div class="article-body-grid">
-          
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">1. La Ciencia de la Corrosión Galvánica</h3>
-            <p>
-              Cuando un tornillo de acero inoxidable entra en contacto con una rosca de cuadro de aluminio o magnesio en presencia de agua salina (que actúa como electrolito), se produce corrosión galvánica. El aluminio se sacrifica oxidándose y soldando el tornillo permanentemente al cuadro.
-            </p>
-            <div class="protocol-box font-mono">
-              <strong>PROTOCOLO EN TALLER:</strong> Aplicar grasa anti-seize base cobre o teflón en cada rosca (pedales, tornillos de portabidón, potencia y eje de centro) durante cualquier ensamble.
-            </div>
-          </div>
+                <p class="card-summary">{item.resumen}</p>
 
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">2. El Error Fatal del Lavado a Presión</h3>
-            <p>
-              Las hidrolavadoras de alta presión fuerzan el ingreso de agua y sal a través de los sellos de goma de los baleros (masas de rueda, caja de dirección y pedalier). Una vez dentro, el agua atrapada disuelve la grasa protectora y destruye las pistas de rodamiento en menos de dos meses.
-            </p>
-            <ul class="article-checklist font-mono">
-              <li>Lavar únicamente con manguera de baja presión o cubeta con jabón biodegradable pH neutro.</li>
-              <li>Secar inmediatamente con paño de microfibra y aplicar aire comprimido en los puntos de articulación del desviador.</li>
-              <li>Nunca guardar la bicicleta húmeda en bodegas cerradas o terrazas con brisa directa de mar.</li>
-            </ul>
-          </div>
-
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">3. Selección de Lubricante: ¿Cera o Wet Lube?</h3>
-            <p>
-              Los lubricantes secos (Dry Lube) base solvente se lavan con el primer charco o rocío matutino. Para rodar en Quintana Roo, recomendamos:
-            </p>
-            <div class="lubricant-comparison-grid font-mono">
-              <div class="lube-card">
-                <span class="lube-name">LUBRICANTE HÚMEDO (WET LUBE)</span>
-                <p>Base sintética densa de alta resistencia al agua. Ideal para rodadas largas y senderos selváticos húmedos.</p>
+                <div class="card-key-takeaway font-mono">
+                  <span style="color: var(--text-muted);">Clave:</span> {item.destacado}
+                </div>
               </div>
-              <div class="lube-card">
-                <span class="lube-name">CERA CERÁMICA HIDROFÓBICA</span>
-                <p>Crea una película seca que no atrae arena ni polvo calcáreo. Exige desengrase total de la cadena antes de la 1ra aplicación.</p>
+
+              <div class="card-footer-action">
+                <a href={item.url} class="btn btn-outline card-read-btn">
+                  <span>Leer Manual Completo →</span>
+                </a>
               </div>
-            </div>
-          </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">4. Purgado de Frenos Hidráulicos: Líquido Mineral vs. DOT</h3>
-            <p>
-              El líquido de frenos DOT (usado por SRAM) es higroscópico: absorbe humedad del aire a través de los microporos de los manguitos con el tiempo, reduciendo su punto de ebullición. El aceite mineral (Shimano / Magura) es hidrofóbico. En el Caribe recomendamos purgar y renovar fluidos cada 6 meses para evitar pérdida de tacto en descensos técnicos.
-            </p>
-          </div>
-
+      <!-- Community Banner -->
+      <section class="directory-bottom-banner">
+        <div class="banner-content-wrap">
+          <span class="font-mono text-xs text-rose-400 font-bold uppercase tracking-wider block mb-2">
+            [THE GARAGE RIDERS CLUB]
+          </span>
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">
+            Aprende en la teoría. Rueda en la práctica.
+          </h2>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; max-width: 620px;">
+            Únete a nuestras rodadas sabatinas gratuitas y aplica estas técnicas en pelotón con asistencia mecánica y barredora en ruta.
+          </p>
         </div>
 
-        <!-- Article Footer CTA -->
-        <div class="article-cta-strip">
-          <div>
-            <span class="font-mono text-xs text-rose-400 font-bold uppercase tracking-wider block">¿TU BICICLETA TIENE RUIDOS O SALITRE ACUMULADO?</span>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.2rem;">
-              En The Garage realizamos desmonte completo, limpieza ultrasónica de transmisión y re-engrase con torquímetro.
-            </p>
-          </div>
-          <a
-            href="https://wa.me/529841381493?text=Hola,%20le%C3%AD%20la%20gu%C3%ADa%20de%20salitre%20y%20me%20gustar%C3%ADa%20agendar%20un%20servicio%20de%20mantenimiento%20preventivo."
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-whatsapp"
-          >
-            Agendar Servicio de Taller por WhatsApp
-          </a>
-        </div>
-      </article>
-
-      <!-- ARTÍCULO 2: RUTAS & EXPEDICIÓN -->
-      <article class="article-master-card" id="guia-rutas">
-        <div class="article-header-strip">
-          <div class="font-mono article-meta-pill">
-            <span class="tag-accent" style="color: #38BDF8;">[02 // RUTAS &amp; EXPEDICIÓN]</span>
-            <span>GUÍA DE TERRENO: 8 MIN</span>
-          </div>
-          <span class="font-mono text-xs text-zinc-400">QUINTANA ROO &amp; YUCATÁN</span>
-        </div>
-
-        <h2 class="article-main-title">
-          Las 4 Mejores Rutas Ciclistas de MTB, Ruta y Gravel en la Riviera Maya
-        </h2>
-        
-        <p class="article-lead">
-          La geografía plana de la península engaña: el viento costero cruzado, el terreno kárstico con roca caliza afilada y la fauna selvática requieren preparación logística y equipo adecuado. Aquí tienes la guía completa de circuitos.
-        </p>
-
-        <div class="routes-detailed-grid">
-          
-          <!-- Ruta 1 -->
-          <div class="route-full-card">
-            <div class="route-card-top font-mono">
-              <span class="route-num">[RUTA 01 // ASFALTO &amp; FONDO]</span>
-              <span class="route-distance">55 KM TOTAL</span>
-            </div>
-            <h3 class="route-title">Playa del Carmen a Puerto Aventuras &amp; Akumal</h3>
-            <p class="route-description">
-              El fondo clásico de fin de semana para bicicletas de ruta y pelotones. Transcurre sobre la Carretera Federal 307 en dirección sur hacia los accesos de Paamul, Puerto Aventuras y Akumal.
-            </p>
-            <div class="route-specs-table font-mono">
-              <div><strong>Tipo de Bici:</strong> Ruta / Gravel aerodinámico</div>
-              <div><strong>Pavimento:</strong> Asfalto con acotamiento amplio de 2.5 metros</div>
-              <div><strong>Viento dominante:</strong> Sureste (viento en contra de ida, a favor de regreso)</div>
-              <div><strong>Puntos de agua:</strong> Gasolineras en Paamul (Km 12) y Marina Puerto Aventuras (Km 22)</div>
-            </div>
-            <div class="route-safety-note font-mono">
-              <strong>CONSEJO DE SEGURIDAD:</strong> Rodar en grupo con luz trasera diurna de mínimo 100 lúmenes visible a 1 km de distancia.
-            </div>
-          </div>
-
-          <!-- Ruta 2 -->
-          <div class="route-full-card">
-            <div class="route-card-top font-mono">
-              <span class="route-num" style="color: #4ADE80;">[RUTA 02 // SENDEROS MTB]</span>
-              <span class="route-distance">CIRCUITO TÉCNICO 15-25 KM</span>
-            </div>
-            <h3 class="route-title">Punta Venado Bike Park &amp; Selva Kárstica</h3>
-            <p class="route-description">
-              El paraíso del Cross Country (XCO) y singletrack en Playa del Carmen. Senderos estrechos trazados entre raíces tropicales, lajas de piedra caliza y senderos costeros con vista al mar.
-            </p>
-            <div class="route-specs-table font-mono">
-              <div><strong>Tipo de Bici:</strong> MTB R29 (Hardtail o Doble Suspensión)</div>
-              <div><strong>Presión de llantas:</strong> 22-26 PSI tubeless con líquido sellador fresco</div>
-              <div><strong>Nivel Técnico:</strong> Intermedio a Avanzado (roca fija y curvas cerradas)</div>
-              <div><strong>Temporada:</strong> Rodar temprano (7:00 am) para evitar el calor del mediodía</div>
-            </div>
-            <div class="route-safety-note font-mono">
-              <strong>RECOMENDACIÓN MECÁNICA:</strong> Usar llantas con protección reforzada de pared lateral (EXO / SnakeSkin) para evitar cortes con laja.
-            </div>
-          </div>
-
-          <!-- Ruta 3 -->
-          <div class="route-full-card">
-            <div class="route-card-top font-mono">
-              <span class="route-num" style="color: #C084FC;">[RUTA 03 // ISLA &amp; VIENTO]</span>
-              <span class="route-distance">64 KM CIRCUITO TOTAL</span>
-            </div>
-            <h3 class="route-title">Vuelta a la Isla de Cozumel (Lado Este Virgen)</h3>
-            <p class="route-description">
-              Una de las rutas escénicas más bellas del mundo. Cruce en ferry desde la terminal de Playa del Carmen con tu bicicleta y recorrido perimetral pasando por la zona hotelera, el faro Celarain y el costado este con oleaje abierto.
-            </p>
-            <div class="route-specs-table font-mono">
-              <div><strong>Tipo de Bici:</strong> Ruta, Triatlón o Gravel con llanta lisa</div>
-              <div><strong>Pavimento:</strong> Ciclovía y carretera perimetral en excelente estado</div>
-              <div><strong>Logística:</strong> Ferry Ultramar o Winjet permite subir bicicletas sin costo extra</div>
-              <div><strong>Abastecimiento:</strong> El tramo oriental (30 km) es completamente deshabitado; llevar 2 bidones de 750ml con electrolitos</div>
-            </div>
-          </div>
-
-          <!-- Ruta 4 -->
-          <div class="route-full-card">
-            <div class="route-card-top font-mono">
-              <span class="route-num" style="color: #FB923C;">[RUTA 04 // GRAVEL &amp; SELVA]</span>
-              <span class="route-distance">40-70 KM MIXTOS</span>
-            </div>
-            <h3 class="route-title">Ruta de los Cenotes &amp; Brechas de Leona Vicario</h3>
-            <p class="route-description">
-              Especial para bicicletas de Gravel y aventura. Conecta Puerto Morelos hacia el interior de la selva maya con desvíos hacia cenotes vírgenes y caminos de terracería compacta.
-            </p>
-            <div class="route-specs-table font-mono">
-              <div><strong>Tipo de Bici:</strong> Gravel con neumático 38mm a 45mm</div>
-              <div><strong>Terreno:</strong> 50% asfalto secundario y 50% terracería de arena blanca y piedra</div>
-              <div><strong>Paradas recomendadas:</strong> Cenote Siete Bocas y Parque Selva Maya</div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="article-cta-strip">
-          <div>
-            <span class="font-mono text-xs text-rose-400 font-bold uppercase tracking-wider block">¿QUIERES RODAR ESTAS RUTAS EN PELOTÓN?</span>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.2rem;">
-              En The Garage organizamos salidas sabatinas gratuitas con barredora e hidratación Wayfar.
-            </p>
-          </div>
-          <a
-            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20a%20la%20pr%C3%B3xima%20rodada%20de%20The%20Garage%20Ride."
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-primary"
-          >
-            Unirme al Grupo de Rodadas
-          </a>
-        </div>
-      </article>
-
-      <!-- ARTÍCULO 3: NUTRICIÓN & RENDIMIENTO -->
-      <article class="article-master-card" id="guia-nutricion">
-        <div class="article-header-strip">
-          <div class="font-mono article-meta-pill">
-            <span class="tag-accent" style="color: #4ADE80;">[03 // NUTRICIÓN &amp; WAYFAR]</span>
-            <span>PROTOCOLO CLÍNICO: 5 MIN</span>
-          </div>
-          <span class="font-mono text-xs text-zinc-400">CIENCIA DE RENDIMIENTO</span>
-        </div>
-
-        <h2 class="article-main-title">
-          Estrategia de Hidratación y Termorregulación para Rodar bajo 35°C en el Caribe
-        </h2>
-        
-        <p class="article-lead">
-          En el clima hiperhúmedo de Quintana Roo, el mecanismo de enfriamiento por evaporación del sudor pierde hasta un 40% de efectividad. Beber solo agua pura provoca hiponatremia y calambres severos. Este es el protocolo de hidratación celular de Wayfar.
-        </p>
-
-        <div class="article-body-grid">
-          
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">1. La Trampa de la Tasa de Sudoración</h3>
-            <p>
-              Un ciclista promedio en Playa del Carmen pierde entre <strong>1.2 y 1.8 litros de sudor por hora</strong> durante rodadas intensas. Con ese líquido se eliminan entre 800mg y 1,500mg de sodio (Na+). Si solo repones agua sin electrolitos, diluyes el torrente sanguíneo, el cerebro activa la fatiga central y sobrevienen los calambres musculares involuntarios.
-            </p>
-          </div>
-
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">2. Los 3 Electrolitos Esenciales en el Trópico</h3>
-            <div class="electrolytes-grid font-mono">
-              <div class="electro-card">
-                <span class="electro-symbol">SODIO (Na+)</span>
-                <p>Retiene el volumen plasmático y estimula el mecanismo de sed celular para evitar deshidratación profunda.</p>
-              </div>
-              <div class="electro-card">
-                <span class="electro-symbol">MAGNESIO (Mg++)</span>
-                <p>Regula la contracción y relajación muscular, previniendo fasciculaciones y contracturas en pantorrillas y cuádriceps.</p>
-              </div>
-              <div class="electro-card">
-                <span class="electro-symbol">POTASIO (K+)</span>
-                <p>Mantiene el potencial eléctrico de las membranas celulares y el ritmo cardíaco bajo esfuerzo térmico.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="article-section-block">
-            <h3 class="section-sub-heading font-mono">3. Protocolo de Hidratación por Fases (Fórmula Wayfar)</h3>
-            <div class="protocol-phases-list font-mono">
-              <div class="phase-item">
-                <span class="phase-badge">FASE PREVIA (-60 MIN)</span>
-                <p>Beber 500ml de agua con 1 porción de electrolitos Wayfar para iniciar con las reservas intracelulares repletas.</p>
-              </div>
-              <div class="phase-item">
-                <span class="phase-badge">DURANTE LA RODADA</span>
-                <p>Alternar un sorbo cada 15 minutos: 500ml a 750ml por hora con solución isotónica (Wayfar Hydration) + 30-60g de carbohidratos de absorción rápida.</p>
-              </div>
-              <div class="phase-item">
-                <span class="phase-badge">POST-RODADA (+30 MIN)</span>
-                <p>Reponer el 150% del peso perdido en líquidos junto con proteína limpia o caldo de huesos para regeneración articular.</p>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="article-cta-strip">
-          <div>
-            <span class="font-mono text-xs text-emerald-400 font-bold uppercase tracking-wider block">PUNTO OFICIAL WAYFAR NUTRITION EN PLAYA DEL CARMEN</span>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.2rem;">
-              Encuentra electrolitos, geles y suplementación limpia directamente en The Garage Cataluña.
-            </p>
-          </div>
-          <a
-            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20consultar%20el%20cat%C3%A1logo%20de%20nutrici%C3%B3n%20e%20hidrataci%C3%B3n%20Wayfar."
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-whatsapp"
-          >
-            Consultar Fórmulas Wayfar por WhatsApp
-          </a>
-        </div>
-      </article>
+        <a
+          href="https://wa.me/529841381493?text=Hola,%20quiero%20unirme%20a%20The%20Garage%20Ride."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-whatsapp"
+        >
+          Unirme a las Rodadas Sabatinas
+        </a>
+      </section>
 
     </div>
   </div>
 </Base>
 
 <style>
-  .guias-page-wrap {
+  .guias-directory-wrap {
     padding: var(--space-6) 0 var(--space-9) 0;
   }
 
-  .guias-header-section {
+  .directory-header-section {
     padding-bottom: var(--space-6);
     border-bottom: 1px solid var(--border-hairline);
     margin-bottom: var(--space-7);
   }
 
-  .guias-badges {
+  .directory-badges {
     display: flex;
     align-items: center;
     gap: var(--space-3);
@@ -342,239 +146,99 @@ import Base from '../layouts/Base.astro';
     color: var(--text-muted);
   }
 
-  /* Master Article Card */
-  .article-master-card {
-    background: var(--surface-card);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-xl);
-    padding: clamp(2rem, 4vw, 3.5rem);
-    margin-bottom: var(--space-7);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-5);
+  .directory-grid-section {
+    margin-bottom: var(--space-8);
   }
 
-  .article-header-strip {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--border-hairline);
-  }
-
-  .article-meta-pill {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-  .tag-accent {
-    color: #FB7185;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-  }
-
-  .article-main-title {
-    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-    font-weight: 900;
-    color: var(--text-primary);
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-  }
-
-  .article-lead {
-    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
-    color: var(--text-secondary);
-    line-height: 1.65;
-    max-width: 900px;
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--border-hairline);
-  }
-
-  .article-body-grid {
+  .directory-cards-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: var(--space-6);
   }
 
-  .article-section-block {
+  .directory-card-tile {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-xl);
+    padding: clamp(2rem, 3.5vw, 2.75rem);
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    justify-content: space-between;
+    transition: transform 0.25s var(--ease-spring), border-color 0.25s ease, box-shadow 0.25s var(--ease-spring);
+  }
+  .directory-card-tile:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-accent);
+    box-shadow: 0 16px 40px -12px rgba(225, 29, 72, 0.15);
   }
 
-  .section-sub-heading {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--text-primary);
-  }
-
-  .article-section-block p {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
-    max-width: 860px;
-  }
-
-  .protocol-box {
-    background: var(--surface-subtle);
-    border-left: 3px solid var(--brand-red);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    padding: var(--space-4);
-    font-size: 0.85rem;
-    color: var(--text-primary);
-    line-height: 1.6;
-  }
-
-  .article-checklist {
-    list-style: none;
+  .card-meta-row {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    background: var(--surface-subtle);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-hairline);
-    font-size: 0.85rem;
-    color: var(--text-secondary);
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    margin-bottom: var(--space-3);
   }
-  .article-checklist li::before {
-    content: "✓ ";
-    color: #4ADE80;
-    font-weight: 900;
-    margin-right: 0.4rem;
-  }
-
-  .lubricant-comparison-grid,
-  .electrolytes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--space-4);
-  }
-
-  .lube-card,
-  .electro-card {
-    background: var(--surface-subtle);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
-  }
-  .lube-name,
-  .electro-symbol {
-    display: block;
-    font-size: 0.8rem;
+  .card-tag {
     font-weight: 800;
-    color: #FB7185;
     letter-spacing: 0.06em;
-    margin-bottom: var(--space-2);
   }
-  .lube-card p,
-  .electro-card p {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    line-height: 1.55;
-  }
-
-  /* Routes Grid Inside Article */
-  .routes-detailed-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: var(--space-5);
-  }
-
-  .route-full-card {
-    background: var(--surface-subtle);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .route-card-top {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    margin-bottom: var(--space-2);
-  }
-  .route-num {
-    color: #FB7185;
-    font-weight: 700;
-  }
-  .route-distance {
-    color: #4ADE80;
-    font-weight: 800;
-  }
-  .route-title {
-    font-size: 1.2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: var(--space-2);
-  }
-  .route-description {
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: var(--space-4);
-  }
-  .route-specs-table {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    font-size: 0.78rem;
+  .card-time {
     color: var(--text-muted);
-    padding: var(--space-3) 0;
-    border-top: 1px solid var(--border-hairline);
-    border-bottom: 1px solid var(--border-hairline);
-    margin-bottom: var(--space-4);
-  }
-  .route-specs-table strong {
-    color: var(--text-primary);
-  }
-  .route-safety-note {
-    font-size: 0.75rem;
-    color: #FCD34D;
-    line-height: 1.5;
   }
 
-  /* Protocol Phases */
-  .protocol-phases-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+  .card-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: var(--space-3);
   }
-  .phase-item {
+  .card-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .card-title a:hover {
+    color: #FB7185;
+  }
+
+  .card-summary {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: var(--space-4);
+  }
+
+  .card-key-takeaway {
     background: var(--surface-subtle);
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-md);
-    padding: var(--space-4);
-  }
-  .phase-badge {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 800;
-    color: #4ADE80;
-    letter-spacing: 0.08em;
-    margin-bottom: var(--space-1);
-  }
-  .phase-item p {
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
+    padding: var(--space-3);
+    font-size: 0.78rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: var(--space-5);
   }
 
-  /* Article Footer CTA */
-  .article-cta-strip {
-    margin-top: var(--space-5);
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--border-hairline);
+  .card-footer-action {
+    margin-top: auto;
+  }
+  .card-read-btn {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .directory-bottom-banner {
+    background: linear-gradient(135deg, #18181C 0%, #101013 100%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-xl);
+    padding: clamp(2rem, 4vw, 3.5rem);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: var(--space-5);
   }
 </style>

@@ -1,0 +1,361 @@
+---
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const guiasData = [
+    {
+      slug: "salitre-humedad-caribe",
+      categoria: "Taller & Cirugía",
+      tag: "01 // TALLER & CIRUGÍA",
+      tagColor: "#FB7185",
+      tiempoLectura: "6 min de lectura",
+      titulo: "Cómo Proteger tu Bicicleta del Salitre y la Humedad Tropical",
+      descripcion: "En la Riviera Maya, la combinación de cloruro de sodio ambiental y humedad superior al 80% oxida cadenas, rodamientos y tornillos hasta cuatro veces más rápido. Este es el protocolo oficial de preservación mecánica de The Garage.",
+      secciones: [
+        {
+          titulo: "1. La Ciencia de la Corrosión Galvánica",
+          contenido: "Cuando un tornillo de acero entra en contacto con la rosca de un cuadro de aluminio o magnesio en presencia de agua salina (que actúa como electrolito), se produce corrosión galvánica. El aluminio se sacrifica oxidándose y soldando el tornillo permanentemente al cuadro.",
+          destacado: "PROTOCOLO EN TALLER: Aplicar grasa anti-seize base cobre o teflón en cada rosca (pedales, tornillos de portabidón, potencia y eje de centro) durante cualquier ensamble."
+        },
+        {
+          titulo: "2. El Error Fatal del Lavado a Presión",
+          contenido: "Las hidrolavadoras fuerzan el ingreso de agua y sal a través de los sellos de goma de los baleros (masas de rueda, caja de dirección y pedalier). Una vez dentro, el agua atrapada disuelve la grasa protectora y destruye las pistas de rodamiento en menos de dos meses.",
+          puntos: [
+            "Lavar únicamente con manguera de baja presión o cubeta con jabón biodegradable pH neutro.",
+            "Secar inmediatamente con paño de microfibra y aplicar aire comprimido en los puntos de articulación del desviador.",
+            "Nunca guardar la bicicleta húmeda en bodegas cerradas o terrazas con brisa marina directa."
+          ]
+        },
+        {
+          titulo: "3. Selección de Lubricante: ¿Cera o Wet Lube?",
+          contenido: "Los lubricantes secos (Dry Lube) base solvente se lavan con el primer charco o rocío matutino. Para rodar en Quintana Roo recomendamos ceras cerámicas hidrofóbicas para rodadas en asfalto seco y lubricantes húmedos densos (Wet Lube) para expediciones de selva y humedad extrema."
+        },
+        {
+          titulo: "4. Purgado de Frenos Hidráulicos: Líquido Mineral vs. DOT",
+          contenido: "El líquido de frenos DOT (usado por SRAM) es higroscópico: absorbe humedad del aire a través de los microporos de los manguitos con el tiempo, reduciendo su punto de ebullición. El aceite mineral (Shimano / Magura) es hidrofóbico. En el Caribe recomendamos purgar y renovar fluidos cada 6 meses para evitar pérdida de tacto en frenadas continuas."
+        }
+      ],
+      ctaTitulo: "¿Tu bicicleta tiene ruidos o salitre acumulado?",
+      ctaDesc: "En The Garage realizamos desmonte completo, limpieza ultrasónica de transmisión y re-engrase con torquímetro.",
+      ctaBoton: "Agendar Mantenimiento por WhatsApp",
+      ctaUrl: "https://wa.me/529841381493?text=Hola,%20le%C3%AD%20la%20gu%C3%ADa%20de%20salitre%20y%20me%20gustar%C3%ADa%20agendar%20un%20servicio%20de%20mantenimiento%20preventivo."
+    },
+    {
+      slug: "rutas-ciclistas-riviera-maya",
+      categoria: "Rutas & Expedición",
+      tag: "02 // RUTAS & EXPEDICIÓN",
+      tagColor: "#38BDF8",
+      tiempoLectura: "8 min de lectura",
+      titulo: "Las 4 Mejores Rutas Ciclistas de MTB, Ruta y Gravel en la Riviera Maya",
+      descripcion: "La geografía plana de la península engaña: el viento costero cruzado, el terreno kárstico con roca caliza afilada y la fauna selvática requieren preparación logística y equipo adecuado. Esta es la guía de circuitos.",
+      secciones: [
+        {
+          titulo: "Ruta 01: Playa del Carmen a Puerto Aventuras & Akumal (55 km)",
+          contenido: "El fondo clásico de fin de semana para bicicletas de ruta y pelotones sobre la Carretera Federal 307. Pavimento con acotamiento amplio de 2.5 metros. Viento dominante del sureste (en contra de ida, a favor de regreso). Puntos de hidratación en gasolineras de Paamul y Marina Puerto Aventuras.",
+          destacado: "CONSEJO DE SEGURIDAD: Rodar en pelotón con luz trasera diurna de mínimo 100 lúmenes visible a 1 km de distancia."
+        },
+        {
+          titulo: "Ruta 02: Punta Venado Bike Park & Selva Kárstica (15-25 km)",
+          contenido: "El paraíso del Cross Country (XCO) y singletrack en Playa del Carmen. Senderos estrechos trazados entre raíces tropicales, lajas de piedra caliza y senderos costeros con vista al mar. Presión recomendada: 22-26 PSI tubeless con cubiertas reforzadas EXO/SnakeSkin.",
+          destacado: "RECOMENDACIÓN MECÁNICA: Usar líquido sellador fresco cada 2 meses por el calor que acelera la evaporación."
+        },
+        {
+          titulo: "Ruta 03: Vuelta a la Isla de Cozumel (64 km Circuito)",
+          contenido: "Una de las rutas escénicas más reconocidas de México. Cruce en ferry Ultramar o Winjet desde la terminal de Playa del Carmen con tu bicicleta sin costo extra. El tramo este (30 km vírgenes) exige llevar 2 bidones de 750ml con electrolitos por falta de comercios intermedios."
+        },
+        {
+          titulo: "Ruta 04: Ruta de los Cenotes & Selva Maya (40-70 km Gravel)",
+          contenido: "Especial para bicicletas de Gravel y aventura con neumáticos de 38mm a 45mm. Conecta Puerto Morelos hacia el interior de la selva maya con desvíos hacia cenotes vírgenes y caminos de terracería compacta."
+        }
+      ],
+      ctaTitulo: "¿Quieres rodar estas rutas con el pelotón de The Garage?",
+      ctaDesc: "Organizamos salidas sabatinas gratuitas con barredora, asistencia técnica e hidratación Wayfar.",
+      ctaBoton: "Unirme al Grupo de Rodadas",
+      ctaUrl: "https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20a%20la%20pr%C3%B3xima%20rodada%20de%20The%20Garage%20Ride."
+    },
+    {
+      slug: "hidratacion-termorregulacion-wayfar",
+      categoria: "Nutrición & Wayfar",
+      tag: "03 // NUTRICIÓN & RENDIMIENTO",
+      tagColor: "#4ADE80",
+      tiempoLectura: "5 min de lectura",
+      titulo: "Estrategia de Hidratación y Termorregulación para Rodar bajo 35°C en el Caribe",
+      descripcion: "En el clima hiperhúmedo de Quintana Roo, el mecanismo de enfriamiento por evaporación del sudor pierde hasta un 40% de efectividad. Beber solo agua pura provoca hiponatremia y calambres severos. Este es el protocolo de hidratación celular de Wayfar.",
+      secciones: [
+        {
+          titulo: "1. La Trampa de la Tasa de Sudoración",
+          contenido: "Un ciclista promedio en Playa del Carmen pierde entre 1.2 y 1.8 litros de sudor por hora durante rodadas intensas. Con ese líquido se eliminan entre 800mg y 1,500mg de sodio (Na+). Si solo repones agua sin electrolitos, diluyes el torrente sanguíneo, el cerebro activa la fatiga central y sobrevienen los calambres musculares involuntarios."
+        },
+        {
+          titulo: "2. Los 3 Electrolitos Esenciales en el Trópico",
+          contenido: "El Sodio (Na+) retiene el volumen plasmático y estimula la sed celular; el Magnesio (Mg++) previene contracturas musculares involuntarias; y el Potasio (K+) mantiene el ritmo cardíaco bajo estrés térmico constante.",
+          destacado: "REGLA CLÍNICA: Beber de 500ml a 750ml de solución isotónica por cada hora de pedaleo a partir de los 28°C."
+        },
+        {
+          titulo: "3. Protocolo de Hidratación por Fases (Fórmula Wayfar)",
+          puntos: [
+            "Fase Previa (-60 min): Beber 500ml de agua con 1 porción de electrolitos Wayfar para saturar las reservas celulares.",
+            "Durante la Rodada: Alternar un sorbo cada 15 minutos de solución isotónica Wayfar + 30-60g de carbohidratos de rápida absorción.",
+            "Post-Rodada (+30 min): Reponer el 150% del peso perdido en líquidos junto con proteína limpia para regeneración articular."
+          ]
+        }
+      ],
+      ctaTitulo: "Punto Oficial Wayfar Nutrition en Playa del Carmen",
+      ctaDesc: "Encuentra electrolitos, geles y suplementación limpia directamente en The Garage Cataluña.",
+      ctaBoton: "Consultar Productos Wayfar por WhatsApp",
+      ctaUrl: "https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20consultar%20el%20cat%C3%A1logo%20de%20nutrici%C3%B3n%20e%20hidrataci%C3%B3n%20Wayfar."
+    }
+  ];
+
+  return guiasData.map((guia) => ({
+    params: { slug: guia.slug },
+    props: { guia }
+  }));
+}
+
+const { guia } = Astro.props;
+---
+
+<Base
+  title={`${guia.titulo} | The Garage Playa del Carmen`}
+  description={guia.descripcion}
+>
+  <div class="article-detail-wrap">
+    <div class="container-fluid">
+      
+      <!-- Breadcrumb Bar -->
+      <nav class="article-breadcrumb font-mono" aria-label="Ruta de navegación">
+        <a href="/guias" class="breadcrumb-back-link">← VOLVER A GUÍAS</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-category" style={`color: ${guia.tagColor};`}>{guia.categoria.toUpperCase()}</span>
+      </nav>
+
+      <!-- Article Main Container -->
+      <article class="article-content-card">
+        
+        <!-- Header -->
+        <header class="article-header">
+          <div class="article-meta-row font-mono">
+            <span class="article-badge" style={`color: ${guia.tagColor}; border-color: ${guia.tagColor};`}>
+              {guia.tag}
+            </span>
+            <span class="article-time">{guia.tiempoLectura}</span>
+          </div>
+
+          <h1 class="article-title">{guia.titulo}</h1>
+          <p class="article-lead">{guia.descripcion}</p>
+        </header>
+
+        <!-- Body Sections -->
+        <div class="article-sections-flow">
+          {guia.secciones.map((sec) => (
+            <div class="section-item-block">
+              <h2 class="section-title">{sec.titulo}</h2>
+              {sec.contenido && <p class="section-text">{sec.contenido}</p>}
+              
+              {sec.destacado && (
+                <div class="section-highlight-box font-mono">
+                  {sec.destacado}
+                </div>
+              )}
+
+              {sec.puntos && (
+                <ul class="section-bullets-list font-mono">
+                  {sec.puntos.map((punto: string) => (
+                    <li>{punto}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <!-- Callout Footer -->
+        <footer class="article-footer-cta">
+          <div class="cta-text-wrap">
+            <h3 class="cta-heading">{guia.ctaTitulo}</h3>
+            <p class="cta-desc">{guia.ctaDesc}</p>
+          </div>
+          <a
+            href={guia.ctaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp cta-button-action"
+          >
+            {guia.ctaBoton}
+          </a>
+        </footer>
+
+      </article>
+
+    </div>
+  </div>
+</Base>
+
+<style>
+  .article-detail-wrap {
+    padding: var(--space-5) 0 var(--space-9) 0;
+  }
+
+  .article-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: var(--space-6);
+  }
+
+  .breadcrumb-back-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .breadcrumb-back-link:hover {
+    color: #FFFFFF;
+  }
+
+  .breadcrumb-sep {
+    color: var(--text-dim);
+  }
+
+  .article-content-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-xl);
+    padding: clamp(2rem, 5vw, 4.5rem);
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .article-header {
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: var(--space-6);
+  }
+
+  .article-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .article-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    border: 1px solid currentColor;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .article-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .article-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+  }
+
+  .article-lead {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .article-sections-flow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    margin-bottom: var(--space-7);
+  }
+
+  .section-item-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .section-text {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+  }
+
+  .section-highlight-box {
+    background: var(--surface-subtle);
+    border-left: 3px solid var(--brand-red);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    padding: var(--space-4);
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .section-bullets-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    background: var(--surface-subtle);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline);
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+  .section-bullets-list li::before {
+    content: "✓ ";
+    color: #4ADE80;
+    font-weight: 900;
+    margin-right: 0.4rem;
+  }
+
+  .article-footer-cta {
+    background: linear-gradient(135deg, #18181C 0%, #101013 100%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .cta-heading {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 0.25rem;
+  }
+
+  .cta-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+
+  .cta-button-action {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.88rem;
+  }
+</style>
