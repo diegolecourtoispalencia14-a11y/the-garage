@@ -2,17 +2,15 @@ backend:
   name: github
   repo: diegolecourtoispalencia14-a11y/the-garage
   branch: main
-  base_url: https://the-garage-oauth.workers.dev # Se conectará con tu Cloudflare Worker gratuito
+  base_url: https://the-garage-oauth.diego-lecourtoispalencia14.workers.dev
 
-# Permite probar el panel localmente en tu computadora
 local_backend: true
 
 media_folder: "public/img"
 public_folder: "/img"
 
-# Configuración de interfaz en español y optimizada para móvil
 locale: "es"
-display_url: "https://thegarageplaya.pages.dev"
+display_url: "https://the-garage-dw4.pages.dev"
 
 collections:
   - name: "bicis"
