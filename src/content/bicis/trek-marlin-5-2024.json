@@ -10,16 +10,15 @@
   "talla": "M (17.5\")",
   "color": "Negro / Rojo Lava",
   "specs": {
-    "cuadro": "Aluminio Alpha Silver con cableado interno",
+    "cuadro": "Aluminio Alpha Silver, guiado interno de cables",
     "grupo": "Shimano CUES 1x9 vel.",
     "frenos": "Disco hidráulico Tektro HD-M275",
     "rodada": "29\""
   },
   "fotos": [
-    "/img/marlin5-1.svg",
-    "/img/marlin5-2.svg"
+    "/img/real/bike-mtb-trek.jpg"
   ],
-  "mensajeWhatsApp": "Hola, me interesa la Trek Marlin 5 (Talla M, color Negro/Rojo). ¿Sigue disponible para verla en la tienda de Playa del Carmen?",
+  "mensajeWhatsApp": "Hola, me interesa la Trek Marlin 5 Gen 3 Nueva (Talla M). ¿Sigue disponible para apartarla?",
   "destacada": true,
-  "esMuestra": true
+  "esMuestra": false
 }

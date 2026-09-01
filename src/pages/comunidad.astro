@@ -14,7 +14,7 @@ const instagramPosts = [
     likes: '142 likes',
     comentarios: '18 comentarios',
     badge: 'DISTRIBUIDOR OFICIAL',
-    imagen: '/img/post-basso.svg',
+    imagen: '/img/real/gravel-basso.jpg',
     specs: ['Cuadro Carbono Torayca', 'Grupo Campagnolo / SRAM', 'Handmade in Italy']
   },
   {
@@ -29,7 +29,7 @@ const instagramPosts = [
     likes: '189 likes',
     comentarios: '24 comentarios',
     badge: 'DISTRIBUIDOR OFICIAL',
-    imagen: '/img/post-lee-cougan.svg',
+    imagen: '/img/real/mtb-lee-cougan.jpg',
     specs: ['Air Blade Suspension', 'Geometría XC Race', 'Cableado Interno Completo']
   },
   {
@@ -43,7 +43,7 @@ const instagramPosts = [
     likes: '97 likes',
     comentarios: '12 comentarios',
     badge: 'SERVICIO DE TALLER',
-    imagen: '/img/post-sram.svg',
+    imagen: '/img/real/workshop-sram.jpg',
     specs: ['SRAM AXS Wireless', 'Montaje Directo al Cuadro', 'Ajuste Electrónico']
   },
   {
@@ -58,7 +58,7 @@ const instagramPosts = [
     likes: '235 likes',
     comentarios: '31 comentarios',
     badge: 'RODADA COMUNITARIA',
-    imagen: '/img/post-rodada.svg',
+    imagen: '/img/real/community-ride.jpg',
     specs: ['55 km Convivencia', 'PDC - Puerto Aventuras', 'Todos los niveles']
   },
   {
@@ -73,7 +73,7 @@ const instagramPosts = [
     likes: '78 likes',
     comentarios: '9 comentarios',
     badge: 'DISPONIBLE EN TIENDA',
-    imagen: '/img/post-wayfar.svg',
+    imagen: '/img/real/nutrition-wayfar.jpg',
     specs: ['Electrolitos Sin Azúcar', 'Geles de Energía Rápida', 'Proteína Vegana']
   },
   {
@@ -87,7 +87,7 @@ const instagramPosts = [
     likes: '164 likes',
     comentarios: '15 comentarios',
     badge: 'NUEVO RIDER',
-    imagen: '/img/post-basso.svg',
+    imagen: '/img/real/bike-road.jpg',
     specs: ['Ajuste Biomecánico', 'Calibración de Calas', '1er Servicio Incluido']
   }
 ];
@@ -97,7 +97,7 @@ const instagramPosts = [
   title="Comunidad Ciclista & Instagram Live | The Garage Playa del Carmen"
   description="Extensión oficial del Instagram @thegarage.pdc. Distribuidores oficiales de Basso, Lee Cougan, taller SRAM y rodadas comunitarias en Playa del Carmen."
 >
-  <!-- Hero Section Limpio y Profesional (Sin jerga de marketing) -->
+  <!-- Hero Section con Fotografías Reales -->
   <section style="background: radial-gradient(circle at top right, #F1F5F9 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
     <div class="container">
       <div style="max-width: 840px;">
@@ -151,7 +151,7 @@ const instagramPosts = [
     </div>
   </section>
 
-  <!-- Feed Social Interactivo de Instagram -->
+  <!-- Feed Social Interactivo de Instagram con Fotos Reales -->
   <section style="padding: 3rem 0 5rem 0;">
     <div class="container">
       
@@ -176,19 +176,19 @@ const instagramPosts = [
         </a>
       </div>
 
-      <!-- Instagram Posts Grid with Vector High-Res Graphics -->
+      <!-- Instagram Posts Grid con Fotos Reales -->
       <div class="insta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
         {instagramPosts.map((post) => (
           <article
             class="insta-card"
             data-tipo={post.tipo}
-            style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;"
+            style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;"
           >
             <!-- Card Header: User & Tag -->
-            <div style="padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: #FAFAFA;">
+            <div style="padding: 0.9rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: #FAFAFA;">
               <div style="display: flex; align-items: center; gap: 0.65rem;">
-                <div style="width: 36px; height: 36px; border-radius: 50%; background: #0F172A; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid #FF5722;">
-                  <img src="/img/favicon.svg" alt="Avatar The Garage" style="width: 24px; height: auto;" />
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid #E2E8F0;">
+                  <img src="/img/the-garage-avatar.png" alt="Avatar The Garage" style="width: 100%; height: 100%; object-fit: cover;" />
                 </div>
                 <div>
                   <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">thegarage.pdc</strong>
@@ -200,16 +200,16 @@ const instagramPosts = [
               </span>
             </div>
 
-            <!-- Card Media Container -->
-            <div style="position: relative; aspect-ratio: 1/1; background: #F8FAFC; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            <!-- Card Media Container con Fotografía Real -->
+            <div style="position: relative; aspect-ratio: 1/1; background: #F8FAFC; overflow: hidden;">
               <img
                 src={post.imagen}
                 alt={post.titulo}
-                style="width: 100%; height: 100%; object-fit: cover;"
+                style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
                 loading="lazy"
               />
               <div style="position: absolute; bottom: 0.85rem; left: 0.85rem;">
-                <span class="badge" style="background: rgba(15, 23, 42, 0.9); color: #FFFFFF; font-size: 0.7rem; backdrop-filter: blur(4px);">
+                <span class="badge" style="background: rgba(15, 23, 42, 0.85); color: #FFFFFF; font-size: 0.7rem; backdrop-filter: blur(4px);">
                   {post.badge}
                 </span>
               </div>
@@ -352,6 +352,9 @@ const instagramPosts = [
   .insta-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
+  }
+  .insta-card:hover img {
+    transform: scale(1.03);
   }
 </style>
 

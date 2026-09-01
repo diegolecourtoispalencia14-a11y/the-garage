@@ -8,18 +8,17 @@
   "estado": "Nueva",
   "disponibilidad": "Apartada",
   "talla": "L (19\")",
-  "color": "Gris Metálico Mate",
+  "color": "Gris Metálico / Verde",
   "specs": {
     "cuadro": "Aluminio ALUXX-Grade",
-    "grupo": "Shimano Altus / MicroSHIFT 2x8 vel.",
-    "frenos": "Disco hidráulico Tektro",
+    "grupo": "Shimano Altus 2x8 vel.",
+    "frenos": "Disco hidráulico Tektro TKD 143",
     "rodada": "29\""
   },
   "fotos": [
-    "/img/talon2-1.svg",
-    "/img/talon2-2.svg"
+    "/img/real/bike-giant.jpg"
   ],
-  "mensajeWhatsApp": "Hola, vi que la Giant Talon 2 (Talla L) está apartada. ¿Tienen alguna similar disponible o me pueden avisar si se libera?",
+  "mensajeWhatsApp": "Hola, vi que la Giant Talon 2 está apartada. ¿Tienen otra similar o cuándo llega inventario en Talla L?",
   "destacada": false,
-  "esMuestra": true
+  "esMuestra": false
 }
