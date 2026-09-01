@@ -1,33 +1,28 @@
-/**
- * Cloudflare Worker: GitHub OAuth Proxy para Sveltia CMS (The Garage)
- * 
- * Permite que solo tú (con tu cuenta de GitHub) puedas iniciar sesión 
- * y administrar el inventario desde el celular de forma gratuita y segura.
- */
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    // 1. Iniciar autenticación
+    // Obtener Client ID y Secret desde las variables de Cloudflare o por defecto
+    const clientId = (env && env.GITHUB_CLIENT_ID) || 'Ov23liVBr4GLST8wLo1l';
+    const clientSecret = (env && env.GITHUB_CLIENT_SECRET) || '';
+
+    // 1. Redirigir a GitHub para iniciar sesión
     if (url.pathname === '/auth') {
       const githubAuthUrl = new URL('https://github.com/login/oauth/authorize');
-      githubAuthUrl.searchParams.set('client_id', env.GITHUB_CLIENT_ID);
+      githubAuthUrl.searchParams.set('client_id', clientId);
       githubAuthUrl.searchParams.set('scope', 'repo,user');
       githubAuthUrl.searchParams.set('redirect_uri', `${url.origin}/callback`);
 
       return Response.redirect(githubAuthUrl.toString(), 302);
     }
 
-    // 2. Retorno de GitHub con el código de autorización
+    // 2. Retorno de GitHub con el código
     if (url.pathname === '/callback') {
       const code = url.searchParams.get('code');
-
       if (!code) {
-        return new Response('Error: No se recibió código de autorización de GitHub.', { status: 400 });
+        return new Response('Error: No se recibió código de GitHub.', { status: 400 });
       }
 
-      // Intercambiar código por Token de acceso con GitHub
       const response = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
         headers: {
@@ -36,8 +31,8 @@ export default {
           'User-Agent': 'TheGarage-OAuth-Worker'
         },
         body: JSON.stringify({
-          client_id: env.GITHUB_CLIENT_ID,
-          client_secret: env.GITHUB_CLIENT_SECRET,
+          client_id: clientId,
+          client_secret: clientSecret,
           code: code,
         }),
       });
@@ -51,38 +46,23 @@ export default {
       const token = data.access_token;
       const provider = 'github';
 
-      // Enviar el token a la ventana de Sveltia CMS de forma segura
-      const htmlContent = `
-        <!doctype html>
+      const html = `<!doctype html>
         <html>
-          <head>
-            <meta charset="utf-8">
-            <title>Autenticación Exitosa - The Garage</title>
-          </head>
-          <body style="font-family: system-ui, sans-serif; text-align: center; padding: 40px; background: #0F172A; color: #FFFFFF;">
-            <h2 style="color: #22C55E;">✓ Sesión Iniciada</h2>
-            <p>Conectando con el panel de administración...</p>
+          <head><meta charset="utf-8"><title>The Garage</title></head>
+          <body style="font-family: sans-serif; text-align: center; padding: 40px;">
+            <p>Conectando con el panel...</p>
             <script>
-              const receiveMessage = (message) => {
-                window.opener.postMessage(
-                  'authorization:${provider}:success:${JSON.stringify({ token, provider })}',
-                  message.origin
-                );
-                window.removeEventListener("message", receiveMessage, false);
-              }
-              window.addEventListener("message", receiveMessage, false);
-              window.opener.postMessage("authorizing:${provider}", "*");
+              window.opener.postMessage('authorization:${provider}:success:${JSON.stringify({ token, provider })}', '*');
+              window.close();
             </script>
           </body>
-        </html>
-      `;
+        </html>`;
 
-      return new Response(htmlContent, {
+      return new Response(html, {
         headers: { 'Content-Type': 'text/html; charset=utf-8' },
       });
     }
 
-    // Ruta por defecto
-    return new Response('The Garage OAuth Proxy activo y seguro.', { status: 200 });
+    return new Response('The Garage OAuth Proxy activo.', { status: 200 });
   },
 };
