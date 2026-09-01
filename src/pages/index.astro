@@ -1,113 +1,1085 @@
 ---
 import Base from '../layouts/Base.astro';
-import BiciCard from '../components/BiciCard.astro';
-import Filtros from '../components/Filtros.astro';
 import { getCollection } from 'astro:content';
 
 const bicisEntries = await getCollection('bicis');
-const orderMap: Record<string, number> = {
-  Disponible: 1,
-  Apartada: 2,
-  Vendida: 3,
-};
-
-const bicis = bicisEntries
-  .map(e => e.data)
-  .sort((a, b) => {
-    const orderA = orderMap[a.disponibilidad] || 99;
-    const orderB = orderMap[b.disponibilidad] || 99;
-    if (orderA !== orderB) return orderA - orderB;
-    return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0);
-  });
+const bicis = bicisEntries.map(e => e.data);
 ---
 
 <Base
-  title="THE GARAGE • BIKE EXPERTS | Distribuidor Basso & Lee Cougan • Playa del Carmen"
-  description="Vitrina oficial de The Garage en Playa del Carmen. Distribuidores oficiales de Basso, Lee Cougan, taller SRAM y comunidad ciclista en la Riviera Maya."
+  title="THE GARAGE • BIKE EXPERTS | Boutique Ciclista & Taller en Playa del Carmen"
+  description="Distribuidor oficial Basso Bikes Italia en Playa del Carmen. Taller especializado SRAM/Shimano, nutrición Wayfar, rodadas The Garage Ride y asesoría personalizada."
 >
-  <!-- Hero Section Editorial -->
-  <section style="padding: 4.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-hairline); background: var(--surface-base);">
+  <!-- Hero Section Disruptivo Editorial -->
+  <section class="hero-section">
     <div class="container">
-      <div style="max-width: 840px;">
-        
-        <!-- Location & Status Badge -->
-        <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1.25rem;">
-          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">
-            Playa del Carmen, Quintana Roo
-          </span>
-          <span style="color: var(--border-hairline);">•</span>
-          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand-red);">
-            Distribuidor Basso Bikes Italia
-          </span>
+      
+      <!-- Top Live Status Pill -->
+      <div class="hero-top-meta">
+        <div class="live-status-pill">
+          <span class="status-ping"></span>
+          <span>TIENDA &amp; TALLER ABIERTO • CATALUÑA PDC</span>
         </div>
-
-        <h1 class="title-xl" style="margin-bottom: 1.25rem;">
-          Bicicletas de clase mundial &amp; taller experto en el Caribe.
-        </h1>
-        
-        <p class="subtitle" style="font-size: 1.15rem; line-height: 1.7; margin-bottom: 2rem;">
-          Tienda boutique y taller certificado en Cataluña, Playa del Carmen. Distribuidores oficiales de <strong>Basso Bikes</strong>, servicio mecánico especializado, nutrición <strong>Wayfar</strong> y salidas semanales con <strong>The Garage Ride</strong>.
-        </p>
-
-        <!-- Minimalist CTA Group -->
-        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-          <a href="#catalogo" class="btn btn-primary">
-            Explorar Inventario ({bicis.length})
-          </a>
-          <a href="/guia-tallas" class="btn btn-outline">
-            Calculadora de Talla →
-          </a>
-        </div>
-
+        <a href="https://www.instagram.com/thegarage.pdc/" target="_blank" rel="noopener noreferrer" class="ig-handle-link">
+          📸 @thegarage.pdc ↗
+        </a>
       </div>
+
+      <!-- Main Headline Disruptivo -->
+      <div class="hero-grid">
+        <div class="hero-content">
+          <span class="hero-eyebrow">THE GARAGE • BIKE EXPERTS</span>
+          <h1 class="hero-headline">
+            Ingeniería italiana.<br />
+            <span class="headline-accent">Pasión en el Caribe.</span>
+          </h1>
+          <p class="hero-subtext">
+            Bicicletas de ruta, gravel y MTB de alto rendimiento. Distribuidores oficiales de <strong>Basso Bikes</strong> en la Riviera Maya, taller especializado y la comunidad ciclista más activa de Playa del Carmen.
+          </p>
+
+          <div class="hero-cta-row">
+            <a href="#bike-finder" class="btn btn-finder">
+              <span>🎯 Encontrar mi Bicicleta Ideal</span>
+              <span class="btn-arrow">↓</span>
+            </a>
+            <a
+              href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20agendar%20un%20servicio%20de%20taller%20o%20conocer%20las%20bicicletas%20disponibles."
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-whatsapp"
+            >
+              Hablar con un Experto
+            </a>
+          </div>
+        </div>
+
+        <!-- 3 Interactive Journey Cards (Estilo Icebug / Vitra) -->
+        <div class="hero-cards-col">
+          
+          <a href="#bike-finder" class="journey-card journey-finder">
+            <div class="journey-icon">⚡</div>
+            <div class="journey-info">
+              <span class="journey-tag">INTERACTIVO</span>
+              <strong>Bike Matchmaker</strong>
+              <p>Responde 3 preguntas y encuentra la bicicleta exacta para tu estatura y estilo.</p>
+            </div>
+            <span class="journey-arrow">→</span>
+          </a>
+
+          <a href="https://wa.me/529841381493?text=Hola,%20quiero%20agendar%20mantenimiento%20para%20mi%20bicicleta." target="_blank" rel="noopener noreferrer" class="journey-card">
+            <div class="journey-icon">🔧</div>
+            <div class="journey-info">
+              <span class="journey-tag">SERVICIO TALLER</span>
+              <strong>Mantenimiento &amp; Upgrades</strong>
+              <p>Calibración milimétrica Shimano &amp; SRAM, purgado de frenos y ajuste biomecánico.</p>
+            </div>
+            <span class="journey-arrow">↗</span>
+          </a>
+
+          <a href="/comunidad" class="journey-card">
+            <div class="journey-icon">🌴</div>
+            <div class="journey-info">
+              <span class="journey-tag">THE GARAGE RIDE</span>
+              <strong>Comunidad &amp; Rodadas</strong>
+              <p>Salidas sabatinas grupales, entrenamientos y circuito Clásica 7:30 XCO.</p>
+            </div>
+            <span class="journey-arrow">→</span>
+          </a>
+
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- Gallery Section -->
-  <section id="catalogo" style="padding: 3.5rem 0 6rem 0; background: var(--surface-subtle);">
+  <!-- INTERACTIVE BIKE FINDER / MATCHMAKER (Inspirado en Vitra) -->
+  <section id="bike-finder" class="finder-section">
     <div class="container">
       
-      <!-- Recent.design Filter Toolbar -->
-      <div style="margin-bottom: 2.5rem;">
-        <Filtros />
+      <div class="finder-header">
+        <span class="finder-badge">🎯 ASESOR INTERACTIVO</span>
+        <h2 class="title-xl" style="color: #FFFFFF;">
+          ¿Cuál es tu bicicleta ideal?
+        </h2>
+        <p class="subtitle" style="color: #94A3B8; max-width: 600px; margin: 0 auto;">
+          Selecciona tus preferencias de terreno, objetivo y estatura para ver el modelo recomendado en inventario en tiempo real.
+        </p>
       </div>
 
-      <!-- High-End Product Grid -->
-      <div class="bici-grid">
-        {bicis.map((bici, index) => (
-          <BiciCard bici={bici} priority={index === 0} />
-        ))}
-      </div>
-
-      <!-- Clean Community Callout -->
-      <div style="margin-top: 5rem; background: #FFFFFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-lg); padding: 3rem 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
-        <div style="max-width: 580px;">
-          <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #E1306C; display: block; margin-bottom: 0.4rem;">
-            📸 @THEGARAGE.PDC EN VIVO
-          </span>
-          <h2 class="title-lg" style="margin-bottom: 0.5rem;">
-            Comunidad, Rodadas &amp; Vida Ciclista
-          </h2>
-          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
-            Conoce nuestras rodadas de fin de semana, la carrera Clásica 7:30 XCO y trabajos de taller con fotos reales extraídas directamente de Instagram.
-          </p>
+      <!-- Step-by-Step Interactive Wizard Box -->
+      <div class="finder-card">
+        
+        <!-- Steps Bar -->
+        <div class="finder-steps-nav">
+          <div class="step-indicator active" id="step-tab-1">1. Terreno</div>
+          <div class="step-line"></div>
+          <div class="step-indicator" id="step-tab-2">2. Nivel / Uso</div>
+          <div class="step-line"></div>
+          <div class="step-indicator" id="step-tab-3">3. Estatura</div>
         </div>
 
-        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
-          <a href="/comunidad" class="btn btn-primary">
-            Ver Muro de Comunidad →
-          </a>
+        <!-- Step 1: Terrain -->
+        <div class="wizard-step active" id="wizard-step-1">
+          <h3 class="step-question">¿Dónde te apasiona rodar principalmente?</h3>
+          <div class="options-grid">
+            <button type="button" class="opt-btn" data-terrain="MTB">
+              <span class="opt-icon">🌲</span>
+              <strong>Senderos &amp; Terracerías</strong>
+              <span>Senderos de la Riviera, raíces, piedras y naturaleza.</span>
+            </button>
+            <button type="button" class="opt-btn" data-terrain="Ruta">
+              <span class="opt-icon">⚡</span>
+              <strong>Carretera &amp; Asfalto</strong>
+              <span>Velocidad, fondo aerodinámico y rutas largas en carretera.</span>
+            </button>
+            <button type="button" class="opt-btn" data-terrain="Gravel">
+              <span class="opt-icon">🌴</span>
+              <strong>Gravel &amp; Aventura Mixta</strong>
+              <span>Libertad total: 50% asfalto y 50% caminos de terracería.</span>
+            </button>
+            <button type="button" class="opt-btn" data-terrain="Urbana">
+              <span class="opt-icon">🚲</span>
+              <strong>Movilidad Urbana</strong>
+              <span>Desplazamientos ágiles y diarios en Playa del Carmen.</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Goal -->
+        <div class="wizard-step" id="wizard-step-2" style="display: none;">
+          <h3 class="step-question">¿Cuál es tu objetivo o nivel de entrenamiento?</h3>
+          <div class="options-grid">
+            <button type="button" class="opt-btn" data-goal="iniciacion">
+              <span class="opt-icon">🌱</span>
+              <strong>Iniciación &amp; Paseos</strong>
+              <span>Disfrutar el fin de semana y empezar a hacer condición física.</span>
+            </button>
+            <button type="button" class="opt-btn" data-goal="entrenamiento">
+              <span class="opt-icon">🔥</span>
+              <strong>Entrenamiento &amp; Rendimiento</strong>
+              <span>Rodadas constantes de 40km a 100km buscando superarte.</span>
+            </button>
+            <button type="button" class="opt-btn" data-goal="competencia">
+              <span class="opt-icon">🏆</span>
+              <strong>Carreras &amp; Máxima Exigencia</strong>
+              <span>Componentes de alta gama, peso pluma y precisión de carrera.</span>
+            </button>
+          </div>
+          <div class="step-back-row">
+            <button type="button" class="btn-back" id="back-to-1">← Volver al paso 1</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Height -->
+        <div class="wizard-step" id="wizard-step-3" style="display: none;">
+          <h3 class="step-question">¿Cuál es tu rango de estatura?</h3>
+          <div class="options-grid">
+            <button type="button" class="opt-btn" data-size="S">
+              <span class="opt-icon">📏</span>
+              <strong>1.55 m – 1.68 m</strong>
+              <span>Talla Pequeña (S / 48-51 cm)</span>
+            </button>
+            <button type="button" class="opt-btn" data-size="M">
+              <span class="opt-icon">📏</span>
+              <strong>1.68 m – 1.78 m</strong>
+              <span>Talla Mediana (M / 52-54 cm)</span>
+            </button>
+            <button type="button" class="opt-btn" data-size="L">
+              <span class="opt-icon">📏</span>
+              <strong>1.78 m – 1.90 m</strong>
+              <span>Talla Grande (L / 55-58 cm)</span>
+            </button>
+          </div>
+          <div class="step-back-row">
+            <button type="button" class="btn-back" id="back-to-2">← Volver al paso 2</button>
+          </div>
+        </div>
+
+        <!-- Result Box (Dynamic Match) -->
+        <div class="wizard-step" id="wizard-result" style="display: none;">
+          <div class="result-box">
+            <div class="match-badge">✨ 98% MATCH RECOMENDADO</div>
+            <div class="result-card-inner">
+              <div class="result-img-box">
+                <img id="res-img" src="/img/bicis/merida-scultura-tiagra-1.webp" alt="Bicicleta recomendada" />
+              </div>
+              <div class="result-details">
+                <span class="result-cat" id="res-cat">BICICLETA RECOMENDADA</span>
+                <h3 class="result-title" id="res-title">Merida Scultura 300 Shimano Tiagra</h3>
+                <div class="result-price" id="res-price">$19,800 MXN</div>
+                <p class="result-desc" id="res-desc">
+                  Ideal para tu perfil de ruta y entrenamiento. Cuadro ligero de aluminio con horquilla de carbono, grupo Shimano Tiagra 2x10 vel y ergonomía rápida.
+                </p>
+                <div class="result-actions">
+                  <a href="#" id="res-wa-link" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+                    Apartar esta Bici por WhatsApp
+                  </a>
+                  <button type="button" class="btn btn-outline" id="restart-finder" style="color: #FFFFFF; border-color: #3F3F46;">
+                    Reiniciar Test ↻
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- High-Impact Brand Showcase (Basso Italia & Taller) -->
+  <section class="brand-showcase-section">
+    <div class="container">
+      <div class="showcase-split">
+        
+        <!-- Basso Highlight -->
+        <div class="showcase-card showcase-basso">
+          <div class="showcase-tag">DISTRIBUIDOR OFICIAL</div>
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.75rem;">
+            Basso Bikes Italia
+          </h2>
+          <p style="color: #D4D4D8; line-height: 1.6; margin-bottom: 1.5rem;">
+            Hechas 100% a mano en Italia. Cuadros monocasco de carbono Torayca, cableado interno total y el balance perfecto entre rigidez, absorción y elegancia atemporal.
+          </p>
+          <div class="showcase-pills">
+            <span>🇮🇹 Handmade in Italy</span>
+            <span>✓ Garantía Oficial</span>
+            <span>⚡ Configuración a Medida</span>
+          </div>
           <a
-            href="https://www.instagram.com/thegarage.pdc/"
+            href="https://wa.me/529841381493?text=Hola,%20me%20interesa%20conocer%20los%20modelos%20de%20Basso%20Bikes%20disponibles."
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-outline"
+            style="color: #FFFFFF; border-color: rgba(255,255,255,0.3);"
           >
-            Instagram ↗
+            Consultar Catálogo Basso ↗
           </a>
         </div>
+
+        <!-- Taller SRAM Highlight -->
+        <div class="showcase-card showcase-taller">
+          <div class="showcase-tag" style="background: rgba(225,29,72,0.15); color: #FB7185; border-color: #E11D48;">TALLER ESPECIALIZADO</div>
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.75rem;">
+            Precisión Mecánica en Cataluña
+          </h2>
+          <p style="color: #D4D4D8; line-height: 1.6; margin-bottom: 1.5rem;">
+            Servicio técnico integral de suspensión, transmisión electrónica AXS/Di2, purgado de frenos hidráulicos y nutrición deportiva <strong>Wayfar</strong>.
+          </p>
+          <div class="showcase-pills">
+            <span>🔧 Certificación SRAM &amp; Shimano</span>
+            <span>⏱️ Entrega Rápida</span>
+            <span>🥤 Punto Wayfar</span>
+          </div>
+          <a
+            href="https://wa.me/529841381493?text=Hola,%20quiero%20llevar%20mi%20bicicleta%20a%20servicio%20de%20taller."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp"
+          >
+            Agendar Servicio por WhatsApp
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Curated Inventory Drops Section -->
+  <section class="drops-section">
+    <div class="container">
+      <div class="drops-header">
+        <div>
+          <span class="drops-badge">DISPONIBILIDAD REAL EN TIENDA</span>
+          <h2 class="title-xl" style="margin-top: 0.4rem;">
+            Bicicletas Listas para Rodar
+          </h2>
+        </div>
+        <a href="/guia-tallas" class="btn btn-outline">
+          Consultar Guía de Tallas →
+        </a>
       </div>
 
+      <!-- Grid of Real Bikes -->
+      <div class="bici-grid">
+        {bicis.map((bici) => (
+          <article class="drop-card">
+            <a href={`/bici/${bici.id}`} class="drop-img-box">
+              <img src={bici.fotos[0]} alt={`${bici.marca} ${bici.modelo}`} loading="lazy" />
+              <div class="drop-status-pill">
+                ● {bici.disponibilidad}
+              </div>
+            </a>
+            <div class="drop-body">
+              <div class="drop-meta">
+                <span>{bici.categoria} • Talla {bici.talla}</span>
+                <strong class="drop-price">
+                  {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(bici.precio)}
+                </strong>
+              </div>
+              <h3 class="drop-title">
+                <a href={`/bici/${bici.id}`}>{bici.marca} {bici.modelo}</a>
+              </h3>
+              <p class="drop-spec-line">
+                {bici.specs.grupo} • {bici.specs.rodada} • Frenos {bici.specs.frenos}
+              </p>
+              <div class="drop-actions">
+                <a
+                  href={`https://wa.me/529841381493?text=${encodeURIComponent(`Hola, me interesa la ${bici.marca} ${bici.modelo}. ¿Sigue disponible?`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-whatsapp"
+                  style="width: 100%; padding: 0.65rem 1rem; font-size: 0.85rem;"
+                >
+                  Apartar por WhatsApp
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Community & Riders Club Banner -->
+  <section class="community-banner-section">
+    <div class="container">
+      <div class="club-box">
+        <div class="club-content">
+          <span class="club-tag">THE GARAGE RIDERS CLUB</span>
+          <h2 class="title-xl" style="color: #FFFFFF; margin-bottom: 0.75rem;">
+            Rodadas Sabatinas &amp; Clásica 7:30 XCO
+          </h2>
+          <p style="color: #CBD5E1; font-size: 1.05rem; line-height: 1.6; margin-bottom: 2rem;">
+            Forma parte de la comunidad ciclista más vibrante de Playa del Carmen. Salidas semanales hacia cenotes y rutas costeras con vehículo barredora y soporte técnico.
+          </p>
+          <div class="club-actions">
+            <a href="/comunidad" class="btn" style="background: #FFFFFF; color: #09090B; font-weight: 800;">
+              Ver Feed en Vivo de Instagram ↗
+            </a>
+            <a
+              href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20a%20The%20Garage%20Ride."
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-whatsapp"
+            >
+              Unirme al Grupo de Rodadas
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </Base>
+
+<style>
+  /* Hero Section */
+  .hero-section {
+    padding: 3.5rem 0 5rem 0;
+    background: radial-gradient(circle at top right, #F8FAFC 0%, #FFFFFF 70%);
+    border-bottom: 1px solid var(--border-hairline);
+  }
+
+  .hero-top-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .live-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #F0FDF4;
+    border: 1px solid #DCFCE7;
+    color: #15803D;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+  }
+
+  .status-ping {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22C55E;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+  }
+
+  .ig-handle-link {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #E1306C;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .ig-handle-link:hover {
+    opacity: 0.8;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-red);
+    display: block;
+    margin-bottom: 0.85rem;
+  }
+
+  .hero-headline {
+    font-size: clamp(2.75rem, 5vw, 4.25rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    color: #09090B;
+    margin-bottom: 1.5rem;
+  }
+
+  .headline-accent {
+    color: #52525B;
+    font-weight: 800;
+  }
+
+  .hero-subtext {
+    font-size: 1.12rem;
+    line-height: 1.65;
+    color: #52525B;
+    margin-bottom: 2.25rem;
+    max-width: 580px;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-finder {
+    background: #09090B;
+    color: #FFFFFF;
+    box-shadow: 0 4px 16px rgba(9, 9, 11, 0.18);
+  }
+  .btn-finder:hover {
+    background: #27272A;
+    transform: translateY(-2px);
+  }
+  .btn-arrow {
+    transition: transform 0.2s ease;
+  }
+  .btn-finder:hover .btn-arrow {
+    transform: translateY(2px);
+  }
+
+  /* Journey Cards Column */
+  .hero-cards-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .journey-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    padding: 1.35rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    text-decoration: none;
+    box-shadow: var(--shadow-subtle);
+    transition: transform 0.22s var(--ease-spring), border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+  .journey-card:hover {
+    transform: translateX(4px);
+    border-color: #09090B;
+    box-shadow: var(--shadow-card);
+  }
+
+  .journey-finder {
+    background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
+    border-color: #27272A;
+    color: #FFFFFF;
+  }
+  .journey-finder:hover {
+    border-color: var(--brand-red);
+    box-shadow: 0 12px 32px rgba(225, 29, 72, 0.2);
+  }
+  .journey-finder .journey-tag {
+    color: #FB7185;
+  }
+  .journey-finder strong {
+    color: #FFFFFF;
+  }
+  .journey-finder p {
+    color: #A1A1AA;
+  }
+
+  .journey-icon {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+  }
+  .journey-info {
+    flex: 1;
+  }
+  .journey-tag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .journey-info strong {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #09090B;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .journey-info p {
+    font-size: 0.82rem;
+    color: #52525B;
+    line-height: 1.45;
+  }
+  .journey-arrow {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  .journey-card:hover .journey-arrow {
+    transform: translateX(3px);
+    color: var(--brand-red);
+  }
+
+  /* Finder Section (Vitra Inspired) */
+  .finder-section {
+    padding: 6rem 0;
+    background: #09090B;
+    color: #FFFFFF;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .finder-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+  .finder-badge {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    background: rgba(225, 29, 72, 0.15);
+    border: 1px solid #E11D48;
+    color: #FB7185;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+
+  .finder-card {
+    max-width: 860px;
+    margin: 0 auto;
+    background: #18181B;
+    border: 1px solid #27272A;
+    border-radius: var(--radius-xl);
+    padding: 3rem;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  }
+
+  .finder-steps-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .step-indicator {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #71717A;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    background: #27272A;
+  }
+  .step-indicator.active {
+    background: #FFFFFF;
+    color: #09090B;
+  }
+  .step-line {
+    width: 32px;
+    height: 1px;
+    background: #3F3F46;
+  }
+
+  .step-question {
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #FAFAFA;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .opt-btn {
+    background: #27272A;
+    border: 1.5px solid #3F3F46;
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    cursor: pointer;
+    color: #FFFFFF;
+    transition: all 0.2s var(--ease-spring);
+  }
+  .opt-btn:hover {
+    background: #3F3F46;
+    border-color: #E11D48;
+    transform: translateY(-3px);
+  }
+  .opt-icon {
+    font-size: 1.85rem;
+    margin-bottom: 0.85rem;
+  }
+  .opt-btn strong {
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .opt-btn span {
+    font-size: 0.78rem;
+    color: #A1A1AA;
+    line-height: 1.4;
+  }
+
+  .step-back-row {
+    text-align: center;
+  }
+  .btn-back {
+    background: transparent;
+    border: none;
+    color: #71717A;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-back:hover {
+    color: #FFFFFF;
+  }
+
+  /* Result Card Inside Finder */
+  .match-badge {
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid #22C55E;
+    color: #4ADE80;
+    padding: 0.4rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+  .result-card-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .result-img-box {
+    aspect-ratio: 1/1;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #09090B;
+  }
+  .result-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .result-cat {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #A1A1AA;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .result-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 0.5rem;
+  }
+  .result-price {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #22C55E;
+    margin-bottom: 1rem;
+  }
+  .result-desc {
+    font-size: 0.88rem;
+    color: #D4D4D8;
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .result-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* Brand Showcase */
+  .brand-showcase-section {
+    padding: 5rem 0;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  .showcase-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .showcase-card {
+    border-radius: var(--radius-xl);
+    padding: 3.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .showcase-basso {
+    background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
+    border: 1px solid #27272A;
+  }
+  .showcase-taller {
+    background: linear-gradient(135deg, #18181B 0%, #27272A 100%);
+    border: 1px solid #3F3F46;
+  }
+  .showcase-tag {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    margin-bottom: 1.5rem;
+    width: fit-content;
+  }
+  .showcase-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .showcase-pills span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    color: #E4E4E7;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+  }
+
+  /* Drops Section */
+  .drops-section {
+    padding: 5rem 0 6rem 0;
+    background: var(--surface-subtle);
+  }
+  .drops-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .drops-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--brand-red);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .drop-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring);
+  }
+  .drop-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+  .drop-img-box {
+    position: relative;
+    aspect-ratio: 1.15 / 1;
+    background: var(--surface-subtle);
+    overflow: hidden;
+    display: block;
+  }
+  .drop-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease-spring);
+  }
+  .drop-card:hover .drop-img-box img {
+    transform: scale(1.035);
+  }
+  .drop-status-pill {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    background: rgba(9, 9, 11, 0.85);
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(8px);
+  }
+  .drop-body {
+    padding: 1.25rem 1.25rem 1.4rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .drop-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+  }
+  .drop-price {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #09090B;
+  }
+  .drop-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .drop-title a {
+    color: #09090B;
+    text-decoration: none;
+  }
+  .drop-title a:hover {
+    color: var(--brand-red);
+  }
+  .drop-spec-line {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+  .drop-actions {
+    margin-top: auto;
+  }
+
+  /* Community Banner Section */
+  .community-banner-section {
+    padding: 0 0 6rem 0;
+    background: var(--surface-subtle);
+  }
+  .club-box {
+    background: linear-gradient(135deg, #09090B 0%, #18181B 100%);
+    border: 1px solid #27272A;
+    border-radius: var(--radius-xl);
+    padding: 4rem 3rem;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  }
+  .club-content {
+    max-width: 720px;
+  }
+  .club-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #FB7185;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+  }
+  .club-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .showcase-split {
+      grid-template-columns: 1fr;
+    }
+    .result-card-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  function initBikeFinder() {
+    let terrain = 'MTB';
+    let goal = 'entrenamiento';
+    let size = 'M';
+
+    const step1 = document.getElementById('wizard-step-1');
+    const step2 = document.getElementById('wizard-step-2');
+    const step3 = document.getElementById('wizard-step-3');
+    const stepResult = document.getElementById('wizard-result');
+
+    const tab1 = document.getElementById('step-tab-1');
+    const tab2 = document.getElementById('step-tab-2');
+    const tab3 = document.getElementById('step-tab-3');
+
+    // Terrain Selection
+    const terrainBtns = document.querySelectorAll<HTMLButtonElement>('[data-terrain]');
+    terrainBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        terrain = btn.getAttribute('data-terrain') || 'MTB';
+        if (step1 && step2 && tab1 && tab2) {
+          step1.style.display = 'none';
+          step2.style.display = 'block';
+          tab1.classList.remove('active');
+          tab2.classList.add('active');
+        }
+      });
+    });
+
+    // Goal Selection
+    const goalBtns = document.querySelectorAll<HTMLButtonElement>('[data-goal]');
+    goalBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        goal = btn.getAttribute('data-goal') || 'entrenamiento';
+        if (step2 && step3 && tab2 && tab3) {
+          step2.style.display = 'none';
+          step3.style.display = 'block';
+          tab2.classList.remove('active');
+          tab3.classList.add('active');
+        }
+      });
+    });
+
+    // Size Selection & Calculate Result
+    const sizeBtns = document.querySelectorAll<HTMLButtonElement>('[data-size]');
+    sizeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        size = btn.getAttribute('data-size') || 'M';
+        calculateResult();
+      });
+    });
+
+    // Back Buttons
+    document.getElementById('back-to-1')?.addEventListener('click', () => {
+      if (step1 && step2 && tab1 && tab2) {
+        step2.style.display = 'none';
+        step1.style.display = 'block';
+        tab2.classList.remove('active');
+        tab1.classList.add('active');
+      }
+    });
+
+    document.getElementById('back-to-2')?.addEventListener('click', () => {
+      if (step2 && step3 && tab2 && tab3) {
+        step3.style.display = 'none';
+        step2.style.display = 'block';
+        tab3.classList.remove('active');
+        tab2.classList.add('active');
+      }
+    });
+
+    // Restart
+    document.getElementById('restart-finder')?.addEventListener('click', () => {
+      if (step1 && stepResult && tab1 && tab3) {
+        stepResult.style.display = 'none';
+        step1.style.display = 'block';
+        tab3.classList.remove('active');
+        tab1.classList.add('active');
+      }
+    });
+
+    function calculateResult() {
+      const resImg = document.getElementById('res-img') as HTMLImageElement;
+      const resCat = document.getElementById('res-cat');
+      const resTitle = document.getElementById('res-title');
+      const resPrice = document.getElementById('res-price');
+      const resDesc = document.getElementById('res-desc');
+      const resWa = document.getElementById('res-wa-link') as HTMLAnchorElement;
+
+      let modelTitle = 'Merida Scultura 300 Shimano Tiagra';
+      let modelPrice = '$19,800 MXN';
+      let modelCat = 'RUTA & ENTRENAMIENTO • TALLA ' + size;
+      let modelImg = '/img/bicis/merida-scultura-tiagra-1.webp';
+      let modelDesc = 'Ideal para tu objetivo de rendimiento en asfalto. Cuadro ligero de aluminio con horquilla de carbono, grupo Shimano Tiagra 2x10 vel y ergonomía rápida.';
+
+      if (terrain === 'MTB' || goal === 'iniciacion') {
+        modelTitle = 'Oferta Relámpago MTB R29 Shimano';
+        modelPrice = '$7,900 MXN';
+        modelCat = 'MONTAÑA & SENDEROS • TALLA ' + size;
+        modelImg = '/img/bicis/oferta-relampago-mtb-r29-1.webp';
+        modelDesc = 'Perfecta para senderos de la Riviera Maya y paseos todo terreno. Rodada 29", suspensión delantera, transmisión Shimano y frenos de disco hidráulicos.';
+      } else if (goal === 'competencia') {
+        modelTitle = 'Basso Bikes Italia Custom Build';
+        modelPrice = 'Cotización Personalizada';
+        modelCat = 'COMPETENCIA & ÉLITE • TALLA ' + size;
+        modelImg = '/img/instagram/live-ig-thegarage.pdcDG6tlpFv-Pq.jpg';
+        modelDesc = 'Cuadro monocasco de carbono Torayca hecho a mano en Italia, grupo electrónico y ruedas de carbono para el más alto nivel competitivo.';
+      }
+
+      if (resImg) resImg.src = modelImg;
+      if (resCat) resCat.textContent = modelCat;
+      if (resTitle) resTitle.textContent = modelTitle;
+      if (resPrice) resPrice.textContent = modelPrice;
+      if (resDesc) resDesc.textContent = modelDesc;
+      if (resWa) {
+        resWa.href = `https://wa.me/529841381493?text=${encodeURIComponent(`Hola, completé el test interactivo en la web y mi resultado fue: ${modelTitle} (${modelPrice}). Me gustaría más información.`)}`;
+      }
+
+      if (step3 && stepResult && tab3) {
+        step3.style.display = 'none';
+        stepResult.style.display = 'block';
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBikeFinder);
+  } else {
+    initBikeFinder();
+  }
+</script>
