@@ -37,7 +37,7 @@ const precioFormateado = bici.precio.toLocaleString('es-MX', {
 
 const isVendida = bici.disponibilidad === 'Vendida';
 const isApartada = bici.disponibilidad === 'Apartada';
-const fotoPrincipal = bici.fotos && bici.fotos.length > 0 ? bici.fotos[0] : '/img/the-garage-logo.svg';
+const fotoPrincipal = bici.fotos && bici.fotos.length > 0 ? bici.fotos[0] : '/img/the-garage-logo-transparent.png';
 
 const textoBoton = isVendida 
   ? "Preguntar por similar" 
@@ -53,20 +53,20 @@ const textoBoton = isVendida
   data-disponibilidad={bici.disponibilidad}
   data-search={`${bici.marca} ${bici.modelo} ${bici.categoria} ${bici.talla} ${bici.color}`.toLowerCase()}
 >
-  <a href={`/bici/${bici.id}`} class="card-img-wrap" title={`Ver detalles de ${bici.marca} ${bici.modelo}`}>
+  <a href={`/bici/${bici.id}`} class="card-img-wrap" title={`Ver ficha de ${bici.marca} ${bici.modelo}`}>
     <img
       src={fotoPrincipal}
       alt={`${bici.marca} ${bici.modelo} - Bicicleta ${bici.categoria} en Playa del Carmen`}
-      width="400"
-      height="400"
+      width="450"
+      height="450"
       loading={priority ? "eager" : "lazy"}
       fetchpriority={priority ? "high" : "auto"}
       decoding="async"
     />
-    <div style="position: absolute; top: 0.75rem; left: 0.75rem; z-index: 2;">
+    <div style="position: absolute; top: 0.85rem; left: 0.85rem; z-index: 2;">
       <BadgeDisponibilidad disponibilidad={bici.disponibilidad} esMuestra={bici.esMuestra} />
     </div>
-    <div style="position: absolute; bottom: 0.75rem; right: 0.75rem; z-index: 2;">
+    <div style="position: absolute; bottom: 0.85rem; right: 0.85rem; z-index: 2;">
       <span class={`badge ${bici.estado === 'Nueva' ? 'badge-nueva' : 'badge-seminueva'}`}>
         {bici.estado}
       </span>
@@ -75,43 +75,43 @@ const textoBoton = isVendida
 
   <div class="card-body">
     <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;">
-      <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em;">
+      <span style="font-size: 0.8rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em;">
         {bici.marca} • {bici.categoria}
       </span>
-      <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
-        Talla: {bici.talla}
+      <span style="font-size: 0.8rem; color: #475569; font-weight: 700; background: #F1F5F9; padding: 0.2rem 0.55rem; border-radius: 4px;">
+        Talla {bici.talla}
       </span>
     </div>
 
-    <h2 class="title-md" style="margin-top: -0.25rem;">
+    <h2 class="title-md" style="margin-top: -0.15rem; line-height: 1.25;">
       <a href={`/bici/${bici.id}`} style="color: var(--secondary); transition: color 0.15s ease;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--secondary)'">
         {bici.marca} {bici.modelo}
       </a>
     </h2>
 
     {bici.specs && (
-      <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.25rem;">
+      <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.2rem;">
         {bici.specs.rodada && (
-          <span style="font-size: 0.75rem; background: #F1F5F9; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">
-            🚲 Rod. {bici.specs.rodada}
+          <span style="font-size: 0.75rem; background: #F8FAFC; border: 1px solid var(--border); color: #334155; padding: 0.2rem 0.55rem; border-radius: var(--radius-sm); font-weight: 700;">
+            🚲 {bici.specs.rodada}
           </span>
         )}
         {bici.specs.grupo && (
-          <span style="font-size: 0.75rem; background: #F1F5F9; color: #475569; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">
+          <span style="font-size: 0.75rem; background: #F8FAFC; border: 1px solid var(--border); color: #334155; padding: 0.2rem 0.55rem; border-radius: var(--radius-sm); font-weight: 700;">
             ⚙️ {bici.specs.grupo}
           </span>
         )}
       </div>
     )}
 
-    <div style="margin-top: auto; padding-top: 0.75rem; display: flex; align-items: baseline; justify-content: space-between;">
+    <div style="margin-top: auto; padding-top: 0.85rem; display: flex; align-items: baseline; justify-content: space-between;">
       <div>
         <span class="price-tag">{precioFormateado}</span>
         <span class="price-currency">{bici.moneda || 'MXN'}</span>
       </div>
     </div>
 
-    <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+    <div style="margin-top: 0.65rem; display: flex; flex-direction: column; gap: 0.5rem;">
       <BotonWhatsApp
         mensaje={bici.mensajeWhatsApp}
         texto={textoBoton}
@@ -121,9 +121,9 @@ const textoBoton = isVendida
       <a
         href={`/bici/${bici.id}`}
         class="btn btn-outline"
-        style="padding: 0.5rem; font-size: 0.85rem;"
+        style="padding: 0.6rem; font-size: 0.85rem;"
       >
-        Ver ficha completa →
+        Ver ficha técnica completa →
       </a>
     </div>
   </div>

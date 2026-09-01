@@ -1,10 +1,11 @@
-/* Global CSS Styles for The Garage */
+/* Global CSS Styles for The Garage — Specialized & Boutique Cycling UI */
 :root {
   --primary: #FF5722;
   --primary-hover: #E64A19;
   --primary-light: #FFF3E0;
-  --secondary: #18181B;
-  --secondary-hover: #27272A;
+  --primary-dark: #C2410C;
+  --secondary: #0F172A;
+  --secondary-hover: #1E293B;
   --whatsapp: #25D366;
   --whatsapp-hover: #1EBE5D;
   --whatsapp-dark: #075E54;
@@ -18,12 +19,13 @@
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
+  --radius-xl: 28px;
   --radius-full: 9999px;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.08);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.06);
-  --container-max: 1200px;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 30px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+  --container-max: 1220px;
 }
 
 *, *::before, *::after {
@@ -33,7 +35,7 @@
 }
 
 html {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-main);
   background-color: var(--bg-page);
   scroll-behavior: smooth;
@@ -45,6 +47,7 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.5;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 main {
@@ -75,42 +78,44 @@ button, input, select {
   padding-right: 1.25rem;
 }
 
-/* Typography Helpers */
+/* Typography Hierarchy */
 .title-xl {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 900;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
   color: var(--secondary);
 }
 
 .title-lg {
-  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
   font-weight: 800;
   line-height: 1.2;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .title-md {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .subtitle {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   color: var(--text-muted);
+  line-height: 1.6;
 }
 
-/* Badges */
+/* Badges & Status Indicators */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.65rem;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   border-radius: var(--radius-full);
   line-height: 1;
   border: 1px solid transparent;
@@ -157,9 +162,9 @@ button, input, select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  font-weight: 700;
+  gap: 0.55rem;
+  padding: 0.8rem 1.4rem;
+  font-weight: 800;
   border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
@@ -176,37 +181,30 @@ button, input, select {
 
 .btn-whatsapp:hover, .btn-whatsapp:active {
   background-color: var(--whatsapp-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px 0 rgba(37, 211, 102, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px 0 rgba(37, 211, 102, 0.45);
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background-color: #0F172A;
   color: #FFFFFF;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
-}
-
-.btn-secondary {
-  background-color: var(--secondary);
-  color: #FFFFFF;
-}
-
-.btn-secondary:hover {
-  background-color: var(--secondary-hover);
+  background-color: #1E293B;
+  transform: translateY(-1px);
 }
 
 .btn-outline {
-  background-color: transparent;
-  border: 2px solid var(--border);
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--border);
   color: var(--text-main);
+  font-weight: 700;
 }
 
 .btn-outline:hover {
-  background-color: #F1F5F9;
-  border-color: var(--text-muted);
+  background-color: #F8FAFC;
+  border-color: var(--secondary);
 }
 
 .btn-block {
@@ -214,15 +212,15 @@ button, input, select {
 }
 
 .btn-lg {
-  padding: 0.95rem 1.5rem;
+  padding: 1rem 1.75rem;
   font-size: 1.05rem;
 }
 
-/* Cards & Grid */
+/* Cards & Product Grid */
 .bici-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1.75rem;
 }
 
 @media (min-width: 640px) {
@@ -240,82 +238,83 @@ button, input, select {
 .card {
   background-color: var(--bg-card);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   display: flex;
   flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
-  border-color: #CBD5E1;
+  border-color: #94A3B8;
 }
 
 .card-sold {
-  opacity: 0.75;
+  opacity: 0.8;
   filter: grayscale(0.2);
 }
 
 .card-img-wrap {
   position: relative;
   aspect-ratio: 1 / 1;
-  background-color: #F1F5F9;
+  background-color: #F8FAFC;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid var(--border);
 }
 
 .card-img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover .card-img-wrap img {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
 .card-body {
-  padding: 1.25rem;
+  padding: 1.4rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .price-tag {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 900;
   color: var(--secondary);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .price-currency {
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
-  margin-left: 0.2rem;
+  margin-left: 0.25rem;
 }
 
 /* Floating WhatsApp Button */
 .fab-whatsapp {
   position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
+  bottom: 1.75rem;
+  right: 1.75rem;
   z-index: 999;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   background-color: var(--whatsapp);
   color: #FFFFFF;
-  padding: 0.85rem 1.25rem;
+  padding: 0.9rem 1.4rem;
   border-radius: var(--radius-full);
-  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
+  box-shadow: 0 10px 28px rgba(37, 211, 102, 0.45);
   font-weight: 800;
   font-size: 0.95rem;
   text-decoration: none;
@@ -323,9 +322,9 @@ button, input, select {
 }
 
 .fab-whatsapp:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
   background-color: var(--whatsapp-hover);
-  box-shadow: 0 10px 30px rgba(37, 211, 102, 0.55);
+  box-shadow: 0 12px 34px rgba(37, 211, 102, 0.55);
 }
 
 @media (max-width: 480px) {
@@ -333,19 +332,33 @@ button, input, select {
     display: none;
   }
   .fab-whatsapp {
-    padding: 0.85rem;
+    padding: 0.9rem;
     border-radius: 50%;
     bottom: 1.25rem;
     right: 1.25rem;
   }
 }
 
-/* Animations */
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+/* Sticky Mobile Bar for Bike Details */
+.sticky-mobile-bar {
+  display: none;
 }
 
-.animate-pulse {
-  animation: pulse-subtle 2s infinite ease-in-out;
+@media (max-width: 768px) {
+  .sticky-mobile-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 0.85rem 1.25rem;
+    z-index: 990;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+  }
 }

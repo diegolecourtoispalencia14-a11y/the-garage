@@ -2,18 +2,17 @@
 import Base from '../../layouts/Base.astro';
 import BadgeDisponibilidad from '../../components/BadgeDisponibilidad.astro';
 import BotonWhatsApp from '../../components/BotonWhatsApp.astro';
-import BiciCard from '../../components/BiciCard.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const bicisEntries = await getCollection('bicis');
-  return bicisEntries.map(entry => ({
-    params: { id: entry.data.id },
-    props: { bici: entry.data, allBicis: bicisEntries.map(e => e.data) },
+  const bicis = await getCollection('bicis');
+  return bicis.map((bici) => ({
+    params: { id: bici.id },
+    props: { bici: bici.data },
   }));
 }
 
-const { bici, allBicis } = Astro.props;
+const { bici } = Astro.props;
 
 const precioFormateado = bici.precio.toLocaleString('es-MX', {
   style: 'currency',
@@ -27,247 +26,209 @@ const isApartada = bici.disponibilidad === 'Apartada';
 const textoBoton = isVendida
   ? "Preguntar por modelo similar"
   : isApartada
-    ? "Preguntar si se libera o similar"
-    : "Apartar o Consultar por WhatsApp";
+    ? "Consultar disponibilidad / Apartar"
+    : "Apartar esta bicicleta por WhatsApp";
 
-const relatedBicis = allBicis.filter(b => b.id !== bici.id).slice(0, 2);
-
-const productSchema = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  "name": `${bici.marca} ${bici.modelo}`,
-  "image": bici.fotos.map(f => `https://thegarageplaya.pages.dev${f}`),
-  "description": `Bicicleta ${bici.marca} ${bici.modelo} (${bici.categoria}, talla ${bici.talla}, color ${bici.color}) disponible en The Garage, Playa del Carmen.`,
-  "brand": {
-    "@type": "Brand",
-    "name": bici.marca
-  },
-  "offers": {
-    "@type": "Offer",
-    "priceCurrency": bici.moneda || "MXN",
-    "price": bici.precio,
-    "availability": isVendida ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
-    "seller": {
-      "@type": "BikeStore",
-      "name": "The Garage Bicicletas"
-    }
-  }
-};
+const fotos = bici.fotos && bici.fotos.length > 0 ? bici.fotos : ['/img/the-garage-logo-transparent.png'];
 ---
 
 <Base
   title={`${bici.marca} ${bici.modelo} (${bici.talla}) | The Garage Playa del Carmen`}
-  description={`${bici.marca} ${bici.modelo} ${bici.estado}. Precio: ${precioFormateado} ${bici.moneda}. Disponible para ver y probar en tienda física en Playa del Carmen o envío a Riviera Maya.`}
-  image={bici.fotos[0]}
+  description={`${bici.marca} ${bici.modelo} en venta en The Garage Bike Experts, Playa del Carmen. Talla ${bici.talla}, ${bici.estado}, ${precioFormateado} MXN. Entrega en toda la Riviera Maya.`}
+  image={fotos[0]}
+  tipo="product"
 >
-  <script type="application/ld+json" set:html={JSON.stringify(productSchema)} />
-
-  <!-- Breadcrumb -->
-  <div style="background: #FFFFFF; border-bottom: 1px solid var(--border); padding: 0.75rem 0;">
-    <div class="container" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
-      <a href="/" style="color: var(--primary); font-weight: 600;">Inventario</a>
-      <span>/</span>
-      <span>{bici.categoria}</span>
-      <span>/</span>
-      <span style="color: var(--secondary); font-weight: 700;">{bici.marca} {bici.modelo}</span>
+  <div style="background: #FFFFFF; border-bottom: 1px solid var(--border); padding: 0.85rem 0;">
+    <div class="container">
+      <nav aria-label="Ruta de navegación" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+        <a href="/" style="color: var(--text-muted); text-decoration: underline;">Catálogo</a>
+        <span>/</span>
+        <span style="color: var(--primary); font-weight: 700;">{bici.categoria}</span>
+        <span>/</span>
+        <span style="color: var(--secondary);">{bici.marca} {bici.modelo}</span>
+      </nav>
     </div>
   </div>
 
-  <section style="padding: 2rem 0 4rem 0;">
+  <section style="padding: 2rem 0 5rem 0;">
     <div class="container">
-      
-      <div style="display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 2.5rem; align-items: start;" class="detail-grid">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem; align-items: start;">
         
-        <!-- Gallery Column -->
+        <!-- Galería de Fotos -->
         <div>
-          <div style="background: #FFFFFF; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm); aspect-ratio: 1/1; position: relative;">
+          <!-- Foto Principal -->
+          <div style="position: relative; aspect-ratio: 1/1; background-color: #F8FAFC; border-radius: var(--radius-xl); border: 2px solid var(--border); overflow: hidden; box-shadow: var(--shadow-md);">
             <img
-              id="main-product-img"
-              src={bici.fotos[0]}
-              alt={`${bici.marca} ${bici.modelo}`}
+              id="main-photo"
+              src={fotos[0]}
+              alt={`${bici.marca} ${bici.modelo} - Playa del Carmen`}
               style="width: 100%; height: 100%; object-fit: cover;"
               loading="eager"
               fetchpriority="high"
             />
-            <div style="position: absolute; top: 1rem; left: 1rem;">
+            <div style="position: absolute; top: 1rem; left: 1rem; z-index: 2;">
               <BadgeDisponibilidad disponibilidad={bici.disponibilidad} esMuestra={bici.esMuestra} />
             </div>
-            <div style="position: absolute; bottom: 1rem; right: 1rem;">
+            <div style="position: absolute; bottom: 1rem; right: 1rem; z-index: 2;">
               <span class={`badge ${bici.estado === 'Nueva' ? 'badge-nueva' : 'badge-seminueva'}`}>
                 {bici.estado}
               </span>
             </div>
           </div>
 
-          <!-- Thumbnails if more than 1 photo -->
-          {bici.fotos.length > 1 && (
-            <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
-              {bici.fotos.map((foto, idx) => (
+          <!-- Miniaturas si hay más de 1 foto -->
+          {fotos.length > 1 && (
+            <div style="display: flex; gap: 0.75rem; margin-top: 1rem; overflow-x: auto; padding-bottom: 0.5rem;">
+              {fotos.map((foto, i) => (
                 <button
                   type="button"
-                  class={`thumb-btn ${idx === 0 ? 'active' : ''}`}
-                  onclick={`document.getElementById('main-product-img').src = '${foto}'; document.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active')); this.classList.add('active');`}
-                  style="flex: 1; aspect-ratio: 1/1; border-radius: var(--radius-md); border: 2px solid var(--border); background: #FFFFFF; overflow: hidden; cursor: pointer; padding: 0;"
+                  class="thumb-btn"
+                  onclick={`document.getElementById('main-photo').src = '${foto}'`}
+                  style="flex: 0 0 70px; height: 70px; border-radius: var(--radius-sm); border: 2px solid var(--border); overflow: hidden; background: #F8FAFC; cursor: pointer; padding: 0;"
                 >
-                  <img src={foto} alt={`Foto ${idx + 1}`} style="width: 100%; height: 100%; object-fit: cover;" />
+                  <img src={foto} alt={`Foto ${i + 1}`} style="width: 100%; height: 100%; object-fit: cover;" />
                 </button>
               ))}
             </div>
           )}
+
+          <!-- Sello de Taller / Tienda -->
+          <div style="margin-top: 2rem; background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: #0F172A; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 1.25rem;">
+                🚲
+              </div>
+              <div>
+                <h4 style="font-weight: 800; font-size: 0.95rem; color: var(--secondary);">Inspección & Taller The Garage</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Revisada por mecánicos profesionales en Playa del Carmen</p>
+              </div>
+            </div>
+            <ul style="list-style: none; font-size: 0.85rem; line-height: 1.8; color: #334155;">
+              <li>✓ Ajuste de cambios y tensión de cadena realizado</li>
+              <li>✓ Purga y calibración de frenos hidráulicos</li>
+              <li>✓ Ajuste ergonómico de altura y manillar gratuito al entregar</li>
+            </ul>
+          </div>
         </div>
 
-        <!-- Info & Action Column -->
-        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-          
-          <div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="font-size: 0.85rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em;">
-                {bici.marca} • {bici.categoria}
-              </span>
-            </div>
-            <h1 class="title-xl" style="margin-bottom: 0.75rem; color: var(--secondary);">
-              {bici.marca} {bici.modelo}
-            </h1>
-            <p style="color: var(--text-muted); font-size: 0.95rem;">
-              Color: <strong>{bici.color}</strong> • Talla: <strong>{bici.talla}</strong>
-            </p>
+        <!-- Información de Compra y Especificaciones -->
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span style="font-size: 0.85rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;">
+              THE GARAGE • {bici.categoria}
+            </span>
           </div>
 
-          <!-- Price Card & Primary CTA (Visible without scroll) -->
-          <div style="background: #FFFFFF; border: 2px solid #E2E8F0; border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-md);">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem;">
-              <div>
-                <span style="font-size: 0.85rem; color: var(--text-muted); display: block; font-weight: 600;">Precio de contado:</span>
-                <span class="price-tag" style="font-size: 2.25rem;">{precioFormateado}</span>
-                <span class="price-currency" style="font-size: 1rem;">{bici.moneda || 'MXN'}</span>
-              </div>
-              <div>
-                <span class={`badge ${bici.disponibilidad === 'Disponible' ? 'badge-disponible' : bici.disponibilidad === 'Apartada' ? 'badge-apartada' : 'badge-vendida'}`} style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">
-                  {bici.disponibilidad}
-                </span>
-              </div>
-            </div>
+          <h1 class="title-xl" style="margin-bottom: 0.75rem; line-height: 1.15;">
+            {bici.marca} {bici.modelo}
+          </h1>
 
-            <!-- WhatsApp Primary CTA -->
+          <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1.5rem;">
+            <span style="font-size: 2.25rem; font-weight: 900; color: var(--secondary); letter-spacing: -0.03em;">
+              {precioFormateado}
+            </span>
+            <span style="font-size: 1rem; font-weight: 700; color: var(--text-muted);">
+              {bici.moneda || 'MXN'} (Pesos Mexicanos)
+            </span>
+          </div>
+
+          <!-- Botón de Acción Principal -->
+          <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+            <p style="font-size: 0.9rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.85rem;">
+              ¿Te interesa esta bicicleta?
+            </p>
             <BotonWhatsApp
               mensaje={bici.mensajeWhatsApp}
               texto={textoBoton}
               tamano="lg"
               fullWidth={true}
             />
-
             <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem;">
-              ⚡ Respuesta rápida • Apartado directo con el encargado de tienda
+              ⚡ Respuesta inmediata de nuestro equipo en Playa del Carmen
             </p>
           </div>
 
-          <!-- Action Prompts -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
-            <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.9rem; display: flex; gap: 0.75rem; align-items: center;">
-              <span style="font-size: 1.5rem;">📍</span>
-              <div style="font-size: 0.85rem; line-height: 1.3;">
-                <strong>Pruébala en tienda</strong><br />
-                <span style="color: var(--text-muted);">Av. Ich Xeel CASA 19, Cataluña</span>
-              </div>
+          <!-- Cuadrícula de Especificaciones Físicas -->
+          <h3 class="title-md" style="margin-bottom: 1rem; color: var(--secondary); border-bottom: 2px solid #0F172A; padding-bottom: 0.4rem;">
+            Ficha Técnica & Componentes
+          </h3>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem; margin-bottom: 2rem;">
+            <div style="background: #FFFFFF; border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block;">Talla de Cuadro</span>
+              <strong style="font-size: 1rem; color: var(--secondary);">{bici.talla}</strong>
             </div>
-            <div style="background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.9rem; display: flex; gap: 0.75rem; align-items: center;">
-              <span style="font-size: 1.5rem;">🚐</span>
-              <div style="font-size: 0.85rem; line-height: 1.3;">
-                <strong>Entregas Riviera Maya</strong><br />
-                <span style="color: var(--text-muted);">Tulum, Akumal, Puerto Aventuras, Cancún</span>
-              </div>
+            <div style="background: #FFFFFF; border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block;">Color</span>
+              <strong style="font-size: 1rem; color: var(--secondary);">{bici.color}</strong>
             </div>
+
+            {bici.specs?.cuadro && (
+              <div style="background: #FFFFFF; border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-md); grid-column: span 2;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block;">Material del Cuadro</span>
+                <strong style="font-size: 0.95rem; color: var(--secondary);">{bici.specs.cuadro}</strong>
+              </div>
+            )}
+
+            {bici.specs?.grupo && (
+              <div style="background: #FFFFFF; border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-md); grid-column: span 2;">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block;">Transmisión / Grupo</span>
+                <strong style="font-size: 0.95rem; color: var(--secondary);">{bici.specs.grupo}</strong>
+              </div>
+            )}
+
+            {bici.specs?.frenos && (
+              <div style="background: #FFFFFF; border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block;">Sistema de Frenos</span>
+                <strong style="font-size: 0.95rem; color: var(--secondary);">{bici.specs.frenos}</strong>
+              </div>
+            )}
+
+            {bici.specs?.rodada && (
+              <div style="background: #FFFFFF; border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-md);">
+                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block;">Rodada de Llanta</span>
+                <strong style="font-size: 0.95rem; color: var(--secondary);">{bici.specs.rodada}</strong>
+              </div>
+            )}
           </div>
 
-          <!-- Technical Specs Table -->
-          <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem;">
-            <h2 class="title-md" style="margin-bottom: 1rem; color: var(--secondary); display: flex; align-items: center; gap: 0.5rem;">
-              <span>⚙️</span> Ficha Técnica y Componentes
-            </h2>
-
-            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
-              <tbody>
-                <tr style="border-bottom: 1px solid var(--border);">
-                  <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted); width: 35%;">Marca:</td>
-                  <td style="padding: 0.75rem 0; color: var(--secondary); font-weight: 600;">{bici.marca}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border);">
-                  <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Modelo:</td>
-                  <td style="padding: 0.75rem 0; color: var(--secondary); font-weight: 600;">{bici.modelo}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border);">
-                  <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Categoría:</td>
-                  <td style="padding: 0.75rem 0; color: var(--secondary); font-weight: 600;">{bici.categoria}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border);">
-                  <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Estado:</td>
-                  <td style="padding: 0.75rem 0; color: var(--secondary); font-weight: 600;">{bici.estado}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border);">
-                  <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Talla:</td>
-                  <td style="padding: 0.75rem 0; color: var(--secondary); font-weight: 600;">{bici.talla}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border);">
-                  <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Color:</td>
-                  <td style="padding: 0.75rem 0; color: var(--secondary); font-weight: 600;">{bici.color}</td>
-                </tr>
-                {bici.specs?.cuadro && (
-                  <tr style="border-bottom: 1px solid var(--border);">
-                    <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Cuadro:</td>
-                    <td style="padding: 0.75rem 0; color: var(--secondary);">{bici.specs.cuadro}</td>
-                  </tr>
-                )}
-                {bici.specs?.grupo && (
-                  <tr style="border-bottom: 1px solid var(--border);">
-                    <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Transmisión / Grupo:</td>
-                    <td style="padding: 0.75rem 0; color: var(--secondary);">{bici.specs.grupo}</td>
-                  </tr>
-                )}
-                {bici.specs?.frenos && (
-                  <tr style="border-bottom: 1px solid var(--border);">
-                    <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Frenos:</td>
-                    <td style="padding: 0.75rem 0; color: var(--secondary);">{bici.specs.frenos}</td>
-                  </tr>
-                )}
-                {bici.specs?.rodada && (
-                  <tr>
-                    <td style="padding: 0.75rem 0; font-weight: 700; color: var(--text-muted);">Rodada:</td>
-                    <td style="padding: 0.75rem 0; color: var(--secondary);">{bici.specs.rodada}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <!-- Módulo de Prueba Física en Tienda -->
+          <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: #FFFFFF; padding: 1.5rem; border-radius: var(--radius-lg); border: 2px solid #334155;">
+            <h4 style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.4rem;">📍 ¿Quieres rodarla y probar la talla?</h4>
+            <p style="font-size: 0.85rem; color: #CBD5E1; line-height: 1.5; margin-bottom: 1rem;">
+              Visítanos en <strong>Av. Ich Xeel CASA 19, Cataluña</strong>, Playa del Carmen. Puedes rodarla frente al local antes de decidir.
+            </p>
+            <a
+              href={`https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20agendar%20una%20visita%20para%20probar%20la%20${encodeURIComponent(bici.marca + ' ' + bici.modelo)}.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline"
+              style="width: 100%; border-color: #475569; color: #0F172A; background: #FFFFFF; font-weight: 800;"
+            >
+              Agendar prueba de manejo en tienda
+            </a>
           </div>
 
         </div>
 
       </div>
-
-      <!-- Related Bikes Section -->
-      {relatedBicis.length > 0 && (
-        <div style="margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--border);">
-          <h2 class="title-lg" style="margin-bottom: 1.5rem;">Otras bicicletas disponibles</h2>
-          <div class="bici-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-            {relatedBicis.map(b => (
-              <BiciCard bici={b} />
-            ))}
-          </div>
-        </div>
-      )}
-
     </div>
   </section>
+
+  <!-- Sticky Mobile Bar (Conversión con el pulgar) -->
+  <div class="sticky-mobile-bar">
+    <div>
+      <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; display: block;">Precio en Tienda</span>
+      <span style="font-size: 1.25rem; font-weight: 900; color: var(--secondary);">{precioFormateado}</span>
+    </div>
+    <a
+      href={`https://wa.me/529841381493?text=${encodeURIComponent(bici.mensajeWhatsApp)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn btn-whatsapp"
+      style="padding: 0.7rem 1.25rem; font-size: 0.9rem;"
+    >
+      Apartar por WhatsApp
+    </a>
+  </div>
 </Base>
-
-<style>
-  @media (min-width: 840px) {
-    .detail-grid {
-      grid-template-columns: 1fr 1.15fr !important;
-    }
-  }
-
-  .thumb-btn.active {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 2px var(--primary-light);
-  }
-</style>
