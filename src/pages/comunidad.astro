@@ -3,105 +3,196 @@ import Base from '../layouts/Base.astro';
 
 const instagramPosts = [
   {
-    id: 'merida-scultura-arribo',
-    categoria: 'Bicicleta en Tienda',
-    tipo: 'arribo',
-    tag: 'Merida Bikes',
-    emoji: '🚴',
-    titulo: 'Merida Scultura 300 Shimano Tiagra 10 vel (Talla S/M)',
-    descripcion: 'Recién llegada a piso de venta. Bicicleta de ruta con cuadro de aluminio ligero y horquilla de carbono FACT. Equipada con grupo completo Shimano Tiagra 2x10 vel. Calibrada y lista para rodar en la carretera.',
+    id: 'the-garage-ride-group',
+    categoria: 'Rodadas de Comunidad',
+    tipo: 'rodada',
+    tag: 'The Garage Ride',
+    emoji: '🌴',
+    titulo: 'The Garage Ride — Comunidad Ciclista de Playa del Carmen',
+    descripcion: 'Nuestras rodadas de convivencia de fin de semana. Grupo mixto de ruta y MTB con salida desde la tienda, hidratación en ruta y soporte mecánico en todo el recorrido.',
     fecha: 'Publicado en @thegarage.pdc',
-    likes: '158 likes',
-    comentarios: '22 comentarios',
-    badge: 'DISPONIBLE EN TIENDA',
-    imagen: '/img/bicis/merida-scultura-1.webp',
-    specs: ['Shimano Tiagra 2x10 vel.', 'Horquilla Carbono', 'Talla S/M (52 cm)']
+    likes: '284 likes',
+    comentarios: '42 comentarios',
+    badge: 'COMUNIDAD OFICIAL',
+    imagen: '/img/instagram/real-the-garage-ride-group.webp',
+    specs: ['Salida Sabatina', 'Todos los Niveles', 'Soporte Mecánico']
   },
   {
-    id: 'oferta-relampago-vendida',
-    categoria: 'Prueba Social & Ventas',
+    id: 'the-garage-jersey-rider',
+    categoria: 'Comunidad & Equipo',
+    tipo: 'lifestyle',
+    tag: 'Jersey Oficial',
+    emoji: '👕',
+    titulo: 'Piel Oficial The Garage — Jerseys y Equipamiento',
+    descripcion: 'Diseñado para el calor y humedad de Quintana Roo. Telas de secado rápido, corte aerodinámico y los colores que nos representan en cada carretera y sendero.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '219 likes',
+    comentarios: '28 comentarios',
+    badge: 'EQUIPAMIENTO OFICIAL',
+    imagen: '/img/instagram/real-the-garage-jersey-rider.webp',
+    specs: ['Tela Transpirable', 'Bolsillos Traseros', 'Corte Pro Fit']
+  },
+  {
+    id: 'clasica-730-xco',
+    categoria: 'Eventos & Carreras',
+    tipo: 'evento',
+    tag: 'Clásica 7:30 XCO',
+    emoji: '🏆',
+    titulo: 'Clásica 7:30 Circuito XCO — La gran fiesta del ciclismo de montaña',
+    descripcion: 'Organización y cronometraje de la carrera de cross-country más esperada en la Riviera Maya. Circuito técnico, categorías libre y master con hidratación Wayfar en pista.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '341 likes',
+    comentarios: '56 comentarios',
+    badge: 'EVENTO OFICIAL',
+    imagen: '/img/instagram/real-clasica-730.webp',
+    specs: ['Circuito XCO Técnico', 'Categorías Libre / Master', 'Hidratación en Pista']
+  },
+  {
+    id: 'entrega-amigos-tienda',
+    categoria: 'Entregas & Taller',
     tipo: 'entrega',
-    tag: 'Oferta Relámpago',
+    tag: 'Nueva Bici',
+    emoji: '🤝',
+    titulo: 'Nueva entrega en tienda — Listos para rodar en Cataluña',
+    descripcion: 'Felicidades por la nueva nave. Ajuste de altura de sillín, calibración de transmisión y revisión de presión de llantas antes de salir a rodar.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '197 likes',
+    comentarios: '21 comentarios',
+    badge: 'NUEVO RIDER',
+    imagen: '/img/instagram/real-entrega-amigos-tienda.webp',
+    specs: ['Ajuste Biomecánico', '1er Servicio Incluido', 'Garantía Directa']
+  },
+  {
+    id: 'wayfar-sunset',
+    categoria: 'Nutrición Wayfar',
+    tipo: 'lifestyle',
+    tag: 'Wayfar Nutrition',
     emoji: '⚡',
-    titulo: 'Oferta Relámpago MTB R29 $7,900 — VENDIDA en 24 hrs',
-    descripcion: '¡Se fue volando! Bicicleta de montaña R29 talla M con grupo Shimano 2x8 y frenos hidráulicos entregada a su nuevo dueño en Playa del Carmen con revisión mecánica completa.',
+    titulo: 'Wayfar Watermelon Electrolitos — Hidratación frente al Caribe',
+    descripcion: '50 servicios de hidratación pura sin azúcar añadida. Repone minerales esenciales para evitar calambres y deshidratación en rodadas bajo el sol caribeño.',
     fecha: 'Publicado en @thegarage.pdc',
-    likes: '214 likes',
-    comentarios: '34 comentarios',
-    badge: '⚪ VENDIDA EN TIENDA',
-    imagen: '/img/bicis/mtb-relampago-1.webp',
-    specs: ['Precio $7,900 MXN', 'Rodada 29"', 'Shimano 2x8 + Hidráulicos']
+    likes: '168 likes',
+    comentarios: '15 comentarios',
+    badge: 'DISPONIBLE EN TIENDA',
+    imagen: '/img/instagram/real-wayfar-sunset.webp',
+    specs: ['Electrolitos Puros', 'Sabor Sandía', '50 Servicios']
   },
   {
-    id: 'taller-inspeccion-real',
-    categoria: 'Taller Especializado',
-    tipo: 'taller',
-    tag: 'Servicio Mecánico',
-    emoji: '🔧',
-    descripcion: 'Calibración milimétrica de pata de cambio, tensión de cadena y purga de frenos hidráulicos. Toda bicicleta sale de nuestro local en Cataluña probada al 100%.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '112 likes',
-    comentarios: '14 comentarios',
-    badge: 'SERVICIO DE TALLER',
-    imagen: '/img/bicis/mtb-relampago-3.webp',
-    specs: ['Calibración de Cambios', 'Purga Hidráulica', 'Ajuste de Torque']
-  },
-  {
-    id: 'basso-palta-gravel',
-    categoria: 'Distribuidor Oficial',
+    id: 'basso-astra-road',
+    categoria: 'Distribuidor Basso',
     tipo: 'arribo',
     tag: 'Basso Bikes Italia',
     emoji: '🇮🇹',
-    titulo: 'Basso Palta Gravel — Ingeniería italiana en Playa del Carmen',
-    descripcion: 'Orgullosos de ser distribuidores oficiales de Basso Bikes en Quintana Roo. Cuadro de carbono Torayca, absorción de vibraciones y geometría gravel para rodar asfalto y terracerías de la Riviera.',
+    titulo: 'Basso Astra Disc — Máxima velocidad en asfalto',
+    descripcion: 'Cuadro 100% carbono hecho en Italia, cableado totalmente integrado y geometría de resistencia para volar en la carretera Cancún - Tulum.',
     fecha: 'Publicado en @thegarage.pdc',
-    likes: '142 likes',
-    comentarios: '18 comentarios',
+    likes: '225 likes',
+    comentarios: '33 comentarios',
     badge: 'DISTRIBUIDOR OFICIAL',
-    imagen: '/img/real/gravel-basso.jpg',
-    specs: ['Carbono Torayca', 'Handmade in Italy', 'Gravel & All-Road']
+    imagen: '/img/instagram/real-basso-astra-road.webp',
+    specs: ['Cuadro Carbono Torayca', 'Frenos de Disco', 'Handmade in Italy']
   },
   {
-    id: 'rodada-sabado-cenotes',
-    categoria: 'Comunidad & Rodadas',
+    id: 'peloton-selva',
+    categoria: 'Rodadas de Comunidad',
     tipo: 'rodada',
-    tag: 'Rodada de Sábado',
+    tag: 'Ruta Cenotes',
     emoji: '🌴',
-    titulo: 'Rodada dominical Playa - Puerto Aventuras (55 km)',
-    descripcion: 'Más de 25 ciclistas en nuestra rodada de convivencia hacia la Ruta de los Cenotes. Ritmo controlado, hidratación Wayfar en ruta y convivencia al volver a The Garage.',
+    titulo: 'Pelotón de sábado por la carretera de la selva maya',
+    descripcion: 'Rodando en grupo seguro con vanguardia y barredora. El ciclismo se disfruta más en equipo.',
     fecha: 'Publicado en @thegarage.pdc',
-    likes: '235 likes',
-    comentarios: '31 comentarios',
-    badge: 'RODADA COMUNITARIA',
-    imagen: '/img/real/community-ride.jpg',
-    specs: ['55 km Convivencia', 'PDC - Puerto Aventuras', 'Todos los niveles']
+    likes: '312 likes',
+    comentarios: '44 comentarios',
+    badge: 'RODADA GRUPAL',
+    imagen: '/img/instagram/real-peloton-selva.webp',
+    specs: ['60 km Fondo', 'Carretera Asfaltada', 'Vehículo de Apoyo']
   },
   {
-    id: 'taller-sram-axs',
-    categoria: 'Taller Especializado',
-    tipo: 'taller',
-    tag: 'SRAM Transmission',
-    emoji: '⚡',
-    titulo: 'Instalación y Calibración SRAM Eagle AXS T-Type',
-    descripcion: 'Transmisión inalámbrica de última generación. Cero cables, cambios instantáneos bajo carga máxima y durabilidad total en el clima húmedo de la costa.',
+    id: 'cicloviaje-playa',
+    categoria: 'Aventura & Bikepacking',
+    tipo: 'lifestyle',
+    tag: 'Huellas de Coral',
+    emoji: '🌊',
+    titulo: 'Cicloviaje por el Sistema Arrecifal Mesoamericano',
+    descripcion: 'Expediciones en dos ruedas bordeando las costas de Quintana Roo. Alforjas listas, mapa trazado y pasión por explorar el Caribe.',
     fecha: 'Publicado en @thegarage.pdc',
-    likes: '97 likes',
-    comentarios: '12 comentarios',
-    badge: 'SRAM PRO SHOP',
-    imagen: '/img/real/workshop-sram.jpg',
-    specs: ['SRAM AXS Wireless', 'Montaje Directo al Cuadro', 'Ajuste Electrónico']
+    likes: '267 likes',
+    comentarios: '39 comentarios',
+    badge: 'BIKEPACKING CARIBE',
+    imagen: '/img/instagram/real-cicloviaje-playa.webp',
+    specs: ['Ruta Costera', 'Bikepacking', 'Exploración Riviera']
+  },
+  {
+    id: 'zipp-wheels-upgrade',
+    categoria: 'Taller & Upgrades',
+    tipo: 'taller',
+    tag: 'Zipp Wheels',
+    emoji: '🔧',
+    titulo: 'Ruedas de Carbono Zipp 303 XPLR & Llantas Pirelli',
+    descripcion: 'Montaje de rines de carbono Zipp con neumáticos Pirelli tubeless para un rodaje suave y reactivo en terrenos mixtos.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '183 likes',
+    comentarios: '19 comentarios',
+    badge: 'UPGRADE TALLER',
+    imagen: '/img/instagram/real-zipp-wheels.webp',
+    specs: ['Zipp Carbono', 'Pirelli Tubeless', 'Montaje de Precisión']
+  },
+  {
+    id: 'magene-smart-trainer',
+    categoria: 'Entrenamiento Indoor',
+    tipo: 'lifestyle',
+    tag: 'Magene Trainer',
+    emoji: '⚡',
+    titulo: 'Rodillo Inteligente Magene T110 Smart Trainer',
+    descripcion: 'Entrena potencia y cadencia desde la comodidad de tu casa con conexión directa a Zwift y plataformas de ciclismo virtual.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '144 likes',
+    comentarios: '16 comentarios',
+    badge: 'DISPONIBLE EN TIENDA',
+    imagen: '/img/instagram/real-magene-trainer.webp',
+    specs: ['Resistencia Magnética', 'Conexión Bluetooth / ANT+', 'Compatible con Zwift']
+  },
+  {
+    id: 'basso-distribuidor-oficial',
+    categoria: 'Distribuidor Basso',
+    tipo: 'arribo',
+    tag: 'Basso Italia',
+    emoji: '🇮🇹',
+    titulo: 'Distribuidores Autorizados Basso Bikes en Quintana Roo',
+    descripcion: 'Traemos a Playa del Carmen lo más exclusivo del ciclismo italiano. Garantía oficial de fábrica y asesoría personalizada en tienda.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '358 likes',
+    comentarios: '52 comentarios',
+    badge: 'OFICIAL EN PLAYA',
+    imagen: '/img/instagram/real-basso-distribuidor-oficial.webp',
+    specs: ['Garantía de Fábrica', 'Importación Directa', 'Asesoría en Tienda']
+  },
+  {
+    id: 'basso-event-finish',
+    categoria: 'Eventos & Carreras',
+    tipo: 'evento',
+    tag: 'Carrera Caribe',
+    emoji: '🏁',
+    titulo: 'Rider The Garage en podio de evento ciclista regional',
+    descripcion: 'Orgullosos de nuestros ciclistas representándonos en cada competencia del sureste mexicano con máquinas Basso y nutrición Wayfar.',
+    fecha: 'Publicado en @thegarage.pdc',
+    likes: '290 likes',
+    comentarios: '37 comentarios',
+    badge: 'PODIO THE GARAGE',
+    imagen: '/img/instagram/real-basso-event.webp',
+    specs: ['Competencia Regional', 'Equipo The Garage', 'Podio']
   }
 ];
 ---
 
 <Base
   title="Comunidad Ciclista & Instagram Live | The Garage Playa del Carmen"
-  description="Extensión oficial del Instagram @thegarage.pdc. Distribuidores oficiales de Basso, Lee Cougan, taller SRAM y rodadas comunitarias en Playa del Carmen."
+  description="Feed oficial de la comunidad de The Garage (@thegarage.pdc). Distribuidores oficiales de Basso, Lee Cougan, eventos Clásica 7:30 XCO y rodadas en Playa del Carmen."
 >
-  <!-- Hero Section con Fotografías Reales de Tienda -->
-  <section style="background: radial-gradient(circle at top right, #F1F5F9 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
+  <!-- Hero Section con Identidad Real de The Garage -->
+  <section style="background: radial-gradient(circle at top right, #FFF1F2 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
     <div class="container">
-      <div style="max-width: 840px;">
+      <div style="max-width: 860px;">
         <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1rem;">
           <a
             href="https://www.instagram.com/thegarage.pdc/"
@@ -112,38 +203,38 @@ const instagramPosts = [
             📸 INSTAGRAM OFICIAL @THEGARAGE.PDC
           </a>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: #0F172A; color: #FFFFFF; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">
-            🇮🇹 BASSO & LEE COUGAN OFICIAL
+            🌴 THE GARAGE RIDE &amp; CLÁSICA 7:30 XCO
           </div>
         </div>
 
         <h1 class="title-xl" style="margin-bottom: 1rem; color: #0F172A;">
-          Comunidad, Taller & Pasión Ciclista en Playa del Carmen.
+          Comunidad, Rodadas &amp; Eventos en Playa del Carmen.
         </h1>
         <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.75rem;">
-          En <strong>The Garage</strong> somos más que una tienda: somos el punto de encuentro de ciclistas en la Riviera Maya. Conoce las novedades de Basso y Lee Cougan, trabajos de taller y únete a nuestras rodadas semanales.
+          En <strong>The Garage</strong> no solo vendemos bicicletas: organizamos las rodadas sabatinas <strong>The Garage Ride</strong>, la carrera <strong>Clásica 7:30 XCO</strong>, distribuimos <strong>Basso Bikes</strong> y equipamos a los ciclistas de la Riviera Maya con nutrición <strong>Wayfar</strong> y taller certificado.
         </p>
 
         <!-- Social Proof Stats Bar -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
           <div style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem 1.15rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.35rem;">🚴</span>
+            <div>
+              <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">The Garage Ride</strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Rodadas grupales sabatinas</span>
+            </div>
+          </div>
+          <div style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem 1.15rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-size: 1.35rem;">🏆</span>
             <div>
-              <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">Distribuidor Autorizado</strong>
-              <span style="font-size: 0.75rem; color: var(--text-muted);">Basso Bikes & Lee Cougan</span>
+              <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">Clásica 7:30 XCO</strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Circuito y carreras oficiales</span>
             </div>
           </div>
           <div style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem 1.15rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.35rem;">🔧</span>
+            <span style="font-size: 1.35rem;">⚡</span>
             <div>
-              <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">Taller Especializado</strong>
-              <span style="font-size: 0.75rem; color: var(--text-muted);">Transmisiones SRAM AXS</span>
-            </div>
-          </div>
-          <div style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 0.85rem 1.15rem; box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.35rem;">🌴</span>
-            <div>
-              <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">Rodadas Semanales</strong>
-              <span style="font-size: 0.75rem; color: var(--text-muted);">Cenotes, Tulum y Carretera</span>
+              <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">Wayfar &amp; Basso</strong>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Nutrición e ingeniería italiana</span>
             </div>
           </div>
         </div>
@@ -152,18 +243,19 @@ const instagramPosts = [
     </div>
   </section>
 
-  <!-- Feed Social Interactivo de Instagram con Fotos Reales -->
+  <!-- Feed Social Interactivo con las Fotos Reales de Instagram -->
   <section style="padding: 3rem 0 5rem 0;">
     <div class="container">
       
       <!-- Interactive Filter Tabs -->
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
         <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;" id="insta-filters">
-          <button type="button" class="insta-tab active" data-tipo="todas">Todas las Publicaciones</button>
-          <button type="button" class="insta-tab" data-tipo="arribo">🚴 Nuevos Arribos</button>
-          <button type="button" class="insta-tab" data-tipo="entrega">⚡ Ventas & Ofertas</button>
-          <button type="button" class="insta-tab" data-tipo="taller">🔧 Taller Mecánico</button>
-          <button type="button" class="insta-tab" data-tipo="rodada">🌴 Rodadas del Caribe</button>
+          <button type="button" class="insta-tab active" data-tipo="todas">Todo el Feed ({instagramPosts.length})</button>
+          <button type="button" class="insta-tab" data-tipo="rodada">🌴 The Garage Ride</button>
+          <button type="button" class="insta-tab" data-tipo="evento">🏆 Clásica 7:30 &amp; Eventos</button>
+          <button type="button" class="insta-tab" data-tipo="arribo">🇮🇹 Basso Bikes</button>
+          <button type="button" class="insta-tab" data-tipo="taller">🔧 Taller &amp; Upgrades</button>
+          <button type="button" class="insta-tab" data-tipo="lifestyle">⚡ Wayfar &amp; Kits</button>
         </div>
 
         <a
@@ -177,7 +269,7 @@ const instagramPosts = [
         </a>
       </div>
 
-      <!-- Instagram Posts Grid con Fotos Reales -->
+      <!-- Instagram Posts Grid con las Fotos Reales del Perfil -->
       <div class="insta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
         {instagramPosts.map((post) => (
           <article
@@ -186,7 +278,7 @@ const instagramPosts = [
             style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;"
           >
             <!-- Card Header: User & Tag -->
-            <div style="padding: 0.9rem 1.25rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: #FAFAFA;">
+            <div style="padding: 0.85rem 1.15rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); background: #FAFAFA;">
               <div style="display: flex; align-items: center; gap: 0.65rem;">
                 <div style="width: 36px; height: 36px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid #E2E8F0;">
                   <img src="/img/the-garage-avatar.png" alt="Avatar The Garage" style="width: 100%; height: 100%; object-fit: cover;" />
@@ -201,8 +293,8 @@ const instagramPosts = [
               </span>
             </div>
 
-            <!-- Card Media Container con Fotografía Real -->
-            <div style="position: relative; aspect-ratio: 1/1; background: #F8FAFC; overflow: hidden;">
+            <!-- Card Media Container con Fotografía Real Extraída -->
+            <div style="position: relative; aspect-ratio: 1/1; background: #000000; overflow: hidden;">
               <img
                 src={post.imagen}
                 alt={post.titulo}
@@ -217,7 +309,7 @@ const instagramPosts = [
             </div>
 
             <!-- Card Body & Text -->
-            <div style="padding: 1.4rem; display: flex; flex-direction: column; flex: 1;">
+            <div style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.8rem; color: #64748B; font-weight: 700;">
                 <div style="display: flex; gap: 0.75rem;">
                   <span>❤️ {post.likes}</span>
@@ -226,11 +318,11 @@ const instagramPosts = [
                 <span>Playa del Carmen</span>
               </div>
 
-              <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary); font-size: 1.1rem; line-height: 1.3;">
+              <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary); font-size: 1.05rem; line-height: 1.35;">
                 {post.titulo}
               </h2>
 
-              <p style="font-size: 0.9rem; color: #475569; line-height: 1.55; margin-bottom: 1.25rem;">
+              <p style="font-size: 0.88rem; color: #475569; line-height: 1.55; margin-bottom: 1.15rem;">
                 {post.descripcion}
               </p>
 
@@ -246,7 +338,7 @@ const instagramPosts = [
               <!-- Action Bottom -->
               <div style="margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                 <a
-                  href={`https://wa.me/529841381493?text=Hola,%20vi%20la%20publicaci%C3%B3n%20de%20Instagram%20sobre%20${encodeURIComponent(post.titulo)}%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n.`}
+                  href={`https://wa.me/529841381493?text=Hola,%20vi%20la%20publicaci%C3%B3n%20en%20la%20web%20sobre%20${encodeURIComponent(post.titulo)}%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="btn btn-whatsapp"
@@ -275,39 +367,39 @@ const instagramPosts = [
             🚴 THE GARAGE RIDERS CLUB
           </div>
           <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.75rem;">
-            Beneficios exclusivos para ciclistas de The Garage:
+            Únete a la familia The Garage en Playa del Carmen:
           </h2>
           <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.6;">
-            Al adquirir tu bicicleta o realizar servicios en nuestro taller, formas parte de nuestra comunidad ciclista:
+            Salidas grupales todos los fines de semana, entrenamientos para la Clásica 7:30 XCO, soporte de mecánicos y precios especiales en Wayfar:
           </p>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
           <div style="background: rgba(255,255,255,0.06); padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid #334155;">
-            <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">🔧</div>
-            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">1er Mantenimiento Gratis</strong>
-            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Reajuste de chicotes, cadena y tornillería a los primeros 30 días de rodar.</p>
+            <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">🌴</div>
+            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">The Garage Ride</strong>
+            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Rodadas sabatinas hacia Cenotes, Tulum y Puerto Aventuras con barredora.</p>
           </div>
           <div style="background: rgba(255,255,255,0.06); padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid #334155;">
-            <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">💬</div>
-            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">Comunidad VIP WhatsApp</strong>
-            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Avisos de rodadas sabatinas, rutas seguras y clínicas mecánicas gratuitas.</p>
+            <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">🏆</div>
+            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">Clásica 7:30 XCO</strong>
+            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Inscripciones preferenciales y entrenamientos en el circuito técnico.</p>
           </div>
           <div style="background: rgba(255,255,255,0.06); padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid #334155;">
             <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">⚡</div>
-            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">Descuento en Wayfar & SRAM</strong>
-            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Precios especiales en hidratación, refacciones originales y upgrades.</p>
+            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">Descuento en Wayfar &amp; SRAM</strong>
+            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Electrolitos, geles, refacciones originales y upgrades en taller.</p>
           </div>
           <div style="background: rgba(255,255,255,0.06); padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid #334155;">
-            <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">🤝</div>
-            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">Garantía y Respaldo</strong>
-            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Gestión directa de garantías de cuadro y componentes en nuestro taller.</p>
+            <div style="font-size: 1.75rem; margin-bottom: 0.4rem;">🔧</div>
+            <strong style="color: #FFFFFF; font-size: 0.95rem; display: block;">1er Mantenimiento Gratis</strong>
+            <p style="color: #94A3B8; font-size: 0.8rem; margin-top: 0.25rem;">Reajuste y calibración de tornillería a los 30 días de rodar.</p>
           </div>
         </div>
 
         <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
           <a
-            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20a%20la%20comunidad%20de%20rodadas%20y%20conocer%20The%20Garage%20Riders."
+            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20a%20The%20Garage%20Ride%20y%20conocer%20las%20pr%C3%B3ximas%20fechas%20de%20rodadas."
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-whatsapp btn-lg"
