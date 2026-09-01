@@ -1,90 +1,91 @@
 ---
 const categorias = [
-  { id: 'todas', label: 'Todos' },
-  { id: 'MTB', label: 'MTB' },
-  { id: 'Ruta', label: 'Ruta' },
-  { id: 'Gravel', label: 'Gravel' },
+  { id: 'todas', label: 'Todos los Modelos' },
+  { id: 'MTB', label: 'MTB & Senderos' },
+  { id: 'Ruta', label: 'Ruta & Asfalto' },
+  { id: 'Gravel', label: 'Gravel Aventura' },
   { id: 'Urbana', label: 'Urbana' },
 ];
 ---
 
-<div class="filter-toolbar">
-  <div class="filter-scroll">
+<div class="filter-toolbar-container">
+  <div class="filter-scroll-wrapper">
     {categorias.map((cat, idx) => (
       <button
         type="button"
-        class={`filter-pill ${idx === 0 ? 'active' : ''}`}
+        class={`filter-tab-pill font-mono ${idx === 0 ? 'active' : ''}`}
         data-filter={cat.id}
       >
-        {cat.label}
+        <span>{cat.label}</span>
       </button>
     ))}
   </div>
 
-  <div class="filter-right-info" id="filter-count-label">
+  <div class="filter-count-indicator font-mono" id="filter-count-label">
     Mostrando todas las unidades
   </div>
 </div>
 
 <style>
-  .filter-toolbar {
+  .filter-toolbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
-    padding-bottom: 1.5rem;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
     border-bottom: 1px solid var(--border-hairline);
     flex-wrap: wrap;
+    width: 100%;
   }
 
-  .filter-scroll {
+  .filter-scroll-wrapper {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-2);
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  .filter-scroll::-webkit-scrollbar {
+  .filter-scroll-wrapper::-webkit-scrollbar {
     display: none;
   }
 
-  .filter-pill {
+  .filter-tab-pill {
     padding: 0.55rem 1.15rem;
     border-radius: var(--radius-full);
     border: 1px solid var(--border-hairline);
-    background: #FFFFFF;
+    background: var(--surface-card);
     color: var(--text-secondary);
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.18s var(--ease-spring);
-    letter-spacing: -0.01em;
+    transition: all 0.2s var(--ease-spring);
+    letter-spacing: 0.02em;
   }
 
-  .filter-pill:hover {
-    border-color: var(--border-hairline-hover);
+  .filter-tab-pill:hover {
+    border-color: rgba(255, 255, 255, 0.3);
     color: var(--text-primary);
-    background: var(--surface-subtle);
+    background: var(--surface-elevated);
   }
 
-  .filter-pill.active {
-    background: var(--text-primary);
-    color: #FFFFFF;
-    border-color: var(--text-primary);
+  .filter-tab-pill.active {
+    background: #FFFFFF;
+    color: #09090B;
+    border-color: #FFFFFF;
   }
 
-  .filter-right-info {
-    font-size: 0.82rem;
-    font-weight: 500;
+  .filter-count-indicator {
+    font-size: 0.8rem;
+    font-weight: 600;
     color: var(--text-muted);
   }
 </style>
 
 <script>
-  function initRecentFilters() {
-    const pills = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
-    const cards = document.querySelectorAll<HTMLElement>('.bici-grid .card-bici');
+  function initInventoryFilters() {
+    const pills = document.querySelectorAll<HTMLButtonElement>('.filter-tab-pill');
+    const cards = document.querySelectorAll<HTMLElement>('.bici-grid .card-bici-tile');
     const countLabel = document.getElementById('filter-count-label');
 
     pills.forEach((pill) => {
@@ -113,8 +114,8 @@ const categorias = [
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRecentFilters);
+    document.addEventListener('DOMContentLoaded', initInventoryFilters);
   } else {
-    initRecentFilters();
+    initInventoryFilters();
   }
 </script>

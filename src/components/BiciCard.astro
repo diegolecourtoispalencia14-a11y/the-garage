@@ -28,9 +28,9 @@ interface Props {
 const { bici, priority = false } = Astro.props;
 
 const statusStyles: Record<string, { label: string; dot: string; color: string; bg: string }> = {
-  Disponible: { label: 'Disponible', dot: '#22C55E', color: '#15803D', bg: '#F0FDF4' },
-  Apartada: { label: 'Apartada', dot: '#F59E0B', color: '#B45309', bg: '#FFFBEB' },
-  Vendida: { label: 'Vendida', dot: '#94A3B8', color: '#64748B', bg: '#F8FAFC' },
+  Disponible: { label: 'Disponible', dot: '#22C55E', color: '#09090B', bg: 'rgba(34, 197, 94, 0.95)' },
+  Apartada: { label: 'Apartada', dot: '#F59E0B', color: '#09090B', bg: 'rgba(245, 158, 11, 0.95)' },
+  Vendida: { label: 'Vendida', dot: '#71717A', color: '#F4F4F5', bg: 'rgba(63, 63, 70, 0.95)' },
 };
 
 const status = statusStyles[bici.disponibilidad] || statusStyles['Disponible'];
@@ -45,57 +45,56 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
 ---
 
 <article
-  class="card-bici"
+  class="card-bici-tile"
   data-categoria={bici.categoria}
   data-estado={bici.estado}
   data-disponibilidad={bici.disponibilidad}
 >
-  <!-- Card Visual Media Container -->
-  <a href={`/bici/${bici.id}`} class="media-container" title={`Ver ${bici.marca} ${bici.modelo}`}>
+  <!-- Card Visual Media Container with Fixed Aspect-Ratio -->
+  <a href={`/bici/${bici.id}`} class="card-media-wrap" title={`Ver ${bici.marca} ${bici.modelo}`}>
     <img
       src={bici.fotos[0]}
       alt={`${bici.marca} ${bici.modelo}`}
       loading={priority ? 'eager' : 'lazy'}
       decoding="async"
+      width="640"
+      height="480"
     />
     
     <!-- Minimalist Status Dot -->
-    <div class="status-indicator" style={`background: ${status.bg}; color: ${status.color}; border: 1px solid ${status.bg};`}>
+    <div class="card-status-pill font-mono" style={`background: ${status.bg}; color: ${status.color};`}>
       <span class="status-dot" style={`background: ${status.dot};`}></span>
       <span>{status.label}</span>
     </div>
 
-    <!-- Hover Glass Action -->
-    <div class="hover-overlay">
-      <span class="glass-action-btn">
-        Ver Ficha Técnica →
-      </span>
+    <div class="card-price-overlay font-mono">
+      {precioFormateado}
     </div>
   </a>
 
   <!-- Metadata Body -->
-  <div class="meta-container">
-    <div class="title-price-row">
-      <h2 class="bike-name">
-        <a href={`/bici/${bici.id}`}>{bici.marca} {bici.modelo}</a>
-      </h2>
-      <span class="bike-price">{precioFormateado}</span>
+  <div class="card-meta-wrap">
+    <div class="card-category-row font-mono">
+      <span>{bici.categoria} // TALLA {bici.talla}</span>
+      <span class="card-condition-label">{bici.estado}</span>
     </div>
 
-    <div class="details-row">
-      <span>{bici.categoria} • Talla {bici.talla}</span>
-      <span>{bici.specs.grupo}</span>
-    </div>
+    <h2 class="card-bike-name">
+      <a href={`/bici/${bici.id}`}>{bici.marca} {bici.modelo}</a>
+    </h2>
 
-    <!-- Direct WhatsApp Quick Action -->
-    <div class="card-footer-row">
+    <p class="card-specs-line">
+      {bici.specs.grupo} • {bici.specs.rodada} • Frenos {bici.specs.frenos}
+    </p>
+
+    <!-- Direct Actions -->
+    <div class="card-action-box">
       {bici.disponibilidad !== 'Vendida' ? (
         <a
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
-          class="btn btn-whatsapp"
-          style="width: 100%; padding: 0.6rem 1rem; font-size: 0.82rem;"
+          class="btn btn-whatsapp card-full-btn"
         >
           Apartar por WhatsApp
         </a>
@@ -104,8 +103,8 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
           href={`https://wa.me/529841381493?text=${encodeURIComponent(`Hola, vi que se vendió la ${bici.marca} ${bici.modelo}. ¿Tienen otra similar?`)}`}
           target="_blank"
           rel="noopener noreferrer"
-          class="btn btn-outline"
-          style="width: 100%; padding: 0.6rem 1rem; font-size: 0.82rem; color: var(--text-muted);"
+          class="btn btn-outline card-full-btn"
+          style="color: var(--text-muted);"
         >
           Pedir Bicicleta Similar
         </a>
@@ -115,42 +114,42 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
 </article>
 
 <style>
-  .card-bici {
-    background: #FFFFFF;
+  .card-bici-tile {
+    background: var(--surface-card);
     border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s var(--ease-spring), border-color 0.25s ease;
+    transition: transform 0.25s var(--ease-spring), border-color 0.25s ease, box-shadow 0.25s var(--ease-spring);
   }
 
-  .card-bici:hover {
+  .card-bici-tile:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
-    border-color: var(--border-hairline-hover);
+    border-color: var(--border-accent);
+    box-shadow: 0 16px 40px -12px rgba(225, 29, 72, 0.15);
   }
 
-  .media-container {
+  .card-media-wrap {
     position: relative;
-    aspect-ratio: 1.15 / 1;
-    background: var(--surface-subtle);
+    aspect-ratio: 16 / 11;
+    background: #09090B;
     overflow: hidden;
     display: block;
   }
 
-  .media-container img {
+  .card-media-wrap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s var(--ease-spring);
   }
 
-  .card-bici:hover .media-container img {
-    transform: scale(1.03);
+  .card-bici-tile:hover .card-media-wrap img {
+    transform: scale(1.04);
   }
 
-  .status-indicator {
+  .card-status-pill {
     position: absolute;
     top: 0.85rem;
     left: 0.85rem;
@@ -160,8 +159,7 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     padding: 0.25rem 0.65rem;
     border-radius: var(--radius-full);
     font-size: 0.7rem;
-    font-weight: 700;
-    backdrop-filter: blur(8px);
+    font-weight: 800;
   }
 
   .status-dot {
@@ -170,80 +168,69 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     border-radius: 50%;
   }
 
-  .hover-overlay {
+  .card-price-overlay {
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
-  .card-bici:hover .hover-overlay {
-    opacity: 1;
-  }
-
-  .glass-action-btn {
-    background: rgba(255, 255, 255, 0.95);
+    bottom: 0.85rem;
+    right: 0.85rem;
+    background: rgba(9, 9, 11, 0.85);
+    backdrop-filter: blur(10px);
     color: var(--text-primary);
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.55rem 1.15rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
     border-radius: var(--radius-full);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .meta-container {
-    padding: 1.25rem 1.25rem 1.4rem 1.25rem;
+  .card-meta-wrap {
+    padding: var(--space-4);
     display: flex;
     flex-direction: column;
     flex: 1;
   }
 
-  .title-price-row {
+  .card-category-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 0.75rem;
-    margin-bottom: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-1);
   }
 
-  .bike-name {
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.015em;
+  .card-condition-label {
+    color: var(--text-secondary);
   }
 
-  .bike-name a {
+  .card-bike-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: var(--space-1);
+  }
+
+  .card-bike-name a {
     color: var(--text-primary);
     text-decoration: none;
     transition: color 0.15s ease;
   }
-
-  .bike-name a:hover {
-    color: var(--brand-red);
+  .card-bike-name a:hover {
+    color: #FB7185;
   }
 
-  .bike-price {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-  }
-
-  .details-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
+  .card-specs-line {
+    font-size: 0.85rem;
     color: var(--text-secondary);
-    margin-bottom: 1.25rem;
+    margin-bottom: var(--space-4);
   }
 
-  .card-footer-row {
+  .card-action-box {
     margin-top: auto;
+  }
+
+  .card-full-btn {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
   }
 </style>

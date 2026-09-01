@@ -1,7 +1,6 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import BotonFlotante from '../components/BotonFlotante.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -9,22 +8,24 @@ interface Props {
   description?: string;
   image?: string;
   canonicalURL?: string;
+  tipo?: string;
 }
 
 const {
-  title = "The Garage | Tienda de Bicicletas en Playa del Carmen • Catálogo e Inventario",
-  description = "Catálogo de bicicletas disponibles en Playa del Carmen. Modelos MTB, Ruta y Urbanas con apartado y entrega en Tulum, Puerto Aventuras, Cancún y toda la Riviera Maya. Consulta por WhatsApp.",
-  image = "/img/the-garage-logo.svg",
+  title = "The Garage • Bike Experts | Boutique Ciclista & Taller en Playa del Carmen",
+  description = "Distribuidor oficial Basso Bikes Italia en Playa del Carmen. Taller certificado SRAM/Shimano, nutrición Wayfar, rodadas The Garage Ride y catálogo de bicicletas.",
+  image = "/img/the-garage-logo-white.png",
   canonicalURL = Astro.url.href,
+  tipo = "website",
 } = Astro.props;
 
-const siteUrl = "https://thegarageplaya.pages.dev";
-const fullImageUrl = new URL(image, siteUrl).href;
+const siteUrl = "https://the-garage-dw4.pages.dev";
+const fullImageUrl = image.startsWith('http') ? image : new URL(image, siteUrl).href;
 
 const schemaLocalBusiness = {
   "@context": "https://schema.org",
   "@type": "BikeStore",
-  "name": "The Garage Bicicletas",
+  "name": "The Garage Bike Experts",
   "image": fullImageUrl,
   "telephone": "+52-984-138-1493",
   "url": siteUrl,
@@ -56,14 +57,7 @@ const schemaLocalBusiness = {
     }
   ],
   "priceRange": "$$",
-  "areaServed": [
-    "Playa del Carmen",
-    "Tulum",
-    "Puerto Aventuras",
-    "Akumal",
-    "Cancún",
-    "Valladolid"
-  ]
+  "areaServed": ["Playa del Carmen", "Tulum", "Puerto Aventuras", "Cancún", "Riviera Maya"]
 };
 ---
 
@@ -71,20 +65,20 @@ const schemaLocalBusiness = {
 <html lang="es-MX">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content={tipo} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={fullImageUrl} />
     <meta property="og:locale" content="es_MX" />
-    <meta property="og:site_name" content="The Garage Bicicletas" />
+    <meta property="og:site_name" content="The Garage Bike Experts" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -97,10 +91,7 @@ const schemaLocalBusiness = {
   </head>
   <body>
     <Header />
-    <main>
-      <slot />
-    </main>
+    <slot />
     <Footer />
-    <BotonFlotante />
   </body>
 </html>

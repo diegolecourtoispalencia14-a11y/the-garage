@@ -25,68 +25,59 @@ const bicis = bicisEntries
   title="Catálogo & Inventario Oficial | The Garage Playa del Carmen"
   description="Inventario de bicicletas nuevas, seminuevas y custom builds disponibles en tienda física en Playa del Carmen. Distribuidores Basso, Merida, Giant, Specialized y Trek."
 >
-  <!-- Header de Catálogo -->
-  <section style="padding: 4rem 0 2.5rem 0; border-bottom: 1px solid var(--border-hairline); background: var(--surface-base);">
-    <div class="container">
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem;">
-        <div style="max-width: 680px;">
-          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.85rem;">
-            <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-red);">
-              INVENTARIO EN TIENDA FÍSICA
-            </span>
-            <span style="color: var(--border-hairline);">•</span>
-            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
-              CATALUÑA CASA 19, PDC
-            </span>
+  <div class="inventory-page-wrap">
+    <div class="container-fluid">
+      
+      <!-- Header de Catálogo -->
+      <section class="inventory-header-section">
+        <div class="inventory-header-content">
+          <div class="inventory-badges font-mono">
+            <span class="inv-tag-red">[INVENTARIO FÍSICO EN TIENDA]</span>
+            <span class="inv-tag-loc">CATALUÑA CASA 19, PDC</span>
           </div>
-          <h1 class="title-xl" style="margin-bottom: 0.75rem;">
+          <h1 class="title-xl inventory-main-title">
             Bicicletas Listas para Rodar.
           </h1>
-          <p class="subtitle" style="font-size: 1.05rem; line-height: 1.6;">
-            Todas nuestras unidades incluyen <strong>inspección mecánica certificada</strong>, ajuste de tornillería con torquímetro y <strong>1er servicio de reajuste gratis a los 30 días</strong>.
+          <p class="subtitle inventory-subtitle">
+            Unidades inspeccionadas con torquímetro mecánico en taller, calibración de transmisión certificada y <strong>1er servicio de reajuste gratis a los 30 días</strong>.
           </p>
         </div>
 
         <a
-          href="https://wa.me/529841381493?text=Hola,%20busco%20una%20bicicleta%20espec%C3%ADfica.%20%C2%BFMe%20pueden%20asesorar?"
+          href="https://wa.me/529841381493?text=Hola,%20busco%20una%20bicicleta%20espec%C3%ADfica%20del%20cat%C3%A1logo.%20%C2%BFMe%20pueden%20asesorar?"
           target="_blank"
           rel="noopener noreferrer"
           class="btn btn-whatsapp"
-          style="padding: 0.75rem 1.5rem; font-size: 0.88rem;"
         >
-          Asesoría Personalizada por WhatsApp
+          <span>Asesoría Directa por WhatsApp</span>
         </a>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- Filtros & Grilla de Productos -->
-  <section style="padding: 3rem 0 6rem 0; background: var(--surface-subtle);">
-    <div class="container">
-      
       <!-- Toolbar de Filtros -->
-      <div style="margin-bottom: 2.5rem;">
+      <section class="inventory-toolbar-section">
         <Filtros />
-      </div>
+      </section>
 
       <!-- Grilla de Bicicletas -->
-      <div class="bici-grid">
-        {bicis.map((bici, index) => (
-          <BiciCard bici={bici} priority={index === 0} />
-        ))}
-      </div>
+      <section class="inventory-grid-section">
+        <div class="bici-grid">
+          {bicis.map((bici, index) => (
+            <BiciCard bici={bici} priority={index === 0} />
+          ))}
+        </div>
+      </section>
 
-      <!-- Banner de Pedido Especial / Basso Custom -->
-      <div style="margin-top: 5rem; background: linear-gradient(135deg, #09090B 0%, #18181B 100%); border: 1px solid #27272A; border-radius: var(--radius-lg); padding: 3.5rem 3rem; color: #FFFFFF; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
-        <div style="max-width: 620px;">
-          <span style="font-size: 0.75rem; font-weight: 800; color: #FB7185; letter-spacing: 0.08em; display: block; margin-bottom: 0.5rem;">
-            🇮🇹 BASSO BIKES ITALIA • CONFIGURACIÓN A MEDIDA
+      <!-- Custom Build Basso Callout -->
+      <section class="basso-custom-banner">
+        <div class="basso-custom-content">
+          <span class="font-mono text-xs text-rose-400 font-bold uppercase tracking-wider">
+            [BASSO BIKES ITALIA // CUSTOM BUILD]
           </span>
-          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">
-            ¿Buscas un cuadro o modelo específico?
+          <h2 class="title-lg" style="color: #FFFFFF; margin: 0.5rem 0;">
+            ¿Buscas un cuadro o ensamble específico?
           </h2>
-          <p style="color: #A1A1AA; font-size: 0.95rem; line-height: 1.6;">
-            Como distribuidores oficiales de Basso Bikes, podemos cotizar e importar tu cuadro de carbono italiano con la transmisión SRAM/Shimano y ruedas de tu preferencia.
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; max-width: 680px;">
+            Como distribuidores oficiales de Basso Bikes, podemos cotizar e importar tu cuadro de carbono italiano Torayca con el grupo electrónico SRAM AXS/Shimano Di2 y ruedas a tu medida.
           </p>
         </div>
 
@@ -94,13 +85,78 @@ const bicis = bicisEntries
           href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20cotizar%20un%20cuadro%20o%20ensamble%20personalizado%20de%20Basso%20Bikes."
           target="_blank"
           rel="noopener noreferrer"
-          class="btn btn-whatsapp"
-          style="padding: 0.85rem 1.75rem; font-size: 0.92rem;"
+          class="btn btn-primary"
         >
-          Cotizar Ensamble a Medida
+          Cotizar Ensamble a Medida ↗
         </a>
-      </div>
+      </section>
 
     </div>
-  </section>
+  </div>
 </Base>
+
+<style>
+  .inventory-page-wrap {
+    padding: var(--space-6) 0 var(--space-9) 0;
+  }
+
+  .inventory-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: var(--space-6);
+  }
+
+  .inventory-header-content {
+    max-width: 780px;
+  }
+
+  .inventory-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: 0.72rem;
+  }
+
+  .inv-tag-red {
+    color: #FB7185;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .inv-tag-loc {
+    color: var(--text-muted);
+  }
+
+  .inventory-main-title {
+    margin-bottom: var(--space-2);
+  }
+
+  .inventory-subtitle {
+    max-width: 680px;
+  }
+
+  .inventory-toolbar-section {
+    margin-bottom: var(--space-6);
+  }
+
+  .inventory-grid-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .basso-custom-banner {
+    background: linear-gradient(135deg, #18181C 0%, #101013 100%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-xl);
+    padding: clamp(2rem, 4vw, 3.5rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+  }
+</style>
