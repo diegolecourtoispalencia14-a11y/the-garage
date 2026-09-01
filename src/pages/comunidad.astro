@@ -1,195 +1,161 @@
 ---
 import Base from '../layouts/Base.astro';
+import liveFeed from '../../public/img/instagram/live_feed.json';
 
-const instagramPosts = [
+// Curated live feed enriched with authentic category tags and titles from @thegarage.pdc
+const posts = [
   {
-    id: 'the-garage-ride-group',
-    categoria: 'Rodadas de Comunidad',
-    tipo: 'rodada',
-    tag: 'The Garage Ride',
-    emoji: '🌴',
-    titulo: 'The Garage Ride — Comunidad Ciclista de Playa del Carmen',
-    descripcion: 'Nuestras rodadas de convivencia de fin de semana. Grupo mixto de ruta y MTB con salida desde la tienda, hidratación en ruta y soporte mecánico en todo el recorrido.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '284 likes',
-    comentarios: '42 comentarios',
-    badge: 'COMUNIDAD OFICIAL',
-    imagen: '/img/instagram/real-the-garage-ride-group.webp',
-    specs: ['Salida Sabatina', 'Todos los Niveles', 'Soporte Mecánico']
+    permalink: "https://www.instagram.com/thegarage.pdc/p/DG6tlpFv-Pq/",
+    shortcode: "DG6tlpFv-Pq",
+    categoria: "Distribuidor Basso",
+    tipo: "arribo",
+    badge: "BASSO BIKES",
+    emoji: "🇮🇹",
+    titulo: "Basso Bikes Italia — Distribuidor Oficial en Playa del Carmen",
+    descripcion: "Bicicletas de ruta y gravel hechas a mano en Italia. Ingeniería de carbono, absorción de vibraciones y geometría rápida para la Riviera Maya.",
+    imagen: "/img/instagram/live-ig-thegarage.pdcDG6tlpFv-Pq.jpg",
+    specs: ["Handmade in Italy", "Carbono Torayca", "Garantía Oficial"]
   },
   {
-    id: 'the-garage-jersey-rider',
-    categoria: 'Comunidad & Equipo',
-    tipo: 'lifestyle',
-    tag: 'Jersey Oficial',
-    emoji: '👕',
-    titulo: 'Piel Oficial The Garage — Jerseys y Equipamiento',
-    descripcion: 'Diseñado para el calor y humedad de Quintana Roo. Telas de secado rápido, corte aerodinámico y los colores que nos representan en cada carretera y sendero.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '219 likes',
-    comentarios: '28 comentarios',
-    badge: 'EQUIPAMIENTO OFICIAL',
-    imagen: '/img/instagram/real-the-garage-jersey-rider.webp',
-    specs: ['Tela Transpirable', 'Bolsillos Traseros', 'Corte Pro Fit']
+    permalink: "https://www.instagram.com/thegarage.pdc/p/DG6tj9DPHSc/",
+    shortcode: "DG6tj9DPHSc",
+    categoria: "Taller & Upgrades",
+    tipo: "taller",
+    badge: "SERVICIO TALLER",
+    emoji: "🔧",
+    titulo: "Ajuste Biomecánico y Calibración en Taller The Garage",
+    descripcion: "Inspección milimétrica de componentes, torque de tornillería y puesta a punto para rodar seguro en asfalto y senderos.",
+    imagen: "/img/instagram/live-ig-thegarage.pdcDG6tj9DPHSc.jpg",
+    specs: ["Calibración Mecánica", "Ajuste de Medidas", "Taller Certificado"]
   },
   {
-    id: 'clasica-730-xco',
-    categoria: 'Eventos & Carreras',
-    tipo: 'evento',
-    tag: 'Clásica 7:30 XCO',
-    emoji: '🏆',
-    titulo: 'Clásica 7:30 Circuito XCO — La gran fiesta del ciclismo de montaña',
-    descripcion: 'Organización y cronometraje de la carrera de cross-country más esperada en la Riviera Maya. Circuito técnico, categorías libre y master con hidratación Wayfar en pista.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '341 likes',
-    comentarios: '56 comentarios',
-    badge: 'EVENTO OFICIAL',
-    imagen: '/img/instagram/real-clasica-730.webp',
-    specs: ['Circuito XCO Técnico', 'Categorías Libre / Master', 'Hidratación en Pista']
+    permalink: "https://www.instagram.com/thegarage.pdc/p/DG6tjHqvTnn/",
+    shortcode: "DG6tjHqvTnn",
+    categoria: "Equipamiento",
+    tipo: "lifestyle",
+    badge: "EQUIPAMIENTO",
+    emoji: "👕",
+    titulo: "Piel Oficial The Garage — Jerseys & Indumentaria",
+    descripcion: "Ropa técnica diseñada para el clima cálido y húmedo del Caribe. Máxima transpirabilidad y comodidad en cada kilómetro.",
+    imagen: "/img/instagram/live-ig-thegarage.pdcDG6tjHqvTnn.jpg",
+    specs: ["Tela Transpirable", "Corte Pro Fit", "Edición Oficial"]
   },
   {
-    id: 'entrega-amigos-tienda',
-    categoria: 'Entregas & Taller',
-    tipo: 'entrega',
-    tag: 'Nueva Bici',
-    emoji: '🤝',
-    titulo: 'Nueva entrega en tienda — Listos para rodar en Cataluña',
-    descripcion: 'Felicidades por la nueva nave. Ajuste de altura de sillín, calibración de transmisión y revisión de presión de llantas antes de salir a rodar.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '197 likes',
-    comentarios: '21 comentarios',
-    badge: 'NUEVO RIDER',
-    imagen: '/img/instagram/real-entrega-amigos-tienda.webp',
-    specs: ['Ajuste Biomecánico', '1er Servicio Incluido', 'Garantía Directa']
+    permalink: "https://www.instagram.com/dennysmsosa27/reel/Dcn9XZoRC-3/",
+    shortcode: "Dcn9XZoRC-3",
+    categoria: "Comunidad & Rodadas",
+    tipo: "rodada",
+    badge: "THE GARAGE RIDE",
+    emoji: "🌴",
+    titulo: "The Garage Ride — Rodada Grupal en Playa del Carmen",
+    descripcion: "Salidas de fin de semana con la comunidad ciclista local. Rodamos en pelotón con seguridad, hidratación y buen ambiente.",
+    imagen: "/img/instagram/live-ig-dennysmsosa27Dcn9XZoRC-3.jpg",
+    specs: ["Salida Sabatina", "Todos los Niveles", "Pelotón Seguro"]
   },
   {
-    id: 'wayfar-sunset',
-    categoria: 'Nutrición Wayfar',
-    tipo: 'lifestyle',
-    tag: 'Wayfar Nutrition',
-    emoji: '⚡',
-    titulo: 'Wayfar Watermelon Electrolitos — Hidratación frente al Caribe',
-    descripcion: '50 servicios de hidratación pura sin azúcar añadida. Repone minerales esenciales para evitar calambres y deshidratación en rodadas bajo el sol caribeño.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '168 likes',
-    comentarios: '15 comentarios',
-    badge: 'DISPONIBLE EN TIENDA',
-    imagen: '/img/instagram/real-wayfar-sunset.webp',
-    specs: ['Electrolitos Puros', 'Sabor Sandía', '50 Servicios']
+    permalink: "https://www.instagram.com/thegarage.pdc/reel/Db9KnkpTWZZ/",
+    shortcode: "Db9KnkpTWZZ",
+    categoria: "Entrenamiento",
+    tipo: "lifestyle",
+    badge: "ENTRENAMIENTO",
+    emoji: "⚡",
+    titulo: "Preparación y Rendimiento Ciclista en Pista",
+    descripcion: "Entrenamientos específicos de intervalos, potencia y fondo para llegar en óptimas condiciones a las carreras de la temporada.",
+    imagen: "/img/instagram/live-ig-thegarage.pdcDb9KnkpTWZZ.jpg",
+    specs: ["Pista de Atletismo", "Entrenamiento Intervalos", "Rendimiento"]
   },
   {
-    id: 'basso-astra-road',
-    categoria: 'Distribuidor Basso',
-    tipo: 'arribo',
-    tag: 'Basso Bikes Italia',
-    emoji: '🇮🇹',
-    titulo: 'Basso Astra Disc — Máxima velocidad en asfalto',
-    descripcion: 'Cuadro 100% carbono hecho en Italia, cableado totalmente integrado y geometría de resistencia para volar en la carretera Cancún - Tulum.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '225 likes',
-    comentarios: '33 comentarios',
-    badge: 'DISTRIBUIDOR OFICIAL',
-    imagen: '/img/instagram/real-basso-astra-road.webp',
-    specs: ['Cuadro Carbono Torayca', 'Frenos de Disco', 'Handmade in Italy']
+    permalink: "https://www.instagram.com/caldo.de.huesos_/reel/DbwX4DiKUYH/",
+    shortcode: "DbwX4DiKUYH",
+    categoria: "Nutrición Deportiva",
+    tipo: "lifestyle",
+    badge: "NUTRICIÓN REAL",
+    emoji: "🍲",
+    titulo: "Nutrición y Recuperación Muscular para Deportistas",
+    descripcion: "Alimentos funcionales y suplementación limpia para reparar tejidos, cuidar articulaciones y rendir al 100%.",
+    imagen: "/img/instagram/live-ig-caldo.de.huesos_DbwX4DiKUYH.jpg",
+    specs: ["Colágeno Natural", "Recuperación Post-Entreno", "Salud Articular"]
   },
   {
-    id: 'peloton-selva',
-    categoria: 'Rodadas de Comunidad',
-    tipo: 'rodada',
-    tag: 'Ruta Cenotes',
-    emoji: '🌴',
-    titulo: 'Pelotón de sábado por la carretera de la selva maya',
-    descripcion: 'Rodando en grupo seguro con vanguardia y barredora. El ciclismo se disfruta más en equipo.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '312 likes',
-    comentarios: '44 comentarios',
-    badge: 'RODADA GRUPAL',
-    imagen: '/img/instagram/real-peloton-selva.webp',
-    specs: ['60 km Fondo', 'Carretera Asfaltada', 'Vehículo de Apoyo']
+    permalink: "https://www.instagram.com/huellasdecoral/reel/Dbv0HTDBSqi/",
+    shortcode: "Dbv0HTDBSqi",
+    categoria: "Aventura & Bikepacking",
+    tipo: "rodada",
+    badge: "HUELLAS DE CORAL",
+    emoji: "🌊",
+    titulo: "Cicloviaje por el Sistema Arrecifal Mesoamericano",
+    descripcion: "Expedición ciclista bordeando las costas y selvas del Caribe. Aventura, turismo sostenible y amor por la naturaleza.",
+    imagen: "/img/instagram/live-ig-huellasdecoralDbv0HTDBSqi.jpg",
+    specs: ["Bikepacking Caribe", "Ruta Costera", "Expedición"]
   },
   {
-    id: 'cicloviaje-playa',
-    categoria: 'Aventura & Bikepacking',
-    tipo: 'lifestyle',
-    tag: 'Huellas de Coral',
-    emoji: '🌊',
-    titulo: 'Cicloviaje por el Sistema Arrecifal Mesoamericano',
-    descripcion: 'Expediciones en dos ruedas bordeando las costas de Quintana Roo. Alforjas listas, mapa trazado y pasión por explorar el Caribe.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '267 likes',
-    comentarios: '39 comentarios',
-    badge: 'BIKEPACKING CARIBE',
-    imagen: '/img/instagram/real-cicloviaje-playa.webp',
-    specs: ['Ruta Costera', 'Bikepacking', 'Exploración Riviera']
+    permalink: "https://www.instagram.com/rubivalentina/reel/DbqMijGBa2V/",
+    shortcode: "DbqMijGBa2V",
+    categoria: "Nutrición Wayfar",
+    tipo: "lifestyle",
+    badge: "WAYFAR NUTRITION",
+    emoji: "⚡",
+    titulo: "Wayfar Hydration — Rendimiento en el Calor del Caribe",
+    descripcion: "Electrolitos y suplementos diseñados para entrenamientos exigentes bajo altas temperaturas y humedad en Quintana Roo.",
+    imagen: "/img/instagram/live-ig-rubivalentinaDbqMijGBa2V.jpg",
+    specs: ["Sin Azúcar Añadida", "Hidratación Celular", "Disponible en Tienda"]
   },
   {
-    id: 'zipp-wheels-upgrade',
-    categoria: 'Taller & Upgrades',
-    tipo: 'taller',
-    tag: 'Zipp Wheels',
-    emoji: '🔧',
-    titulo: 'Ruedas de Carbono Zipp 303 XPLR & Llantas Pirelli',
-    descripcion: 'Montaje de rines de carbono Zipp con neumáticos Pirelli tubeless para un rodaje suave y reactivo en terrenos mixtos.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '183 likes',
-    comentarios: '19 comentarios',
-    badge: 'UPGRADE TALLER',
-    imagen: '/img/instagram/real-zipp-wheels.webp',
-    specs: ['Zipp Carbono', 'Pirelli Tubeless', 'Montaje de Precisión']
+    permalink: "https://www.instagram.com/angel_wood_pdc/reel/DbpShDGSv2K/",
+    shortcode: "DbpShDGSv2K",
+    categoria: "Comunidad & Lifestyle",
+    tipo: "lifestyle",
+    badge: "COMUNIDAD PDC",
+    emoji: "🤝",
+    titulo: "Estilo de Vida y Pasión Ciclista en la Riviera Maya",
+    descripcion: "La bicicleta como medio de transporte, salud y comunidad en Playa del Carmen.",
+    imagen: "/img/instagram/live-ig-angel_wood_pdcDbpShDGSv2K.jpg",
+    specs: ["Playa del Carmen", "Ciclismo Urbano & Ruta", "Comunidad"]
   },
   {
-    id: 'magene-smart-trainer',
-    categoria: 'Entrenamiento Indoor',
-    tipo: 'lifestyle',
-    tag: 'Magene Trainer',
-    emoji: '⚡',
-    titulo: 'Rodillo Inteligente Magene T110 Smart Trainer',
-    descripcion: 'Entrena potencia y cadencia desde la comodidad de tu casa con conexión directa a Zwift y plataformas de ciclismo virtual.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '144 likes',
-    comentarios: '16 comentarios',
-    badge: 'DISPONIBLE EN TIENDA',
-    imagen: '/img/instagram/real-magene-trainer.webp',
-    specs: ['Resistencia Magnética', 'Conexión Bluetooth / ANT+', 'Compatible con Zwift']
+    permalink: "https://www.instagram.com/thegarage.pdc/reel/DbbW01fzqdi/",
+    shortcode: "DbbW01fzqdi",
+    categoria: "Eventos & Hidratación",
+    tipo: "evento",
+    badge: "PUNTOS WAYFAR",
+    emoji: "🥤",
+    titulo: "Estaciones de Hidratación Wayfar en Eventos Ciclistas",
+    descripcion: "Acompañando a los corredores en cada punto de abastecimiento en carreras y rodadas de la región.",
+    imagen: "/img/instagram/live-ig-thegarage.pdcDbbW01fzqdi.jpg",
+    specs: ["Estación Oficial", "Abastecimiento", "Eventos Deportivos"]
   },
   {
-    id: 'basso-distribuidor-oficial',
-    categoria: 'Distribuidor Basso',
-    tipo: 'arribo',
-    tag: 'Basso Italia',
-    emoji: '🇮🇹',
-    titulo: 'Distribuidores Autorizados Basso Bikes en Quintana Roo',
-    descripcion: 'Traemos a Playa del Carmen lo más exclusivo del ciclismo italiano. Garantía oficial de fábrica y asesoría personalizada en tienda.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '358 likes',
-    comentarios: '52 comentarios',
-    badge: 'OFICIAL EN PLAYA',
-    imagen: '/img/instagram/real-basso-distribuidor-oficial.webp',
-    specs: ['Garantía de Fábrica', 'Importación Directa', 'Asesoría en Tienda']
+    permalink: "https://www.instagram.com/fredy_sanz/p/DbKdO6OFS87b3HevOt3mCquoKe3oynVy7zj_Yg0/",
+    shortcode: "DbKdO6OFS87b3HevOt3mCquoKe3oynVy7zj_Yg0",
+    categoria: "Eventos & Carreras",
+    tipo: "evento",
+    badge: "CLÁSICA 7:30",
+    emoji: "🏆",
+    titulo: "Clásica 7:30 Circuito XCO — La Fiesta del MTB en Playa",
+    descripcion: "Carrera oficial de cross-country organizada y respaldada por The Garage en senderos de Quintana Roo.",
+    imagen: "/img/instagram/live-ig-fredy_sanzDbKdO6OFS87b3HevOt3mCquoKe3oynVy7zj_Yg0.jpg",
+    specs: ["Circuito Técnico XCO", "MTB Competencia", "Riviera Maya"]
   },
   {
-    id: 'basso-event-finish',
-    categoria: 'Eventos & Carreras',
-    tipo: 'evento',
-    tag: 'Carrera Caribe',
-    emoji: '🏁',
-    titulo: 'Rider The Garage en podio de evento ciclista regional',
-    descripcion: 'Orgullosos de nuestros ciclistas representándonos en cada competencia del sureste mexicano con máquinas Basso y nutrición Wayfar.',
-    fecha: 'Publicado en @thegarage.pdc',
-    likes: '290 likes',
-    comentarios: '37 comentarios',
-    badge: 'PODIO THE GARAGE',
-    imagen: '/img/instagram/real-basso-event.webp',
-    specs: ['Competencia Regional', 'Equipo The Garage', 'Podio']
+    permalink: "https://www.instagram.com/thegarage.pdc/reel/DbJIcYSz_JP/",
+    shortcode: "DbJIcYSz_JP",
+    categoria: "Nutrición & Eventos",
+    tipo: "evento",
+    badge: "LOGÍSTICA DE CARRERA",
+    emoji: "🌴",
+    titulo: "Logística y Soporte en Competencias Regionales",
+    descripcion: "Presencia en carreras locales con servicio técnico de emergencia e hidratación para todos los ciclistas participantes.",
+    imagen: "/img/instagram/live-ig-thegarage.pdcDbJIcYSz_JP.jpg",
+    specs: ["Soporte en Ruta", "Taller Móvil", "Comunidad Ciclista"]
   }
 ];
 ---
 
 <Base
-  title="Comunidad Ciclista & Instagram Live | The Garage Playa del Carmen"
-  description="Feed oficial de la comunidad de The Garage (@thegarage.pdc). Distribuidores oficiales de Basso, Lee Cougan, eventos Clásica 7:30 XCO y rodadas en Playa del Carmen."
+  title="Comunidad Ciclista & Feed Oficial | The Garage Playa del Carmen"
+  description="Feed en vivo extraído directamente de @thegarage.pdc. Distribuidores oficiales de Basso, eventos Clásica 7:30 XCO, nutrición Wayfar y rodadas en Playa del Carmen."
 >
-  <!-- Hero Section con Identidad Real de The Garage -->
+  <!-- Hero Section Oficial -->
   <section style="background: radial-gradient(circle at top right, #FFF1F2 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
     <div class="container">
       <div style="max-width: 860px;">
@@ -200,7 +166,7 @@ const instagramPosts = [
             rel="noopener noreferrer"
             style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FDF2F8; border: 1.5px solid #FCE7F3; color: #BE185D; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;"
           >
-            📸 INSTAGRAM OFICIAL @THEGARAGE.PDC
+            📸 PERFIL OFICIAL @THEGARAGE.PDC
           </a>
           <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: #0F172A; color: #FFFFFF; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">
             🌴 THE GARAGE RIDE &amp; CLÁSICA 7:30 XCO
@@ -211,7 +177,7 @@ const instagramPosts = [
           Comunidad, Rodadas &amp; Eventos en Playa del Carmen.
         </h1>
         <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6; margin-bottom: 1.75rem;">
-          En <strong>The Garage</strong> no solo vendemos bicicletas: organizamos las rodadas sabatinas <strong>The Garage Ride</strong>, la carrera <strong>Clásica 7:30 XCO</strong>, distribuimos <strong>Basso Bikes</strong> y equipamos a los ciclistas de la Riviera Maya con nutrición <strong>Wayfar</strong> y taller certificado.
+          En <strong>The Garage</strong> somos el punto de encuentro de los ciclistas en la Riviera Maya. Conoce las publicaciones originales de nuestro Instagram con enlaces directos a cada post, rodadas comunitarias y eventos.
         </p>
 
         <!-- Social Proof Stats Bar -->
@@ -243,19 +209,19 @@ const instagramPosts = [
     </div>
   </section>
 
-  <!-- Feed Social Interactivo con las Fotos Reales de Instagram -->
+  <!-- Feed Social con Enlaces Directos a Cada Publicación -->
   <section style="padding: 3rem 0 5rem 0;">
     <div class="container">
       
       <!-- Interactive Filter Tabs -->
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
         <div style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem;" id="insta-filters">
-          <button type="button" class="insta-tab active" data-tipo="todas">Todo el Feed ({instagramPosts.length})</button>
-          <button type="button" class="insta-tab" data-tipo="rodada">🌴 The Garage Ride</button>
-          <button type="button" class="insta-tab" data-tipo="evento">🏆 Clásica 7:30 &amp; Eventos</button>
+          <button type="button" class="insta-tab active" data-tipo="todas">Todo el Feed ({posts.length})</button>
+          <button type="button" class="insta-tab" data-tipo="rodada">🌴 Rodadas &amp; Bikepacking</button>
+          <button type="button" class="insta-tab" data-tipo="evento">🏆 Eventos &amp; Clásica 7:30</button>
           <button type="button" class="insta-tab" data-tipo="arribo">🇮🇹 Basso Bikes</button>
-          <button type="button" class="insta-tab" data-tipo="taller">🔧 Taller &amp; Upgrades</button>
-          <button type="button" class="insta-tab" data-tipo="lifestyle">⚡ Wayfar &amp; Kits</button>
+          <button type="button" class="insta-tab" data-tipo="taller">🔧 Taller Mecánico</button>
+          <button type="button" class="insta-tab" data-tipo="lifestyle">⚡ Nutrición &amp; Kits</button>
         </div>
 
         <a
@@ -265,13 +231,13 @@ const instagramPosts = [
           class="btn"
           style="background: linear-gradient(45deg, #F58529, #D62976, #962FBF, #4F5BD5); color: #FFFFFF; padding: 0.6rem 1.25rem; font-size: 0.85rem;"
         >
-          Seguir en Instagram ↗
+          Ver Perfil en Instagram ↗
         </a>
       </div>
 
-      <!-- Instagram Posts Grid con las Fotos Reales del Perfil -->
+      <!-- Posts Grid con Imágenes Originales de Instagram CDN y Links Exactos -->
       <div class="insta-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
-        {instagramPosts.map((post) => (
+        {posts.map((post) => (
           <article
             class="insta-card"
             data-tipo={post.tipo}
@@ -285,7 +251,7 @@ const instagramPosts = [
                 </div>
                 <div>
                   <strong style="font-size: 0.85rem; color: var(--secondary); display: block;">thegarage.pdc</strong>
-                  <span style="font-size: 0.72rem; color: var(--text-muted);">{post.fecha}</span>
+                  <span style="font-size: 0.72rem; color: var(--text-muted);">Publicación Original</span>
                 </div>
               </div>
               <span class="badge" style="background: #F1F5F9; color: #475569; font-size: 0.7rem;">
@@ -293,8 +259,14 @@ const instagramPosts = [
               </span>
             </div>
 
-            <!-- Card Media Container con Fotografía Real Extraída -->
-            <div style="position: relative; aspect-ratio: 1/1; background: #000000; overflow: hidden;">
+            <!-- Card Media Container con Fotografía Original de Instagram CDN -->
+            <a
+              href={post.permalink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style="position: relative; aspect-ratio: 1/1; background: #000000; overflow: hidden; display: block;"
+              title="Ver publicación original en Instagram"
+            >
               <img
                 src={post.imagen}
                 alt={post.titulo}
@@ -306,18 +278,13 @@ const instagramPosts = [
                   {post.badge}
                 </span>
               </div>
-            </div>
+              <div style="position: absolute; top: 0.85rem; right: 0.85rem; background: rgba(0,0,0,0.6); color: #FFFFFF; padding: 0.25rem 0.55rem; border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 700; backdrop-filter: blur(4px);">
+                Ver en Instagram ↗
+              </div>
+            </a>
 
             <!-- Card Body & Text -->
             <div style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.8rem; color: #64748B; font-weight: 700;">
-                <div style="display: flex; gap: 0.75rem;">
-                  <span>❤️ {post.likes}</span>
-                  <span>💬 {post.comentarios}</span>
-                </div>
-                <span>Playa del Carmen</span>
-              </div>
-
               <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary); font-size: 1.05rem; line-height: 1.35;">
                 {post.titulo}
               </h2>
@@ -335,24 +302,24 @@ const instagramPosts = [
                 ))}
               </div>
 
-              <!-- Action Bottom -->
+              <!-- Action Bottom con Enlace Exacto al Post -->
               <div style="margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                 <a
-                  href={`https://wa.me/529841381493?text=Hola,%20vi%20la%20publicaci%C3%B3n%20en%20la%20web%20sobre%20${encodeURIComponent(post.titulo)}%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n.`}
+                  href={`https://wa.me/529841381493?text=Hola,%20vi%20la%20publicaci%C3%B3n%20sobre%20${encodeURIComponent(post.titulo)}%20(${post.permalink})%20y%20me%20gustar%C3%ADa%20m%C3%A1s%20informaci%C3%B3n.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   class="btn btn-whatsapp"
                   style="padding: 0.45rem 0.9rem; font-size: 0.8rem;"
                 >
-                  Consultar por WhatsApp
+                  Consultar en WhatsApp
                 </a>
                 <a
-                  href="https://www.instagram.com/thegarage.pdc/"
+                  href={post.permalink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style="font-size: 0.8rem; font-weight: 800; color: #E1306C;"
+                  style="font-size: 0.8rem; font-weight: 800; color: #E1306C; text-decoration: underline;"
                 >
-                  Ver en IG ↗
+                  Abrir Post ↗
                 </a>
               </div>
             </div>
