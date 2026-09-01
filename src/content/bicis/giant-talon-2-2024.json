@@ -1,0 +1,25 @@
+{
+  "id": "giant-talon-2-2024",
+  "modelo": "Talon 2",
+  "marca": "Giant",
+  "categoria": "MTB",
+  "precio": 11200,
+  "moneda": "MXN",
+  "estado": "Nueva",
+  "disponibilidad": "Apartada",
+  "talla": "L (19\")",
+  "color": "Gris Metálico Mate",
+  "specs": {
+    "cuadro": "Aluminio ALUXX-Grade",
+    "grupo": "Shimano Altus / MicroSHIFT 2x8 vel.",
+    "frenos": "Disco hidráulico Tektro",
+    "rodada": "29\""
+  },
+  "fotos": [
+    "/img/talon2-1.svg",
+    "/img/talon2-2.svg"
+  ],
+  "mensajeWhatsApp": "Hola, vi que la Giant Talon 2 (Talla L) está apartada. ¿Tienen alguna similar disponible o me pueden avisar si se libera?",
+  "destacada": false,
+  "esMuestra": true
+}
