@@ -25,10 +25,10 @@ const bicis = bicisEntries.map(e => e.data);
         </a>
       </div>
 
-      <!-- BENTO GRID SECTION 1: HERO & WORKSHOP SURGERY -->
+      <!-- BENTO SECTION 1: INICIO & TALLER CIRUGÍA -->
       <div class="bento-row bento-hero-grid" id="sec-hero">
         
-        <!-- Bento Tile 1: Master Hero (8/12 on desktop) -->
+        <!-- Bento Tile 1: Master Hero -->
         <div class="bento-tile tile-hero-main">
           <div class="tile-hero-header">
             <div class="meta-pill-group font-mono">
@@ -48,7 +48,7 @@ const bicis = bicisEntries.map(e => e.data);
 
           <div class="tile-hero-footer">
             <a href="#sec-matchmaker" class="btn btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
               <span>Probar Asesor de Bicicleta</span>
             </a>
             <a
@@ -63,7 +63,7 @@ const bicis = bicisEntries.map(e => e.data);
           </div>
         </div>
 
-        <!-- Bento Tile 2: Workshop Surgery Side (4/12 on desktop) -->
+        <!-- Bento Tile 2: Workshop Surgery Side -->
         <div class="bento-tile tile-taller-side">
           <div class="taller-card-top">
             <div class="taller-meta-row font-mono">
@@ -97,7 +97,7 @@ const bicis = bicisEntries.map(e => e.data);
 
       </div>
 
-      <!-- BENTO GRID SECTION 2: INTERACTIVE BIKE MATCHMAKER -->
+      <!-- BENTO SECTION 2: INTERACTIVE BIKE MATCHMAKER -->
       <div class="bento-tile tile-matchmaker" id="sec-matchmaker">
         <div class="matchmaker-top-bar">
           <div>
@@ -128,8 +128,9 @@ const bicis = bicisEntries.map(e => e.data);
               <p class="opt-desc">Velocidad aerodinámica, cadencia y fondos de resistencia.</p>
             </button>
             <button type="button" class="wizard-card-opt" data-terrain="Gravel">
+              <!-- True Adventure/Compass SVG for Gravel (NO DOLLAR SIGN) -->
               <div class="opt-svg-box">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
               </div>
               <strong class="opt-title">Gravel &amp; Mixto</strong>
               <p class="opt-desc">50% asfalto y 50% caminos de terracería con libertad total.</p>
@@ -214,7 +215,7 @@ const bicis = bicisEntries.map(e => e.data);
                   Apartar esta Unidad por WhatsApp
                 </a>
                 <button type="button" class="btn btn-outline" id="btn-restart-match">
-                  Reiniciar Test ↻
+                  Reiniciar Asesor ↻
                 </button>
               </div>
             </div>
@@ -223,10 +224,10 @@ const bicis = bicisEntries.map(e => e.data);
 
       </div>
 
-      <!-- BENTO GRID SECTION 3: SPOTLIGHT DROPS (Real Stock) -->
+      <!-- BENTO SECTION 3: INVENTARIO FÍSICO -->
       <div class="bento-row bento-drops-grid" id="sec-drops">
         
-        <!-- Drop 1: Merida Scultura 300 -->
+        <!-- Bike 1: Merida Scultura 300 -->
         <div class="bento-tile drop-card-tile">
           <div class="drop-media-viewport">
             <img src="/img/bicis/merida-scultura-1.webp" alt="Merida Scultura 300" />
@@ -234,7 +235,7 @@ const bicis = bicisEntries.map(e => e.data);
             <div class="badge-price-floating font-mono">$19,800 MXN</div>
           </div>
           <div class="drop-content-block">
-            <span class="drop-edition-num font-mono">[DROP 01 // RUTA]</span>
+            <span class="drop-edition-num font-mono">[DISPONIBLE EN TIENDA // RUTA]</span>
             <h3 class="drop-bike-title">Merida Scultura 300 Shimano Tiagra</h3>
             <p class="drop-bike-summary">Talla S/M (52 cm) • Cuadro aluminio + horquilla carbono • 2x10 vel.</p>
             <a
@@ -248,7 +249,7 @@ const bicis = bicisEntries.map(e => e.data);
           </div>
         </div>
 
-        <!-- Drop 2: Oferta Relampago MTB R29 -->
+        <!-- Bike 2: Oferta Relampago MTB R29 -->
         <div class="bento-tile drop-card-tile">
           <div class="drop-media-viewport">
             <img src="/img/bicis/mtb-relampago-1.webp" alt="Oferta Relámpago MTB" />
@@ -256,7 +257,7 @@ const bicis = bicisEntries.map(e => e.data);
             <div class="badge-price-floating font-mono">$7,900 MXN</div>
           </div>
           <div class="drop-content-block">
-            <span class="drop-edition-num font-mono">[DROP 02 // MTB]</span>
+            <span class="drop-edition-num font-mono">[UNIDAD VENDIDA // MTB]</span>
             <h3 class="drop-bike-title">Oferta Relámpago MTB R29 Shimano</h3>
             <p class="drop-bike-summary">Talla M • Frenos de disco hidráulicos • Suspensión delantera • 2x8 vel.</p>
             <a
@@ -272,7 +273,7 @@ const bicis = bicisEntries.map(e => e.data);
 
       </div>
 
-      <!-- BENTO GRID SECTION 4: COMMUNITY & RIDERS CLUB -->
+      <!-- BENTO SECTION 4: COMMUNITY & RIDERS CLUB -->
       <div class="bento-tile tile-riders-club" id="sec-riders">
         <div class="riders-header-flex">
           <div>
@@ -307,12 +308,12 @@ const bicis = bicisEntries.map(e => e.data);
     </div>
   </div>
 
-  <!-- FLOATING DOCK (Shopify Editions Signature Navigation) -->
+  <!-- FLOATING DOCK (Customer-First Clean Labels) -->
   <nav class="floating-dock-nav" aria-label="Navegación Rápida">
-    <button type="button" class="dock-nav-btn active" data-target="sec-hero">01 Hero</button>
+    <button type="button" class="dock-nav-btn active" data-target="sec-hero">01 Inicio</button>
     <button type="button" class="dock-nav-btn" data-target="sec-matchmaker">02 Asesor</button>
-    <button type="button" class="dock-nav-btn" data-target="sec-drops">03 Drops</button>
-    <button type="button" class="dock-nav-btn" data-target="sec-riders">04 Riders</button>
+    <button type="button" class="dock-nav-btn" data-target="sec-drops">03 Bicicletas</button>
+    <button type="button" class="dock-nav-btn" data-target="sec-riders">04 Comunidad</button>
     <a href="/inventario" class="dock-nav-btn dock-catalog-accent font-mono">Catálogo ↗</a>
   </nav>
 </Base>
@@ -916,18 +917,40 @@ const bicis = bicisEntries.map(e => e.data);
 
 <script>
   function initMasterBento() {
-    // Dock smooth scroll
     const dockButtons = document.querySelectorAll<HTMLElement>('.dock-nav-btn[data-target]');
+    
+    // Smooth Scroll on Click
     dockButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const targetId = btn.getAttribute('data-target');
         if (targetId) {
           document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
-          dockButtons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
         }
       });
     });
+
+    // Real-Time Scroll Spy via IntersectionObserver
+    const observedSections = ['sec-hero', 'sec-matchmaker', 'sec-drops', 'sec-riders'];
+    const sectionElements = observedSections.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+
+    if ('IntersectionObserver' in window && sectionElements.length > 0) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const currentId = entry.target.id;
+            dockButtons.forEach(btn => {
+              if (btn.getAttribute('data-target') === currentId) {
+                btn.classList.add('active');
+              } else {
+                btn.classList.remove('active');
+              }
+            });
+          }
+        });
+      }, { threshold: 0.35, rootMargin: '-10% 0px -40% 0px' });
+
+      sectionElements.forEach(sec => observer.observe(sec));
+    }
 
     // Matchmaker state & steps
     let terrain = 'MTB';
@@ -1013,18 +1036,24 @@ const bicis = bicisEntries.map(e => e.data);
       let modelImg = '/img/bicis/merida-scultura-1.webp';
       let modelDesc = 'Ideal para tu objetivo de rendimiento en asfalto. Cuadro ligero de aluminio con horquilla de carbono, grupo Shimano Tiagra 2x10 vel y ergonomía rápida.';
 
-      if (terrain === 'MTB' || goal === 'iniciacion') {
+      if (terrain === 'Gravel') {
+        modelTitle = 'Basso Bikes Italia Tera Gravel / Palta';
+        modelPrice = 'Cotización Personalizada';
+        modelCat = 'GRAVEL & AVENTURA // TALLA ' + size;
+        modelImg = '/img/instagram/live-ig-thegarage.pdcDG6tlpFv-Pq.jpg';
+        modelDesc = 'Geometría italiana de absorción, cuadro con paso de rueda de hasta 45mm para arena y terracería, cableado interno total y máxima polivalencia.';
+      } else if (terrain === 'MTB' || goal === 'iniciacion') {
         modelTitle = 'Oferta Relámpago MTB R29 Shimano';
         modelPrice = '$7,900 MXN';
         modelCat = 'MONTAÑA & SENDEROS // TALLA ' + size;
         modelImg = '/img/bicis/mtb-relampago-1.webp';
         modelDesc = 'Perfecta para senderos de la Riviera Maya y paseos todo terreno. Rodada 29", suspensión delantera, transmisión Shimano y frenos de disco hidráulicos.';
       } else if (goal === 'competencia') {
-        modelTitle = 'Basso Bikes Italia Custom Build';
+        modelTitle = 'Basso Bikes Italia Diamante / Astra Custom Build';
         modelPrice = 'Cotización Personalizada';
         modelCat = 'COMPETENCIA ÉLITE // TALLA ' + size;
         modelImg = '/img/instagram/live-ig-thegarage.pdcDG6tlpFv-Pq.jpg';
-        modelDesc = 'Cuadro monocasco de carbono Torayca hecho a mano en Italia, grupo electrónico y ruedas de carbono para el más alto nivel competitivo.';
+        modelDesc = 'Cuadro monocasco de carbono Torayca hecho a mano en Italia, grupo electrónico SRAM AXS/Shimano Di2 y ruedas de carbono para el más alto nivel competitivo.';
       }
 
       if (resImg) resImg.src = modelImg;

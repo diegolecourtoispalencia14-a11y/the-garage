@@ -246,6 +246,13 @@
     btn?.addEventListener('click', () => {
       drawer?.classList.toggle('open');
     });
+
+    // Auto-close on link click
+    drawer?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        drawer.classList.remove('open');
+      });
+    });
   }
 
   if (document.readyState === 'loading') {
