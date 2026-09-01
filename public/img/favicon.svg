@@ -1,6 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <circle cx="32" cy="32" r="30" fill="#18181B"/>
-  <circle cx="32" cy="32" r="22" fill="none" stroke="#FF5722" stroke-width="4" stroke-dasharray="8 4"/>
-  <circle cx="32" cy="32" r="10" fill="#FF5722"/>
-  <circle cx="32" cy="32" r="4" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <rect width="160" height="160" fill="#111111" rx="32"/>
+  <g transform="translate(10, 18) scale(0.9)">
+    <path d="M 35 15 
+             L 105 15 
+             L 125 35 
+             L 125 52 
+             L 45 52 
+             L 32 65 
+             L 32 75 
+             L 45 88 
+             L 125 88 
+             L 125 70 
+             L 75 70 
+             L 75 52 
+             L 142 52 
+             L 142 105 
+             L 122 125 
+             L 35 125 
+             L 12 102 
+             L 12 38 Z" 
+          fill="#FFFFFF"/>
+    <!-- Small orange racing accent dot -->
+    <rect x="135" y="115" width="10" height="10" rx="2" fill="#FF5722"/>
+  </g>
 </svg>

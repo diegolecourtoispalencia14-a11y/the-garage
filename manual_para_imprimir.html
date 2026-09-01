@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual de Uso y Administración — The Garage</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 1.8cm 1.5cm;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1E293B;
+      line-height: 1.5;
+      font-size: 11pt;
+      background: #FFFFFF;
+    }
+
+    .header-bar {
+      border-bottom: 3px solid #FF5722;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-title {
+      font-size: 24pt;
+      font-weight: 900;
+      color: #0F172A;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .brand-subtitle {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #FF5722;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .doc-tag {
+      font-size: 9pt;
+      font-weight: 700;
+      background: #F1F5F9;
+      color: #475569;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: 800;
+      color: #0F172A;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    p, li {
+      font-size: 10pt;
+      color: #334155;
+    }
+
+    ul, ol {
+      padding-left: 18px;
+      margin-bottom: 8px;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    .table-links {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px 0;
+      font-size: 9.5pt;
+    }
+
+    .table-links th {
+      background: #0F172A;
+      color: #FFFFFF;
+      text-align: left;
+      padding: 6px 10px;
+      font-weight: 700;
+      font-size: 9pt;
+      text-transform: uppercase;
+    }
+
+    .table-links td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .table-links tr:nth-child(even) td {
+      background: #F8FAFC;
+    }
+
+    .url-text {
+      font-family: ui-monospace, Menlo, Monaco, monospace;
+      font-weight: 700;
+      color: #0284C7;
+      font-size: 9pt;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-green { background: #DCFCE7; color: #15803D; }
+    .badge-yellow { background: #FEF9C3; color: #A16207; }
+    .badge-gray { background: #F1F5F9; color: #475569; }
+
+    .box-step {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-left: 4px solid #FF5722;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 8px 0 12px 0;
+    }
+
+    .box-step strong {
+      color: #0F172A;
+    }
+
+    .box-security {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 9pt;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      padding-top: 10px;
+      border-top: 1px solid #E2E8F0;
+      font-size: 8.5pt;
+      color: #94A3B8;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <div class="header-bar">
+    <div>
+      <div class="brand-title">THE GARAGE</div>
+      <div class="brand-subtitle">Tienda de Bicicletas • Playa del Carmen, Q.R.</div>
+    </div>
+    <div class="doc-tag">Manual de Uso Oficial</div>
+  </div>
+
+  <!-- 1. Enlaces Clave -->
+  <h2>📌 1. Enlaces y Accesos de tu Negocio</h2>
+  <table class="table-links">
+    <thead>
+      <tr>
+        <th>Servicio</th>
+        <th>Enlace Directo</th>
+        <th>Uso</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Vitrina Pública</strong></td>
+        <td class="url-text">https://the-garage-dw4.pages.dev</td>
+        <td>La web que ven tus clientes en toda la Riviera Maya.</td>
+      </tr>
+      <tr>
+        <td><strong>Panel de Control</strong></td>
+        <td class="url-text">https://the-garage-dw4.pages.dev/admin/</td>
+        <td>Donde cambias estatus (*Vendida/Apartada*), precios y fotos.</td>
+      </tr>
+      <tr>
+        <td><strong>WhatsApp Tienda</strong></td>
+        <td class="url-text">+52 984 138 1493</td>
+        <td>Recepción automática de apartados y consultas directas.</td>
+      </tr>
+      <tr>
+        <td><strong>Ubicación Física</strong></td>
+        <td>Av. Ich Xeel CASA 19, Cataluña</td>
+        <td>C.P. 77725 Playa del Carmen, Quintana Roo.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2. Como App en el Celular -->
+  <h2>📱 2. Cómo Instalar el Panel en tu Celular (En 10 Segundos)</h2>
+  <p>Para entrar como si fuera una aplicación sin escribir la dirección cada vez:</p>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
+    <div class="box-step" style="border-left-color: #0284C7;">
+      <strong>En iPhone (Safari):</strong>
+      <ol style="margin-top: 4px; padding-left: 14px;">
+        <li>Entra a <code>https://the-garage-dw4.pages.dev/admin/</code></li>
+        <li>Toca el botón <strong>Compartir</strong> (cuadro con flecha hacia arriba).</li>
+        <li>Baja y toca <strong>"Agregar a pantalla de inicio"</strong>.</li>
+      </ol>
+    </div>
+    <div class="box-step" style="border-left-color: #10B981;">
+      <strong>En Android (Chrome):</strong>
+      <ol style="margin-top: 4px; padding-left: 14px;">
+        <li>Entra a <code>https://the-garage-dw4.pages.dev/admin/</code></li>
+        <li>Toca los <strong>tres puntos verticales ⋮</strong> arriba a la derecha.</li>
+        <li>Toca <strong>"Agregar a la pantalla principal"</strong>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- 3. Marcar como Vendida o Apartada -->
+  <h2>⏱️ 3. Marcar una Bici como VENDIDA o APARTADA (30 Segundos)</h2>
+  <p>Cuando un cliente compre o aparte una bicicleta parado en el local:</p>
+  <div class="box-step">
+    <ol>
+      <li>Abre el panel en tu celular: <code>https://the-garage-dw4.pages.dev/admin/</code></li>
+      <li>Toca la bicicleta en la lista (ejemplo: <em>Trek Marlin 5</em>).</li>
+      <li>En el campo <strong>Disponibilidad</strong>, selecciona:
+        <ul style="margin-top: 4px;">
+          <li><span class="badge badge-gray">Vendida</span>: La bici se queda visible con etiqueta gris como <em>prueba social</em> de que tu tienda vende rápido.</li>
+          <li><span class="badge badge-yellow">Apartada</span>: Muestra etiqueta amarilla avisando que ya dieron anticipo.</li>
+          <li><span class="badge badge-green">Disponible</span>: Si se cancela un apartado y vuelve al piso de venta.</li>
+        </ul>
+      </li>
+      <li>Toca el botón azul <strong>"Guardar" (Save)</strong> arriba a la derecha.</li>
+    </ol>
+    <p style="margin-top: 6px; font-size: 9pt; color: #64748B;">
+      ⚡ <em>En menos de 40 segundos Cloudflare actualizará la web automáticamente en internet.</em>
+    </p>
+  </div>
+
+  <!-- 4. Subir Bici Nueva -->
+  <h2>📸 4. Cómo Subir una Bicicleta Nueva desde el Teléfono</h2>
+  <div class="box-step">
+    <ol>
+      <li>Entra a tu panel y toca el botón <strong>"+ Nueva Bicicleta"</strong>.</li>
+      <li>Llena los campos básicos:
+        <ul style="margin-top: 4px;">
+          <li><strong>ID único:</strong> Nombre corto sin espacios (ej: <code>specialized-allez-azul</code>).</li>
+          <li><strong>Marca y Modelo:</strong> (ej: <em>Specialized</em>, <em>Allez E5 Sport</em>).</li>
+          <li><strong>Categoría:</strong> <em>MTB, Ruta, Urbana, Eléctrica</em> o <em>Infantil</em>.</li>
+          <li><strong>Precio:</strong> Solo números en pesos (ej: <code>18900</code>).</li>
+          <li><strong>Talla y Color:</strong> (ej: <em>Talla 54 cm</em>, <em>Azul Cobalto</em>).</li>
+          <li><strong>Fotos:</strong> Toca en <em>"Elegir imagen"</em> y sube fotos cuadradas <strong>1:1</strong> tomadas directo con la cámara con buena luz.</li>
+        </ul>
+      </li>
+      <li>Toca el botón azul <strong>"Guardar / Publicar"</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- 5. Seguridad y Preguntas Frecuentes -->
+  <h2>🔒 5. Seguridad y Operación</h2>
+  <div class="box-security">
+    <p><strong>¿Por qué nadie más puede editar tu tienda?</strong><br>
+    El panel de administración está blindado exclusivamente para tu cuenta de GitHub (<code>diegolecourtoispalencia14-a11y</code>). Si cualquier cliente o extraño intenta entrar, el sistema le pedirá tu cuenta personal y lo bloqueará de inmediato.</p>
+  </div>
+
+  <!-- Pie de página -->
+  <div class="footer-note">
+    <span>The Garage • Playa del Carmen, Quintana Roo, México</span>
+    <span>Soporte WhatsApp: +52 984 138 1493</span>
+  </div>
+
+</body>
+</html>

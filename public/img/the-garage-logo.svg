@@ -1,20 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 120" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 140" width="100%" height="100%">
   <defs>
-    <linearGradient id="garageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF5722"/>
-      <stop offset="100%" stop-color="#FF8A50"/>
-    </linearGradient>
+    <!-- Geometric styling -->
   </defs>
-  <!-- Bicycle Gear Icon -->
-  <g transform="translate(15, 10)">
-    <circle cx="50" cy="50" r="42" fill="none" stroke="#212529" stroke-width="6" stroke-dasharray="14 6"/>
-    <circle cx="50" cy="50" r="32" fill="#18181B"/>
-    <circle cx="50" cy="50" r="16" fill="url(#garageGrad)"/>
-    <!-- Chainring teeth / spoke accents -->
-    <path d="M 50 22 L 50 78 M 22 50 L 78 50 M 30 30 L 70 70 M 30 70 L 70 30" stroke="#27272A" stroke-width="3"/>
-    <circle cx="50" cy="50" r="8" fill="#FFFFFF"/>
+  
+  <!-- Icon: Geometric Stylized Angular G Monogram -->
+  <g transform="translate(10, 15)">
+    <!-- Outer G Poly Shape -->
+    <path d="M 35 15 
+             L 105 15 
+             L 125 35 
+             L 125 52 
+             L 45 52 
+             L 32 65 
+             L 32 75 
+             L 45 88 
+             L 125 88 
+             L 125 70 
+             L 75 70 
+             L 75 52 
+             L 142 52 
+             L 142 105 
+             L 122 125 
+             L 35 125 
+             L 12 102 
+             L 12 38 Z" 
+          fill="#111111"/>
+    <!-- Inner dynamic highlight / cut -->
+    <path d="M 45 35 L 105 35 L 115 45 L 45 45 Z" fill="#FFFFFF" opacity="0.1"/>
   </g>
-  <!-- Brand Typography -->
-  <text x="130" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" fill="#18181B" letter-spacing="1">THE GARAGE</text>
-  <text x="132" y="86" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="14" fill="#FF5722" letter-spacing="4">TIENDA DE BICICLETAS • PLAYA DEL CARMEN</text>
+
+  <!-- Typography Wordmark -->
+  <!-- "THE" -->
+  <text x="170" y="55" font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="34" fill="#111111" letter-spacing="1">THE</text>
+  
+  <!-- "GARAGE." -->
+  <text x="170" y="92" font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="44" fill="#111111" letter-spacing="-0.5">GARAGE<tspan fill="#FF5722">.</tspan></text>
+  
+  <!-- "BIKE EXPERTS" Subtitle -->
+  <text x="172" y="116" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" font-size="16" fill="#111111" letter-spacing="4.5">BIKE EXPERTS</text>
 </svg>
