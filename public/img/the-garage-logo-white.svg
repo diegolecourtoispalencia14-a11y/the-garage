@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 140" width="100%" height="100%">
+  <!-- White Vector Logo for Dark Backgrounds -->
+  <g transform="translate(10, 15)">
+    <path d="M 42 8
+             L 115 8
+             L 138 31
+             L 138 52
+             L 98 52
+             L 98 42
+             L 52 42
+             L 38 56
+             L 38 74
+             L 52 88
+             L 115 88
+             L 115 72
+             L 82 72
+             L 82 56
+             L 138 56
+             L 138 98
+             L 118 118
+             L 42 118
+             L 14 90
+             L 14 36 Z"
+          fill="#FFFFFF" />
+  </g>
+
+  <!-- Typography Wordmark in White -->
+  <text x="165" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', 'Trebuchet MS', sans-serif" font-weight="900" font-size="28" fill="#FFFFFF" letter-spacing="1">THE</text>
+  
+  <text x="165" y="90" font-family="-apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', 'Trebuchet MS', sans-serif" font-weight="900" font-size="46" fill="#FFFFFF" letter-spacing="-0.5">GARAGE<tspan font-size="50" fill="#FF5722">.</tspan></text>
+  
+  <text x="168" y="115" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="16" fill="#CBD5E1" letter-spacing="5">BIKE EXPERTS</text>
+</svg>
