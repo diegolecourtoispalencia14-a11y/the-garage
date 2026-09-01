@@ -6,148 +6,216 @@ import Base from '../layouts/Base.astro';
   title="Guías Técnicas y Rutas Ciclistas en la Riviera Maya | The Garage"
   description="Aprende cómo cuidar tu bicicleta del salitre en Playa del Carmen, rutas de MTB y carretera en Quintana Roo y consejos de mecánicos certificados."
 >
-  <!-- Schema FAQPage & Article -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "¿Cómo proteger mi bicicleta del salitre y la humedad en Playa del Carmen?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Limpia y seca la transmisión después de cada rodada cerca del mar, aplica lubricante cerámico para clima húmedo (Wet Lube) y evita lavar la bicicleta a presión en las zonas de baleros."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "¿Dónde rodar en bicicleta de montaña cerca de Playa del Carmen y Tulum?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Los principales senderos de MTB se encuentran en Punta Venado Bike Park, la ruta de los cenotes hacia Puerto Morelos y los caminos de terracería hacia Cobá."
-          }
-        }
-      ]
-    }
-  </script>
+  <div class="guias-page-wrap">
+    <div class="container-fluid">
 
-  <!-- Hero Header -->
-  <section style="background: radial-gradient(circle at top left, #F1F5F9 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
-    <div class="container">
-      <div style="max-width: 800px;">
-        <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: #ECFDF5; border: 1.5px solid #A7F3D0; color: #047857; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
-          📚 CONOCIMIENTO & RUTAS DEL CARIBE
+      <!-- Header Section -->
+      <section class="guias-header-section">
+        <div class="guias-badges font-mono">
+          <span class="badge-red">[05 // CONOCIMIENTO TÉCNICO]</span>
+          <span class="badge-dim">RUTAS &amp; MANTENIMIENTO CARIBE</span>
         </div>
-        <h1 class="title-xl" style="margin-bottom: 1rem; color: #0F172A;">
-          Guías Técnicas & Rutas para Rodar
+        <h1 class="title-xl" style="margin-bottom: 0.75rem;">
+          Guías Técnicas &amp; Rutas para Rodar.
         </h1>
-        <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6;">
-          El clima y la geografía del Caribe tienen retos únicos: alta humedad, salinidad constante y terreno calizo. Preparamos estas guías con consejos prácticos de nuestro taller mecánico en Playa del Carmen.
+        <p class="subtitle" style="max-width: 760px;">
+          El clima del Caribe presenta retos mecánicos específicos: salitre constante, alta humedad y terreno calizo. Preparamos estas guías con recomendaciones prácticas de nuestro taller en Playa del Carmen.
         </p>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- Articles Content Grid -->
-  <section style="padding: 3.5rem 0 5rem 0;">
-    <div class="container">
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+      <!-- Articles Grid -->
+      <section class="guias-articles-grid">
         
         <!-- Artículo 1: Salitre y Mantenimiento -->
-        <article style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em;">TALLER & CUIDADOS</span>
-            <span style="color: #CBD5E1;">•</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">5 min de lectura</span>
+        <article class="guia-article-card">
+          <div class="guia-card-meta font-mono">
+            <span class="guia-cat-tag">TALLER &amp; CIRUGÍA</span>
+            <span>5 MIN LECTURA</span>
           </div>
-          <h2 class="title-md" style="margin-bottom: 0.75rem; color: var(--secondary); line-height: 1.3;">
-            Cómo proteger tu bicicleta del salitre y humedad en Playa del Carmen
+          <h2 class="guia-card-title">
+            Cómo proteger tu bicicleta del salitre y la humedad en Playa del Carmen
           </h2>
-          <p style="font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 1.25rem;">
-            El ambiente costero de Quintana Roo oxida cadenas y tornillos hasta 4 veces más rápido. Te explicamos qué lubricantes usar, cómo lavar tu bici sin dañar los baleros y cuándo programar purga de frenos hidráulicos.
+          <p class="guia-card-summary">
+            El ambiente costero de Quintana Roo oxida cadenas y tornillos hasta 4 veces más rápido. Aprende qué lubricantes hidrofóbicos usar, cómo limpiar sin dañar los baleros y cuándo programar purgado de frenos hidráulicos.
           </p>
-          <div style="background: #F8FAFC; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: #334155;">
-            <strong>Regla de oro del taller:</strong> Nunca uses WD-40 estándar como lubricante de cadena; usa siempre ceras o lubricantes hidrofóbicos (Wet Lube).
+          <div class="guia-pro-tip font-mono">
+            <strong style="color: #FB7185;">REGLA DE TALLER:</strong> Nunca uses WD-40 estándar en la cadena; utiliza ceras o lubricantes de base húmeda (Wet Lube) resistentes al agua salina.
           </div>
-          <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border);">
-            <a href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20agendar%20un%20servicio%20de%20mantenimiento%20anti-salitre%20en%20el%20taller." target="_blank" rel="noopener noreferrer" style="color: var(--primary); font-weight: 800; font-size: 0.9rem;">
-              Agendar servicio de taller por WhatsApp →
+          <div class="guia-card-footer">
+            <a
+              href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20agendar%20un%20servicio%20de%20mantenimiento%20anti-salitre%20en%20el%20taller."
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-whatsapp"
+              style="width: 100%;"
+            >
+              Agendar Mantenimiento Anti-Salitre por WhatsApp
             </a>
           </div>
         </article>
 
-        <!-- Artículo 2: Rutas y Senderos -->
-        <article style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <span style="font-size: 0.75rem; font-weight: 800; color: #0284C7; text-transform: uppercase; letter-spacing: 0.05em;">RUTAS & DESTINOS</span>
-            <span style="color: #CBD5E1;">•</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">7 min de lectura</span>
+        <!-- Artículo 2: Rutas y Circuitos -->
+        <article class="guia-article-card">
+          <div class="guia-card-meta font-mono">
+            <span class="guia-cat-tag">RUTAS &amp; EXPEDICIÓN</span>
+            <span>7 MIN LECTURA</span>
           </div>
-          <h2 class="title-md" style="margin-bottom: 0.75rem; color: var(--secondary); line-height: 1.3;">
-            Las 4 mejores rutas ciclistas de MTB y Carretera en Riviera Maya
+          <h2 class="guia-card-title">
+            Las 4 mejores rutas ciclistas de MTB y Carretera en la Riviera Maya
           </h2>
-          <p style="font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 1.25rem;">
-            Descubre los mejores circuitos para rodar: desde la ciclovía costera de Playa del Carmen hasta los senderos técnicos de Punta Venado y la recta de alta velocidad hacia Puerto Morelos.
+          <p class="guia-card-summary">
+            Descubre los mejores circuitos para rodar en la región: desde los fondos planos hacia Puerto Aventuras hasta los senderos técnicos de roca en Punta Venado y el circuito de Cozumel.
           </p>
-          <ul style="list-style: none; font-size: 0.85rem; color: #334155; line-height: 1.8; margin-bottom: 1.25rem;">
-            <li>🌴 <strong>Ruta 1:</strong> Playa del Carmen a Puerto Aventuras (55 km ida y vuelta)</li>
-            <li>⛰️ <strong>Ruta 2:</strong> Senderos de Selva y Roca en Punta Venado</li>
-            <li>🚴 <strong>Ruta 3:</strong> Circuito Cozumel (64 km planos con viento caribeño)</li>
+          <ul class="guia-routes-list font-mono">
+            <li><span>Ruta 01:</span> Playa del Carmen a Puerto Aventuras (55 km ida y vuelta)</li>
+            <li><span>Ruta 02:</span> Senderos de Selva y Roca en Punta Venado Bike Park</li>
+            <li><span>Ruta 03:</span> Circuito Isla Cozumel (64 km planos con viento caribeño)</li>
+            <li><span>Ruta 04:</span> Ruta de los Cenotes hacia Puerto Morelos</li>
           </ul>
-          <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border);">
-            <a href="/comunidad" style="color: var(--primary); font-weight: 800; font-size: 0.9rem;">
-              Ver fotos y fechas de próximas rodadas →
+          <div class="guia-card-footer">
+            <a href="/comunidad" class="btn btn-primary" style="width: 100%;">
+              Ver Fotos de las Rutas en Comunidad →
             </a>
           </div>
         </article>
 
-        <!-- Artículo 3: MTB vs Ruta en el Caribe -->
-        <article style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-            <span style="font-size: 0.75rem; font-weight: 800; color: #16A34A; text-transform: uppercase; letter-spacing: 0.05em;">COMPRA INTELIGENTE</span>
-            <span style="color: #CBD5E1;">•</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">4 min de lectura</span>
+        <!-- Artículo 3: Nutrición e Hidratación -->
+        <article class="guia-article-card">
+          <div class="guia-card-meta font-mono">
+            <span class="guia-cat-tag">NUTRICIÓN &amp; WAYFAR</span>
+            <span>4 MIN LECTURA</span>
           </div>
-          <h2 class="title-md" style="margin-bottom: 0.75rem; color: var(--secondary); line-height: 1.3;">
-            ¿MTB, Ruta o Gravel? Qué bicicleta te conviene en Quintana Roo
+          <h2 class="guia-card-title">
+            Estrategia de hidratación para rodar bajo 35°C en el Caribe
           </h2>
-          <p style="font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 1.25rem;">
-            Si vives en Playa del Carmen, Tulum o Cancún, elegir la geometría y rodada correcta hace la diferencia entre una bici rápida y una incómoda. Te explicamos los pros y contras de cada cuadro.
+          <p class="guia-card-summary">
+            La deshidratación y los calambres reducen tu rendimiento drásticamente. Descubre cómo calcular tu reposición de sodio, magnesio y potasio con las fórmulas de Wayfar disponibles en tienda.
           </p>
-          <div style="background: #F8FAFC; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; font-size: 0.85rem; color: #334155;">
-            <strong>Para baches y lluvia:</strong> Las bicicletas de montaña (MTB) con llantas 29x2.20 absorben el agua y el asfalto quebrado de las colonias.
+          <div class="guia-pro-tip font-mono">
+            <strong style="color: #4ADE80;">TIP DE RENDIMIENTO:</strong> Bebe 500ml de solución con electrolitos por cada hora de pedaleo continuo a partir de los 28°C.
           </div>
-          <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border);">
-            <a href="/guia-tallas" style="color: var(--primary); font-weight: 800; font-size: 0.9rem;">
-              Calcular tu talla con nuestra herramienta →
+          <div class="guia-card-footer">
+            <a
+              href="https://wa.me/529841381493?text=Hola,%20quisiera%20informaci%C3%B3n%20sobre%20los%20suplementos%20e%20hidrataci%C3%B3n%20Wayfar."
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-outline"
+              style="width: 100%; color: #FFFFFF;"
+            >
+              Consultar Productos Wayfar por WhatsApp
             </a>
           </div>
         </article>
 
-      </div>
-
-      <!-- Assistance Banner -->
-      <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: #FFFFFF; border-radius: var(--radius-xl); padding: 3rem 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2rem; box-shadow: var(--shadow-xl); border: 2px solid #334155;">
-        <div style="max-width: 600px;">
-          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">¿Tienes una duda mecánica o técnica con tu bici?</h2>
-          <p style="color: #CBD5E1; font-size: 0.95rem; line-height: 1.5;">
-            Mándanos fotos o un audio de WhatsApp explicando el problema y nuestros mecánicos en Cataluña te asesoran sin costo.
-          </p>
-        </div>
-        <div>
-          <a
-            href="https://wa.me/529841381493?text=Hola,%20tengo%20una%20duda%20t%C3%A9cnica%20sobre%20mi%20bicicleta%20y%20me%20gustar%C3%ADa%20asesor%C3%ADa%20del%20taller."
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-whatsapp btn-lg"
-          >
-            Consultar a Taller The Garage
-          </a>
-        </div>
-      </div>
+      </section>
 
     </div>
-  </section>
+  </div>
 </Base>
+
+<style>
+  .guias-page-wrap {
+    padding: var(--space-6) 0 var(--space-9) 0;
+  }
+
+  .guias-header-section {
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: var(--space-7);
+  }
+
+  .guias-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: 0.72rem;
+  }
+  .badge-red {
+    color: #FB7185;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .badge-dim {
+    color: var(--text-muted);
+  }
+
+  .guias-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .guia-article-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-xl);
+    padding: clamp(2rem, 3vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s var(--ease-spring), border-color 0.25s ease;
+  }
+  .guia-article-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-accent);
+  }
+
+  .guia-card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-3);
+  }
+  .guia-cat-tag {
+    color: #FB7185;
+    font-weight: 700;
+  }
+
+  .guia-card-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.35;
+    margin-bottom: var(--space-3);
+  }
+
+  .guia-card-summary {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: var(--space-4);
+  }
+
+  .guia-pro-tip {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: var(--space-5);
+  }
+
+  .guia-routes-list {
+    list-style: none;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: var(--space-5);
+    background: var(--surface-subtle);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline);
+  }
+  .guia-routes-list span {
+    color: #FB7185;
+    font-weight: 700;
+  }
+
+  .guia-card-footer {
+    margin-top: auto;
+  }
+</style>

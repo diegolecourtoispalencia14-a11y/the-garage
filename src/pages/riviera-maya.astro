@@ -1,113 +1,226 @@
 ---
 import Base from '../layouts/Base.astro';
+
+const zones = [
+  {
+    num: "01",
+    tag: "ENTREGA INMEDIATA",
+    tagColor: "#4ADE80",
+    name: "Playa del Carmen (Local)",
+    desc: "Entrega el mismo día o recolección directa en tienda física en Cataluña Casa 19. Ajuste biomecánico de altura y manillar incluido.",
+    status: "Mismo Día / Tienda Física"
+  },
+  {
+    num: "02",
+    tag: "ENTREGA PROGRAMADA 24-48 HRS",
+    tagColor: "#38BDF8",
+    name: "Tulum & Puerto Aventuras",
+    desc: "Envíos directos a tu domicilio en Tulum Centro, La Veleta, Aldea Zama, Akumal y Puerto Aventuras.",
+    status: "Ruta Directa"
+  },
+  {
+    num: "03",
+    tag: "ENTREGA PROGRAMADA 24-48 HRS",
+    tagColor: "#38BDF8",
+    name: "Cancún & Puerto Morelos",
+    desc: "Coordinación de entrega a domicilio en Cancún (Zona Urbana, Huayacán) y punto medio en Puerto Morelos.",
+    status: "Ruta Directa"
+  },
+  {
+    num: "04",
+    tag: "ENVÍO VÍA FERRY",
+    tagColor: "#C084FC",
+    name: "Isla Cozumel",
+    desc: "Entrega protegida en la terminal de ferry de Playa del Carmen o envío seguro vía paquetería marítima de carga.",
+    status: "Terminal Ferry PDC"
+  },
+  {
+    num: "05",
+    tag: "RUTA ESPECIAL",
+    tagColor: "#FB923C",
+    name: "Valladolid, Yucatán",
+    desc: "Ruta periódica hacia el oriente de Yucatán con bicicletas totalmente ensambladas y calibradas listas para rodar.",
+    status: "Envío Programado"
+  }
+];
 ---
 
 <Base
   title="Entregas & Cobertura en Riviera Maya y Valladolid | The Garage"
   description="Servicio de entrega personal de bicicletas en Playa del Carmen, Tulum, Cancún, Puerto Morelos, Cozumel y Valladolid, Yucatán. Compra segura por WhatsApp en The Garage Bike Experts."
 >
-  <!-- Hero Section -->
-  <section style="background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
-    <div class="container">
-      <div style="max-width: 800px;">
-        <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF7ED; border: 1.5px solid #FFEDD5; color: #C2410C; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
-          🚚 LOGÍSTICA & ENTREGAS CARIBE
+  <div class="cobertura-page-wrap">
+    <div class="container-fluid">
+
+      <!-- Header Section -->
+      <section class="cobertura-header-section">
+        <div class="cobertura-badges font-mono">
+          <span class="badge-red">[06 // LOGÍSTICA &amp; COBERTURA]</span>
+          <span class="badge-dim">RIVIERA MAYA &amp; PENÍNSULA DE YUCATÁN</span>
         </div>
-        <h1 class="title-xl" style="margin-bottom: 1rem; color: #0F172A;">
-          Llevamos tu bicicleta hasta tu puerta en toda la Riviera Maya.
+        <h1 class="title-xl" style="margin-bottom: 0.75rem;">
+          Llevamos tu bicicleta calibrada hasta tu puerta.
         </h1>
-        <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6;">
-          Nuestra base física está en <strong>Playa del Carmen</strong>, pero entregamos bicicletas ajustadas, calibradas y listas para rodar en los principales municipios de Quintana Roo y Yucatán.
+        <p class="subtitle" style="max-width: 760px;">
+          Nuestra base física está en <strong>Cataluña, Playa del Carmen</strong>, pero realizamos entregas de bicicletas ensambladas, ajustadas y listas para rodar en los principales municipios de Quintana Roo y Yucatán.
         </p>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- Cobertura Detallada -->
-  <section style="padding: 3.5rem 0 5rem 0;">
-    <div class="container">
-      
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3.5rem;">
-        
-        <!-- Zona 1: Playa del Carmen -->
-        <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📍</div>
-          <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary);">Playa del Carmen (Local)</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
-            Entrega el mismo día o recolección directa en tienda física (Cataluña). Ajuste de manillar y altura incluido sin costo.
-          </p>
-          <span style="font-size: 0.8rem; font-weight: 800; color: #15803D; background: #DCFCE7; padding: 0.25rem 0.6rem; border-radius: var(--radius-full);">
-            ENTREGA INMEDIATA
-          </span>
+      <!-- Zones Grid -->
+      <section class="zones-grid-section">
+        <div class="zones-grid">
+          {zones.map((z) => (
+            <div class="zone-bento-card">
+              <div class="zone-top-row font-mono">
+                <span class="zone-number">[{z.num}]</span>
+                <span class="zone-tag" style={`color: ${z.tagColor}; border-color: ${z.tagColor};`}>
+                  {z.tag}
+                </span>
+              </div>
+              <h2 class="zone-title">{z.name}</h2>
+              <p class="zone-desc">{z.desc}</p>
+              <div class="zone-footer font-mono">
+                <span class="zone-status-label">Modalidad:</span>
+                <strong class="zone-status-val">{z.status}</strong>
+              </div>
+            </div>
+          ))}
         </div>
+      </section>
 
-        <!-- Zona 2: Tulum & Akumal -->
-        <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌴</div>
-          <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary);">Tulum & Puerto Aventuras</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
-            Envíos programados semanales directamente a tu domicilio o local en Tulum Centro, La Veleta, Aldea Zama y Akumal.
-          </p>
-          <span style="font-size: 0.8rem; font-weight: 800; color: #0369A1; background: #E0F2FE; padding: 0.25rem 0.6rem; border-radius: var(--radius-full);">
-            ENTREGA PROGRAMADA 24-48 HRS
+      <!-- CTA Box -->
+      <section class="cobertura-cta-box">
+        <div class="cta-inner-content">
+          <span class="font-mono text-xs text-rose-400 font-bold uppercase tracking-wider block mb-2">
+            [COTIZACIÓN DIRECTA]
           </span>
-        </div>
-
-        <!-- Zona 3: Cancún & Puerto Morelos -->
-        <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏖️</div>
-          <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary);">Cancún & Puerto Morelos</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
-            Coordinamos entrega en punto medio o entrega a puerta en Cancún (Zona Urbana y Huayacán) y Puerto Morelos.
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">
+            ¿Deseas cotizar la entrega de una bicicleta a tu localidad?
+          </h2>
+          <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; max-width: 640px; margin: 0 auto var(--space-5) auto;">
+            Escríbenos por WhatsApp con tu ubicación y el modelo que te interesa para coordinar fecha y costo exacto de entrega.
           </p>
-          <span style="font-size: 0.8rem; font-weight: 800; color: #0369A1; background: #E0F2FE; padding: 0.25rem 0.6rem; border-radius: var(--radius-full);">
-            ENTREGA PROGRAMADA 24-48 HRS
-          </span>
+          <a
+            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20cotizar%20la%20entrega%20de%20una%20bicicleta%20en%20mi%20localidad."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp"
+            style="padding: 0.85rem 2rem;"
+          >
+            <span>Cotizar Entrega por WhatsApp</span>
+          </a>
         </div>
-
-        <!-- Zona 4: Cozumel (Ferry) -->
-        <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">⛴️</div>
-          <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary);">Cozumel</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
-            Entrega protegida en la terminal del ferry de Playa del Carmen o envío por paquetería marítima de carga.
-          </p>
-          <span style="font-size: 0.8rem; font-weight: 800; color: #7E22CE; background: #F3E8FF; padding: 0.25rem 0.6rem; border-radius: var(--radius-full);">
-            ENVÍO VÍA FERRY
-          </span>
-        </div>
-
-        <!-- Zona 5: Valladolid, Yucatán -->
-        <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-sm);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏛️</div>
-          <h2 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary);">Valladolid, Yucatán</h2>
-          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem;">
-            Ruta periódica hacia el oriente de Yucatán. Bicicletas totalmente armadas y listas para usarse.
-          </p>
-          <span style="font-size: 0.8rem; font-weight: 800; color: #C2410C; background: #FFF7ED; padding: 0.25rem 0.6rem; border-radius: var(--radius-full);">
-            RUTA QUINCENAL / ESPECIAL
-          </span>
-        </div>
-
-      </div>
-
-      <!-- FAQ & Call to Action -->
-      <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: #FFFFFF; border-radius: var(--radius-xl); padding: 3rem 2rem; text-align: center; max-width: 800px; margin: 0 auto; box-shadow: var(--shadow-xl); border: 2px solid #334155;">
-        <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.75rem;">¿Deseas cotizar el envío de una bicicleta a tu localidad?</h2>
-        <p style="color: #CBD5E1; font-size: 1rem; line-height: 1.6; margin-bottom: 1.75rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-          Escríbenos directamente por WhatsApp con tu ubicación y el modelo que te interesa para darte el costo exacto y tiempo de entrega.
-        </p>
-        <a
-          href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20cotizar%20el%20env%C3%ADo%20de%20una%20bicicleta%20a%20mi%20ciudad."
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-whatsapp btn-lg"
-          style="display: inline-flex;"
-        >
-          Cotizar Entrega por WhatsApp (+52 984 138 1493)
-        </a>
-      </div>
+      </section>
 
     </div>
-  </section>
+  </div>
 </Base>
+
+<style>
+  .cobertura-page-wrap {
+    padding: var(--space-6) 0 var(--space-9) 0;
+  }
+
+  .cobertura-header-section {
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: var(--space-7);
+  }
+
+  .cobertura-badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: 0.72rem;
+  }
+  .badge-red {
+    color: #FB7185;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .badge-dim {
+    color: var(--text-muted);
+  }
+
+  .zones-grid-section {
+    margin-bottom: var(--space-7);
+  }
+
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-5);
+  }
+
+  .zone-bento-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.25s var(--ease-spring), border-color 0.25s ease;
+  }
+  .zone-bento-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-accent);
+  }
+
+  .zone-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+  .zone-number {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-weight: 700;
+  }
+  .zone-tag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    border: 1px solid currentColor;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .zone-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+  }
+  .zone-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-4);
+  }
+
+  .zone-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-hairline);
+  }
+  .zone-status-label {
+    color: var(--text-muted);
+  }
+  .zone-status-val {
+    color: var(--text-primary);
+  }
+
+  .cobertura-cta-box {
+    background: linear-gradient(135deg, #18181C 0%, #101013 100%);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-xl);
+    padding: clamp(2.5rem, 5vw, 4rem) var(--space-5);
+    text-align: center;
+  }
+</style>
