@@ -1,0 +1,229 @@
+---
+import Base from '../layouts/Base.astro';
+
+const posts = [
+  {
+    id: 1,
+    tipo: 'entrega',
+    titulo: 'Trek Marlin 7 entregada a Carlos en Tulum',
+    tag: 'Entrega Feliz',
+    emoji: '🎉',
+    descripcion: 'Carlos vino desde Tulum buscando una MTB para los senderos de selva y cenotes. Se fue calibrada con suspensión ajustada a su peso.',
+    fecha: 'Hace 3 días',
+    marca: 'Trek Marlin 7',
+    imagen: '/img/marlin5-1.svg'
+  },
+  {
+    id: 2,
+    tipo: 'taller',
+    titulo: 'Restauración completa y purga de frenos hidráulicos',
+    tag: 'Taller & Mecánica',
+    emoji: '🔧',
+    descripcion: 'Mantenimiento mayor a transmisión Shimano Deore 1x12 y cambio de baleros cerámicos para resistir la humedad costera de Playa del Carmen.',
+    fecha: 'Hace 5 días',
+    marca: 'Servicio Pro',
+    imagen: '/img/allez-1.svg'
+  },
+  {
+    id: 3,
+    tipo: 'rodada',
+    titulo: 'Rodada dominical Playa - Puerto Aventuras (55 km)',
+    tag: 'Rodada Caribe',
+    emoji: '🌴',
+    descripcion: 'Más de 18 ciclistas rodando juntos por la ciclovía y carretera federal con parada de hidratación en Puerto Aventuras.',
+    fecha: 'Domingo pasado',
+    marca: 'Grupo The Garage',
+    imagen: '/img/talon2-1.svg'
+  },
+  {
+    id: 4,
+    tipo: 'entrega',
+    titulo: 'Specialized Allez lista para triatlón Cozumel',
+    tag: 'Entrega Feliz',
+    emoji: '🚴',
+    descripcion: 'Preparada con llantas Continental Grand Prix 5000 y ajuste aerodinámico para competencia en la isla.',
+    fecha: 'Esta semana',
+    marca: 'Specialized Allez',
+    imagen: '/img/allez-1.svg'
+  },
+  {
+    id: 5,
+    tipo: 'taller',
+    titulo: 'Tratamiento anti-salitre a cuadro de carbono',
+    tag: 'Taller & Mecánica',
+    emoji: '🛡️',
+    descripcion: 'Aplicación de sellador cerámico repelente al polvo y humedad marina para máxima durabilidad en Quintana Roo.',
+    fecha: 'Hace 1 semana',
+    marca: 'Protección Caribe',
+    imagen: '/img/the-garage-logo-transparent.png'
+  },
+  {
+    id: 6,
+    tipo: 'rodada',
+    titulo: 'Clínica de MTB en senderos de Punta Venado',
+    tag: 'Rodada Caribe',
+    emoji: '⛰️',
+    descripcion: 'Práctica de curvas, frenado en roca caliza y paso de raíces con la comunidad ciclista de Playa del Carmen.',
+    fecha: 'Hace 2 semanas',
+    marca: 'MTB Community',
+    imagen: '/img/marlin5-1.svg'
+  }
+];
+---
+
+<Base
+  title="Comunidad Ciclista & Taller en Vivo | The Garage Playa del Carmen"
+  description="Historias reales de ciclistas en Playa del Carmen, entregas de bicicletas, servicio de taller y rodadas por la Riviera Maya. Síguenos en Instagram @thegarage.pdc."
+>
+  <!-- Hero Section -->
+  <section style="background: radial-gradient(circle at top right, #F1F5F9 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
+    <div class="container">
+      <div style="max-width: 800px;">
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FDF2F8; border: 1.5px solid #FCE7F3; color: #BE185D; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+          📸 COMUNIDAD THE GARAGE • PLAYA DEL CARMEN
+        </div>
+        <h1 class="title-xl" style="margin-bottom: 1rem; color: #0F172A;">
+          Pasión por las dos ruedas en el Caribe.
+        </h1>
+        <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6;">
+          Más que una tienda, somos el punto de encuentro para los ciclistas de Playa del Carmen, Tulum y Cancún. Conoce los proyectos de taller, entregas a clientes y próximas rodadas.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community Grid & Interactive Filter -->
+  <section style="padding: 3rem 0 5rem 0;">
+    <div class="container">
+      
+      <!-- Filter Tabs -->
+      <div style="display: flex; gap: 0.5rem; overflow-x: auto; margin-bottom: 2.5rem; padding-bottom: 0.5rem;" id="com-filters">
+        <button type="button" class="com-tab active" data-tipo="todas">Todas las Historias</button>
+        <button type="button" class="com-tab" data-tipo="entrega">🎉 Entregas Felices</button>
+        <button type="button" class="com-tab" data-tipo="taller">🔧 Taller & Mecánica</button>
+        <button type="button" class="com-tab" data-tipo="rodada">🌴 Rodadas del Caribe</button>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="com-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        {posts.map((post) => (
+          <article class="com-card" data-tipo={post.tipo} style="background: #FFFFFF; border: 1.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column;">
+            <div style="position: relative; aspect-ratio: 16/10; background: #F8FAFC; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+              <img src={post.imagen} alt={post.titulo} style="width: 100%; height: 100%; object-fit: cover;" />
+              <div style="position: absolute; top: 0.75rem; left: 0.75rem;">
+                <span class="badge" style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem;">
+                  {post.emoji} {post.tag}
+                </span>
+              </div>
+            </div>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; flex: 1;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.5rem;">
+                <span>{post.marca}</span>
+                <span>{post.fecha}</span>
+              </div>
+              <h3 class="title-md" style="margin-bottom: 0.5rem; color: var(--secondary); line-height: 1.3;">
+                {post.titulo}
+              </h3>
+              <p style="font-size: 0.9rem; color: #475569; line-height: 1.5; margin-bottom: 1.25rem;">
+                {post.descripcion}
+              </p>
+              <div style="margin-top: auto; padding-top: 0.75rem; border-top: 1px solid var(--border);">
+                <a
+                  href="https://www.instagram.com/thegarage.pdc/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style="font-size: 0.85rem; font-weight: 800; color: #E1306C; display: inline-flex; align-items: center; gap: 0.35rem;"
+                >
+                  Ver en Instagram @thegarage.pdc ↗
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Join WhatsApp Community Banner -->
+      <div style="margin-top: 4rem; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: #FFFFFF; border-radius: var(--radius-xl); padding: 3rem 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 2rem; box-shadow: var(--shadow-xl); border: 2px solid #334155;">
+        <div style="max-width: 600px;">
+          <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.1); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--whatsapp);">
+            ● COMUNIDAD ABIERTA
+          </div>
+          <h2 class="title-lg" style="color: #FFFFFF; margin-bottom: 0.5rem;">¿Quieres unirte a las rodadas en Playa del Carmen?</h2>
+          <p style="color: #CBD5E1; font-size: 0.95rem; line-height: 1.5;">
+            Tenemos grupos para principiantes, intermedios y avanzados. Salidas a cenotes, rutas de carretera a Tulum y clínicas técnicas de mecánica básica.
+          </p>
+        </div>
+        <div>
+          <a
+            href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20al%20grupo%20de%20rodadas%20y%20comunidad%20de%20The%20Garage."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-whatsapp btn-lg"
+          >
+            Unirme al Grupo de WhatsApp
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Base>
+
+<style>
+  .com-tab {
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--border);
+    background: #F8FAFC;
+    color: #334155;
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .com-tab.active {
+    background: #0F172A;
+    color: #FFFFFF;
+    border-color: #0F172A;
+  }
+  .com-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .com-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+</style>
+
+<script>
+  function initCommunityFilters() {
+    const tabs = document.querySelectorAll<HTMLButtonElement>('#com-filters .com-tab');
+    const cards = document.querySelectorAll<HTMLElement>('.com-grid .com-card');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const tipo = tab.getAttribute('data-tipo') || 'todas';
+
+        cards.forEach((card) => {
+          const cardTipo = card.getAttribute('data-tipo');
+          if (tipo === 'todas' || cardTipo === tipo) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCommunityFilters);
+  } else {
+    initCommunityFilters();
+  }
+</script>

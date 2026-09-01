@@ -1,0 +1,391 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Calculadora de Tallas de Bicicleta | The Garage Playa del Carmen"
+  description="Calcula tu talla ideal de bicicleta de montaña, ruta o urbana según tu estatura. Consulta con mecánicos expertos en The Garage Playa del Carmen y aparta por WhatsApp."
+>
+  <!-- Schema JSON-LD para HowTo y FAQ -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Cómo calcular tu talla de bicicleta",
+      "description": "Guía interactiva para saber qué talla de cuadro necesitas en bicicletas MTB, Ruta y Urbana en Playa del Carmen y Riviera Maya.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Mide tu estatura",
+          "text": "Párate descalzo contra una pared con los talones juntos y mide la distancia desde el suelo hasta la parte superior de tu cabeza en centímetros."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Selecciona la disciplina",
+          "text": "Elige si buscas una bicicleta de Montaña (MTB), Ruta (Carretera) o Urbana."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Comprueba el rango de cuadro",
+          "text": "Cruza tu estatura con las tablas de geometría estándar y valida con una prueba de manejo física en tienda."
+        }
+      ]
+    }
+  </script>
+
+  <!-- Hero Header -->
+  <section style="background: radial-gradient(circle at top left, #F1F5F9 0%, #FFFFFF 60%); border-bottom: 2px solid #0F172A; padding: 3.5rem 0 2.5rem 0;">
+    <div class="container">
+      <div style="max-width: 800px;">
+        <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: #FFF7ED; border: 1.5px solid #FFEDD5; color: #C2410C; padding: 0.35rem 0.85rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 1rem;">
+          📏 HERRAMIENTA INTERACTIVA & GUÍA BIOMECÁNICA
+        </div>
+        <h1 class="title-xl" style="margin-bottom: 1rem; color: #0F172A;">
+          Calculadora de Tallas de Bicicleta
+        </h1>
+        <p class="subtitle" style="font-size: 1.15rem; line-height: 1.6;">
+          Rodar en la talla correcta evita dolores de espalda, molestias en rodillas y maximiza tu rendimiento. Usa nuestra calculadora interactiva para conocer tu medida exacta.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Calculator App Section -->
+  <section style="padding: 3rem 0 4rem 0;">
+    <div class="container">
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; align-items: start;">
+        
+        <!-- Left: Interactive Controls -->
+        <div style="background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-xl); padding: 2rem; box-shadow: var(--shadow-md);">
+          <h2 class="title-md" style="margin-bottom: 1.5rem; color: var(--secondary); display: flex; align-items: center; gap: 0.5rem;">
+            <span>⚙️</span> Ingresa tus datos
+          </h2>
+
+          <!-- Discipline Selector -->
+          <div style="margin-bottom: 1.75rem;">
+            <label style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.6rem;">
+              1. Tipo de Bicicleta:
+            </label>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;" id="disc-buttons">
+              <button type="button" class="calc-disc-btn active" data-disc="MTB">
+                ⛰️ MTB
+              </button>
+              <button type="button" class="calc-disc-btn" data-disc="Ruta">
+                🚴 Ruta
+              </button>
+              <button type="button" class="calc-disc-btn" data-disc="Urbana">
+                🏙️ Urbana
+              </button>
+            </div>
+          </div>
+
+          <!-- Height Slider -->
+          <div style="margin-bottom: 1.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.6rem;">
+              <label style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted);">
+                2. Tu Estatura (cm):
+              </label>
+              <span id="slider-height-display" style="font-size: 1.4rem; font-weight: 900; color: var(--primary);">
+                175 cm
+              </span>
+            </div>
+            <input
+              type="range"
+              id="calc-height-range"
+              min="145"
+              max="205"
+              value="175"
+              style="width: 100%; height: 8px; border-radius: 4px; background: #E2E8F0; outline: none; cursor: pointer; accent-color: var(--primary);"
+            />
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94A3B8; font-weight: 700; margin-top: 0.35rem;">
+              <span>145 cm (4'9")</span>
+              <span>175 cm (5'9")</span>
+              <span>205 cm (6'9")</span>
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div>
+            <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">
+              Estaturas frecuentes:
+            </label>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <button type="button" class="preset-btn" data-val="160">160 cm (5'3")</button>
+              <button type="button" class="preset-btn" data-val="170">170 cm (5'7")</button>
+              <button type="button" class="preset-btn" data-val="175">175 cm (5'9")</button>
+              <button type="button" class="preset-btn" data-val="180">180 cm (5'11")</button>
+              <button type="button" class="preset-btn" data-val="188">188 cm (6'2")</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live Result Card -->
+        <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); color: #FFFFFF; border-radius: var(--radius-xl); padding: 2.25rem; box-shadow: var(--shadow-xl); border: 2px solid #334155;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;">
+              TU RECOMENDACIÓN OFICIAL
+            </span>
+            <span id="res-badge-disc" style="font-size: 0.75rem; background: rgba(255,255,255,0.15); padding: 0.2rem 0.6rem; border-radius: var(--radius-full); font-weight: 700;">
+              MTB / Montaña
+            </span>
+          </div>
+
+          <!-- Giant Size Letter -->
+          <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.25rem;">
+            <div id="res-size-letter" style="font-size: 4.5rem; font-weight: 900; line-height: 1; color: #FFFFFF; text-shadow: 0 4px 20px rgba(255,87,34,0.3);">
+              M
+            </div>
+            <div>
+              <div id="res-size-detail" style="font-size: 1.35rem; font-weight: 800; color: var(--primary);">
+                Talla M (17.5")
+              </div>
+              <div id="res-rider-range" style="font-size: 0.85rem; color: #CBD5E1;">
+                Ideal para estaturas entre 168 cm y 178 cm
+              </div>
+            </div>
+          </div>
+
+          <!-- Specs pills -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.75rem; padding-top: 1.25rem; border-top: 1px solid #334155;">
+            <div style="background: rgba(255,255,255,0.06); padding: 0.75rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; display: block;">Rodada Sugerida</span>
+              <strong id="res-wheel-size" style="font-size: 0.95rem; color: #FFFFFF;">29" o 27.5"</strong>
+            </div>
+            <div style="background: rgba(255,255,255,0.06); padding: 0.75rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.7rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; display: block;">Postura de Manejo</span>
+              <strong id="res-posture" style="font-size: 0.95rem; color: #FFFFFF;">Equilibrada y ágil</strong>
+            </div>
+          </div>
+
+          <!-- CTA Actions -->
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <a
+              id="res-whatsapp-btn"
+              href="https://wa.me/529841381493?text=Hola,%20us%C3%A9%20su%20calculadora%20de%20tallas%20y%20mi%20estatura%20es%20175cm%20(Talla%20M).%20%C2%BFQu%C3%A9%20bicicletas%20tienen%20disponibles%20en%20tienda%3F"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-whatsapp btn-lg"
+              style="width: 100%;"
+            >
+              Consultar bicis en Talla M por WhatsApp
+            </a>
+            <a
+              href="/"
+              class="btn btn-outline"
+              style="width: 100%; color: #0F172A; background: #FFFFFF;"
+            >
+              Ver todo el inventario en tienda →
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tabla Comparativa Completa -->
+      <div style="margin-top: 4rem; background: #FFFFFF; border: 2px solid var(--border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; box-shadow: var(--shadow-sm);">
+        <h3 class="title-lg" style="margin-bottom: 0.5rem; color: var(--secondary);">
+          📊 Tabla de Referencia de Tallas y Geometrías
+        </h3>
+        <p class="subtitle" style="margin-bottom: 1.5rem;">
+          Guía rápida de tallas estándar empleada por fabricantes líderes como Trek, Specialized, Giant y Cannondale.
+        </p>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+            <thead>
+              <tr style="background: #0F172A; color: #FFFFFF;">
+                <th style="padding: 0.75rem 1rem; border-radius: var(--radius-sm) 0 0 0;">Estatura del Ciclista</th>
+                <th style="padding: 0.75rem 1rem;">Talla Universal</th>
+                <th style="padding: 0.75rem 1rem;">Cuadro MTB (Pulgadas)</th>
+                <th style="padding: 0.75rem 1rem;">Cuadro Ruta (Centímetros)</th>
+                <th style="padding: 0.75rem 1rem; border-radius: 0 var(--radius-sm) 0 0;">Rodada Habitual</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">148 cm – 158 cm</td>
+                <td style="padding: 0.75rem 1rem;"><span class="badge" style="background:#F1F5F9;">XS</span></td>
+                <td style="padding: 0.75rem 1rem;">13" – 14"</td>
+                <td style="padding: 0.75rem 1rem;">47 – 49 cm</td>
+                <td style="padding: 0.75rem 1rem;">27.5" / 26"</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border); background: #F8FAFC;">
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">158 cm – 168 cm</td>
+                <td style="padding: 0.75rem 1rem;"><span class="badge" style="background:#F1F5F9;">S</span></td>
+                <td style="padding: 0.75rem 1rem;">15" – 16"</td>
+                <td style="padding: 0.75rem 1rem;">50 – 52 cm</td>
+                <td style="padding: 0.75rem 1rem;">27.5" / 29"</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border); background: #EFF6FF;">
+                <td style="padding: 0.75rem 1rem; font-weight: 800; color: var(--primary);">168 cm – 178 cm (Más común)</td>
+                <td style="padding: 0.75rem 1rem;"><span class="badge" style="background:#DCFCE7; color:#15803D;">M</span></td>
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">17" – 18" (17.5")</td>
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">53 – 55 cm (54 cm)</td>
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">29" / 700c</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border); background: #F8FAFC;">
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">178 cm – 188 cm</td>
+                <td style="padding: 0.75rem 1rem;"><span class="badge" style="background:#F1F5F9;">L</span></td>
+                <td style="padding: 0.75rem 1rem;">19" – 20"</td>
+                <td style="padding: 0.75rem 1rem;">56 – 58 cm</td>
+                <td style="padding: 0.75rem 1rem;">29" / 700c</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem 1rem; font-weight: 700;">188 cm – 200+ cm</td>
+                <td style="padding: 0.75rem 1rem;"><span class="badge" style="background:#F1F5F9;">XL</span></td>
+                <td style="padding: 0.75rem 1rem;">21" – 22"</td>
+                <td style="padding: 0.75rem 1rem;">59 – 62 cm</td>
+                <td style="padding: 0.75rem 1rem;">29" / 700c</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</Base>
+
+<style>
+  .calc-disc-btn {
+    padding: 0.75rem 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--border);
+    background: #F8FAFC;
+    color: var(--secondary);
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .calc-disc-btn.active {
+    background: #0F172A;
+    color: #FFFFFF;
+    border-color: #0F172A;
+  }
+  .preset-btn {
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: #F8FAFC;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #475569;
+    cursor: pointer;
+  }
+  .preset-btn:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+  }
+</style>
+
+<script>
+  function initCalculator() {
+    const rangeInput = document.getElementById('calc-height-range') as HTMLInputElement | null;
+    const heightDisplay = document.getElementById('slider-height-display');
+    const discButtons = document.querySelectorAll<HTMLButtonElement>('#disc-buttons .calc-disc-btn');
+    const presetButtons = document.querySelectorAll<HTMLButtonElement>('.preset-btn');
+
+    const resSizeLetter = document.getElementById('res-size-letter');
+    const resSizeDetail = document.getElementById('res-size-detail');
+    const resRiderRange = document.getElementById('res-rider-range');
+    const resBadgeDisc = document.getElementById('res-badge-disc');
+    const resWheelSize = document.getElementById('res-wheel-size');
+    const resPosture = document.getElementById('res-posture');
+    const resWhatsAppBtn = document.getElementById('res-whatsapp-btn') as HTMLAnchorElement | null;
+
+    let selectedDisc = 'MTB';
+
+    function calculateSize(height: number, disc: string) {
+      let letter = 'M';
+      let detail = 'Talla M (17.5")';
+      let range = '168 cm – 178 cm';
+      let wheel = '29"';
+      let posture = 'Ágil y equilibrada';
+
+      if (disc === 'MTB') {
+        if (height < 158) {
+          letter = 'XS'; detail = 'Talla XS (13.5" – 14")'; range = '148 cm – 158 cm'; wheel = '27.5" / 26"';
+        } else if (height < 168) {
+          letter = 'S'; detail = 'Talla S (15.5")'; range = '158 cm – 168 cm'; wheel = '27.5" / 29"';
+        } else if (height < 178) {
+          letter = 'M'; detail = 'Talla M (17.5")'; range = '168 cm – 178 cm'; wheel = '29"';
+        } else if (height < 188) {
+          letter = 'L'; detail = 'Talla L (19.5")'; range = '178 cm – 188 cm'; wheel = '29"';
+        } else {
+          letter = 'XL'; detail = 'Talla XL (21.5")'; range = '188 cm – 205 cm'; wheel = '29"';
+        }
+      } else if (disc === 'Ruta') {
+        if (height < 158) {
+          letter = 'XS'; detail = 'Talla 48 – 49 cm'; range = '150 cm – 158 cm'; wheel = '700c';
+        } else if (height < 168) {
+          letter = 'S'; detail = 'Talla 50 – 52 cm'; range = '158 cm – 168 cm'; wheel = '700c';
+        } else if (height < 178) {
+          letter = 'M'; detail = 'Talla 54 cm'; range = '168 cm – 178 cm'; wheel = '700c';
+        } else if (height < 188) {
+          letter = 'L'; detail = 'Talla 56 – 58 cm'; range = '178 cm – 188 cm'; wheel = '700c';
+        } else {
+          letter = 'XL'; detail = 'Talla 59 – 61 cm'; range = '188 cm – 205 cm'; wheel = '700c';
+        }
+      } else {
+        // Urbana
+        if (height < 165) {
+          letter = 'S'; detail = 'Talla S (Paseo Confort)'; range = '150 cm – 165 cm'; wheel = '700c / 27.5"';
+        } else if (height < 180) {
+          letter = 'M'; detail = 'Talla M (Urbana Estándar)'; range = '165 cm – 180 cm'; wheel = '700c';
+        } else {
+          letter = 'L'; detail = 'Talla L (Cuadro Alto)'; range = '180 cm – 200 cm'; wheel = '700c';
+        }
+      }
+
+      if (resSizeLetter) resSizeLetter.textContent = letter;
+      if (resSizeDetail) resSizeDetail.textContent = detail;
+      if (resRiderRange) resRiderRange.textContent = `Ideal para estaturas entre ${range}`;
+      if (resBadgeDisc) resBadgeDisc.textContent = `${disc}`;
+      if (resWheelSize) resWheelSize.textContent = wheel;
+      if (resPosture) resPosture.textContent = posture;
+
+      if (resWhatsAppBtn) {
+        const msg = encodeURIComponent(`Hola The Garage, usé la calculadora web. Mi estatura es ${height}cm y busco una ${disc} en ${detail}. ¿Tienen modelos disponibles en tienda?`);
+        resWhatsAppBtn.href = `https://wa.me/529841381493?text=${msg}`;
+        resWhatsAppBtn.textContent = `Consultar bicis en ${letter} (${disc}) por WhatsApp`;
+      }
+    }
+
+    function update() {
+      const h = parseInt(rangeInput?.value || '175', 10);
+      if (heightDisplay) heightDisplay.textContent = `${h} cm`;
+      calculateSize(h, selectedDisc);
+    }
+
+    rangeInput?.addEventListener('input', update);
+
+    discButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        discButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedDisc = btn.getAttribute('data-disc') || 'MTB';
+        update();
+      });
+    });
+
+    presetButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-val');
+        if (val && rangeInput) {
+          rangeInput.value = val;
+          update();
+        }
+      });
+    });
+
+    update();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCalculator);
+  } else {
+    initCalculator();
+  }
+</script>
