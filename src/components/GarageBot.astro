@@ -25,9 +25,7 @@
     <div id="gb-messages" class="gb-messages">
       <!-- Los mensajes se inyectan por JS -->
 
-    <div id="gb-typing" class="gb-msg gb-msg-bot" style="display:none; width:45px; padding: 0.4rem 0.85rem;">
-      <span class="dot-bounce"></span><span class="dot-bounce" style="animation-delay:0.2s"></span><span class="dot-bounce" style="animation-delay:0.4s"></span>
-    </div>
+    
 
     </div>
 
@@ -353,17 +351,24 @@
     return `¡Bienvenido a The Garage! Cualquier duda con el catálogo, aquí estoy.`;
   }
 
+  function showTyping() {
+    const t = document.createElement('div');
+    t.id = 'gb-typing';
+    t.className = 'gb-msg gb-msg-bot';
+    t.style.width = '50px';
+    t.style.padding = '0.5rem 0.85rem';
+    t.innerHTML = '<span class="dot-bounce"></span><span class="dot-bounce" style="animation-delay:0.2s"></span><span class="dot-bounce" style="animation-delay:0.4s"></span>';
+    msgContainer.appendChild(t);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+  }
+
   function handleUserInput(text) {
     addMessage('user', text);
     input.value = '';
-    const typing = document.getElementById('gb-typing');
-    typing.style.display = 'block';
-    msgContainer.appendChild(typing);
-    msgContainer.scrollTop = msgContainer.scrollHeight;
+    showTyping();
     
-    let delay = Math.random() * 1000 + 800; // Fake typing 0.8s - 1.8s
+    let delay = Math.random() * 1000 + 800; // Fake typing delay
     setTimeout(() => {
-      typing.style.display = 'none';
       processBotLogic(text);
     }, delay);
   }
