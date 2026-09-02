@@ -334,20 +334,28 @@
       return "¡Anotado! Ya guardé tu contacto en el sistema. En breve te escribo personalmente para darle seguimiento.";
     }
 
-    // 2. Name Capture Heuristics
-    // If we asked for their name, or they say "soy X", "me llamo X"
+    // 2. Name Capture Heuristics (Non-blocking)
+    let prefix = "";
     const nameMatch = t.match(/\b(soy|me llamo|mi nombre es)\s+([a-záéíóúñ]+)/i);
     if (nameMatch) {
-      saveCRMName(nameMatch[2]);
-      return `¡Mucho gusto, ${nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1)}! ¿Qué tipo de bici tienes en mente?`;
+      const extractedName = nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1);
+      saveCRMName(extractedName);
+      prefix = `¡Mucho gusto, ${extractedName}! `;
+      // Remove the name part so we can parse the rest of the sentence
+      t = t.replace(nameMatch[0], "");
     }
 
     // 3. Match Intents
     for (let i = 0; i < intents.length; i++) {
       if (intents[i].pattern.test(t)) {
         let options = intents[i].responses;
-        return options[Math.floor(Math.random() * options.length)];
+        return prefix + options[Math.floor(Math.random() * options.length)];
       }
+    }
+    
+    // If we had a name but no other intent matched:
+    if (prefix) {
+      return prefix + "¿En qué te puedo ayudar hoy con tu próxima bicicleta?";
     }
 
     // 4. Smart Fallbacks based on Context & Score
