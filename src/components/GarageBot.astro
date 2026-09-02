@@ -24,9 +24,6 @@
 
     <div id="gb-messages" class="gb-messages">
       <!-- Los mensajes se inyectan por JS -->
-
-    
-
     </div>
 
     <div class="gb-quick-replies" id="gb-quick-replies">
@@ -212,6 +209,9 @@
   }
   .gb-send-btn:hover { color: #fb7185; }
 
+  .dot-bounce { display:inline-block; width:6px; height:6px; background:#e4e4e7; border-radius:50%; margin:0 2px; animation: gb-bounce 1.4s infinite ease-in-out both; }
+  @keyframes gb-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
   @media (max-width: 400px) {
     .gb-chat-window {
       position: fixed;
@@ -220,10 +220,6 @@
       border-radius: 0;
     }
   }
-
-  .dot-bounce { display:inline-block; width:6px; height:6px; background:#e4e4e7; border-radius:50%; margin:0 2px; animation: gb-bounce 1.4s infinite ease-in-out both; }
-  @keyframes gb-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-
 </style>
 
 <script is:inline>
@@ -234,46 +230,24 @@
   const msgContainer = document.getElementById('gb-messages');
   const form = document.getElementById('gb-input-form');
   const input = document.getElementById('gb-input');
-  const qrContainer = document.getElementById('gb-quick-replies');
   const notifDot = document.getElementById('gb-notif-dot');
 
   let chatHistory = JSON.parse(localStorage.getItem('tg_bot_history') || '[]');
-  let botState = localStorage.getItem('tg_bot_state') || 'INIT'; 
+  let botContext = JSON.parse(localStorage.getItem('tg_bot_context') || '{"askedName":false, "askedPhone":false}');
 
-  // Helpers CRM
-  function getSessionId() {
-    return localStorage.getItem('tg_session_id');
-  }
+  // CRM Helpers
+  function getSessionId() { return localStorage.getItem('tg_session_id'); }
   function getCRMScore() {
     try {
-      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
-      const s = sessions.find(x => x.id === getSessionId());
+      const s = JSON.parse(localStorage.getItem('tg_sessions')||'[]').find(x => x.id === getSessionId());
       if (!s || !s.events) return 0;
-      let score = 0;
-      const WEIGHTS = {
-        page_view:2,scroll_50:5,scroll_75:8,scroll_90:10,time_3min:8,time_5min:12,
-        return_visit:20,matchmaker_step1:6,matchmaker_step2:10,matchmaker_complete:22,
-        bike_detail_view:14,inventory_view:6,guide_complete:7,whatsapp_click:25,lead_form_submit:30
-      };
-      s.events.forEach(e => { score += (WEIGHTS[e.type] || 0); });
-      return Math.min(100, score);
+      return Math.min(100, s.events.reduce((acc, e) => acc + (e.type==='page_view'?2:e.type==='whatsapp_click'?25:5), 0));
     } catch(e) { return 0; }
   }
-  function getCRMPages() {
-    try {
-      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
-      const s = sessions.find(x => x.id === getSessionId());
-      return s ? (s.pages || []) : [];
-    } catch(e) { return []; }
-  }
-  function getCRMName() {
-    try {
-      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
-      const s = sessions.find(x => x.id === getSessionId());
-      if(s && s.extended_info && s.extended_info.name) return s.extended_info.name;
-      if(s && s.user && s.user.name) return s.user.name;
-      return null;
-    } catch(e) { return null; }
+  function captureCRMContact(val) {
+    window.dispatchEvent(new CustomEvent('tg:lead_captured', { 
+      detail: { contact: val, channel: val.includes('@') ? 'email' : 'whatsapp', model: 'Bot Local Engine' }
+    }));
   }
   function saveCRMName(name) {
     try {
@@ -286,13 +260,8 @@
       }
     } catch(e) {}
   }
-  function captureCRMContact(val) {
-    window.dispatchEvent(new CustomEvent('tg:lead_captured', { 
-      detail: { contact: val, channel: val.includes('@') ? 'email' : 'whatsapp', model: 'Bot Capture' }
-    }));
-  }
 
-  // UI Helpers
+  // UI
   function renderMessages() {
     msgContainer.innerHTML = '';
     chatHistory.forEach(m => {
@@ -308,49 +277,6 @@
     localStorage.setItem('tg_bot_history', JSON.stringify(chatHistory));
     renderMessages();
   }
-  function showQuickReplies(replies) {
-    qrContainer.innerHTML = '';
-    replies.forEach(r => {
-      const btn = document.createElement('button');
-      btn.className = 'gb-qr-btn';
-      btn.textContent = r;
-      btn.onclick = () => {
-        qrContainer.innerHTML = '';
-        handleUserInput(r);
-      };
-      qrContainer.appendChild(btn);
-    });
-  }
-
-  // --- BOT ENGINE (State Machine & Logic) ---
-  function getGreeting() {
-    const score = getCRMScore();
-    const name = getCRMName();
-    const pages = getCRMPages();
-    const sawBikes = pages.some(p => p.includes('/bici/'));
-
-    if (score >= 70) {
-      return name 
-        ? `¡Hola ${name}! Tienes el perfil ideal para nuestras bicicletas de alto nivel. Veo que estás muy interesado, ¿quieres que te aparte alguna unidad hoy mismo?`
-        : `¡Hola! Noto mucho interés en nuestro catálogo. Para darte atención VIP y revisar el inventario en físico, ¿con quién tengo el gusto?`;
-    } 
-    if (score >= 45) {
-      if(sawBikes) {
-        return name 
-          ? `Hola ${name}, esa bicicleta que estuviste viendo tiene mucha demanda últimamente. ¿Quieres que te pase fotos reales por WhatsApp de las que tengo armadas?`
-          : `Hola, me di cuenta que revisaste a fondo nuestro inventario. A veces decidir la talla correcta es difícil. Para asesorarte mejor, ¿cuál es tu nombre?`;
-      }
-      return `¡Hola! Estás revisando bastante información técnica. ¿Hay alguna disciplina en particular (Ruta, Gravel, MTB) que te interese más?`;
-    }
-    if (score >= 20) {
-      return name 
-        ? `${name}, sigo a tus órdenes si tienes alguna duda sobre modelos o guías de tallas.`
-        : `¡Hola! Soy tu asistente de The Garage. ¿Buscas tu primera bicicleta o ya tienes experiencia rodando?`;
-    }
-    // Anónimo < 20
-    return `¡Bienvenido a The Garage! Cualquier duda con el catálogo, aquí estoy.`;
-  }
-
   function showTyping() {
     const t = document.createElement('div');
     t.id = 'gb-typing';
@@ -361,61 +287,89 @@
     msgContainer.appendChild(t);
     msgContainer.scrollTop = msgContainer.scrollHeight;
   }
+  function hideTyping() {
+    const t = document.getElementById('gb-typing');
+    if (t) t.remove();
+  }
+
+  // --- GARAGE ENGINE (Custom Local NLP) ---
+  const intents = [
+    { pattern: /\\b(hola|buenas|que tal|hols|buenos dias|buenas tardes)\\b/i, 
+      responses: ["¡Hola! Soy Diego. ¿En qué te puedo ayudar hoy con tu próxima bicicleta?", "¡Qué tal! Bienvenido a The Garage. ¿Buscas algo en específico?"] },
+    { pattern: /\\b(comprar|quiero una|busco una|me interesa|bici)\\b/i,
+      responses: ["Excelente decisión. Manejamos Ruta, Gravel y Montaña. ¿Qué disciplina te gusta más?", "Tengo opciones listas para rodar. ¿Para qué terreno la buscas?"] },
+    { pattern: /\\b(ruta|asfalto|carrera)\\b/i,
+      responses: ["La velocidad es lo nuestro. Manejamos marcas top como Merida y Basso. ¿Qué presupuesto tienes en mente?", "Perfecto para asfalto. Te puedo mandar fotos reales del inventario. ¿Me pasas tu WhatsApp?"] },
+    { pattern: /\\b(montaña|mtb|terraceria|senderos)\\b/i,
+      responses: ["Nada como el MTB. Tenemos desde suspensiones rígidas hasta dobles. Si me dejas tu WhatsApp te mando el catálogo con precios.", "¡Rudos senderos! Tengo unas Trek y Giant listas. ¿Te paso la info por WhatsApp?"] },
+    { pattern: /\\b(gravel|mixto)\\b/i,
+      responses: ["Gravel es la disciplina más versátil hoy en día. Tengo unas joyas en tienda. ¿Me compartes tu cel a 10 dígitos para mandarte fotos?"] },
+    { pattern: /\\b(precio|cuesta|costo|cuanto|caro)\\b/i,
+      responses: ["Nuestros equipos van desde los $7,900 MXN hasta gama premium. Todo se entrega ajustado y con servicio gratis. ¿Me pasas tu WhatsApp y te armo una cotización?", "Depende mucho de los componentes (Shimano, SRAM). ¿Quieres que te contacte un experto por WhatsApp para darte precios exactos?"] },
+    { pattern: /\\b(garantia|servicio|taller)\\b/i,
+      responses: ["Somos centro de servicio certificado. Todas traen garantía y tu primer servicio va por nuestra cuenta. ¿Te animas a venir a la tienda?"] },
+    { pattern: /\\b(donde|ubicacion|direccion|tienda)\\b/i,
+      responses: ["Estamos en Av. Ich Xeel CASA 19, Cataluña, Playa del Carmen. ¿Te gustaría agendar una cita?"] },
+    { pattern: /\\b(quien eres|con quien tengo el gusto|como te llamas)\\b/i,
+      responses: ["Soy Diego, asesor especializado de The Garage. ¡Un gusto! ¿Con quién tengo el gusto yo?"] }
+  ];
+
+  function processLocalEngine(text) {
+    let t = text.toLowerCase();
+    
+    // 1. Capture Contacts First
+    const phoneRegex = /\\b\\d{10}\\b/;
+    const emailRegex = /\\S+@\\S+\\.\\S+/;
+    if (phoneRegex.test(t) || emailRegex.test(t)) {
+      let match = t.match(phoneRegex) || t.match(emailRegex);
+      captureCRMContact(match[0]);
+      botContext.askedPhone = true;
+      localStorage.setItem('tg_bot_context', JSON.stringify(botContext));
+      return "¡Anotado! Ya guardé tu contacto en el sistema. En breve te escribo personalmente para darle seguimiento.";
+    }
+
+    // 2. Name Capture Heuristics
+    // If we asked for their name, or they say "soy X", "me llamo X"
+    const nameMatch = t.match(/\\b(soy|me llamo|mi nombre es)\\s+([a-záéíóúñ]+)/i);
+    if (nameMatch) {
+      saveCRMName(nameMatch[2]);
+      return `¡Mucho gusto, ${nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1)}! ¿Qué tipo de bici tienes en mente?`;
+    }
+
+    // 3. Match Intents
+    for (let i = 0; i < intents.length; i++) {
+      if (intents[i].pattern.test(t)) {
+        let options = intents[i].responses;
+        return options[Math.floor(Math.random() * options.length)];
+      }
+    }
+
+    // 4. Smart Fallbacks based on Context & Score
+    const score = getCRMScore();
+    if (!botContext.askedPhone && score > 30) {
+      botContext.askedPhone = true;
+      localStorage.setItem('tg_bot_context', JSON.stringify(botContext));
+      return "Te entiendo. Creo que lo mejor será enviarte detalles específicos. ¿Me compartes tu número a 10 dígitos para atenderte por WhatsApp?";
+    }
+    
+    return "Comprendo. Cada ciclista es único, y me gustaría asesorarte bien. ¿Te interesaría venir al taller o prefieres que platiquemos por WhatsApp?";
+  }
 
   function handleUserInput(text) {
     addMessage('user', text);
     input.value = '';
     showTyping();
     
-    let delay = Math.random() * 1000 + 800; // Fake typing delay
+    let delay = Math.random() * 800 + 600; // 0.6s - 1.4s
     setTimeout(() => {
-      processBotLogic(text);
+      hideTyping();
+      const reply = processLocalEngine(text);
+      addMessage('bot', reply);
     }, delay);
   }
 
-  function extractName(text) {
-    let t = text.toLowerCase().trim();
-    t = t.replace(/(me llamo|soy|mi nombre es)\s+/i, '');
-    t = t.charAt(0).toUpperCase() + t.slice(1);
-    if(t.split(' ').length <= 3) return t; 
-    return null;
-  }
-
-    function processBotLogic(text) {
-    let t = text.toLowerCase();
-    
-    // Always check for contact info to feed the CRM
-    const phoneRegex = /\b\d{10}\b/;
-    const emailRegex = /\S+@\S+\.\S+/;
-    
-    if (phoneRegex.test(t) || emailRegex.test(t)) {
-      let match = t.match(phoneRegex) || t.match(emailRegex);
-      captureCRMContact(match[0]);
-      // We don't return here! We still send it to the LLM so it can say "Thanks, I saved your number!"
-    }
-
-    const crmData = {
-      score: getCRMScore(),
-      name: getCRMName(),
-      pages: getCRMPages().join(', ')
-    };
-
-    fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ history: chatHistory, crmContext: crmData })
-    })
-    .then(r => r.json())
-    .then(data => {
-      addMessage('bot', data.reply);
-    })
-    .catch(err => {
-      addMessage('bot', 'Perdón, mi sistema está intentando conectar. ¿Me dejas tu WhatsApp a 10 dígitos para atenderte por allá?');
-    });
-  }
-
   // Events
-    toggleBtn.addEventListener('click', () => {
+  toggleBtn.addEventListener('click', () => {
     chatWindow.style.display = 'flex';
     toggleBtn.style.display = 'none';
     notifDot.style.display = 'none';
@@ -423,8 +377,13 @@
     if (chatHistory.length === 0) {
       showTyping();
       setTimeout(() => {
-        processBotLogic('HOLA_INICIAL_SISTEMA'); // trigger LLM for first message
-      }, 500);
+        hideTyping();
+        const score = getCRMScore();
+        const initialGreeting = score > 45 
+          ? "¡Hola! Noto que estás viendo nuestras bicis. Si quieres fotos reales del taller, avísame."
+          : "¡Bienvenido a The Garage! Soy Diego, si tienes dudas con los precios o modelos, escríbeme.";
+        addMessage('bot', initialGreeting);
+      }, 700);
     }
   });
 
@@ -436,7 +395,6 @@
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if(!input.value.trim()) return;
-    qrContainer.innerHTML = '';
     handleUserInput(input.value.trim());
   });
 
@@ -450,6 +408,5 @@
       renderMessages();
     }
   }, 2000);
-
 })();
 </script>
