@@ -381,75 +381,50 @@
     return null;
   }
 
-  function processBotLogic(text) {
+    function processBotLogic(text) {
     let t = text.toLowerCase();
     
+    // Always check for contact info to feed the CRM
     const phoneRegex = /\b\d{10}\b/;
     const emailRegex = /\S+@\S+\.\S+/;
     
     if (phoneRegex.test(t) || emailRegex.test(t)) {
       let match = t.match(phoneRegex) || t.match(emailRegex);
       captureCRMContact(match[0]);
-      botState = 'CLOSING';
-      localStorage.setItem('tg_bot_state', botState);
-      addMessage('bot', '¡Excelente! He guardado tu contacto en el sistema de ventas. En breve uno de nuestros asesores de tienda se comunicará contigo personalmente.');
-      return;
+      // We don't return here! We still send it to the LLM so it can say "Thanks, I saved your number!"
     }
 
-    if (botState === 'ASKING_NAME') {
-      let name = extractName(text);
-      if(name) {
-        saveCRMName(name);
-        botState = 'ASKING_INTEREST';
-        localStorage.setItem('tg_bot_state', botState);
-        addMessage('bot', `Mucho gusto, ${name}. Cuéntame, ¿qué estás buscando hoy? ¿Una bici de Ruta, Gravel o Montaña?`);
-        showQuickReplies(['Ruta', 'Gravel', 'MTB (Montaña)']);
-      } else {
-        addMessage('bot', `Perdona, no capté bien tu nombre. ¿Me lo repites por favor?`);
-      }
-      return;
-    }
+    const crmData = {
+      score: getCRMScore(),
+      name: getCRMName(),
+      pages: getCRMPages().join(', ')
+    };
 
-    if (botState === 'ASKING_INTEREST' || t.includes('ruta') || t.includes('gravel') || t.includes('montaña') || t.includes('mtb')) {
-      botState = 'PROVIDING_VALUE';
-      localStorage.setItem('tg_bot_state', botState);
-      addMessage('bot', '¡Gran elección! Tenemos excelentes opciones con esa disciplina. Si me pasas tu WhatsApp a 10 dígitos, te envío el catálogo actualizado con inventario real y precios.');
-      return;
-    }
-
-    if (t.includes('precio') || t.includes('cuesta')) {
-      addMessage('bot', 'Nuestros precios varían según el modelo y el ensamble (manejamos bicis desde $7,900 MXN hasta topes de gama). Si dejas tu WhatsApp te mando la lista oficial.');
-      return;
-    }
-
-    if (t.includes('donde') || t.includes('ubicacion') || t.includes('tienda')) {
-      addMessage('bot', 'Estamos en Playa del Carmen, Av. Ich Xeel CASA 19, Cataluña. ¿Te gustaría agendar una visita al taller? Déjame tu WhatsApp para coordinarlo.');
-      return;
-    }
-
-    const name = getCRMName();
-    if (!name && botState !== 'ASKING_NAME') {
-      botState = 'ASKING_NAME';
-      localStorage.setItem('tg_bot_state', botState);
-      addMessage('bot', 'Para poder darte información más específica, ¿con quién tengo el gusto?');
-      return;
-    }
-
-    addMessage('bot', 'Entiendo. Como experto en bicicletas, mi mejor recomendación es que charlemos por WhatsApp para enviarte fotos reales y asesorarte a fondo. ¿Me compartes tu número a 10 dígitos?');
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history: chatHistory, crmContext: crmData })
+    })
+    .then(r => r.json())
+    .then(data => {
+      addMessage('bot', data.reply);
+    })
+    .catch(err => {
+      addMessage('bot', 'Perdón, mi sistema está intentando conectar. ¿Me dejas tu WhatsApp a 10 dígitos para atenderte por allá?');
+    });
   }
 
   // Events
-  toggleBtn.addEventListener('click', () => {
+    toggleBtn.addEventListener('click', () => {
     chatWindow.style.display = 'flex';
     toggleBtn.style.display = 'none';
     notifDot.style.display = 'none';
     
     if (chatHistory.length === 0) {
+      showTyping();
       setTimeout(() => {
-        botState = getCRMName() ? 'GENERAL' : 'ASKING_NAME';
-        localStorage.setItem('tg_bot_state', botState);
-        addMessage('bot', getGreeting());
-      }, 300);
+        processBotLogic('HOLA_INICIAL_SISTEMA'); // trigger LLM for first message
+      }, 500);
     }
   });
 
