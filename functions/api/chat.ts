@@ -2,58 +2,67 @@ export async function onRequestPost(context) {
   try {
     const request = context.request;
     const { history, crmContext } = await request.json();
-
     const apiKey = context.env.GEMINI_API_KEY;
     
     if (!apiKey) {
       return new Response(JSON.stringify({ 
-        reply: "Necesitas configurar tu `GEMINI_API_KEY` en la pestaña de 'Settings > Variables' de tu proyecto en Cloudflare Pages para que el bot pueda razonar." 
+        reply: "Necesitas configurar tu `GEMINI_API_KEY` en Cloudflare." 
       }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
     const systemPrompt = `
-Eres Diego, asesor experto en ventas de "The Garage Bike Experts", una boutique de bicicletas de gama alta (Ruta, MTB, Gravel) en Playa del Carmen.
-Tono: Profesional, experto, amigable, persuasivo. Eres humano, no un bot. Escribes corto, estilo WhatsApp.
+Eres Diego, asesor experto en ventas de "The Garage Bike Experts", una boutique de bicicletas de gama alta en Playa del Carmen.
+Tono: Profesional, experto, persuasivo. Estilo WhatsApp, corto y al grano.
 
 Contexto Actual del Cliente:
 - Nombre: ${crmContext.name || 'Desconocido'}
 - Score de Interés: ${crmContext.score}/100
-- Páginas que ha visto: ${crmContext.pages}
 
 Instrucciones:
-1. Si el usuario dice "HOLA_INICIAL_SISTEMA", significa que acaba de abrir el chat. Preséntate e inicia tú la conversación basado en su Score (ej. si Score > 45, dile que notaste que está viendo bicis; si es < 45, dale la bienvenida general y pregunta su nombre).
-2. Pregunta el WhatsApp a 10 dígitos sutilmente para mandarle catálogo o fotos.
-3. Si el cliente te da un número de 10 dígitos, agradécele y dile que lo contactarás en breve.
-4. NUNCA uses emojis (regla estricta).
-5. Mantén tus respuestas en 1 o 2 párrafos cortos.
+1. Si el usuario dice "HOLA_INICIAL_SISTEMA", preséntate e inicia la conversación.
+2. Si quiere informes, pide sutilmente el WhatsApp a 10 dígitos.
+3. NUNCA uses emojis (regla estricta).
 `;
 
-    const formattedHistory = history.map(msg => ({
+    let formattedHistory = history.map(msg => ({
       role: msg.sender === 'bot' ? 'model' : 'user',
       parts: [{ text: msg.text }]
     }));
 
+    // Fix: If history is empty because it's the auto-greeting ping
+    if (formattedHistory.length === 0) {
+      formattedHistory = [{ role: 'user', parts: [{ text: 'HOLA_INICIAL_SISTEMA' }] }];
+    }
+
     const payload = {
-      systemInstruction: {
-        parts: [{ text: systemPrompt }]
-      },
+      systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: formattedHistory,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 250,
-      }
+      generationConfig: { temperature: 0.7, maxOutputTokens: 250 }
     };
 
-    const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    let data;
+    let success = false;
+    let attempts = 3; // Retry logic for high demand
 
-    const data = await apiResponse.json();
-    
-    if (data.error) {
-      return new Response(JSON.stringify({ reply: "Hubo un error conectando con el modelo: " + data.error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    for (let i = 0; i < attempts; i++) {
+      const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      data = await apiResponse.json();
+      
+      // If 503 high demand, wait 1.5s and retry
+      if (data.error && data.error.message.includes('high demand')) {
+        await new Promise(r => setTimeout(r, 1500));
+        continue;
+      }
+      success = true;
+      break;
+    }
+
+    if (!success || data.error) {
+      return new Response(JSON.stringify({ reply: "Hubo un error de conexión temporal con los servidores de Google: " + (data.error?.message || "Unknown error") }), { status: 500, headers: { 'Content-Type': 'application/json' } });
     }
 
     const replyText = data.candidates[0].content.parts[0].text;
