@@ -46,6 +46,7 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
 
 <article
   class="card-bici-tile"
+  data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2"
   data-categoria={bici.categoria}
   data-estado={bici.estado}
   data-disponibilidad={bici.disponibilidad}
@@ -125,6 +126,15 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
 </article>
 
 <style>
+  
+  .card-bici-tile {
+    animation: fade-up 0.6s var(--ease-spring) both;
+  }
+  @keyframes fade-up {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
   .card-bici-tile {
     background: var(--surface-card);
     border: 1px solid var(--border-hairline);
@@ -245,3 +255,5 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     font-size: 0.82rem;
   }
 </style>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>

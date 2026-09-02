@@ -24,6 +24,11 @@
 
     <div id="gb-messages" class="gb-messages">
       <!-- Los mensajes se inyectan por JS -->
+
+    <div id="gb-typing" class="gb-msg gb-msg-bot" style="display:none; width:45px; padding: 0.4rem 0.85rem;">
+      <span class="dot-bounce"></span><span class="dot-bounce" style="animation-delay:0.2s"></span><span class="dot-bounce" style="animation-delay:0.4s"></span>
+    </div>
+
     </div>
 
     <div class="gb-quick-replies" id="gb-quick-replies">
@@ -48,7 +53,7 @@
     bottom: 20px;
     right: 20px;
     z-index: 9995;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
   .gb-toggle-btn {
     background: #e11d48;
@@ -83,8 +88,8 @@
     position: absolute;
     bottom: 70px;
     right: 0;
-    width: 340px;
-    height: 480px;
+    width: 380px;
+    height: 600px;
     background: #111113;
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
@@ -191,7 +196,7 @@
     padding: 0.5rem 1rem;
     color: #e4e4e7;
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     outline: none;
   }
   .gb-input-area input:focus {
@@ -217,6 +222,10 @@
       border-radius: 0;
     }
   }
+
+  .dot-bounce { display:inline-block; width:6px; height:6px; background:#e4e4e7; border-radius:50%; margin:0 2px; animation: gb-bounce 1.4s infinite ease-in-out both; }
+  @keyframes gb-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
 </style>
 
 <script is:inline>
@@ -347,11 +356,16 @@
   function handleUserInput(text) {
     addMessage('user', text);
     input.value = '';
+    const typing = document.getElementById('gb-typing');
+    typing.style.display = 'block';
+    msgContainer.appendChild(typing);
+    msgContainer.scrollTop = msgContainer.scrollHeight;
     
-    // Simulate delay
+    let delay = Math.random() * 1000 + 800; // Fake typing 0.8s - 1.8s
     setTimeout(() => {
+      typing.style.display = 'none';
       processBotLogic(text);
-    }, 600);
+    }, delay);
   }
 
   function extractName(text) {
