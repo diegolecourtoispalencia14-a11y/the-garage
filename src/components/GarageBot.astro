@@ -223,6 +223,7 @@
 </style>
 
 <script is:inline>
+
 (function() {
   const toggleBtn = document.getElementById('gb-toggle-btn');
   const chatWindow = document.getElementById('gb-chat-window');
@@ -233,7 +234,6 @@
   const notifDot = document.getElementById('gb-notif-dot');
 
   let chatHistory = JSON.parse(localStorage.getItem('tg_bot_history') || '[]');
-  let botContext = JSON.parse(localStorage.getItem('tg_bot_context') || '{"askedName":false, "askedPhone":false}');
 
   // CRM Helpers
   function getSessionId() { return localStorage.getItem('tg_session_id'); }
@@ -246,19 +246,8 @@
   }
   function captureCRMContact(val) {
     window.dispatchEvent(new CustomEvent('tg:lead_captured', { 
-      detail: { contact: val, channel: val.includes('@') ? 'email' : 'whatsapp', model: 'Bot Local Engine' }
+      detail: { contact: val, channel: val.includes('@') ? 'email' : 'whatsapp', model: 'Gemini AI Engine' }
     }));
-  }
-  function saveCRMName(name) {
-    try {
-      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
-      const s = sessions.find(x => x.id === getSessionId());
-      if(s) {
-        if(!s.extended_info) s.extended_info = {};
-        s.extended_info.name = name;
-        localStorage.setItem('tg_sessions', JSON.stringify(sessions));
-      }
-    } catch(e) {}
   }
 
   // UI
@@ -292,107 +281,38 @@
     if (t) t.remove();
   }
 
-  // --- GARAGE ENGINE (Custom Local NLP) ---
-        const intents = [
-    // 1. Specific Brands (Highest Priority)
-    { pattern: /(lee cougan|merida|basso|giant|trek|specialized|pinarello|cervelo|bmc|alubike|allubike)/i,
-      responses: ["¡Excelente marca! Manejamos esa línea. ¿Me podrías compartir tu WhatsApp a 10 dígitos para mandarte los modelos y tallas exactas que tenemos en piso?"] },
-    
-    // 2. Specific Disciplines
-    { pattern: /(ruta|asfalto|carrera)/i,
-      responses: ["¡La velocidad es lo nuestro! Manejamos marcas top de ruta. ¿Me pasas tu WhatsApp para mandarte fotos del inventario real?"] },
-    { pattern: /(montaña|mtb|terraceria|senderos)/i,
-      responses: ["Nada como el MTB. Tenemos desde suspensiones rígidas hasta dobles. Si me dejas tu WhatsApp a 10 dígitos te mando el catálogo con precios."] },
-    { pattern: /(gravel|mixto)/i,
-      responses: ["Gravel es la disciplina más versátil. Tengo unas joyas en tienda para rodar donde sea. ¿Me compartes tu cel a 10 dígitos para mandarte fotos?"] },
-    { pattern: /(no se|no estoy seguro|recomiendame|recomendacion|recomendar|ayuda|diario|ciudad|urbana|trabajo)/i,
-      responses: ["¡Para uso diario y moverte por la ciudad, te recomiendo muchísimo una bicicleta Híbrida o Gravel! Son cómodas y rápidas. ¿Qué presupuesto tienes en mente?"] },
-
-    // 3. Purchase / Price Intents
-    { pattern: /(precio|cuesta|costo|cuanto|caro)/i,
-      responses: ["Nuestros equipos van desde los $7,900 MXN hasta gama premium, y todo se entrega ajustado con servicio gratis. ¿Me pasas tu WhatsApp y te armo una cotización?"] },
-    { pattern: /(comprar|quiero una|busco una|me interesa|bici|tienen dispo|disponibles|entrega inmediata)/i,
-      responses: ["¡Claro que sí! Manejamos Ruta, Gravel y Montaña listas para entrega. ¿Qué disciplina te gusta más?", "Tenemos un catálogo muy amplio listo para rodar. ¿Buscas de Ruta, Montaña o Gravel?"] },
-    { pattern: /(garantia|servicio|taller)/i,
-      responses: ["Somos centro de servicio certificado. Todas traen garantía y tu primer servicio va por nuestra cuenta. ¿Te animas a venir a la tienda?"] },
-    { pattern: /(donde|ubicacion|direccion|tienda)/i,
-      responses: ["Estamos en Av. Ich Xeel CASA 19, Cataluña, Playa del Carmen. ¿Te gustaría agendar una cita?"] },
-
-    // 4. Affirmative / Negative / Just looking
-    { pattern: /(solo estoy viendo|mirando|curioseando|viendo)/i,
-      responses: ["¡Adelante! Tómate tu tiempo. Si ves alguna que te llame la atención, aquí estoy para resolver tus dudas."] },
-    { pattern: /(^|\s)(si|sí|claro|por supuesto|dale|va|me parece bien|ok|okay|vale|simon|sipi)(\s|$|\.|,|\?|!)/i,
-      responses: ["¡Excelente! Por favor escríbeme tu número de WhatsApp a 10 dígitos para mandarte todo.", "¡Perfecto! Pásame tu número (10 dígitos) y nos ponemos en contacto en un momento."] },
-    { pattern: /(^|\s)(no|nop|nel|ahorita no|despues|luego)(\s|$|\.|,|\?)/i,
-      responses: ["No te preocupes. Aquí ando si cambias de opinión o necesitas ayuda con el catálogo."] },
-
-    // 5. Greetings (Lowest Priority)
-    { pattern: /(hola|buenas|que tal|hols|buenos dias|buenas tardes)/i, 
-      responses: ["¡Hola! Cuéntame, ¿qué bicicleta tienes en mente hoy?", "¡Qué tal! ¿Buscas alguna marca o disciplina en específico?"] },
-    { pattern: /(quien eres|con quien tengo el gusto|como te llamas|nombre)/i,
-      responses: ["Soy Diego, asesor especializado de The Garage. ¡Un gusto! ¿Con quién tengo el gusto yo?"] }
-  ];
-
-  function processLocalEngine(text) {
-    let t = text.toLowerCase();
-    
-    // 1. Capture Contacts First
-    const phoneRegex = /\b\d{10}\b/;
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (phoneRegex.test(t) || emailRegex.test(t)) {
-      let match = t.match(phoneRegex) || t.match(emailRegex);
-      captureCRMContact(match[0]);
-      botContext.askedPhone = true;
-      localStorage.setItem('tg_bot_context', JSON.stringify(botContext));
-      return "¡Anotado! Ya guardé tu contacto en el sistema. En breve te escribo personalmente para darle seguimiento.";
-    }
-
-    // 2. Name Capture Heuristics (Non-blocking)
-    let prefix = "";
-    const nameMatch = t.match(/\b(soy|me llamo|mi nombre es)\s+([a-záéíóúñ]+)/i);
-    if (nameMatch) {
-      const extractedName = nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1);
-      saveCRMName(extractedName);
-      prefix = `¡Mucho gusto, ${extractedName}! `;
-      // Remove the name part so we can parse the rest of the sentence
-      t = t.replace(nameMatch[0], "");
-    }
-
-    // 3. Match Intents
-    for (let i = 0; i < intents.length; i++) {
-      if (intents[i].pattern.test(t)) {
-        let options = intents[i].responses;
-        return prefix + options[Math.floor(Math.random() * options.length)];
-      }
-    }
-    
-    // If we had a name but no other intent matched:
-    if (prefix) {
-      return prefix + "¿En qué te puedo ayudar hoy con tu próxima bicicleta?";
-    }
-
-    // 4. Smart Fallbacks based on Context & Score
-    const score = getCRMScore();
-    if (!botContext.askedPhone && score > 30) {
-      botContext.askedPhone = true;
-      localStorage.setItem('tg_bot_context', JSON.stringify(botContext));
-      return "Te entiendo. Creo que lo mejor será enviarte detalles específicos. ¿Me compartes tu número a 10 dígitos para atenderte por WhatsApp?";
-    }
-    
-    return "Comprendo. Cada ciclista es único, y me gustaría asesorarte bien. ¿Te interesaría venir al taller o prefieres que platiquemos por WhatsApp?";
-  }
-
-  function handleUserInput(text) {
+  async function handleUserInput(text) {
     addMessage('user', text);
     input.value = '';
     showTyping();
     
-    let delay = Math.random() * 800 + 600; // 0.6s - 1.4s
-    setTimeout(() => {
+    // CRM Contact Extraction Heuristic
+    const phoneRegex = /\b\d{10}\b/;
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (phoneRegex.test(text) || emailRegex.test(text)) {
+      let match = text.match(phoneRegex) || text.match(emailRegex);
+      captureCRMContact(match[0]);
+    }
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) }) // send history without current msg
+      });
+      const data = await res.json();
       hideTyping();
-      const reply = processLocalEngine(text);
-      addMessage('bot', reply);
-    }, delay);
+      
+      if (data.error) {
+        console.error("Bot API Error:", data.error);
+        addMessage('bot', "Disculpa, tuve un problema de conexión. ¿Te importaría escribirme a nuestro WhatsApp directamente?");
+      } else {
+        addMessage('bot', data.reply);
+      }
+    } catch (err) {
+      hideTyping();
+      addMessage('bot', "Se perdió la conexión. Por favor intenta de nuevo o escríbenos al WhatsApp.");
+    }
   }
 
   // Events
@@ -436,4 +356,5 @@
     }
   }, 2000);
 })();
+
 </script>
