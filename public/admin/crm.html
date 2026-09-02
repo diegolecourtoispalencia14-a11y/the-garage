@@ -150,7 +150,7 @@
 
       .kpi-label {
         font-size: 0.75rem;
-        color: var(--text-muted);
+        color: var(--text-dim);
         letter-spacing: 0.06em;
         margin-bottom: 8px;
       }
@@ -230,7 +230,7 @@
 
       th {
         background: var(--surface-subtle);
-        color: var(--text-muted);
+        color: var(--text-dim);
         font-weight: 700;
         font-size: 0.72rem;
         letter-spacing: 0.06em;
@@ -437,201 +437,209 @@
     </div>
 
     <script>
-      const DEFAULT_PIN = "1493"; // Tienda The Garage
+      (function() {
+        var DEFAULT_PIN = "1493";
 
-      // Initial Default Leads if empty
-      const initialLeads = [
-        {
-          id: "lead-1",
-          contact: "+52 984 112 3456",
-          channel: "whatsapp",
-          terrain: "Gravel",
-          size: "M (52-54 cm)",
-          model: "Basso Bikes Italia Tera Gravel / Palta",
-          status: "Nuevo",
-          first_visit: new Date(Date.now() - 3600000 * 2).toISOString(),
-          captured_at: new Date(Date.now() - 3600000 * 2).toISOString()
-        },
-        {
-          id: "lead-2",
-          contact: "carlos.ciclista@gmail.com",
-          channel: "email",
-          terrain: "Ruta",
-          size: "S/M (52 cm)",
-          model: "Merida Scultura 300 Shimano Tiagra",
-          status: "Contactado",
-          first_visit: new Date(Date.now() - 3600000 * 24).toISOString(),
-          captured_at: new Date(Date.now() - 3600000 * 24).toISOString()
-        },
-        {
-          id: "lead-3",
-          contact: "+52 984 876 5432",
-          channel: "whatsapp",
-          terrain: "MTB",
-          size: "L (19\")",
-          model: "Oferta Relámpago MTB R29 Shimano",
-          status: "Cita Agendada",
-          first_visit: new Date(Date.now() - 3600000 * 48).toISOString(),
-          captured_at: new Date(Date.now() - 3600000 * 48).toISOString()
+        var initialLeads = [
+          {
+            id: "lead-1",
+            contact: "+52 984 112 3456",
+            channel: "whatsapp",
+            terrain: "Gravel",
+            size: "M (52-54 cm)",
+            model: "Basso Bikes Italia Tera Gravel / Palta",
+            status: "Nuevo",
+            first_visit: new Date(Date.now() - 3600000 * 2).toISOString(),
+            captured_at: new Date(Date.now() - 3600000 * 2).toISOString()
+          },
+          {
+            id: "lead-2",
+            contact: "carlos.ciclista@gmail.com",
+            channel: "email",
+            terrain: "Ruta",
+            size: "S/M (52 cm)",
+            model: "Merida Scultura 300 Shimano Tiagra",
+            status: "Contactado",
+            first_visit: new Date(Date.now() - 3600000 * 24).toISOString(),
+            captured_at: new Date(Date.now() - 3600000 * 24).toISOString()
+          },
+          {
+            id: "lead-3",
+            contact: "+52 984 876 5432",
+            channel: "whatsapp",
+            terrain: "MTB",
+            size: "L (19\")",
+            model: "Oferta Relámpago MTB R29 Shimano",
+            status: "Cita Agendada",
+            first_visit: new Date(Date.now() - 3600000 * 48).toISOString(),
+            captured_at: new Date(Date.now() - 3600000 * 48).toISOString()
+          }
+        ];
+
+        function getStoredLeads() {
+          var local = localStorage.getItem('the_garage_leads');
+          if (!local) {
+            localStorage.setItem('the_garage_leads', JSON.stringify(initialLeads));
+            return initialLeads;
+          }
+          try {
+            var parsed = JSON.parse(local);
+            return parsed.length > 0 ? parsed : initialLeads;
+          } catch(e) {
+            return initialLeads;
+          }
         }
-      ];
 
-      function getStoredLeads() {
-        const local = localStorage.getItem('the_garage_leads');
-        if (!local) {
-          localStorage.setItem('the_garage_leads', JSON.stringify(initialLeads));
-          return initialLeads;
+        function renderCRM() {
+          var leads = getStoredLeads();
+          var tbody = document.getElementById('leads-tbody');
+          var searchInput = document.getElementById('crm-search');
+          var catSelect = document.getElementById('crm-filter-category');
+          var statusSelect = document.getElementById('crm-filter-status');
+
+          var searchVal = (searchInput && searchInput.value) ? searchInput.value.toLowerCase() : '';
+          var catFilter = (catSelect && catSelect.value) ? catSelect.value : 'ALL';
+          var statusFilter = (statusSelect && statusSelect.value) ? statusSelect.value : 'ALL';
+
+          var filtered = leads.filter(function(l) {
+            var contactStr = (l.contact || '').toLowerCase();
+            var modelStr = (l.model || l.model_matched || '').toLowerCase();
+            var sizeStr = (l.size || l.user_size || '').toLowerCase();
+            var terrainStr = l.terrain || l.terrain_interest || '';
+            var statusStr = l.status || 'Nuevo';
+
+            var matchesSearch = contactStr.indexOf(searchVal) !== -1 ||
+                                modelStr.indexOf(searchVal) !== -1 ||
+                                sizeStr.indexOf(searchVal) !== -1;
+            var matchesCat = catFilter === 'ALL' || terrainStr === catFilter;
+            var matchesStatus = statusFilter === 'ALL' || statusStr === statusFilter;
+            return matchesSearch && matchesCat && matchesStatus;
+          });
+
+          var totalMetric = document.getElementById('metric-total');
+          if (totalMetric) totalMetric.textContent = leads.length.toString();
+
+          if (tbody) {
+            tbody.innerHTML = filtered.map(function(lead) {
+              var rawContact = lead.contact || '';
+              var isWA = lead.channel === 'whatsapp' || rawContact.indexOf('@') === -1;
+              var cleanPhone = rawContact.replace(/\D/g, '');
+              var modelName = lead.model || lead.model_matched || 'Bicicleta Consultada';
+              var userSize = lead.size || lead.user_size || 'M';
+              var status = lead.status || 'Nuevo';
+              var dateObj = new Date(lead.captured_at || Date.now());
+              var dateStr = dateObj.toLocaleDateString('es-MX', {
+                month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+              });
+
+              var waMessage = "Hola! Te escribimos de The Garage Bike Experts en Cataluña. Vimos que en tu visita te interesó la " + modelName + " (Talla " + userSize + "). ¿Te gustaría agendar una prueba de manejo o apartado?";
+              var phoneFormatted = cleanPhone.length === 10 ? '52' + cleanPhone : cleanPhone;
+              var waUrl = "https://wa.me/" + phoneFormatted + "?text=" + encodeURIComponent(waMessage);
+
+              var statusClass = 'status-nuevo';
+              if (status === 'Contactado') statusClass = 'status-contactado';
+              if (status === 'Cita Agendada') statusClass = 'status-cita';
+              if (status === 'Apartada') statusClass = 'status-apartada';
+
+              var actionHtml = isWA ?
+                '<a href="' + waUrl + '" target="_blank" rel="noopener noreferrer" class="btn btn-wa font-mono"><span>💬 Abrir WhatsApp</span></a>' :
+                '<a href="mailto:' + rawContact + '?subject=Tu Ficha Tecnica The Garage" class="btn btn-outline font-mono" style="font-size: 0.75rem; padding: 4px 10px;"><span>✉️ Enviar Correo</span></a>';
+
+              return '<tr>' +
+                '<td class="font-mono text-xs">' +
+                  '<div>' + dateStr + '</div>' +
+                  '<div style="color: var(--text-dim); font-size: 0.7rem;">1ra Visita Trackeada</div>' +
+                '</td>' +
+                '<td class="td-contact font-mono">' +
+                  rawContact +
+                  '<div style="font-size: 0.72rem; color: var(--text-dim); font-weight: normal;">Canal: ' + (isWA ? 'WhatsApp' : 'Email') + '</div>' +
+                '</td>' +
+                '<td class="font-mono">' +
+                  '<span style="color: #FB7185; font-weight: 700;">' + (lead.terrain || lead.terrain_interest || 'Gravel') + '</span>' +
+                  '<div style="font-size: 0.75rem; color: var(--text-dim);">Talla: ' + userSize + '</div>' +
+                '</td>' +
+                '<td>' +
+                  '<strong style="color: var(--text-primary); font-size: 0.88rem;">' + modelName + '</strong>' +
+                '</td>' +
+                '<td>' +
+                  '<span class="badge-status font-mono ' + statusClass + '">' + status + '</span>' +
+                '</td>' +
+                '<td>' + actionHtml + '</td>' +
+              '</tr>';
+            }).join('');
+          }
         }
-        try {
-          const parsed = JSON.parse(local);
-          return parsed.length > 0 ? parsed : initialLeads;
-        } catch {
-          return initialLeads;
+
+        // Unlock Handler
+        var pinInput = document.getElementById('admin-pin-input');
+        var unlockBtn = document.getElementById('btn-unlock-crm');
+        var pinOverlay = document.getElementById('pin-lock-overlay');
+        var crmApp = document.getElementById('crm-main-app');
+        var pinError = document.getElementById('pin-error-msg');
+
+        function tryUnlock() {
+          var val = pinInput ? pinInput.value.trim() : '';
+          if (val === DEFAULT_PIN || sessionStorage.getItem('crm_unlocked') === 'true') {
+            sessionStorage.setItem('crm_unlocked', 'true');
+            if (pinOverlay) pinOverlay.style.display = 'none';
+            if (crmApp) crmApp.style.display = 'block';
+            renderCRM();
+          } else {
+            if (pinError) pinError.style.display = 'block';
+            if (pinInput) pinInput.value = '';
+          }
         }
-      }
 
-      function renderCRM() {
-        const leads = getStoredLeads();
-        const tbody = document.getElementById('leads-tbody');
-        const searchVal = (document.getElementById('crm-search') as HTMLInputElement)?.value.toLowerCase() || '';
-        const catFilter = (document.getElementById('crm-filter-category') as HTMLSelectElement)?.value || 'ALL';
-        const statusFilter = (document.getElementById('crm-filter-status') as HTMLSelectElement)?.value || 'ALL';
-
-        const filtered = leads.filter(l => {
-          const matchesSearch = (l.contact || '').toLowerCase().includes(searchVal) ||
-                                (l.model || l.model_matched || '').toLowerCase().includes(searchVal) ||
-                                (l.size || l.user_size || '').toLowerCase().includes(searchVal);
-          const matchesCat = catFilter === 'ALL' || (l.terrain || l.terrain_interest) === catFilter;
-          const matchesStatus = statusFilter === 'ALL' || (l.status || 'Nuevo') === statusFilter;
-          return matchesSearch && matchesCat && matchesStatus;
+        unlockBtn?.addEventListener('click', tryUnlock);
+        pinInput?.addEventListener('keyup', function(e) {
+          if (e.key === 'Enter') tryUnlock();
         });
 
-        // Update KPI
-        const totalMetric = document.getElementById('metric-total');
-        if (totalMetric) totalMetric.textContent = leads.length.toString();
-
-        if (tbody) {
-          tbody.innerHTML = filtered.map((lead, idx) => {
-            const rawContact = lead.contact || '';
-            const isWA = lead.channel === 'whatsapp' || !rawContact.includes('@');
-            const cleanPhone = rawContact.replace(/\D/g, '');
-            const modelName = lead.model || lead.model_matched || 'Bicicleta Consultada';
-            const userSize = lead.size || lead.user_size || 'M';
-            const status = lead.status || 'Nuevo';
-            const dateStr = new Date(lead.captured_at || Date.now()).toLocaleDateString('es-MX', {
-              month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-            });
-
-            const waMessage = `Hola! Te escribimos de The Garage Bike Experts en Cataluña. Vimos que en tu visita te interesó la ${modelName} (Talla ${userSize}). ¿Te gustaría agendar una prueba de manejo o apartado?`;
-            const waUrl = `https://wa.me/${cleanPhone.length === 10 ? '52' + cleanPhone : cleanPhone}?text=${encodeURIComponent(waMessage)}`;
-
-            let statusClass = 'status-nuevo';
-            if (status === 'Contactado') statusClass = 'status-contactado';
-            if (status === 'Cita Agendada') statusClass = 'status-cita';
-            if (status === 'Apartada') statusClass = 'status-apartada';
-
-            return `
-              <tr>
-                <td class="font-mono text-xs">
-                  <div>${dateStr}</div>
-                  <div style="color: var(--text-dim); font-size: 0.7rem;">1ra Visita Trackeada</div>
-                </td>
-                <td class="td-contact font-mono">
-                  ${rawContact}
-                  <div style="font-size: 0.72rem; color: var(--text-dim); font-weight: normal;">Canal: ${isWA ? 'WhatsApp' : 'Email'}</div>
-                </td>
-                <td class="font-mono">
-                  <span style="color: #FB7185; font-weight: 700;">${lead.terrain || lead.terrain_interest || 'Gravel'}</span>
-                  <div style="font-size: 0.75rem; color: var(--text-dim);">Talla: ${userSize}</div>
-                </td>
-                <td>
-                  <strong style="color: var(--text-primary); font-size: 0.88rem;">${modelName}</strong>
-                </td>
-                <td>
-                  <span class="badge-status font-mono ${statusClass}">${status}</span>
-                </td>
-                <td>
-                  ${isWA ? `
-                    <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-wa font-mono">
-                      <span>💬 Abrir WhatsApp</span>
-                    </a>
-                  ` : `
-                    <a href="mailto:${rawContact}?subject=Tu%20Ficha%20Técnica%20The%20Garage" class="btn btn-outline font-mono" style="font-size: 0.75rem; padding: 4px 10px;">
-                      <span>✉️ Enviar Correo</span>
-                    </a>
-                  `}
-                </td>
-              </tr>
-            `;
-          }).join('');
+        if (sessionStorage.getItem('crm_unlocked') === 'true') {
+          tryUnlock();
         }
-      }
 
-      // Unlock Handler
-      const pinInput = document.getElementById('admin-pin-input');
-      const unlockBtn = document.getElementById('btn-unlock-crm');
-      const pinOverlay = document.getElementById('pin-lock-overlay');
-      const crmApp = document.getElementById('crm-main-app');
-      const pinError = document.getElementById('pin-error-msg');
+        // Filter events
+        document.getElementById('crm-search')?.addEventListener('input', renderCRM);
+        document.getElementById('crm-filter-category')?.addEventListener('change', renderCRM);
+        document.getElementById('crm-filter-status')?.addEventListener('change', renderCRM);
 
-      function tryUnlock() {
-        if (pinInput.value === DEFAULT_PIN || sessionStorage.getItem('crm_unlocked') === 'true') {
-          sessionStorage.setItem('crm_unlocked', 'true');
-          if (pinOverlay) pinOverlay.style.display = 'none';
-          if (crmApp) crmApp.style.display = 'block';
-          renderCRM();
-        } else {
-          if (pinError) pinError.style.display = 'block';
-          pinInput.value = '';
-        }
-      }
+        // Reset Demo
+        document.getElementById('btn-clear-demo')?.addEventListener('click', function() {
+          if (confirm('¿Restablecer datos demo del CRM?')) {
+            localStorage.setItem('the_garage_leads', JSON.stringify(initialLeads));
+            renderCRM();
+          }
+        });
 
-      unlockBtn?.addEventListener('click', tryUnlock);
-      pinInput?.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') tryUnlock();
-      });
+        // Export CSV
+        document.getElementById('btn-export-csv')?.addEventListener('click', function() {
+          var leads = getStoredLeads();
+          var headers = ["ID", "Fecha_Captura", "Contacto", "Canal", "Terreno", "Talla", "Modelo_Match", "Estado"];
+          var rows = leads.map(function(l) {
+            return [
+              l.id || "lead",
+              l.captured_at || new Date().toISOString(),
+              '"' + (l.contact || '') + '"',
+              l.channel || 'whatsapp',
+              l.terrain || l.terrain_interest || '',
+              l.size || l.user_size || '',
+              '"' + (l.model || l.model_matched || '') + '"',
+              l.status || 'Nuevo'
+            ];
+          });
 
-      if (sessionStorage.getItem('crm_unlocked') === 'true') {
-        tryUnlock();
-      }
+          var csvContent = "data:text/csv;charset=utf-8," + [headers.join(",")].concat(rows.map(function(e) { return e.join(","); })).join("\n");
+          var encodedUri = encodeURI(csvContent);
+          var link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "the_garage_leads_" + new Date().toISOString().slice(0, 10) + ".csv");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        });
 
-      // Filter events
-      document.getElementById('crm-search')?.addEventListener('input', renderCRM);
-      document.getElementById('crm-filter-category')?.addEventListener('change', renderCRM);
-      document.getElementById('crm-filter-status')?.addEventListener('change', renderCRM);
-
-      // Reset Demo
-      document.getElementById('btn-clear-demo')?.addEventListener('click', () => {
-        if (confirm('¿Restablecer datos demo del CRM?')) {
-          localStorage.setItem('the_garage_leads', JSON.stringify(initialLeads));
-          renderCRM();
-        }
-      });
-
-      // Export CSV
-      document.getElementById('btn-export-csv')?.addEventListener('click', () => {
-        const leads = getStoredLeads();
-        const headers = ["ID", "Fecha_Captura", "Contacto", "Canal", "Terreno", "Talla", "Modelo_Match", "Estado"];
-        const rows = leads.map(l => [
-          l.id || "lead",
-          l.captured_at || new Date().toISOString(),
-          `"${l.contact || ''}"`,
-          l.channel || 'whatsapp',
-          l.terrain || l.terrain_interest || '',
-          l.size || l.user_size || '',
-          `"${l.model || l.model_matched || ''}"`,
-          l.status || 'Nuevo'
-        ]);
-
-        const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `the_garage_leads_${new Date().toISOString().slice(0, 10)}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
+      })();
     </script>
   </body>
 </html>
