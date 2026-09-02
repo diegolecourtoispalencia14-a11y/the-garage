@@ -37,7 +37,7 @@ Instrucciones:
     const payload = {
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents: formattedHistory,
-      generationConfig: { temperature: 0.7, maxOutputTokens: 250 }
+      generationConfig: { temperature: 0.7 }
     };
 
     let data;
@@ -45,7 +45,7 @@ Instrucciones:
     let attempts = 3; // Retry logic for high demand
 
     for (let i = 0; i < attempts; i++) {
-      const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`, {
+      const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
