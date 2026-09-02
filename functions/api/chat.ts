@@ -10,32 +10,6 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Falta la API KEY de Gemini en Cloudflare" }), { status: 500 });
     }
 
-    // 1. OBTENER MODELOS DISPONIBLES DINÁMICAMENTE
-    const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-    if (!modelsRes.ok) {
-        const err = await modelsRes.text();
-        return new Response(JSON.stringify({ error: "Error obteniendo modelos: " + err }), { status: 500 });
-    }
-    const modelsData = await modelsRes.json();
-    const availableModels = modelsData.models || [];
-    
-    // Filtrar modelos que soporten generateContent y sean gemini
-    const validModels = availableModels.filter(m => 
-      m.supportedGenerationMethods && 
-      m.supportedGenerationMethods.includes('generateContent') && 
-      m.name.includes('gemini')
-    );
-
-    if (validModels.length === 0) {
-        return new Response(JSON.stringify({ error: "No hay modelos Gemini disponibles para esta API KEY." }), { status: 500 });
-    }
-
-    // Preferir 1.5-flash, luego 1.5-pro, luego el primero disponible
-    let selectedModel = validModels.find(m => m.name.includes('1.5-flash'))?.name 
-                     || validModels.find(m => m.name.includes('1.5-pro'))?.name 
-                     || validModels.find(m => m.name.includes('pro'))?.name 
-                     || validModels[0].name;
-
     const systemInstruction = `Eres Diego, el asesor experto en bicicletas de 'The Garage Bike Experts' en Playa del Carmen.
 REGLAS ESTRICTAS:
 1. Nunca uses emojis.
@@ -78,6 +52,8 @@ REGLAS ESTRICTAS:
       }
     };
 
+    // Google API explícitamente requiere el modelo gemini-3.1-pro-preview para cuentas nuevas
+    let selectedModel = 'models/gemini-3.1-pro-preview';
     let url = `https://generativelanguage.googleapis.com/v1beta/${selectedModel}:generateContent?key=${apiKey}`;
     
     let res = await fetch(url, {
@@ -85,26 +61,6 @@ REGLAS ESTRICTAS:
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-
-    // Si falla porque el modelo no soporta system_instruction (modelos legacy), hacemos fallback inyectándolo en el texto
-    if (!res.ok && res.status === 400) {
-      const errorCheck = await res.clone().text();
-      if (errorCheck.includes("system_instruction")) {
-          const fallbackContents = [...contents];
-          fallbackContents[0].parts[0].text = `[Instrucciones de sistema: ${systemInstruction}]\n\n${fallbackContents[0].parts[0].text}`;
-          
-          const fallbackPayload = {
-            contents: fallbackContents,
-            generationConfig: { temperature: 0.4, maxOutputTokens: 250 }
-          };
-
-          res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(fallbackPayload)
-          });
-      }
-    }
 
     if (!res.ok) {
       const errorText = await res.text();
