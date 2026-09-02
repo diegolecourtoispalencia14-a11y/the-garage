@@ -251,6 +251,56 @@ import Base from '../../layouts/Base.astro';
 </div><!-- /crm-page-wrapper -->
 
 <!-- ══════════════════════════════════════════════════════
+     CLIENT PROFILE DRAWER
+══════════════════════════════════════════════════════ -->
+<div id="client-drawer-overlay" class="drawer-overlay" style="display:none;"></div>
+<div id="client-drawer" class="client-drawer" aria-hidden="true">
+  <div class="drawer-header font-mono">
+    <div>
+      <span class="drawer-badge">[PERFIL DE CLIENTE]</span>
+      <h2 id="drawer-title" class="drawer-title">Cargando...</h2>
+    </div>
+    <button type="button" id="btn-close-drawer" class="drawer-close" aria-label="Cerrar">&times;</button>
+  </div>
+  <div class="drawer-body">
+    <form id="client-profile-form">
+      <input type="hidden" id="drawer-session-id" />
+      
+      <div class="form-group font-mono">
+        <label>Nombre Completo</label>
+        <input type="text" id="prof-name" class="crm-input" placeholder="Ej. Carlos Mendoza" />
+      </div>
+      
+      <div class="form-group font-mono">
+        <label>WhatsApp / Teléfono</label>
+        <input type="text" id="prof-phone" class="crm-input" placeholder="Ej. +52 984 123 4567" />
+      </div>
+
+      <div class="form-group font-mono">
+        <label>Correo Electrónico</label>
+        <input type="email" id="prof-email" class="crm-input" placeholder="carlos@email.com" />
+      </div>
+
+      <div class="form-group font-mono">
+        <label>Presupuesto Estimado ($ MXN)</label>
+        <input type="text" id="prof-budget" class="crm-input" placeholder="Ej. $25,000" />
+      </div>
+
+      <div class="form-group font-mono">
+        <label>Notas del Vendedor / Historial</label>
+        <textarea id="prof-notes" class="crm-input" rows="6" placeholder="Anota aquí acuerdos, bicicletas de interés, objeciones, o cualquier detalle de tus pláticas por WhatsApp."></textarea>
+      </div>
+
+      <div class="drawer-footer">
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+          Guardar Perfil
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
      STYLES
 ══════════════════════════════════════════════════════ -->
 <style>
@@ -457,6 +507,49 @@ import Base from '../../layouts/Base.astro';
   .bar-track { flex:1;background:rgba(255,255,255,0.05);border-radius:4px;height:10px;overflow:hidden; }
   .bar-fill  { height:100%;border-radius:4px;background:#3f3f46;transition:width 0.4s; }
   .bar-val   { color:#52525b;min-width:30px;text-align:right; }
+  /* ── Drawer ── */
+  .drawer-overlay {
+    position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
+    z-index:9000;
+  }
+  .client-drawer {
+    position:fixed;top:0;right:0;bottom:0;width:100%;max-width:440px;
+    background:#111113;border-left:1px solid rgba(255,255,255,0.08);
+    z-index:9001;display:flex;flex-direction:column;
+    transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .client-drawer.open { transform:translateX(0); }
+  .drawer-header {
+    display:flex;justify-content:space-between;align-items:flex-start;
+    padding:1.5rem;border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .drawer-badge {
+    display:inline-block;font-size:0.65rem;letter-spacing:0.12em;
+    color:#fb7185;margin-bottom:0.4rem;
+  }
+  .drawer-title { font-size:1.2rem;font-weight:700;color:#fff;margin:0; }
+  .drawer-close {
+    background:none;border:none;color:#71717a;font-size:1.5rem;cursor:pointer;
+    padding:0;line-height:1;
+  }
+  .drawer-close:hover { color:#fff; }
+  .drawer-body {
+    flex:1;overflow-y:auto;padding:1.5rem;
+  }
+  .form-group { margin-bottom:1.25rem; }
+  .form-group label {
+    display:block;font-size:0.75rem;color:#a1a1aa;margin-bottom:0.5rem;letter-spacing:0.05em;
+  }
+  .crm-input {
+    width:100%;background:#09090b;border:1px solid rgba(255,255,255,0.1);
+    border-radius:6px;padding:0.75rem;color:#e4e4e7;font-family:monospace;font-size:0.8rem;
+    outline:none;
+  }
+  .crm-input:focus { border-color:rgba(255,255,255,0.3); }
+  .drawer-footer {
+    padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08);
+    margin-top:1rem;
+  }
 </style>
 
 <!-- ══════════════════════════════════════════════════════
@@ -512,7 +605,9 @@ import Base from '../../layouts/Base.astro';
 
     return leads.map(function (l) {
       var sess = sessMap[l.id] || {};
+      var ext = sess.extended_info || {};
       return Object.assign({}, l, {
+        contact:      ext.name || l.contact, // Use profile name if available
         score:        sess.score || 0,
         stage:        sess.stage || l.status || 'Nuevo',
         device:       sess.device || 'desktop',
@@ -709,7 +804,8 @@ import Base from '../../layouts/Base.astro';
 
   function buildKanbanCard(s) {
     var score   = s._score || 0;
-    var contact = (s.contact && s.contact.value) || (s.user && s.user.email) || null;
+    var ext     = s.extended_info || {};
+    var contact = ext.name || (s.user && s.user.name) || (s.contact && s.contact.value) || null;
     var terrain = (s.contact && s.contact.terrain) || '';
     var model   = (s.contact && s.contact.model)   || '';
     var pages   = (s.pages || []).slice(0, 3).join(' · ');
@@ -718,7 +814,7 @@ import Base from '../../layouts/Base.astro';
     var contactEl  = el('div', { class:'kanban-card-contact' },
       contact
         ? contact.substring(0, 30)
-        : (s.user ? s.user.name : 'Anónimo [' + s.id.substring(0, 6) + ']')
+        : 'Anónimo [' + s.id.substring(0, 6) + ']'
     );
     var metaEl  = el('div', { class:'kanban-card-meta' },
       [terrain, model, s.device, fmt(s.started_at)].filter(Boolean).join(' · ')
@@ -798,6 +894,8 @@ import Base from '../../layouts/Base.astro';
       statusSel += '</select>';
 
       var row = document.createElement('tr');
+      row.setAttribute('data-session-id', l.id);
+      row.style.cursor = 'pointer';
       row.innerHTML = [
         '<td>' + (l.contact || '—') + '</td>',
         '<td>' + scoreSpan + '</td>',
@@ -1048,7 +1146,108 @@ import Base from '../../layouts/Base.astro';
     initLeadsFilters();
     initSessionsFilters();
     initCSV();
+    initDrawer();
   }
+
+  /* ══════════ CLIENT PROFILE DRAWER LOGIC ══════════ */
+  function initDrawer() {
+    var overlay = document.getElementById('client-drawer-overlay');
+    var drawer  = document.getElementById('client-drawer');
+    var close   = document.getElementById('btn-close-drawer');
+    var form    = document.getElementById('client-profile-form');
+
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      setTimeout(function() { overlay.style.display = 'none'; }, 300);
+    }
+
+    if(overlay) overlay.addEventListener('click', closeDrawer);
+    if(close) close.addEventListener('click', closeDrawer);
+
+    // Guardar Perfil
+    if(form) form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var sid    = document.getElementById('drawer-session-id').value;
+      var name   = document.getElementById('prof-name').value.trim();
+      var phone  = document.getElementById('prof-phone').value.trim();
+      var email  = document.getElementById('prof-email').value.trim();
+      var budget = document.getElementById('prof-budget').value.trim();
+      var notes  = document.getElementById('prof-notes').value.trim();
+
+      var sessions = getSessions();
+      for (var i = 0; i < sessions.length; i++) {
+        if (sessions[i].id === sid) {
+          if (!sessions[i].extended_info) sessions[i].extended_info = {};
+          sessions[i].extended_info.name   = name;
+          sessions[i].extended_info.phone  = phone;
+          sessions[i].extended_info.email  = email;
+          sessions[i].extended_info.budget = budget;
+          sessions[i].extended_info.notes  = notes;
+          try { localStorage.setItem('tg_sessions', JSON.stringify(sessions)); } catch (_) {}
+          break;
+        }
+      }
+      renderPipeline();
+      renderLeadsTable();
+      closeDrawer();
+    });
+
+    // Event Delegation para clics en Kanban
+    var board = document.getElementById('kanban-board');
+    if (board) {
+      var isDragging = false;
+      board.addEventListener('dragstart', function() { isDragging = true; });
+      board.addEventListener('drop', function() { setTimeout(function(){ isDragging = false; }, 50); });
+      board.addEventListener('click', function(e) {
+        if (isDragging) return;
+        var card = e.target.closest('.kanban-card');
+        if (!card) return;
+        var sid = card.getAttribute('data-session-id');
+        window.openDrawerForSession(sid);
+      });
+    }
+
+    // Event Delegation para clics en la Tabla de Leads
+    var leadsTbody = document.getElementById('leads-table-body');
+    if (leadsTbody) {
+      leadsTbody.addEventListener('click', function(e) {
+        if (e.target.tagName === 'SELECT' || e.target.tagName === 'OPTION' || e.target.closest('a')) return;
+        var row = e.target.closest('tr');
+        if (!row || !row.getAttribute('data-session-id')) return;
+        window.openDrawerForSession(row.getAttribute('data-session-id'));
+      });
+    }
+  }
+
+  window.openDrawerForSession = function(sid) {
+    var sessions = getSessions();
+    var s = null;
+    for (var i=0; i<sessions.length; i++) {
+      if (sessions[i].id === sid) { s = sessions[i]; break; }
+    }
+    if (!s) return;
+
+    var overlay = document.getElementById('client-drawer-overlay');
+    var drawer  = document.getElementById('client-drawer');
+    if (!overlay || !drawer) return;
+
+    var ext = s.extended_info || {};
+    var defaultName = (s.user && s.user.name) ? s.user.name : ((s.contact && s.contact.value && !s.contact.value.includes('@')) ? '' : '');
+    var defaultEmail = (s.user && s.user.email) ? s.user.email : ((s.contact && s.contact.value && s.contact.value.includes('@')) ? s.contact.value : '');
+
+    document.getElementById('drawer-session-id').value = sid;
+    document.getElementById('prof-name').value   = ext.name || defaultName || '';
+    document.getElementById('prof-phone').value  = ext.phone || ((s.contact && s.contact.channel === 'whatsapp') ? s.contact.value : '');
+    document.getElementById('prof-email').value  = ext.email || defaultEmail || '';
+    document.getElementById('prof-budget').value = ext.budget || '';
+    document.getElementById('prof-notes').value  = ext.notes || '';
+
+    var displayTitle = ext.name || defaultName || (s.contact ? s.contact.value : 'Prospecto Anónimo');
+    document.getElementById('drawer-title').textContent = displayTitle;
+
+    overlay.style.display = 'block';
+    setTimeout(function() { drawer.classList.add('open'); }, 10);
+  };
 
 })();
 </script>
