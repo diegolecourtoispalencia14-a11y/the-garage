@@ -1,0 +1,461 @@
+---
+---
+<div id="garage-bot-container" class="garage-bot-container font-mono">
+  <!-- Botón Flotante -->
+  <button id="gb-toggle-btn" class="gb-toggle-btn" aria-label="Abrir Asistente">
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <span class="gb-notification-dot" id="gb-notif-dot"></span>
+  </button>
+
+  <!-- Ventana de Chat -->
+  <div id="gb-chat-window" class="gb-chat-window" style="display: none;">
+    <div class="gb-header">
+      <div class="gb-header-info">
+        <span class="gb-avatar">GB</span>
+        <div>
+          <h3 class="gb-title">GarageBot</h3>
+          <span class="gb-status">Asesor Experto en Línea</span>
+        </div>
+      </div>
+      <button id="gb-close-btn" class="gb-close-btn">&times;</button>
+    </div>
+
+    <div id="gb-messages" class="gb-messages">
+      <!-- Los mensajes se inyectan por JS -->
+    </div>
+
+    <div class="gb-quick-replies" id="gb-quick-replies">
+      <!-- Botones de respuesta rápida -->
+    </div>
+
+    <form id="gb-input-form" class="gb-input-area">
+      <input type="text" id="gb-input" placeholder="Escribe tu mensaje..." autocomplete="off" />
+      <button type="submit" class="gb-send-btn">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<style>
+  .garage-bot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9995;
+    font-size: 0.85rem;
+  }
+  .gb-toggle-btn {
+    background: #e11d48;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .gb-toggle-btn:hover {
+    transform: scale(1.05);
+  }
+  .gb-notification-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: #22c55e;
+    border: 2px solid #111113;
+    border-radius: 50%;
+    display: none;
+  }
+  .gb-chat-window {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 340px;
+    height: 480px;
+    background: #111113;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    overflow: hidden;
+  }
+  .gb-header {
+    background: #18181b;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .gb-header-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .gb-avatar {
+    width: 32px;
+    height: 32px;
+    background: #e11d48;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.75rem;
+  }
+  .gb-title { margin: 0; font-size: 0.9rem; color: #fff; font-weight: 700; }
+  .gb-status { font-size: 0.65rem; color: #22c55e; letter-spacing: 0.05em; }
+  .gb-close-btn {
+    background: none;
+    border: none;
+    color: #a1a1aa;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .gb-close-btn:hover { color: #fff; }
+  .gb-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .gb-msg {
+    max-width: 85%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    line-height: 1.4;
+  }
+  .gb-msg-bot {
+    align-self: flex-start;
+    background: #27272a;
+    color: #e4e4e7;
+    border-bottom-left-radius: 2px;
+  }
+  .gb-msg-user {
+    align-self: flex-end;
+    background: #e11d48;
+    color: #fff;
+    border-bottom-right-radius: 2px;
+  }
+  .gb-quick-replies {
+    padding: 0 1rem 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .gb-qr-btn {
+    background: transparent;
+    border: 1px solid #e11d48;
+    color: #fb7185;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .gb-qr-btn:hover {
+    background: #e11d48;
+    color: #fff;
+  }
+  .gb-input-area {
+    display: flex;
+    padding: 0.75rem;
+    background: #18181b;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    gap: 0.5rem;
+  }
+  .gb-input-area input {
+    flex: 1;
+    background: #09090b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    color: #e4e4e7;
+    font-family: inherit;
+    font-size: 0.8rem;
+    outline: none;
+  }
+  .gb-input-area input:focus {
+    border-color: rgba(255,255,255,0.3);
+  }
+  .gb-send-btn {
+    background: none;
+    border: none;
+    color: #e11d48;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.25rem;
+  }
+  .gb-send-btn:hover { color: #fb7185; }
+
+  @media (max-width: 400px) {
+    .gb-chat-window {
+      position: fixed;
+      bottom: 0; right: 0; left: 0; top: 0;
+      width: 100%; height: 100%;
+      border-radius: 0;
+    }
+  }
+</style>
+
+<script is:inline>
+(function() {
+  const toggleBtn = document.getElementById('gb-toggle-btn');
+  const chatWindow = document.getElementById('gb-chat-window');
+  const closeBtn = document.getElementById('gb-close-btn');
+  const msgContainer = document.getElementById('gb-messages');
+  const form = document.getElementById('gb-input-form');
+  const input = document.getElementById('gb-input');
+  const qrContainer = document.getElementById('gb-quick-replies');
+  const notifDot = document.getElementById('gb-notif-dot');
+
+  let chatHistory = JSON.parse(localStorage.getItem('tg_bot_history') || '[]');
+  let botState = localStorage.getItem('tg_bot_state') || 'INIT'; 
+
+  // Helpers CRM
+  function getSessionId() {
+    return localStorage.getItem('tg_session_id');
+  }
+  function getCRMScore() {
+    try {
+      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
+      const s = sessions.find(x => x.id === getSessionId());
+      if (!s || !s.events) return 0;
+      let score = 0;
+      const WEIGHTS = {
+        page_view:2,scroll_50:5,scroll_75:8,scroll_90:10,time_3min:8,time_5min:12,
+        return_visit:20,matchmaker_step1:6,matchmaker_step2:10,matchmaker_complete:22,
+        bike_detail_view:14,inventory_view:6,guide_complete:7,whatsapp_click:25,lead_form_submit:30
+      };
+      s.events.forEach(e => { score += (WEIGHTS[e.type] || 0); });
+      return Math.min(100, score);
+    } catch(e) { return 0; }
+  }
+  function getCRMPages() {
+    try {
+      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
+      const s = sessions.find(x => x.id === getSessionId());
+      return s ? (s.pages || []) : [];
+    } catch(e) { return []; }
+  }
+  function getCRMName() {
+    try {
+      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
+      const s = sessions.find(x => x.id === getSessionId());
+      if(s && s.extended_info && s.extended_info.name) return s.extended_info.name;
+      if(s && s.user && s.user.name) return s.user.name;
+      return null;
+    } catch(e) { return null; }
+  }
+  function saveCRMName(name) {
+    try {
+      const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
+      const s = sessions.find(x => x.id === getSessionId());
+      if(s) {
+        if(!s.extended_info) s.extended_info = {};
+        s.extended_info.name = name;
+        localStorage.setItem('tg_sessions', JSON.stringify(sessions));
+      }
+    } catch(e) {}
+  }
+  function captureCRMContact(val) {
+    window.dispatchEvent(new CustomEvent('tg:lead_captured', { 
+      detail: { contact: val, channel: val.includes('@') ? 'email' : 'whatsapp', model: 'Bot Capture' }
+    }));
+  }
+
+  // UI Helpers
+  function renderMessages() {
+    msgContainer.innerHTML = '';
+    chatHistory.forEach(m => {
+      const el = document.createElement('div');
+      el.className = 'gb-msg ' + (m.sender === 'bot' ? 'gb-msg-bot' : 'gb-msg-user');
+      el.textContent = m.text;
+      msgContainer.appendChild(el);
+    });
+    msgContainer.scrollTop = msgContainer.scrollHeight;
+  }
+  function addMessage(sender, text) {
+    chatHistory.push({ sender, text });
+    localStorage.setItem('tg_bot_history', JSON.stringify(chatHistory));
+    renderMessages();
+  }
+  function showQuickReplies(replies) {
+    qrContainer.innerHTML = '';
+    replies.forEach(r => {
+      const btn = document.createElement('button');
+      btn.className = 'gb-qr-btn';
+      btn.textContent = r;
+      btn.onclick = () => {
+        qrContainer.innerHTML = '';
+        handleUserInput(r);
+      };
+      qrContainer.appendChild(btn);
+    });
+  }
+
+  // --- BOT ENGINE (State Machine & Logic) ---
+  function getGreeting() {
+    const score = getCRMScore();
+    const name = getCRMName();
+    const pages = getCRMPages();
+    const sawBikes = pages.some(p => p.includes('/bici/'));
+
+    if (score >= 70) {
+      return name 
+        ? `¡Hola ${name}! Tienes el perfil ideal para nuestras bicicletas de alto nivel. Veo que estás muy interesado, ¿quieres que te aparte alguna unidad hoy mismo?`
+        : `¡Hola! Noto mucho interés en nuestro catálogo. Para darte atención VIP y revisar el inventario en físico, ¿con quién tengo el gusto?`;
+    } 
+    if (score >= 45) {
+      if(sawBikes) {
+        return name 
+          ? `Hola ${name}, esa bicicleta que estuviste viendo tiene mucha demanda últimamente. ¿Quieres que te pase fotos reales por WhatsApp de las que tengo armadas?`
+          : `Hola, me di cuenta que revisaste a fondo nuestro inventario. A veces decidir la talla correcta es difícil. Para asesorarte mejor, ¿cuál es tu nombre?`;
+      }
+      return `¡Hola! Estás revisando bastante información técnica. ¿Hay alguna disciplina en particular (Ruta, Gravel, MTB) que te interese más?`;
+    }
+    if (score >= 20) {
+      return name 
+        ? `${name}, sigo a tus órdenes si tienes alguna duda sobre modelos o guías de tallas.`
+        : `¡Hola! Soy tu asistente de The Garage. ¿Buscas tu primera bicicleta o ya tienes experiencia rodando?`;
+    }
+    // Anónimo < 20
+    return `¡Bienvenido a The Garage! Cualquier duda con el catálogo, aquí estoy.`;
+  }
+
+  function handleUserInput(text) {
+    addMessage('user', text);
+    input.value = '';
+    
+    // Simulate delay
+    setTimeout(() => {
+      processBotLogic(text);
+    }, 600);
+  }
+
+  function extractName(text) {
+    let t = text.toLowerCase().trim();
+    t = t.replace(/(me llamo|soy|mi nombre es)\s+/i, '');
+    t = t.charAt(0).toUpperCase() + t.slice(1);
+    if(t.split(' ').length <= 3) return t; 
+    return null;
+  }
+
+  function processBotLogic(text) {
+    let t = text.toLowerCase();
+    
+    const phoneRegex = /\b\d{10}\b/;
+    const emailRegex = /\S+@\S+\.\S+/;
+    
+    if (phoneRegex.test(t) || emailRegex.test(t)) {
+      let match = t.match(phoneRegex) || t.match(emailRegex);
+      captureCRMContact(match[0]);
+      botState = 'CLOSING';
+      localStorage.setItem('tg_bot_state', botState);
+      addMessage('bot', '¡Excelente! He guardado tu contacto en el sistema de ventas. En breve uno de nuestros asesores de tienda se comunicará contigo personalmente.');
+      return;
+    }
+
+    if (botState === 'ASKING_NAME') {
+      let name = extractName(text);
+      if(name) {
+        saveCRMName(name);
+        botState = 'ASKING_INTEREST';
+        localStorage.setItem('tg_bot_state', botState);
+        addMessage('bot', `Mucho gusto, ${name}. Cuéntame, ¿qué estás buscando hoy? ¿Una bici de Ruta, Gravel o Montaña?`);
+        showQuickReplies(['Ruta', 'Gravel', 'MTB (Montaña)']);
+      } else {
+        addMessage('bot', `Perdona, no capté bien tu nombre. ¿Me lo repites por favor?`);
+      }
+      return;
+    }
+
+    if (botState === 'ASKING_INTEREST' || t.includes('ruta') || t.includes('gravel') || t.includes('montaña') || t.includes('mtb')) {
+      botState = 'PROVIDING_VALUE';
+      localStorage.setItem('tg_bot_state', botState);
+      addMessage('bot', '¡Gran elección! Tenemos excelentes opciones con esa disciplina. Si me pasas tu WhatsApp a 10 dígitos, te envío el catálogo actualizado con inventario real y precios.');
+      return;
+    }
+
+    if (t.includes('precio') || t.includes('cuesta')) {
+      addMessage('bot', 'Nuestros precios varían según el modelo y el ensamble (manejamos bicis desde $7,900 MXN hasta topes de gama). Si dejas tu WhatsApp te mando la lista oficial.');
+      return;
+    }
+
+    if (t.includes('donde') || t.includes('ubicacion') || t.includes('tienda')) {
+      addMessage('bot', 'Estamos en Playa del Carmen, Av. Ich Xeel CASA 19, Cataluña. ¿Te gustaría agendar una visita al taller? Déjame tu WhatsApp para coordinarlo.');
+      return;
+    }
+
+    const name = getCRMName();
+    if (!name && botState !== 'ASKING_NAME') {
+      botState = 'ASKING_NAME';
+      localStorage.setItem('tg_bot_state', botState);
+      addMessage('bot', 'Para poder darte información más específica, ¿con quién tengo el gusto?');
+      return;
+    }
+
+    addMessage('bot', 'Entiendo. Como experto en bicicletas, mi mejor recomendación es que charlemos por WhatsApp para enviarte fotos reales y asesorarte a fondo. ¿Me compartes tu número a 10 dígitos?');
+  }
+
+  // Events
+  toggleBtn.addEventListener('click', () => {
+    chatWindow.style.display = 'flex';
+    toggleBtn.style.display = 'none';
+    notifDot.style.display = 'none';
+    
+    if (chatHistory.length === 0) {
+      setTimeout(() => {
+        botState = getCRMName() ? 'GENERAL' : 'ASKING_NAME';
+        localStorage.setItem('tg_bot_state', botState);
+        addMessage('bot', getGreeting());
+      }, 300);
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    chatWindow.style.display = 'none';
+    toggleBtn.style.display = 'flex';
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(!input.value.trim()) return;
+    qrContainer.innerHTML = '';
+    handleUserInput(input.value.trim());
+  });
+
+  setTimeout(() => {
+    if (chatHistory.length === 0) {
+      const score = getCRMScore();
+      if (score >= 45 && chatWindow.style.display === 'none') {
+        notifDot.style.display = 'block';
+      }
+    } else {
+      renderMessages();
+    }
+  }, 2000);
+
+})();
+</script>
