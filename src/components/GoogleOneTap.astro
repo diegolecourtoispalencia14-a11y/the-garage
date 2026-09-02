@@ -19,7 +19,7 @@
 <!-- Hidden One-Tap initialization element -->
 <div
   id="g_id_onload"
-  data-client_id="YOUR_GOOGLE_CLIENT_ID"
+  data-client_id="727148939594-h5l331vu9mqq7nc61lsv6b21ed6uhjdt.apps.googleusercontent.com"
   data-callback="handleGoogleCredentialResponse"
   data-auto_prompt="false"
   data-itp_support="true"
@@ -188,7 +188,7 @@
     if (!modal) return;
 
     // Only show if Google SDK loaded and Client ID is configured
-    if (!clientCfg || clientCfg.dataset.client_id === 'YOUR_GOOGLE_CLIENT_ID') return;
+    if (!clientCfg || !clientCfg.dataset.client_id) return;
 
     modal.style.display = 'flex';
     modal.removeAttribute('aria-hidden');
