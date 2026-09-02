@@ -48,7 +48,7 @@ const bicis = bicisEntries.map(e => e.data);
 
           <div class="tile-hero-footer">
             <a href="#sec-matchmaker" class="btn btn-primary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
               <span>Probar Asesor de Bicicleta</span>
             </a>
             <a
@@ -128,7 +128,6 @@ const bicis = bicisEntries.map(e => e.data);
               <p class="opt-desc">Velocidad aerodinámica, cadencia y fondos de resistencia.</p>
             </button>
             <button type="button" class="wizard-card-opt" data-terrain="Gravel">
-              <!-- True Adventure/Compass SVG for Gravel (NO DOLLAR SIGN) -->
               <div class="opt-svg-box">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
               </div>
@@ -190,7 +189,7 @@ const bicis = bicisEntries.map(e => e.data);
           <button type="button" class="btn-step-prev font-mono" id="btn-back-goal">← Volver al paso 2</button>
         </div>
 
-        <!-- Dynamic Live Result Box -->
+        <!-- Dynamic Live Result Box with Smart Lead Capture Form -->
         <div id="step-result" class="result-display-panel" style="display: none;">
           <div class="result-match-indicator font-mono">
             <span class="match-ping"></span>
@@ -210,9 +209,33 @@ const bicis = bicisEntries.map(e => e.data);
                 Cuadro ligero de aluminio con horquilla de carbono, grupo Shimano Tiagra 2x10 vel y ergonomía rápida para asfalto.
               </p>
 
-              <div class="result-actions-row">
+              <!-- SMART CRO LEAD CAPTURE ENGINE -->
+              <div class="lead-capture-card font-mono">
+                <span class="lead-capture-tag">[ENTREGA DE FICHA &amp; DISPONIBILIDAD]</span>
+                <p class="lead-capture-desc">
+                  Recibe la ficha técnica completa de geometría, opciones de financiamiento y aviso de disponibilidad por WhatsApp o Correo:
+                </p>
+
+                <form id="lead-capture-form" class="lead-form-grid">
+                  <input
+                    type="text"
+                    id="lead-contact-input"
+                    placeholder="Tu WhatsApp (10 dígitos) o Correo"
+                    required
+                    class="lead-input"
+                  />
+                  <button type="submit" class="btn btn-primary lead-submit-btn" id="lead-submit-btn">
+                    <span>Recibir Ficha Técnica ↗</span>
+                  </button>
+                </form>
+                <div id="lead-success-msg" class="lead-success-feedback" style="display: none;">
+                  ✓ Ficha registrada. Te contactaremos con la información técnica y opciones de apartado.
+                </div>
+              </div>
+
+              <div class="result-actions-row" style="margin-top: 1rem;">
                 <a href="#" id="res-wa-btn" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
-                  Apartar esta Unidad por WhatsApp
+                  Apartar de Inmediato por WhatsApp
                 </a>
                 <button type="button" class="btn btn-outline" id="btn-restart-match">
                   Reiniciar Asesor ↻
@@ -308,7 +331,7 @@ const bicis = bicisEntries.map(e => e.data);
     </div>
   </div>
 
-  <!-- FLOATING DOCK (Customer-First Clean Labels) -->
+  <!-- FLOATING DOCK -->
   <nav class="floating-dock-nav" aria-label="Navegación Rápida">
     <button type="button" class="dock-nav-btn active" data-target="sec-hero">01 Inicio</button>
     <button type="button" class="dock-nav-btn" data-target="sec-matchmaker">02 Asesor</button>
@@ -316,6 +339,27 @@ const bicis = bicisEntries.map(e => e.data);
     <button type="button" class="dock-nav-btn" data-target="sec-riders">04 Comunidad</button>
     <a href="/inventario" class="dock-nav-btn dock-catalog-accent font-mono">Catálogo ↗</a>
   </nav>
+
+  <!-- LUXURY FIRST-VISIT PADDOCK CLUB DRAWER TRIGGER -->
+  <div id="paddock-club-drawer" class="paddock-club-bar font-mono">
+    <div class="paddock-inner-content">
+      <div class="paddock-text-block">
+        <span class="paddock-badge">[BASSO PADDOCK CLUB]</span>
+        <span class="paddock-headline">¿Buscas una talla o modelo específico de Basso Bikes Italia?</span>
+      </div>
+      <div class="paddock-action-block">
+        <a
+          href="https://wa.me/529841381493?text=Hola,%20me%20gustar%C3%ADa%20unirme%20al%20Paddock%20Club%20para%20recibir%20alertas%20de%20arribos%20de%20Basso%20Bikes."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary paddock-cta-btn"
+        >
+          Recibir Alertas de Arribo ↗
+        </a>
+        <button type="button" class="paddock-close-btn" id="paddock-close" aria-label="Cerrar">✕</button>
+      </div>
+    </div>
+  </div>
 </Base>
 
 <style>
@@ -663,7 +707,7 @@ const bicis = bicisEntries.map(e => e.data);
     display: grid;
     grid-template-columns: 1fr 1.3fr;
     gap: var(--space-6);
-    align-items: center;
+    align-items: start;
   }
 
   .result-media-container {
@@ -700,8 +744,59 @@ const bicis = bicisEntries.map(e => e.data);
     font-size: 0.95rem;
     color: var(--text-secondary);
     line-height: 1.65;
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
   }
+
+  /* Smart CRO Lead Capture Card */
+  .lead-capture-card {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+  .lead-capture-tag {
+    font-size: 0.7rem;
+    color: #FB7185;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .lead-capture-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-3);
+  }
+  .lead-form-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2);
+  }
+  .lead-input {
+    background: #09090B;
+    border: 1px solid var(--border-hairline);
+    color: #FFFFFF;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .lead-input:focus {
+    border-color: #E11D48;
+  }
+  .lead-submit-btn {
+    padding: 0.6rem 1.15rem;
+    font-size: 0.8rem;
+  }
+  .lead-success-feedback {
+    margin-top: var(--space-2);
+    color: #4ADE80;
+    font-size: 0.78rem;
+  }
+
   .result-actions-row {
     display: flex;
     gap: var(--space-3);
@@ -894,6 +989,67 @@ const bicis = bicisEntries.map(e => e.data);
     color: #FB7185;
   }
 
+  /* Paddock Club Floating Bar */
+  .paddock-club-bar {
+    position: fixed;
+    bottom: 84px;
+    right: 24px;
+    background: rgba(18, 18, 22, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    z-index: 990;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    max-width: 440px;
+    transition: transform 0.3s var(--ease-spring), opacity 0.3s ease;
+  }
+
+  .paddock-inner-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .paddock-badge {
+    color: #FB7185;
+    font-weight: 800;
+    font-size: 0.7rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .paddock-headline {
+    color: #FAFAFA;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .paddock-action-block {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .paddock-cta-btn {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.75rem;
+  }
+
+  .paddock-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .paddock-close-btn:hover {
+    color: #FFFFFF;
+  }
+
   @media (max-width: 900px) {
     .bento-hero-grid {
       grid-template-columns: 1fr;
@@ -912,14 +1068,28 @@ const bicis = bicisEntries.map(e => e.data);
       padding: 6px 10px;
       font-size: 11px;
     }
+    .paddock-club-bar {
+      bottom: 74px;
+      left: 16px;
+      right: 16px;
+      max-width: none;
+    }
+    .lead-form-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 
 <script>
   function initMasterBento() {
+    // 1. First-Party Visit Tracker (CRO standard)
+    const firstVisitKey = 'the_garage_first_visit';
+    if (!localStorage.getItem(firstVisitKey)) {
+      localStorage.setItem(firstVisitKey, new Date().toISOString());
+    }
+
+    // 2. Dock Smooth Scroll & Scroll Spy
     const dockButtons = document.querySelectorAll<HTMLElement>('.dock-nav-btn[data-target]');
-    
-    // Smooth Scroll on Click
     dockButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const targetId = btn.getAttribute('data-target');
@@ -929,7 +1099,6 @@ const bicis = bicisEntries.map(e => e.data);
       });
     });
 
-    // Real-Time Scroll Spy via IntersectionObserver
     const observedSections = ['sec-hero', 'sec-matchmaker', 'sec-drops', 'sec-riders'];
     const sectionElements = observedSections.map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
 
@@ -952,10 +1121,25 @@ const bicis = bicisEntries.map(e => e.data);
       sectionElements.forEach(sec => observer.observe(sec));
     }
 
-    // Matchmaker state & steps
+    // 3. Paddock Club Bar Close Trigger
+    const paddockDrawer = document.getElementById('paddock-club-drawer');
+    const paddockClose = document.getElementById('paddock-close');
+    paddockClose?.addEventListener('click', () => {
+      if (paddockDrawer) {
+        paddockDrawer.style.display = 'none';
+        sessionStorage.setItem('paddock_dismissed', 'true');
+      }
+    });
+    if (sessionStorage.getItem('paddock_dismissed') === 'true' && paddockDrawer) {
+      paddockDrawer.style.display = 'none';
+    }
+
+    // 4. Matchmaker Wizard State & Steps
     let terrain = 'MTB';
     let goal = 'entrenamiento';
     let size = 'M';
+    let currentModelTitle = 'Merida Scultura 300 Shimano Tiagra';
+    let currentModelPrice = '$19,800 MXN';
 
     const stepTerrain = document.getElementById('step-terrain');
     const stepGoal = document.getElementById('step-goal');
@@ -967,6 +1151,7 @@ const bicis = bicisEntries.map(e => e.data);
     document.querySelectorAll<HTMLButtonElement>('[data-terrain]').forEach(btn => {
       btn.addEventListener('click', () => {
         terrain = btn.getAttribute('data-terrain') || 'MTB';
+        localStorage.setItem('the_garage_interest_terrain', terrain);
         if (stepTerrain && stepGoal && stepLabel) {
           stepTerrain.style.display = 'none';
           stepGoal.style.display = 'block';
@@ -991,11 +1176,12 @@ const bicis = bicisEntries.map(e => e.data);
     document.querySelectorAll<HTMLButtonElement>('[data-size]').forEach(btn => {
       btn.addEventListener('click', () => {
         size = btn.getAttribute('data-size') || 'M';
+        localStorage.setItem('the_garage_user_size', size);
         renderMatchResult();
       });
     });
 
-    // Back to Step 1
+    // Back Buttons
     document.getElementById('btn-back-terrain')?.addEventListener('click', () => {
       if (stepTerrain && stepGoal && stepLabel) {
         stepGoal.style.display = 'none';
@@ -1004,7 +1190,6 @@ const bicis = bicisEntries.map(e => e.data);
       }
     });
 
-    // Back to Step 2
     document.getElementById('btn-back-goal')?.addEventListener('click', () => {
       if (stepGoal && stepSize && stepLabel) {
         stepSize.style.display = 'none';
@@ -1013,7 +1198,6 @@ const bicis = bicisEntries.map(e => e.data);
       }
     });
 
-    // Restart
     document.getElementById('btn-restart-match')?.addEventListener('click', () => {
       if (stepTerrain && stepResult && stepLabel) {
         stepResult.style.display = 'none';
@@ -1056,6 +1240,9 @@ const bicis = bicisEntries.map(e => e.data);
         modelDesc = 'Cuadro monocasco de carbono Torayca hecho a mano en Italia, grupo electrónico SRAM AXS/Shimano Di2 y ruedas de carbono para el más alto nivel competitivo.';
       }
 
+      currentModelTitle = modelTitle;
+      currentModelPrice = modelPrice;
+
       if (resImg) resImg.src = modelImg;
       if (resCat) resCat.textContent = modelCat;
       if (resTitle) resTitle.textContent = modelTitle;
@@ -1071,6 +1258,44 @@ const bicis = bicisEntries.map(e => e.data);
         stepLabel.textContent = 'Match Listo';
       }
     }
+
+    // 5. Smart Lead Capture Form Submission Handler
+    const leadForm = document.getElementById('lead-capture-form');
+    const contactInput = document.getElementById('lead-contact-input') as HTMLInputElement;
+    const successMsg = document.getElementById('lead-success-msg');
+    const submitBtn = document.getElementById('lead-submit-btn');
+
+    leadForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const contactVal = contactInput?.value.trim();
+      if (!contactVal) return;
+
+      const leadPayload = {
+        contact: contactVal,
+        channel: contactVal.includes('@') ? 'email' : 'whatsapp',
+        terrain_interest: terrain,
+        goal_interest: goal,
+        user_size: size,
+        model_matched: currentModelTitle,
+        model_price: currentModelPrice,
+        first_visit: localStorage.getItem('the_garage_first_visit') || new Date().toISOString(),
+        captured_at: new Date().toISOString(),
+        url: window.location.href
+      };
+
+      // Store in local audit trail
+      const existingLeads = JSON.parse(localStorage.getItem('the_garage_leads') || '[]');
+      existingLeads.push(leadPayload);
+      localStorage.setItem('the_garage_leads', JSON.stringify(existingLeads));
+
+      // Visual Feedback
+      if (submitBtn) submitBtn.textContent = 'Enviando...';
+      setTimeout(() => {
+        if (submitBtn) submitBtn.textContent = '✓ Registrado';
+        if (successMsg) successMsg.style.display = 'block';
+        if (contactInput) contactInput.disabled = true;
+      }, 500);
+    });
   }
 
   if (document.readyState === 'loading') {
