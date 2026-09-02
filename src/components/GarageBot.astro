@@ -305,7 +305,7 @@
       
       if (data.error) {
         console.error("Bot API Error:", data.error);
-        addMessage('bot', "Disculpa, tuve un problema de conexión. ¿Te importaría escribirme a nuestro WhatsApp directamente?");
+        addMessage('bot', "Error de Sistema: " + data.error);
       } else {
         addMessage('bot', data.reply);
       }
