@@ -312,6 +312,8 @@
       responses: ["Somos centro de servicio certificado. Todas traen garantía y tu primer servicio va por nuestra cuenta. ¿Te animas a venir a la tienda?"] },
     { pattern: /(donde|ubicacion|direccion|tienda)/i,
       responses: ["Estamos en Av. Ich Xeel CASA 19, Cataluña, Playa del Carmen. ¿Te gustaría agendar una cita?"] },
+        { pattern: /(^|\s)(si|sí|claro|por supuesto|dale|va|me parece bien|ok|okay|vale|simon|sipi)(\s|$|\.|,|\?|!)/i,
+      responses: ["¡Excelente! Por favor escríbeme tu número de WhatsApp a 10 dígitos para mandarte todo.", "¡Perfecto! Pásame tu número (10 dígitos) y nos ponemos en contacto en un momento."] },
     { pattern: /(^|\s)(no|nop|nel|ahorita no|despues|luego)(\s|$|\.|,|\?)/i,
       responses: ["No te preocupes. Aquí ando si cambias de opinión o necesitas ayuda con el catálogo."] },
     { pattern: /(quien eres|con quien tengo el gusto|como te llamas|nombre)/i,
