@@ -1,228 +1,9 @@
----
----
-<div id="garage-bot-container" class="garage-bot-container font-mono">
-  <!-- Botón Flotante -->
-  <button id="gb-toggle-btn" class="gb-toggle-btn" aria-label="Abrir Asistente">
-    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-    <span class="gb-notification-dot" id="gb-notif-dot"></span>
-  </button>
+const fs = require('fs');
+let content = fs.readFileSync('src/components/GarageBot.astro', 'utf8');
 
-  <!-- Ventana de Chat -->
-  <div id="gb-chat-window" class="gb-chat-window" style="display: none;">
-    <div class="gb-header">
-      <div class="gb-header-info">
-        <span class="gb-avatar">GB</span>
-        <div>
-          <h3 class="gb-title">GarageBot</h3>
-          <span class="gb-status">Asesor Experto en Línea</span>
-        </div>
-      </div>
-      <button id="gb-close-btn" class="gb-close-btn">&times;</button>
-    </div>
+const scriptRegex = /<script is:inline>[\s\S]*?<\/script>/;
 
-    <div id="gb-messages" class="gb-messages">
-      <!-- Los mensajes se inyectan por JS -->
-    </div>
-
-    <div class="gb-quick-replies" id="gb-quick-replies">
-      <!-- Botones de respuesta rápida -->
-    </div>
-
-    <form id="gb-input-form" class="gb-input-area">
-      <input type="text" id="gb-input" placeholder="Escribe tu mensaje..." autocomplete="off" />
-      <button type="submit" class="gb-send-btn">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
-    </form>
-  </div>
-</div>
-
-<style>
-  .garage-bot-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 9995;
-    font-size: 0.95rem;
-  }
-  .gb-toggle-btn {
-    background: #e11d48;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-  }
-  .gb-toggle-btn:hover {
-    transform: scale(1.05);
-  }
-  .gb-notification-dot {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 12px;
-    height: 12px;
-    background: #22c55e;
-    border: 2px solid #111113;
-    border-radius: 50%;
-    display: none;
-  }
-  .gb-chat-window {
-    position: absolute;
-    bottom: 70px;
-    right: 0;
-    width: 380px;
-    height: 600px;
-    background: #111113;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    overflow: hidden;
-  }
-  .gb-header {
-    background: #18181b;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .gb-header-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .gb-avatar {
-    width: 32px;
-    height: 32px;
-    background: #e11d48;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 0.75rem;
-  }
-  .gb-title { margin: 0; font-size: 0.9rem; color: #fff; font-weight: 700; }
-  .gb-status { font-size: 0.65rem; color: #22c55e; letter-spacing: 0.05em; }
-  .gb-close-btn {
-    background: none;
-    border: none;
-    color: #a1a1aa;
-    font-size: 1.5rem;
-    cursor: pointer;
-    line-height: 1;
-  }
-  .gb-close-btn:hover { color: #fff; }
-  .gb-messages {
-    flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .gb-msg {
-    max-width: 85%;
-    padding: 0.65rem 0.85rem;
-    border-radius: 12px;
-    line-height: 1.4;
-  }
-  .gb-msg-bot {
-    align-self: flex-start;
-    background: #27272a;
-    color: #e4e4e7;
-    border-bottom-left-radius: 2px;
-  }
-  .gb-msg-user {
-    align-self: flex-end;
-    background: #e11d48;
-    color: #fff;
-    border-bottom-right-radius: 2px;
-  }
-  .gb-quick-replies {
-    padding: 0 1rem 0.5rem;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-  .gb-qr-btn {
-    background: transparent;
-    border: 1px solid #e11d48;
-    color: #fb7185;
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
-  }
-  .gb-qr-btn:hover {
-    background: #e11d48;
-    color: #fff;
-  }
-  .gb-input-area {
-    display: flex;
-    padding: 0.75rem;
-    background: #18181b;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    gap: 0.5rem;
-  }
-  .gb-input-area input {
-    flex: 1;
-    background: #09090b;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
-    color: #e4e4e7;
-    font-family: inherit;
-    font-size: 0.9rem;
-    outline: none;
-  }
-  .gb-input-area input:focus {
-    border-color: rgba(255,255,255,0.3);
-  }
-  .gb-send-btn {
-    background: none;
-    border: none;
-    color: #e11d48;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 0.25rem;
-  }
-  .gb-send-btn:hover { color: #fb7185; }
-
-  .dot-bounce { display:inline-block; width:6px; height:6px; background:#e4e4e7; border-radius:50%; margin:0 2px; animation: gb-bounce 1.4s infinite ease-in-out both; }
-  @keyframes gb-bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-
-  @media (max-width: 400px) {
-    .gb-chat-window {
-      position: fixed;
-      bottom: 0; right: 0; left: 0; top: 0;
-      width: 100%; height: 100%;
-      border-radius: 0;
-    }
-  }
-</style>
-
-<script is:inline>
+const newScript = `<script is:inline>
 (function() {
   const toggleBtn = document.getElementById('gb-toggle-btn');
   const chatWindow = document.getElementById('gb-chat-window');
@@ -307,13 +88,13 @@
       responses: ["Nuestro taller especializado es la joya de The Garage. Estamos certificados para mantenimientos profundos y suspensiones. ¿Te gustaría agendar una cita para consentir a tu bici?"] },
     { pattern: /(envio|envios|mandan|republica|enviar|paqueteria)/i,
       responses: ["¡Enviamos a todo México de forma 100% segura! Las mandamos en su caja original, ultra protegidas. ¿A qué estado o código postal te la mandaríamos?"] },
-    { pattern: /(talla|medida|estatura|\bs\b|\bm\b|\bl\b|\bxl\b)/i,
+    { pattern: /(talla|medida|estatura|\\bs\\b|\\bm\\b|\\bl\\b|\\bxl\\b)/i,
       responses: ["El fit es lo más importante para evitar lesiones. Manejamos todas las tallas. ¿Exactamente cuánto mides para decirte tu talla ideal?"] },
     { pattern: /(nuevo|principiante|empezando)/i,
       responses: ["¡No te preocupes, para eso estamos los expertos! Todos empezamos desde cero. Una bici Híbrida o una Gravel son opciones comodísimas para empezar. ¿Qué presupuesto te gustaría invertir?"] },
     { pattern: /(mejor por whatsapp|te paso mi numero|mi numero es|pasame el tuyo|por whats)/i,
       responses: ["¡Excelente decisión! Por WhatsApp la atención es muchísimo más rápida. Pásame tu número a 10 dígitos aquí mismo y yo te contacto enseguida."] },
-    { pattern: /(^|\s)(no|nop|nel)(\s|$|\.|,|\?)/i,
+    { pattern: /(^|\\s)(no|nop|nel)(\\s|$|\\.|,|\\?)/i,
       responses: ["Sin problema, el chiste es que te sientas súper cómodo. Podemos seguir platicando por aquí. ¿De casualidad ya sabes qué disciplina o rodada estabas buscando?"] }
   ];
 
@@ -343,7 +124,7 @@
     }
     
     if (fsmState === 'STATE_GATHERING_FIT_DATA') {
-        if (/\d\.\d{2}/.test(t) || /\d{3}/.test(t)) { // Altura en metros o cm
+        if (/\\d\\.\\d{2}/.test(t) || /\\d{3}/.test(t)) { // Altura en metros o cm
             updateState('STATE_AWAITING_LEAD_INFO');
             return "¡Anotado! Ya tengo tu talla. Fíjate que para poder mandarte las fotos reales de los modelos que me quedan en tu medida, prefiero que lo veamos por WhatsApp. Pásame tu número a 10 dígitos aquí mismo.";
         }
@@ -366,7 +147,7 @@
     showTyping();
     
     // 1. EXTRACTOR DE NÚMEROS DE TELÉFONO (LA META)
-    const phoneRegex = /\b\d{10}\b/;
+    const phoneRegex = /\\b\\d{10}\\b/;
     if (phoneRegex.test(text)) {
       captureCRMContact(text.match(phoneRegex)[0]);
       hideTyping();
@@ -414,4 +195,7 @@
     }
   }, 1000);
 })();
-</script>
+</script>`;
+
+content = content.replace(scriptRegex, newScript);
+fs.writeFileSync('src/components/GarageBot.astro', content);
