@@ -10,7 +10,6 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Falta la API KEY de Gemini en Cloudflare" }), { status: 500 });
     }
 
-    // System prompt para el LLM
     const systemInstruction = `Eres Diego, el asesor experto en bicicletas de 'The Garage Bike Experts' en Playa del Carmen.
 REGLAS ESTRICTAS:
 1. Nunca uses emojis.
@@ -23,28 +22,40 @@ REGLAS ESTRICTAS:
 8. Mantén respuestas cortas, fluidas y muy conversacionales.`;
 
     const contents = [];
-    // Convertir el historial al formato de Gemini
-    for (const msg of history) {
-      contents.push({
-        role: msg.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }]
-      });
+    
+    // El API de Gemini EXIGE que el historial comience con el rol "user" y que los roles se alternen.
+    // Si el historial comienza con un mensaje del "bot", agregamos un "user" fantasma inicial.
+    if (history.length > 0 && history[0].sender === 'bot') {
+        contents.push({ role: 'user', parts: [{ text: "Hola, me interesa ver bicicletas." }] });
     }
-    contents.push({
-      role: 'user',
-      parts: [{ text: userMessage }]
-    });
+
+    for (const msg of history) {
+      // Evitar que dos roles iguales se envíen seguidos (Gemini lanza 400 Bad Request)
+      const role = msg.sender === 'user' ? 'user' : 'model';
+      if (contents.length > 0 && contents[contents.length - 1].role === role) {
+          // Fusionar mensajes consecutivos del mismo rol
+          contents[contents.length - 1].parts[0].text += `\n${msg.text}`;
+      } else {
+          contents.push({ role, parts: [{ text: msg.text }] });
+      }
+    }
+
+    // Agregar el mensaje actual del usuario
+    if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
+        contents[contents.length - 1].parts[0].text += `\n${userMessage}`;
+    } else {
+        contents.push({ role: 'user', parts: [{ text: userMessage }] });
+    }
 
     const payload = {
       system_instruction: { parts: [{ text: systemInstruction }] },
       contents: contents,
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 200,
+        maxOutputTokens: 250,
       }
     };
 
-    // Intentaremos con gemini-1.5-flash primero, si falla gemini-pro
     let model = 'gemini-1.5-flash';
     let url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     
@@ -59,14 +70,12 @@ REGLAS ESTRICTAS:
       model = 'gemini-pro';
       url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       
-      // gemini-pro no soporta system_instruction en la raíz de la misma forma a veces,
-      // pero se lo inyectaremos en el primer mensaje de usuario si es necesario.
       const fallbackContents = [...contents];
       fallbackContents[0].parts[0].text = `[Instrucciones de sistema: ${systemInstruction}]\n\n${fallbackContents[0].parts[0].text}`;
       
       const fallbackPayload = {
         contents: fallbackContents,
-        generationConfig: { temperature: 0.4, maxOutputTokens: 200 }
+        generationConfig: { temperature: 0.4, maxOutputTokens: 250 }
       };
 
       res = await fetch(url, {
