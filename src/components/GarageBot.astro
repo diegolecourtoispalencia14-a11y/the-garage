@@ -356,35 +356,8 @@
       responses: ["Soy Diego, asesor especializado de The Garage. ¡Un gusto! ¿Con quién tengo el gusto yo?"] }
   ];
 
-  function processLocalEngine(text) {
-    let t = text.toLowerCase();
-    let prefix = "";
-    
-    const nameMatch = t.match(/\b(me llamo|mi nombre es)\s+([a-záéíóúñ]+)/i);
-    if (nameMatch) {
-      const extractedName = nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1);
-      prefix = `¡Mucho gusto, ${extractedName}! `;
-      t = t.replace(nameMatch[0], "");
-    }
-
-    for (let i = 0; i < localIntents.length; i++) {
-      if (localIntents[i].pattern.test(t)) {
-        let options = localIntents[i].responses;
-        return prefix + options[Math.floor(Math.random() * options.length)];
-      }
-    }
-    
-    if (prefix) return prefix + "¿En qué te puedo ayudar hoy con tu próxima bicicleta?";
-    
-    // Fallback Ultra-Tolerante
-    const score = getCRMScore();
-    if (score > 35) {
-        return "Me agarraste un poco en curva, pero entiendo por dónde vas. Cada ciclista busca algo súper específico. Como noto que estás revisando el catálogo, ¿prefieres que platiquemos a detalle por WhatsApp para enviarte modelos exactos?";
-    }
-    return "Esa es una excelente pregunta, pero para no darte información a medias por este chat, me encantaría que un técnico te asesore bien. ¿Te interesaría venir al taller en Playa del Carmen o prefieres dejarnos tu WhatsApp?";
-  }
-
-  function handleUserInput(text) {
+  
+  async function handleUserInput(text) {
     addMessage('user', text);
     input.value = '';
     showTyping();
@@ -396,15 +369,33 @@
       captureCRMContact(match[0]);
     }
 
-    // Retraso simulado para que parezca humano (800ms a 1.5s)
-    let delay = Math.random() * 700 + 800;
-    
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history: chatHistory.slice(0, -1) }) 
+      });
+      const data = await res.json();
       hideTyping();
-      const reply = processLocalEngine(text);
-      addMessage('bot', reply);
-    }, delay);
+      
+      if (data.error) {
+        console.error("Bot API Error:", data.error);
+        if (data.error.includes('429')) {
+             addMessage('bot', "Tu cuenta de Google (API KEY) ha agotado su límite gratuito de inteligencia artificial (Error 429). Para que yo pueda razonar y platicar contigo como un experto de The Garage, necesitas agregar más cuota en Google AI Studio o esperar a que se reinicie el límite.");
+        } else {
+             addMessage('bot', "Error en el servidor de IA: " + data.error);
+        }
+      } else {
+        addMessage('bot', data.reply);
+      }
+    } catch (err) {
+      hideTyping();
+      addMessage('bot', "Se perdió la conexión con el motor de Inteligencia Artificial de Google.");
+    }
   }
+
+  // --- IGNORAR ABAJO (CÓDIGO LEGACY) ---
+
 
   // Events
   toggleBtn.addEventListener('click', () => {
