@@ -1,0 +1,134 @@
+---
+---
+
+<div id="cookie-consent-banner" class="cookie-banner-wrap font-mono" style="display: none;">
+  <div class="container-fluid">
+    <div class="cookie-banner-inner">
+      <div class="cookie-text-col">
+        <span class="cookie-badge">[PRIVACIDAD &amp; CONSENTIMIENTO]</span>
+        <p class="cookie-text">
+          Utilizamos almacenamiento local y cookies técnicas bajo tu consentimiento para recordar tu primera visita, calcular tu talla biomecánica y ofrecerte asesoría comercial y de taller exclusiva para <strong>The Garage</strong>. Nunca transferimos ni vendemos tu información a terceros. Consulta nuestro <a href="/aviso-privacidad" class="cookie-link">Aviso de Privacidad</a>.
+        </p>
+      </div>
+
+      <div class="cookie-actions-col">
+        <button type="button" id="btn-accept-cookies" class="btn btn-primary cookie-btn">
+          <span>Aceptar &amp; Continuar</span>
+        </button>
+        <button type="button" id="btn-reject-cookies" class="btn btn-outline cookie-btn-dim">
+          <span>Solo Esenciales</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-banner-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(9, 9, 11, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--border-accent);
+    padding: var(--space-4) 0;
+    z-index: 10000;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+    animation: fadeInUp 0.35s var(--ease-spring);
+  }
+
+  .cookie-banner-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .cookie-text-col {
+    max-width: 880px;
+  }
+
+  .cookie-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #FB7185;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .cookie-text {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  .cookie-text strong {
+    color: #FFFFFF;
+  }
+
+  .cookie-link {
+    color: #FB7185;
+    text-decoration: underline;
+  }
+
+  .cookie-actions-col {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .cookie-btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.8rem;
+  }
+
+  .cookie-btn-dim {
+    padding: 0.6rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .cookie-banner-wrap {
+      padding: var(--space-3) 0 var(--space-4) 0;
+    }
+    .cookie-actions-col {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+</style>
+
+<script>
+  function initCookieBanner() {
+    const banner = document.getElementById('cookie-consent-banner');
+    const btnAccept = document.getElementById('btn-accept-cookies');
+    const btnReject = document.getElementById('btn-reject-cookies');
+    const consentKey = 'the_garage_cookie_consent';
+
+    if (!localStorage.getItem(consentKey)) {
+      if (banner) banner.style.display = 'block';
+    }
+
+    btnAccept?.addEventListener('click', () => {
+      localStorage.setItem(consentKey, 'accepted');
+      if (banner) banner.style.display = 'none';
+    });
+
+    btnReject?.addEventListener('click', () => {
+      localStorage.setItem(consentKey, 'essential_only');
+      if (banner) banner.style.display = 'none';
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCookieBanner);
+  } else {
+    initCookieBanner();
+  }
+</script>
