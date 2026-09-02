@@ -13,16 +13,10 @@
 <!-- Google Identity Services SDK -->
 <script src="https://accounts.google.com/gsi/client" async defer is:inline></script>
 
-<!-- Hidden One-Tap initialization element -->
-<div
-  id="g_id_onload"
-  data-client_id="727148939594-h5l331vu9mqq7nc61lsv6b21ed6uhjdt.apps.googleusercontent.com"
-  data-callback="handleGoogleCredentialResponse"
-  data-auto_prompt="false"
-  data-itp_support="true"
-  data-cancel_on_tap_outside="false"
-  style="display:none;"
-></div>
+<!-- Client ID Configuration -->
+<script is:inline>
+  window.TG_GOOGLE_CLIENT_ID = "727148939594-h5l331vu9mqq7nc61lsv6b21ed6uhjdt.apps.googleusercontent.com";
+</script>
 
 <!-- Optional: render a sign-in button when triggered programmatically -->
 <div id="tg-google-btn-container" style="display:none;"></div>
@@ -180,18 +174,22 @@
 
     var modal     = document.getElementById('tg-exit-modal');
     var target    = document.getElementById('tg-onetap-render-target');
-    var clientCfg = document.getElementById('g_id_onload');
+    var clientId  = window.TG_GOOGLE_CLIENT_ID;
 
     if (!modal) return;
-
-    // Only show if Google SDK loaded and Client ID is configured
-    if (!clientCfg || !clientCfg.dataset.client_id) return;
+    if (!clientId) return;
 
     modal.style.display = 'flex';
     modal.removeAttribute('aria-hidden');
 
-    // Render the button inside the modal
+    // Render the button inside the modal programmatically
     if (window.google && window.google.accounts && target && !target.hasChildNodes()) {
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: window.handleGoogleCredentialResponse,
+        auto_prompt: false
+      });
+      
       google.accounts.id.renderButton(target, {
         theme:    'outline',
         size:     'large',
@@ -206,9 +204,14 @@
   /* ── Allow programmatic trigger (e.g., from Paddock Club CTA) ── */
   window.TGGoogleOneTap = {
     prompt: function () {
-      var clientCfg = document.getElementById('g_id_onload');
-      if (!clientCfg || !clientCfg.dataset.client_id) return;
+      var clientId = window.TG_GOOGLE_CLIENT_ID;
+      if (!clientId) return;
       if (window.google && window.google.accounts) {
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: window.handleGoogleCredentialResponse,
+          auto_prompt: false
+        });
         google.accounts.id.prompt();
       }
     }

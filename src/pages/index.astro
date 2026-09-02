@@ -1273,19 +1273,23 @@ const bicis = bicisEntries.map(e => e.data);
       const leadPayload = {
         contact: contactVal,
         channel: contactVal.includes('@') ? 'email' : 'whatsapp',
-        terrain_interest: terrain,
-        goal_interest: goal,
-        user_size: size,
-        model_matched: currentModelTitle,
-        model_price: currentModelPrice,
+        terrain: terrain,
+        size: size,
+        model: currentModelTitle
+      };
+
+      // 1. Dispatch custom event to BehaviorTracker (integrates with CRM Pipeline)
+      window.dispatchEvent(new CustomEvent('tg:lead_captured', { detail: leadPayload }));
+
+      // 2. Backward compatibility for legacy CRM Leads table
+      const legacyPayload = {
+        ...leadPayload,
         first_visit: localStorage.getItem('the_garage_first_visit') || new Date().toISOString(),
         captured_at: new Date().toISOString(),
         url: window.location.href
       };
-
-      // Store in local audit trail
       const existingLeads = JSON.parse(localStorage.getItem('the_garage_leads') || '[]');
-      existingLeads.push(leadPayload);
+      existingLeads.push(legacyPayload);
       localStorage.setItem('the_garage_leads', JSON.stringify(existingLeads));
 
       // Visual Feedback
