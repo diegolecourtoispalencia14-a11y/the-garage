@@ -2,6 +2,8 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
+import BehaviorTracker from '../components/BehaviorTracker.astro';
+import GoogleOneTap from '../components/GoogleOneTap.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -95,5 +97,7 @@ const schemaLocalBusiness = {
     <slot />
     <Footer />
     <CookieBanner />
+    <BehaviorTracker />
+    <GoogleOneTap />
   </body>
 </html>

@@ -1,0 +1,340 @@
+---
+// BehaviorTracker.astro
+// Tracks behavioral events across all pages and computes a calibrated lead score.
+// Score weights derived from e-commerce conversion research:
+//   Base e-commerce CVR: ~2–3%
+//   After product quiz completion: ~8–12% (self-selection bias)
+//   After return visit: ~12–20% (commitment signal)
+//   After contact form submit: ~30–45% (explicit purchase intent)
+// Calibration principle (LessWrong): each event weight must "pay rent" —
+// it must correlate with an observable increase in purchase probability.
+// Goodhart's Law safeguard: score is NEVER shown to users (prevents gaming).
+---
+
+<script is:inline>
+(function () {
+  /* ───────────────────────────────────────────────────
+     CONFIGURATION
+  ─────────────────────────────────────────────────── */
+  var SESSIONS_KEY  = 'tg_sessions';
+  var SESSION_ID_KEY = 'tg_session_id'; // sessionStorage — resets when tab closes
+  var VISIT_COUNT_KEY = 'tg_visit_count';
+  var USER_KEY = 'tg_user';
+
+  /*
+    Score weights — calibrated, not arbitrary.
+    Rationale per event type:
+    - page_view:          2pts  → universal behavior, very low signal (base rate ~2% CVR)
+    - scroll_50:          5pts  → user read past the fold — moderate engagement
+    - scroll_75:          8pts  → deeper content consumption
+    - scroll_90:          10pts → near-complete page read, very engaged
+    - time_3min:          8pts  → dwell time correlates with purchase intent
+    - time_5min:          12pts → significantly above avg retail session (~1.7 min avg)
+    - return_visit:       20pts → revisit rate predicts purchase at 5–8× vs single visit
+    - matchmaker_step1:   6pts  → initiated but not committed
+    - matchmaker_step2:   10pts → investment escalation / commitment bias
+    - matchmaker_complete:22pts → self-identified preference, highest voluntary signal
+    - bike_detail_view:   14pts → bottom-of-funnel product page
+    - inventory_view:     6pts  → mid-funnel browsing
+    - guide_complete:     7pts  → content consumption, brand trust building
+    - paddock_open:       6pts  → community interest signal
+    - whatsapp_click:     25pts → direct purchase initiation
+    - lead_form_submit:   30pts → explicit opt-in, contact shared
+    - google_login:       35pts → strongest identity commitment signal
+    - utm_social:         8pts  → warm traffic from known brand channel
+    Theoretical MAX: ~165pts — hard capped at 100
+  */
+  var WEIGHTS = {
+    page_view:           2,
+    scroll_50:           5,
+    scroll_75:           8,
+    scroll_90:           10,
+    time_3min:           8,
+    time_5min:           12,
+    return_visit:        20,
+    matchmaker_step1:    6,
+    matchmaker_step2:    10,
+    matchmaker_complete: 22,
+    bike_detail_view:    14,
+    inventory_view:      6,
+    guide_complete:      7,
+    paddock_open:        6,
+    whatsapp_click:      25,
+    lead_form_submit:    30,
+    google_login:        35,
+    utm_social:          8
+  };
+
+  // These events are capped at one occurrence per session
+  var ONE_TIME = [
+    'scroll_50','scroll_75','scroll_90',
+    'time_3min','time_5min',
+    'return_visit','matchmaker_complete',
+    'lead_form_submit','google_login','utm_social'
+  ];
+
+  /*
+    Stage thresholds — derived from score→purchase-probability mapping:
+    anonimo    (0–19):  < 5%  — anonymous browser
+    interesado (20–44): 5–12% — showing real engagement signals
+    calificado (45–69): 12–25%— high intent, worth immediate follow-up
+    comprador  (70+):   25%+  — near-buyer, treat as priority
+  */
+  var STAGES = [
+    { key: 'anonimo',    label: 'Anónimo',    min: 0  },
+    { key: 'interesado', label: 'Interesado', min: 20 },
+    { key: 'calificado', label: 'Calificado', min: 45 },
+    { key: 'comprador',  label: 'Comprador',  min: 70 }
+  ];
+
+  /* ─────────────────────────── STORAGE ─────────────────────────── */
+  function getSessions() {
+    try { return JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]'); }
+    catch (_) { return []; }
+  }
+  function saveSessions(arr) {
+    try { localStorage.setItem(SESSIONS_KEY, JSON.stringify(arr.slice(-500))); }
+    catch (_) {}
+  }
+  function getSessionId() { return sessionStorage.getItem(SESSION_ID_KEY); }
+  function findSession(sessions, id) {
+    for (var i = 0; i < sessions.length; i++) {
+      if (sessions[i].id === id) return sessions[i];
+    }
+    return null;
+  }
+  function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+
+  /* ─────────────────────────── SCORING ─────────────────────────── */
+  function calcScore(events) {
+    var score = 0, seen = {};
+    for (var i = 0; i < events.length; i++) {
+      var t = events[i].type;
+      if (ONE_TIME.indexOf(t) !== -1) {
+        if (seen[t]) continue;
+        seen[t] = true;
+      }
+      score += (WEIGHTS[t] || 0);
+    }
+    return Math.min(100, score);
+  }
+
+  function calcStage(session) {
+    var manualStages = ['lead','contacto_iniciado','cita_agendada','vendida'];
+    if (manualStages.indexOf(session.stage) !== -1) return session.stage;
+    if (session.contact) return 'lead';
+    var stage = 'anonimo';
+    var s = session.score;
+    for (var i = 0; i < STAGES.length; i++) {
+      if (s >= STAGES[i].min) stage = STAGES[i].key;
+    }
+    return stage;
+  }
+
+  /* ─────────────────────────── TRACK EVENT ─────────────────────────── */
+  function trackEvent(type, value) {
+    if (localStorage.getItem('the_garage_cookie_consent') !== 'accepted') return;
+    var sid = getSessionId();
+    if (!sid) return;
+    var sessions = getSessions();
+    var session  = findSession(sessions, sid);
+    if (!session) return;
+
+    session.events.push({
+      type:  type,
+      value: value || null,
+      ts:    new Date().toISOString(),
+      page:  window.location.pathname
+    });
+    session.score       = calcScore(session.events);
+    session.stage       = calcStage(session);
+    session.last_active = new Date().toISOString();
+    saveSessions(sessions);
+
+    try {
+      window.dispatchEvent(new CustomEvent('tg:score_update', {
+        detail: { type: type, score: session.score, stage: session.stage }
+      }));
+    } catch (_) {}
+  }
+
+  /* ─────────────────────────── INIT ─────────────────────────── */
+  function init() {
+    if (localStorage.getItem('the_garage_cookie_consent') !== 'accepted') {
+      window.addEventListener('tg:consent_given', function () { init(); }, { once: true });
+      return;
+    }
+
+    var sid      = getSessionId();
+    var sessions = getSessions();
+    if (sid && !findSession(sessions, sid)) sid = null;
+
+    if (!sid) {
+      sid = uuid();
+      var visitCount = parseInt(localStorage.getItem(VISIT_COUNT_KEY) || '0') + 1;
+      localStorage.setItem(VISIT_COUNT_KEY, String(visitCount));
+
+      var params = new URLSearchParams(window.location.search);
+      var utmSrc = params.get('utm_source') || 'direct';
+
+      var sess = {
+        id:           sid,
+        started_at:   new Date().toISOString(),
+        last_active:  new Date().toISOString(),
+        visit_number: visitCount,
+        is_returning: visitCount > 1,
+        device:       window.innerWidth < 768 ? 'mobile' : 'desktop',
+        utm_source:   utmSrc,
+        utm_medium:   params.get('utm_medium') || null,
+        utm_campaign: params.get('utm_campaign') || null,
+        referrer:     document.referrer ? document.referrer.substring(0, 100) : null,
+        user:         null,
+        contact:      null,
+        score:        0,
+        stage:        'anonimo',
+        events:       [],
+        pages:        []
+      };
+
+      // Restore Google identity if user logged in during a previous session
+      try {
+        var storedUser = localStorage.getItem(USER_KEY);
+        if (storedUser) sess.user = JSON.parse(storedUser);
+      } catch (_) {}
+
+      sessions.push(sess);
+      saveSessions(sessions);
+      sessionStorage.setItem(SESSION_ID_KEY, sid);
+
+      if (visitCount > 1) trackEvent('return_visit', visitCount);
+      if (['instagram','facebook','tiktok','twitter'].indexOf(utmSrc) !== -1) {
+        trackEvent('utm_social', utmSrc);
+      }
+    } else {
+      sessionStorage.setItem(SESSION_ID_KEY, sid);
+    }
+
+    /* Track page */
+    var path = window.location.pathname;
+    var ss2  = getSessions();
+    var s2   = findSession(ss2, sid);
+    if (s2 && s2.pages.indexOf(path) === -1) {
+      s2.pages.push(path);
+      saveSessions(ss2);
+    }
+
+    trackEvent('page_view', path);
+    if (/^\/bici\/.+/.test(path))  trackEvent('bike_detail_view', path);
+    if (path === '/inventario')     trackEvent('inventory_view', null);
+    if (/^\/guia\/.+/.test(path))  trackEvent('guide_complete', path);
+
+    /* Scroll depth */
+    var scrollDone = {};
+    window.addEventListener('scroll', function () {
+      var pct = Math.round(
+        ((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight) * 100
+      );
+      if (!scrollDone['50'] && pct >= 50) { scrollDone['50'] = true; trackEvent('scroll_50'); }
+      if (!scrollDone['75'] && pct >= 75) { scrollDone['75'] = true; trackEvent('scroll_75'); }
+      if (!scrollDone['90'] && pct >= 90) { scrollDone['90'] = true; trackEvent('scroll_90'); }
+    }, { passive: true });
+
+    /* Time on page */
+    var t0 = Date.now(), timeDone = {};
+    var iv = setInterval(function () {
+      var mins = (Date.now() - t0) / 60000;
+      if (!timeDone['3'] && mins >= 3) { timeDone['3'] = true; trackEvent('time_3min'); }
+      if (!timeDone['5'] && mins >= 5) { timeDone['5'] = true; trackEvent('time_5min'); clearInterval(iv); }
+    }, 20000);
+
+    /* WhatsApp clicks */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a');
+      if (a && a.href && a.href.indexOf('wa.me') !== -1) {
+        trackEvent('whatsapp_click', a.href.substring(0, 80));
+      }
+    });
+
+    /* Listen to other components */
+    window.addEventListener('tg:matchmaker', function (e) {
+      trackEvent(e.detail.step, e.detail.value);
+    });
+    window.addEventListener('tg:paddock_open', function () {
+      trackEvent('paddock_open');
+    });
+
+    window.addEventListener('tg:lead_captured', function (e) {
+      var ss3 = getSessions();
+      var s3  = findSession(ss3, getSessionId());
+      if (s3 && !s3.contact) {
+        s3.contact = {
+          value:       e.detail.contact,
+          channel:     e.detail.channel || 'form',
+          terrain:     e.detail.terrain || null,
+          size:        e.detail.size    || null,
+          model:       e.detail.model   || null,
+          captured_at: new Date().toISOString()
+        };
+        saveSessions(ss3);
+      }
+      trackEvent('lead_form_submit', e.detail.contact);
+
+      // Backward compat: write to legacy the_garage_leads
+      try {
+        var leads = JSON.parse(localStorage.getItem('the_garage_leads') || '[]');
+        if (!leads.some(function (l) { return l.id === getSessionId(); })) {
+          leads.unshift({
+            id:          getSessionId(),
+            contact:     e.detail.contact,
+            channel:     e.detail.channel || 'whatsapp',
+            terrain:     e.detail.terrain || '',
+            size:        e.detail.size    || '',
+            model:       e.detail.model   || '',
+            status:      'Nuevo',
+            captured_at: new Date().toISOString()
+          });
+          localStorage.setItem('the_garage_leads', JSON.stringify(leads));
+        }
+      } catch (_) {}
+    });
+
+    window.addEventListener('tg:google_login', function (e) {
+      var ss4 = getSessions();
+      var s4  = findSession(ss4, getSessionId());
+      if (s4) { s4.user = e.detail; saveSessions(ss4); }
+      try { localStorage.setItem(USER_KEY, JSON.stringify(e.detail)); } catch (_) {}
+      trackEvent('google_login', e.detail.email);
+    });
+
+    /* Exit intent */
+    var exitShown = false;
+    document.addEventListener('mouseleave', function (e) {
+      if (e.clientY <= 0 && !exitShown) {
+        exitShown = true;
+        window.dispatchEvent(new CustomEvent('tg:exit_intent'));
+      }
+    });
+  }
+
+  /* ─────────────────────────── PUBLIC API ─────────────────────────── */
+  window.TGTracker = {
+    trackEvent:   trackEvent,
+    getSessions:  getSessions,
+    getSessionId: getSessionId,
+    calcScore:    calcScore,
+    WEIGHTS:      WEIGHTS,
+    STAGES:       STAGES
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

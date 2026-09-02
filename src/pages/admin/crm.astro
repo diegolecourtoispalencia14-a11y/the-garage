@@ -6,618 +6,1051 @@ import Base from '../../layouts/Base.astro';
   title="Panel CRM & Prospectos | The Garage Bike Experts"
   description="Gestor de prospectos y recontactación para The Garage Bike Experts."
 >
-  <div class="crm-page-wrapper">
-    <div class="container-fluid">
+<div class="crm-page-wrapper">
+<div class="container-fluid">
 
-      <!-- PIN Protection Modal Overlay -->
-      <div id="pin-lock-overlay" class="lock-modal-overlay">
-        <div class="lock-card font-mono">
-          <span class="lock-badge">[ACCESO RESTRINGIDO // TALLER]</span>
-          <h2 class="lock-title">Panel CRM The Garage</h2>
-          <p class="lock-desc">Ingresa el PIN de administrador para consultar la base de datos de clientes:</p>
-          
-          <form id="pin-form" onsubmit="event.preventDefault(); window.tryUnlock();">
-            <input
-              type="password"
-              id="admin-pin-input"
-              class="pin-input font-mono"
-              maxlength="4"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              placeholder="••••"
-              autofocus
-            />
-            <button type="submit" id="btn-unlock-crm" class="btn btn-primary pin-submit-btn">
-              <span>Desbloquear CRM ↗</span>
-            </button>
-          </form>
-
-          <p id="pin-error-msg" class="pin-error" style="display: none;">
-            PIN incorrecto. (PIN por defecto: 1493)
-          </p>
-          <p class="pin-hint">PIN inicial de tienda: <strong>1493</strong></p>
-        </div>
-      </div>
-
-      <!-- Main CRM Application (Shown upon unlock) -->
-      <div id="crm-main-app" class="crm-content-view" style="display: none;">
-        
-        <!-- Header -->
-        <header class="crm-top-bar">
-          <div>
-            <div class="crm-badge-row font-mono">
-              <span class="badge-red">[PANEL PRIVADO]</span>
-              <span class="badge-dim">RECONTACTACIÓN &amp; PROSPECTOS LFPDPPP</span>
-            </div>
-            <h1 class="title-xl" style="margin-top: 0.25rem;">The Garage • Lead CRM</h1>
-          </div>
-
-          <div class="crm-top-actions font-mono">
-            <button type="button" id="btn-export-csv" class="btn btn-outline">
-              <span>Descargar CSV / Excel</span>
-            </button>
-            <a href="/" class="btn btn-primary">
-              <span>Tienda en Vivo ↗</span>
-            </a>
-          </div>
-        </header>
-
-        <!-- KPI Metrics Grid -->
-        <section class="kpi-cards-grid font-mono">
-          <div class="kpi-box">
-            <span class="kpi-label">[TOTAL PROSPECTOS]</span>
-            <div class="kpi-number" id="metric-total">0</div>
-            <span class="kpi-note">Consentimiento registrado</span>
-          </div>
-          <div class="kpi-box">
-            <span class="kpi-label">[DISCIPLINA TOP]</span>
-            <div class="kpi-number" id="metric-top-discipline" style="font-size: 1.4rem;">Gravel / Ruta</div>
-            <span class="kpi-note">Mayor interés en tienda</span>
-          </div>
-          <div class="kpi-box">
-            <span class="kpi-label">[CANAL WHATSAPP]</span>
-            <div class="kpi-number" id="metric-wa-rate">85%</div>
-            <span class="kpi-note">Canal prioritario</span>
-          </div>
-          <div class="kpi-box">
-            <span class="kpi-label">[TIEMPO DE RESPUESTA]</span>
-            <div class="kpi-number" style="color: #4ADE80;">&lt; 15 min</div>
-            <span class="kpi-note">Estándar Concierge</span>
-          </div>
-        </section>
-
-        <!-- Search & Filter Controls -->
-        <section class="crm-controls-panel font-mono">
-          <div class="filter-inputs-group">
-            <input
-              type="text"
-              id="crm-search"
-              placeholder="Buscar por teléfono, correo, bici o talla..."
-              class="crm-search-box"
-            />
-            <select id="crm-filter-category" class="crm-select-box">
-              <option value="ALL">Todas las Categorías</option>
-              <option value="Gravel">Gravel &amp; Aventura</option>
-              <option value="Ruta">Ruta &amp; Asfalto</option>
-              <option value="MTB">MTB &amp; Senderos</option>
-            </select>
-            <select id="crm-filter-status" class="crm-select-box">
-              <option value="ALL">Todos los Estados</option>
-              <option value="Nuevo">Nuevo</option>
-              <option value="Contactado">Contactado</option>
-              <option value="Cita Agendada">Cita Agendada</option>
-              <option value="Apartada">Apartada / Vendida</option>
-            </select>
-          </div>
-
-          <button type="button" id="btn-clear-demo" class="btn btn-outline" style="font-size: 0.75rem;">
-            Restablecer Demo ↻
-          </button>
-        </section>
-
-        <!-- Leads Table -->
-        <section class="crm-table-container font-mono">
-          <table class="crm-table">
-            <thead>
-              <tr>
-                <th>FECHA &amp; 1RA VISITA</th>
-                <th>CONTACTO</th>
-                <th>DISCIPLINA // TALLA</th>
-                <th>BICICLETA CONSULTADA</th>
-                <th>ESTADO</th>
-                <th>ACCIÓN CONCIERGE</th>
-              </tr>
-            </thead>
-            <tbody id="leads-tbody">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
-        </section>
-
-      </div>
-
+  <!-- ══════════════════════════════════════════════════════
+       PIN LOCK OVERLAY
+  ══════════════════════════════════════════════════════ -->
+  <div id="pin-lock-overlay" class="lock-modal-overlay">
+    <div class="lock-card font-mono">
+      <span class="lock-badge">[ACCESO RESTRINGIDO // TALLER]</span>
+      <h2 class="lock-title">Panel CRM The Garage</h2>
+      <p class="lock-desc">Ingresa el PIN de administrador para consultar la base de datos de clientes:</p>
+      <form id="pin-form" onsubmit="event.preventDefault(); window.tryUnlock();">
+        <input
+          type="password"
+          id="admin-pin-input"
+          class="pin-input font-mono"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="••••"
+          autofocus
+        />
+        <button type="submit" id="btn-unlock-crm" class="btn btn-primary pin-submit-btn">
+          <span>Desbloquear CRM ↗</span>
+        </button>
+      </form>
+      <p id="pin-error-msg" class="pin-error" style="display:none;">PIN incorrecto.</p>
+      <p class="pin-hint">PIN inicial de tienda: <strong>1493</strong></p>
     </div>
   </div>
-</Base>
 
+  <!-- ══════════════════════════════════════════════════════
+       MAIN CRM APPLICATION
+  ══════════════════════════════════════════════════════ -->
+  <div id="crm-main-app" class="crm-content-view" style="display:none;">
+
+    <!-- Top Bar -->
+    <header class="crm-top-bar">
+      <div>
+        <div class="crm-badge-row font-mono">
+          <span class="badge-red">[PANEL PRIVADO]</span>
+          <span class="badge-dim">RECONTACTACIÓN &amp; PROSPECTOS · LFPDPPP</span>
+        </div>
+        <h1 class="title-xl" style="margin-top:0.25rem;">The Garage · Lead CRM</h1>
+      </div>
+      <div class="crm-top-actions font-mono">
+        <button type="button" id="btn-export-csv" class="btn btn-outline">
+          <span>Descargar CSV</span>
+        </button>
+        <a href="/" class="btn btn-primary"><span>Tienda en Vivo ↗</span></a>
+      </div>
+    </header>
+
+    <!-- KPI Strip -->
+    <section class="kpi-cards-grid font-mono">
+      <div class="kpi-box">
+        <span class="kpi-label">[SESIONES HOY]</span>
+        <div class="kpi-number" id="kpi-sessions-today">0</div>
+        <span class="kpi-note">Con consentimiento</span>
+      </div>
+      <div class="kpi-box">
+        <span class="kpi-label">[LEADS CON CONTACTO]</span>
+        <div class="kpi-number" id="kpi-leads-total">0</div>
+        <span class="kpi-note">Email o WhatsApp captado</span>
+      </div>
+      <div class="kpi-box">
+        <span class="kpi-label">[SCORE PROMEDIO]</span>
+        <div class="kpi-number" id="kpi-avg-score">0</div>
+        <span class="kpi-note">Todos los visitantes</span>
+      </div>
+      <div class="kpi-box">
+        <span class="kpi-label">[COMPRADORES HOT]</span>
+        <div class="kpi-number" id="kpi-hot-leads">0</div>
+        <span class="kpi-note">Score ≥ 70 pts</span>
+      </div>
+      <div class="kpi-box">
+        <span class="kpi-label">[RETORNO WA]</span>
+        <div class="kpi-number" id="kpi-wa-clicks">0</div>
+        <span class="kpi-note">Clicks a WhatsApp</span>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════
+         TAB NAV
+    ════════════════════════════════ -->
+    <nav class="crm-tab-nav font-mono" role="tablist">
+      <button class="crm-tab active" data-tab="pipeline" role="tab" aria-selected="true">
+        [01] Pipeline
+      </button>
+      <button class="crm-tab" data-tab="leads" role="tab" aria-selected="false">
+        [02] Leads
+      </button>
+      <button class="crm-tab" data-tab="sesiones" role="tab" aria-selected="false">
+        [03] Sesiones
+      </button>
+      <button class="crm-tab" data-tab="analytics" role="tab" aria-selected="false">
+        [04] Analytics
+      </button>
+    </nav>
+
+    <!-- ════════════════════════════════
+         TAB: PIPELINE KANBAN
+    ════════════════════════════════ -->
+    <div id="tab-pipeline" class="crm-tab-panel" role="tabpanel">
+      <div class="pipeline-legend font-mono">
+        <span>Arrastra las tarjetas entre columnas para mover el estado del prospecto.</span>
+        <span>Las primeras 4 columnas se actualizan automáticamente por score de comportamiento.</span>
+      </div>
+      <div class="kanban-board" id="kanban-board">
+        <!-- Columns rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         TAB: LEADS TABLE
+    ════════════════════════════════ -->
+    <div id="tab-leads" class="crm-tab-panel" role="tabpanel" style="display:none;">
+      <div class="crm-filters font-mono">
+        <input type="text" id="leads-search" placeholder="Buscar por contacto, modelo o terreno..." class="crm-search-input" />
+        <select id="leads-filter-status" class="crm-select">
+          <option value="">Todos los estados</option>
+          <option value="Nuevo">Nuevo</option>
+          <option value="Contactado">Contactado</option>
+          <option value="Cita Agendada">Cita Agendada</option>
+          <option value="Vendida">Vendida</option>
+        </select>
+        <select id="leads-filter-terrain" class="crm-select">
+          <option value="">Toda disciplina</option>
+          <option value="gravel">Gravel</option>
+          <option value="ruta">Ruta</option>
+          <option value="mtb">MTB</option>
+          <option value="urbana">Urbana</option>
+        </select>
+      </div>
+      <div class="crm-table-wrap">
+        <table class="crm-table font-mono" id="leads-table">
+          <thead>
+            <tr>
+              <th>Contacto</th>
+              <th>Score</th>
+              <th>Disciplina</th>
+              <th>Modelo Match</th>
+              <th>Canal</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="leads-table-body">
+            <tr>
+              <td colspan="8" class="empty-row">No hay leads con contacto capturado aún.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         TAB: SESIONES
+    ════════════════════════════════ -->
+    <div id="tab-sesiones" class="crm-tab-panel" role="tabpanel" style="display:none;">
+      <div class="crm-filters font-mono">
+        <select id="sessions-filter-stage" class="crm-select">
+          <option value="">Todos los stages</option>
+          <option value="comprador">Comprador (≥70)</option>
+          <option value="calificado">Calificado (45–69)</option>
+          <option value="interesado">Interesado (20–44)</option>
+          <option value="anonimo">Anónimo (0–19)</option>
+        </select>
+        <select id="sessions-filter-device" class="crm-select">
+          <option value="">Todos los dispositivos</option>
+          <option value="mobile">Móvil</option>
+          <option value="desktop">Escritorio</option>
+        </select>
+        <span class="font-mono" style="color:#71717a;font-size:0.75rem;align-self:center;">
+          Máx. 200 sesiones recientes
+        </span>
+      </div>
+      <div id="sessions-list" class="sessions-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════
+         TAB: ANALYTICS
+    ════════════════════════════════ -->
+    <div id="tab-analytics" class="crm-tab-panel" role="tabpanel" style="display:none;">
+      <div class="analytics-grid">
+
+        <!-- Score Distribution -->
+        <div class="analytics-card">
+          <h3 class="analytics-card-title font-mono">[01] Distribución de Score</h3>
+          <div id="score-dist-chart" class="bar-chart-wrap">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Top Event Types -->
+        <div class="analytics-card">
+          <h3 class="analytics-card-title font-mono">[02] Eventos de Mayor Frecuencia</h3>
+          <div id="events-chart" class="bar-chart-wrap">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Traffic Sources -->
+        <div class="analytics-card">
+          <h3 class="analytics-card-title font-mono">[03] Fuentes de Tráfico</h3>
+          <div id="utm-chart" class="bar-chart-wrap">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Device Split -->
+        <div class="analytics-card">
+          <h3 class="analytics-card-title font-mono">[04] Dispositivos</h3>
+          <div id="device-chart" class="bar-chart-wrap">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Pages Visited Ranking -->
+        <div class="analytics-card analytics-card--wide">
+          <h3 class="analytics-card-title font-mono">[05] Páginas más Visitadas (por sesiones únicas)</h3>
+          <div id="pages-chart" class="bar-chart-wrap">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Return vs New -->
+        <div class="analytics-card">
+          <h3 class="analytics-card-title font-mono">[06] Visitantes Nuevos vs Recurrentes</h3>
+          <div id="returning-chart" class="bar-chart-wrap">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /crm-main-app -->
+</div><!-- /container-fluid -->
+</div><!-- /crm-page-wrapper -->
+
+<!-- ══════════════════════════════════════════════════════
+     STYLES
+══════════════════════════════════════════════════════ -->
 <style>
-  .crm-page-wrapper {
-    padding: var(--space-6) 0 var(--space-9) 0;
-    min-height: 80vh;
-  }
+  /* ── Layout ── */
+  .crm-page-wrapper { min-height:100vh; padding:0; background:var(--color-bg,#09090B); }
+  .crm-content-view { padding:2rem var(--padding-x,2rem) 4rem; }
 
-  /* Lock Modal */
+  /* ── Lock Screen ── */
   .lock-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(9, 9, 11, 0.96);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-    padding: var(--space-4);
+    position:fixed;inset:0;z-index:9000;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--color-bg,#09090B);
   }
-
   .lock-card {
-    background: var(--surface-card);
-    border: 1px solid var(--border-accent);
-    border-radius: var(--radius-xl);
-    padding: clamp(2rem, 4vw, 3rem);
-    max-width: 420px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    background:#111113;border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;padding:2.5rem 2rem;max-width:400px;width:90%;text-align:center;
   }
-
   .lock-badge {
-    font-size: 0.72rem;
-    color: #FB7185;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    display: block;
-    margin-bottom: 0.5rem;
+    display:inline-block;font-size:0.65rem;letter-spacing:0.12em;
+    color:#a1a1aa;border:1px solid rgba(255,255,255,0.1);
+    border-radius:4px;padding:0.2rem 0.6rem;margin-bottom:1rem;
   }
+  .lock-title { font-size:1.5rem;font-weight:600;color:#fff;margin:0 0 0.5rem; }
+  .lock-desc  { color:#71717a;font-size:0.85rem;margin-bottom:1.5rem; }
+  .pin-input  {
+    display:block;width:100%;text-align:center;letter-spacing:0.5em;
+    font-size:1.8rem;padding:0.75rem;margin-bottom:1rem;
+    background:#0f0f11;border:1px solid rgba(255,255,255,0.12);
+    border-radius:8px;color:#fff;outline:none;
+  }
+  .pin-input:focus { border-color:rgba(255,255,255,0.3); }
+  .pin-submit-btn { width:100%;justify-content:center; }
+  .pin-error { color:#ef4444;font-size:0.8rem;margin-top:0.75rem; }
+  .pin-hint  { color:#52525b;font-size:0.75rem;margin-top:0.75rem; }
 
-  .lock-title {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #FFFFFF;
-    margin-bottom: 0.5rem;
-  }
-
-  .lock-desc {
-    font-size: 0.82rem;
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
-  }
-
-  .pin-input {
-    width: 100%;
-    background: #09090B;
-    border: 1px solid var(--border-hairline);
-    color: #FFFFFF;
-    font-size: 1.75rem;
-    letter-spacing: 0.4em;
-    text-align: center;
-    padding: 0.75rem;
-    border-radius: var(--radius-md);
-    margin-bottom: 1rem;
-    outline: none;
-    transition: border-color 0.2s ease;
-  }
-  .pin-input:focus {
-    border-color: #E11D48;
-  }
-
-  .pin-submit-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.85rem;
-  }
-
-  .pin-error {
-    color: #FB7185;
-    font-size: 0.75rem;
-    margin-top: 0.75rem;
-  }
-
-  .pin-hint {
-    font-size: 0.72rem;
-    color: var(--text-dim);
-    margin-top: 1rem;
-  }
-
-  /* Main CRM View */
+  /* ── Top Bar ── */
   .crm-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    padding-bottom: var(--space-5);
-    border-bottom: 1px solid var(--border-hairline);
-    margin-bottom: var(--space-6);
+    display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;
+    gap:1rem;padding:1.5rem 0;border-bottom:1px solid rgba(255,255,255,0.06);
+    margin-bottom:1.5rem;
   }
+  .crm-badge-row { display:flex;gap:0.5rem;align-items:center;margin-bottom:0.25rem;flex-wrap:wrap; }
+  .badge-red  { font-size:0.65rem;letter-spacing:0.1em;color:#ef4444;border:1px solid #ef4444;border-radius:4px;padding:0.15rem 0.5rem; }
+  .badge-dim  { font-size:0.65rem;letter-spacing:0.08em;color:#52525b; }
+  .crm-top-actions { display:flex;gap:0.75rem;flex-wrap:wrap; }
 
-  .crm-badge-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: 0.72rem;
-  }
-  .badge-red {
-    color: #FB7185;
-    font-weight: 800;
-  }
-  .badge-dim {
-    color: var(--text-muted);
-  }
-
-  .crm-top-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  /* KPI Grid */
+  /* ── KPIs ── */
   .kpi-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:1rem;margin-bottom:1.5rem;
   }
-
   .kpi-box {
-    background: var(--surface-card);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    background:#111113;border:1px solid rgba(255,255,255,0.06);
+    border-radius:10px;padding:1rem;
   }
+  .kpi-label  { display:block;font-size:0.6rem;letter-spacing:0.1em;color:#52525b;margin-bottom:0.5rem; }
+  .kpi-number { font-size:2rem;font-weight:700;color:#fff;line-height:1; }
+  .kpi-note   { display:block;font-size:0.7rem;color:#71717a;margin-top:0.25rem; }
 
-  .kpi-label {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    letter-spacing: 0.06em;
-    margin-bottom: 0.25rem;
+  /* ── Tab Nav ── */
+  .crm-tab-nav {
+    display:flex;gap:0.25rem;border-bottom:1px solid rgba(255,255,255,0.08);
+    margin-bottom:1.5rem;overflow-x:auto;
   }
+  .crm-tab {
+    background:none;border:none;cursor:pointer;
+    font-family:inherit;font-size:0.75rem;letter-spacing:0.08em;
+    color:#71717a;padding:0.75rem 1.25rem;border-bottom:2px solid transparent;
+    white-space:nowrap;transition:color 0.2s,border-color 0.2s;
+  }
+  .crm-tab:hover  { color:#a1a1aa; }
+  .crm-tab.active { color:#fff;border-bottom-color:#fff; }
 
-  .kpi-number {
-    font-size: 1.8rem;
-    font-weight: 900;
-    color: #FFFFFF;
+  /* ── Pipeline Kanban ── */
+  .pipeline-legend {
+    display:flex;flex-direction:column;gap:0.25rem;
+    font-size:0.7rem;color:#52525b;letter-spacing:0.05em;
+    margin-bottom:1rem;
   }
+  .kanban-board {
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:1rem;
+    align-items:start;
+  }
+  .kanban-col {
+    background:#111113;border:1px solid rgba(255,255,255,0.06);
+    border-radius:10px;min-height:200px;
+  }
+  .kanban-col-header {
+    padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06);
+    display:flex;align-items:center;gap:0.5rem;
+  }
+  .kanban-col-dot {
+    width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  }
+  .kanban-col-title { font-size:0.7rem;letter-spacing:0.1em;font-family:monospace;color:#a1a1aa;flex:1; }
+  .kanban-col-count { font-size:0.65rem;color:#52525b;font-family:monospace; }
+  .kanban-col-body  { padding:0.75rem;display:flex;flex-direction:column;gap:0.5rem;min-height:150px; }
+  .kanban-col-body.drag-over { background:rgba(255,255,255,0.03); }
 
-  .kpi-note {
-    font-size: 0.72rem;
-    color: #4ADE80;
-    margin-top: 0.25rem;
+  .kanban-card {
+    background:#18181b;border:1px solid rgba(255,255,255,0.06);
+    border-radius:8px;padding:0.75rem;cursor:grab;
+    font-family:monospace;font-size:0.72rem;
+    transition:border-color 0.15s,box-shadow 0.15s;
+    user-select:none;
   }
+  .kanban-card:hover { border-color:rgba(255,255,255,0.15);box-shadow:0 4px 12px rgba(0,0,0,0.3); }
+  .kanban-card:active { cursor:grabbing; }
+  .kanban-card-score {
+    display:inline-block;padding:0.15rem 0.5rem;border-radius:4px;
+    font-size:0.65rem;font-weight:700;letter-spacing:0.05em;margin-bottom:0.4rem;
+  }
+  .score-cold   { background:#1c1c1f;color:#71717a; }
+  .score-warm   { background:#1a1a0d;color:#ca8a04; }
+  .score-hot    { background:#1a0d0d;color:#ef4444; }
+  .score-buyer  { background:#0d1a0d;color:#22c55e; }
+  .kanban-card-contact { color:#e4e4e7;margin-bottom:0.25rem;font-size:0.75rem;word-break:break-all; }
+  .kanban-card-meta    { color:#52525b;font-size:0.65rem; }
+  .kanban-card-pages   { color:#3f3f46;font-size:0.6rem;margin-top:0.2rem; }
+  .kanban-empty { color:#3f3f46;font-size:0.7rem;text-align:center;padding:1.5rem 0.5rem; }
 
-  /* Controls Panel */
-  .crm-controls-panel {
-    background: var(--surface-card);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-bottom: var(--space-5);
+  /* ── Leads Table ── */
+  .crm-filters { display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap; }
+  .crm-search-input {
+    flex:1;min-width:200px;background:#111113;border:1px solid rgba(255,255,255,0.1);
+    border-radius:6px;padding:0.5rem 0.75rem;color:#e4e4e7;font-family:monospace;font-size:0.8rem;
+    outline:none;
   }
-
-  .filter-inputs-group {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    flex-wrap: wrap;
+  .crm-search-input:focus { border-color:rgba(255,255,255,0.25); }
+  .crm-select {
+    background:#111113;border:1px solid rgba(255,255,255,0.1);
+    border-radius:6px;padding:0.5rem 0.75rem;color:#a1a1aa;
+    font-family:monospace;font-size:0.75rem;outline:none;cursor:pointer;
   }
-
-  .crm-search-box {
-    background: #09090B;
-    border: 1px solid var(--border-hairline);
-    color: #FFFFFF;
-    padding: 0.5rem 0.85rem;
-    border-radius: var(--radius-full);
-    font-size: 0.78rem;
-    min-width: 240px;
-    outline: none;
-  }
-  .crm-search-box:focus {
-    border-color: #E11D48;
-  }
-
-  .crm-select-box {
-    background: #09090B;
-    border: 1px solid var(--border-hairline);
-    color: #FFFFFF;
-    padding: 0.5rem 0.85rem;
-    border-radius: var(--radius-full);
-    font-size: 0.78rem;
-    outline: none;
-    cursor: pointer;
-  }
-
-  /* Table */
-  .crm-table-container {
-    background: var(--surface-card);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-lg);
-    overflow-x: auto;
-  }
-
-  .crm-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-    text-align: left;
-  }
-
+  .crm-table-wrap { overflow-x:auto; }
+  .crm-table { width:100%;border-collapse:collapse;font-size:0.78rem; }
   .crm-table th {
-    background: var(--surface-subtle);
-    color: var(--text-dim);
-    font-weight: 700;
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border-hairline);
+    text-align:left;padding:0.6rem 0.75rem;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    color:#52525b;font-size:0.65rem;letter-spacing:0.08em;white-space:nowrap;
   }
-
   .crm-table td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border-hairline);
-    color: var(--text-secondary);
-    vertical-align: middle;
+    padding:0.65rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.04);
+    color:#a1a1aa;vertical-align:middle;
+  }
+  .crm-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .empty-row { text-align:center;color:#3f3f46;padding:3rem!important; }
+  .score-pill {
+    display:inline-block;padding:0.15rem 0.5rem;border-radius:4px;
+    font-size:0.65rem;font-weight:700;
+  }
+  .status-select {
+    background:#111113;border:1px solid rgba(255,255,255,0.1);
+    border-radius:4px;color:#a1a1aa;font-size:0.7rem;padding:0.2rem 0.4rem;
+    font-family:monospace;cursor:pointer;
+  }
+  .btn-wa {
+    display:inline-flex;align-items:center;gap:0.3rem;
+    background:#166534;color:#dcfce7;border:none;border-radius:5px;
+    padding:0.3rem 0.6rem;font-size:0.7rem;cursor:pointer;font-family:monospace;
+    white-space:nowrap;
+  }
+  .btn-wa:hover { background:#15803d; }
+
+  /* ── Sessions ── */
+  .sessions-grid { display:flex;flex-direction:column;gap:0.5rem; }
+  .session-row {
+    background:#111113;border:1px solid rgba(255,255,255,0.06);
+    border-radius:8px;padding:0.75rem 1rem;
+    display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+    font-family:monospace;font-size:0.75rem;
+  }
+  .session-row:hover { border-color:rgba(255,255,255,0.1); }
+  .session-id   { color:#3f3f46;font-size:0.65rem;width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis; }
+  .session-score-badge {
+    display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border-radius:8px;font-size:0.9rem;font-weight:700;flex-shrink:0;
+  }
+  .session-info  { flex:1;min-width:120px; }
+  .session-name  { color:#e4e4e7;font-size:0.8rem; }
+  .session-meta  { color:#52525b;font-size:0.65rem;margin-top:0.2rem; }
+  .session-events { color:#3f3f46;font-size:0.65rem; }
+  .session-stage-tag {
+    font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:4px;
+    letter-spacing:0.06em;white-space:nowrap;
   }
 
-  .crm-table tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
+  /* ── Analytics ── */
+  .analytics-grid {
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:1rem;
   }
-
-  .status-pill {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: var(--radius-full);
+  .analytics-card {
+    background:#111113;border:1px solid rgba(255,255,255,0.06);
+    border-radius:10px;padding:1.25rem;
   }
-
-  .status-nuevo {
-    background: rgba(225, 29, 72, 0.15);
-    color: #FB7185;
-    border: 1px solid rgba(225, 29, 72, 0.35);
-  }
-  .status-contactado {
-    background: rgba(56, 189, 248, 0.15);
-    color: #38BDF8;
-    border: 1px solid rgba(56, 189, 248, 0.35);
-  }
-  .status-cita {
-    background: rgba(250, 204, 21, 0.15);
-    color: #FACC15;
-    border: 1px solid rgba(250, 204, 21, 0.35);
-  }
-  .status-apartada {
-    background: rgba(34, 197, 94, 0.15);
-    color: #4ADE80;
-    border: 1px solid rgba(34, 197, 94, 0.35);
-  }
+  .analytics-card--wide { grid-column:1/-1; }
+  .analytics-card-title { font-size:0.65rem;letter-spacing:0.1em;color:#52525b;margin:0 0 1rem; }
+  .bar-chart-wrap { display:flex;flex-direction:column;gap:0.5rem; }
+  .bar-row { display:flex;align-items:center;gap:0.5rem;font-family:monospace;font-size:0.72rem; }
+  .bar-label { color:#a1a1aa;min-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .bar-track { flex:1;background:rgba(255,255,255,0.05);border-radius:4px;height:10px;overflow:hidden; }
+  .bar-fill  { height:100%;border-radius:4px;background:#3f3f46;transition:width 0.4s; }
+  .bar-val   { color:#52525b;min-width:30px;text-align:right; }
 </style>
 
+<!-- ══════════════════════════════════════════════════════
+     SCRIPT
+══════════════════════════════════════════════════════ -->
 <script is:inline>
-  (function() {
-    var DEFAULT_PIN = "1493";
+(function () {
 
-    var initialLeads = [
-      {
-        id: "lead-1",
-        contact: "+52 984 112 3456",
-        channel: "whatsapp",
-        terrain: "Gravel",
-        size: "M (52-54 cm)",
-        model: "Basso Bikes Italia Tera Gravel / Palta",
-        status: "Nuevo",
-        first_visit: new Date(Date.now() - 3600000 * 2).toISOString(),
-        captured_at: new Date(Date.now() - 3600000 * 2).toISOString()
-      },
-      {
-        id: "lead-2",
-        contact: "carlos.ciclista@gmail.com",
-        channel: "email",
-        terrain: "Ruta",
-        size: "S/M (52 cm)",
-        model: "Merida Scultura 300 Shimano Tiagra",
-        status: "Contactado",
-        first_visit: new Date(Date.now() - 3600000 * 24).toISOString(),
-        captured_at: new Date(Date.now() - 3600000 * 24).toISOString()
-      },
-      {
-        id: "lead-3",
-        contact: "+52 984 876 5432",
-        channel: "whatsapp",
-        terrain: "MTB",
-        size: "L (19\")",
-        model: "Oferta Relámpago MTB R29 Shimano",
-        status: "Cita Agendada",
-        first_visit: new Date(Date.now() - 3600000 * 48).toISOString(),
-        captured_at: new Date(Date.now() - 3600000 * 48).toISOString()
-      }
-    ];
+  /* ══════════ PIN LOGIC ══════════ */
+  var CORRECT_PIN = '1493';
 
-    function getStoredLeads() {
-      var local = localStorage.getItem('the_garage_leads');
-      if (!local) {
-        localStorage.setItem('the_garage_leads', JSON.stringify(initialLeads));
-        return initialLeads;
-      }
-      try {
-        var parsed = JSON.parse(local);
-        return parsed.length > 0 ? parsed : initialLeads;
-      } catch(e) {
-        return initialLeads;
-      }
+  window.tryUnlock = function () {
+    var val = document.getElementById('admin-pin-input').value.trim();
+    if (val === CORRECT_PIN) {
+      document.getElementById('pin-lock-overlay').style.display = 'none';
+      document.getElementById('crm-main-app').style.display     = 'block';
+      bootCRM();
+    } else {
+      document.getElementById('pin-error-msg').style.display = '';
+      document.getElementById('admin-pin-input').value = '';
+      document.getElementById('admin-pin-input').focus();
     }
+  };
 
-    function renderCRM() {
-      var leads = getStoredLeads();
-      var tbody = document.getElementById('leads-tbody');
-      var searchInput = document.getElementById('crm-search');
-      var catSelect = document.getElementById('crm-filter-category');
-      var statusSelect = document.getElementById('crm-filter-status');
-
-      var searchVal = (searchInput && searchInput.value) ? searchInput.value.toLowerCase() : '';
-      var catFilter = (catSelect && catSelect.value) ? catSelect.value : 'ALL';
-      var statusFilter = (statusSelect && statusSelect.value) ? statusSelect.value : 'ALL';
-
-      var filtered = leads.filter(function(l) {
-        var contactStr = (l.contact || '').toLowerCase();
-        var modelStr = (l.model || l.model_matched || '').toLowerCase();
-        var sizeStr = (l.size || l.user_size || '').toLowerCase();
-        var terrainStr = l.terrain || l.terrain_interest || '';
-        var statusStr = l.status || 'Nuevo';
-
-        var matchesSearch = contactStr.indexOf(searchVal) !== -1 ||
-                            modelStr.indexOf(searchVal) !== -1 ||
-                            sizeStr.indexOf(searchVal) !== -1;
-        var matchesCat = catFilter === 'ALL' || terrainStr === catFilter;
-        var matchesStatus = statusFilter === 'ALL' || statusStr === statusFilter;
-        return matchesSearch && matchesCat && matchesStatus;
+  document.addEventListener('DOMContentLoaded', function () {
+    var inp = document.getElementById('admin-pin-input');
+    if (inp) {
+      inp.addEventListener('input', function () {
+        if (this.value.length === 4) window.tryUnlock();
       });
-
-      var totalMetric = document.getElementById('metric-total');
-      if (totalMetric) totalMetric.textContent = leads.length.toString();
-
-      if (tbody) {
-        tbody.innerHTML = filtered.map(function(lead) {
-          var rawContact = lead.contact || '';
-          var isWA = lead.channel === 'whatsapp' || rawContact.indexOf('@') === -1;
-          var cleanPhone = rawContact.replace(/\D/g, '');
-          var modelName = lead.model || lead.model_matched || 'Bicicleta Consultada';
-          var userSize = lead.size || lead.user_size || 'M';
-          var status = lead.status || 'Nuevo';
-          var dateObj = new Date(lead.captured_at || Date.now());
-          var dateStr = dateObj.toLocaleDateString('es-MX', {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-          });
-
-          var waMessage = "Hola! Te escribimos de The Garage Bike Experts en Cataluña. Vimos que en tu visita te interesó la " + modelName + " (Talla " + userSize + "). ¿Te gustaría agendar una prueba de manejo o apartado?";
-          var phoneFormatted = cleanPhone.length === 10 ? '52' + cleanPhone : cleanPhone;
-          var waUrl = "https://wa.me/" + phoneFormatted + "?text=" + encodeURIComponent(waMessage);
-
-          var statusClass = 'status-nuevo';
-          if (status === 'Contactado') statusClass = 'status-contactado';
-          if (status === 'Cita Agendada') statusClass = 'status-cita';
-          if (status === 'Apartada') statusClass = 'status-apartada';
-
-          var actionHtml = isWA ?
-            '<a href="' + waUrl + '" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="padding: 4px 10px; font-size: 0.72rem;"><span>💬 WhatsApp</span></a>' :
-            '<a href="mailto:' + rawContact + '?subject=Tu Ficha Tecnica The Garage" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.72rem;"><span>✉️ Correo</span></a>';
-
-          return '<tr>' +
-            '<td class="font-mono text-xs">' +
-              '<div>' + dateStr + '</div>' +
-              '<div style="color: var(--text-dim); font-size: 0.68rem;">1ra Visita Trackeada</div>' +
-            '</td>' +
-            '<td class="font-mono font-bold" style="color: #FFFFFF;">' +
-              rawContact +
-              '<div style="font-size: 0.7rem; color: var(--text-dim); font-weight: normal;">Canal: ' + (isWA ? 'WhatsApp' : 'Email') + '</div>' +
-            '</td>' +
-            '<td class="font-mono">' +
-              '<span style="color: #FB7185; font-weight: 700;">' + (lead.terrain || lead.terrain_interest || 'Gravel') + '</span>' +
-              '<div style="font-size: 0.72rem; color: var(--text-dim);">Talla: ' + userSize + '</div>' +
-            '</td>' +
-            '<td>' +
-              '<strong style="color: var(--text-primary);">' + modelName + '</strong>' +
-            '</td>' +
-            '<td>' +
-              '<span class="status-pill ' + statusClass + '">' + status + '</span>' +
-            '</td>' +
-            '<td>' + actionHtml + '</td>' +
-          '</tr>';
-        }).join('');
-      }
     }
+  });
 
-    window.tryUnlock = function() {
-      var pinInput = document.getElementById('admin-pin-input');
-      var pinOverlay = document.getElementById('pin-lock-overlay');
-      var crmApp = document.getElementById('crm-main-app');
-      var pinError = document.getElementById('pin-error-msg');
+  /* ══════════ DATA HELPERS ══════════ */
+  function getSessions() {
+    try { return JSON.parse(localStorage.getItem('tg_sessions') || '[]'); }
+    catch (_) { return []; }
+  }
 
-      var val = pinInput ? pinInput.value.trim() : '';
-      if (val === DEFAULT_PIN || sessionStorage.getItem('crm_unlocked') === 'true') {
-        sessionStorage.setItem('crm_unlocked', 'true');
-        if (pinOverlay) pinOverlay.style.display = 'none';
-        if (crmApp) crmApp.style.display = 'block';
-        renderCRM();
-      } else {
-        if (pinError) pinError.style.display = 'block';
-        if (pinInput) pinInput.value = '';
-      }
+  function getLeads() {
+    try { return JSON.parse(localStorage.getItem('the_garage_leads') || '[]'); }
+    catch (_) { return []; }
+  }
+
+  // Merge tg_sessions data into the legacy leads array (enrich with score)
+  function buildEnrichedLeads() {
+    var leads    = getLeads();
+    var sessions = getSessions();
+
+    // Map session by id
+    var sessMap = {};
+    sessions.forEach(function (s) { sessMap[s.id] = s; });
+
+    return leads.map(function (l) {
+      var sess = sessMap[l.id] || {};
+      return Object.assign({}, l, {
+        score:        sess.score || 0,
+        stage:        sess.stage || l.status || 'Nuevo',
+        device:       sess.device || 'desktop',
+        utm_source:   sess.utm_source || 'direct',
+        pages:        sess.pages || [],
+        events_count: sess.events ? sess.events.length : 0,
+        user:         sess.user || null
+      });
+    });
+  }
+
+  function calcScore(events) {
+    var WEIGHTS = {
+      page_view:2,scroll_50:5,scroll_75:8,scroll_90:10,
+      time_3min:8,time_5min:12,return_visit:20,
+      matchmaker_step1:6,matchmaker_step2:10,matchmaker_complete:22,
+      bike_detail_view:14,inventory_view:6,guide_complete:7,paddock_open:6,
+      whatsapp_click:25,lead_form_submit:30,google_login:35,utm_social:8
     };
-
-    // Auto-unlock on 4 digits typed
-    var pinField = document.getElementById('admin-pin-input');
-    pinField?.addEventListener('input', function() {
-      if (pinField.value.length === 4) {
-        window.tryUnlock();
-      }
+    var ONE_TIME = ['scroll_50','scroll_75','scroll_90','time_3min','time_5min',
+      'return_visit','matchmaker_complete','lead_form_submit','google_login','utm_social'];
+    var score = 0, seen = {};
+    (events || []).forEach(function (e) {
+      var t = e.type;
+      if (ONE_TIME.indexOf(t) !== -1) { if (seen[t]) return; seen[t] = true; }
+      score += (WEIGHTS[t] || 0);
     });
+    return Math.min(100, score);
+  }
 
-    if (sessionStorage.getItem('crm_unlocked') === 'true') {
-      window.tryUnlock();
+  function scoreClass(score) {
+    if (score >= 70) return 'score-buyer';
+    if (score >= 45) return 'score-hot';
+    if (score >= 20) return 'score-warm';
+    return 'score-cold';
+  }
+
+  function stageLabel(stage) {
+    var map = {
+      anonimo:'Anónimo', interesado:'Interesado', calificado:'Calificado',
+      comprador:'Comprador', lead:'Lead', contacto_iniciado:'En Contacto',
+      cita_agendada:'Cita Agendada', vendida:'Vendida'
+    };
+    return map[stage] || stage;
+  }
+
+  function stageColor(stage) {
+    var map = {
+      anonimo:'#3f3f46', interesado:'#92400e', calificado:'#991b1b',
+      comprador:'#166534', lead:'#1e3a5f', contacto_iniciado:'#1d4ed8',
+      cita_agendada:'#7c3aed', vendida:'#064e3b'
+    };
+    return map[stage] || '#3f3f46';
+  }
+
+  function fmt(ts) {
+    if (!ts) return '—';
+    var d = new Date(ts);
+    return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'2-digit' });
+  }
+
+  function el(tag, attrs, children) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      if (k === 'style') e.style.cssText = attrs[k];
+      else if (k === 'class') e.className = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    });
+    if (children) {
+      if (typeof children === 'string') e.innerHTML = children;
+      else children.forEach(function (c) { if (c) e.appendChild(c); });
     }
+    return e;
+  }
 
-    // Filter events
-    document.getElementById('crm-search')?.addEventListener('input', renderCRM);
-    document.getElementById('crm-filter-category')?.addEventListener('change', renderCRM);
-    document.getElementById('crm-filter-status')?.addEventListener('change', renderCRM);
+  /* ══════════ KPI RENDERING ══════════ */
+  function renderKPIs() {
+    var sessions = getSessions();
+    var today    = new Date().toDateString();
 
-    // Reset Demo
-    document.getElementById('btn-clear-demo')?.addEventListener('click', function() {
-      if (confirm('¿Restablecer datos demo del CRM?')) {
-        localStorage.setItem('the_garage_leads', JSON.stringify(initialLeads));
-        renderCRM();
+    var sessionsToday = sessions.filter(function (s) {
+      return new Date(s.started_at).toDateString() === today;
+    }).length;
+
+    var leadsWithContact = sessions.filter(function (s) { return !!s.contact; }).length;
+
+    var scores     = sessions.map(function (s) { return calcScore(s.events || []); });
+    var avgScore   = scores.length ? Math.round(scores.reduce(function (a, b) { return a + b; }, 0) / scores.length) : 0;
+    var hotLeads   = scores.filter(function (s) { return s >= 70; }).length;
+    var waClicks   = sessions.filter(function (s) {
+      return (s.events || []).some(function (e) { return e.type === 'whatsapp_click'; });
+    }).length;
+
+    document.getElementById('kpi-sessions-today').textContent = sessionsToday;
+    document.getElementById('kpi-leads-total').textContent    = leadsWithContact;
+    document.getElementById('kpi-avg-score').textContent      = avgScore;
+    document.getElementById('kpi-hot-leads').textContent      = hotLeads;
+    document.getElementById('kpi-wa-clicks').textContent      = waClicks;
+  }
+
+  /* ══════════ TAB SWITCHING ══════════ */
+  function initTabs() {
+    var tabs = document.querySelectorAll('.crm-tab');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected','true');
+        var panels = document.querySelectorAll('.crm-tab-panel');
+        panels.forEach(function (p) { p.style.display = 'none'; });
+        var target = document.getElementById('tab-' + tab.dataset.tab);
+        if (target) target.style.display = '';
+        if (tab.dataset.tab === 'pipeline') renderPipeline();
+        if (tab.dataset.tab === 'leads')    renderLeadsTable();
+        if (tab.dataset.tab === 'sesiones') renderSessions();
+        if (tab.dataset.tab === 'analytics') renderAnalytics();
+      });
+    });
+  }
+
+  /* ══════════ PIPELINE / KANBAN ══════════ */
+  var PIPELINE_COLS = [
+    { key:'anonimo',         label:'ANÓNIMO',         dot:'#3f3f46',  desc:'Score 0–19' },
+    { key:'interesado',      label:'INTERESADO',      dot:'#d97706',  desc:'Score 20–44' },
+    { key:'calificado',      label:'CALIFICADO',      dot:'#ef4444',  desc:'Score 45–69' },
+    { key:'comprador',       label:'COMPRADOR',       dot:'#22c55e',  desc:'Score 70+' },
+    { key:'lead',            label:'LEAD',            dot:'#3b82f6',  desc:'Contacto captado' },
+    { key:'contacto_iniciado',label:'EN CONTACTO',    dot:'#6366f1',  desc:'Seguimiento activo' },
+    { key:'cita_agendada',   label:'CITA AGENDADA',   dot:'#a855f7',  desc:'Visita confirmada' },
+    { key:'vendida',         label:'VENDIDA',         dot:'#10b981',  desc:'Cierre de venta' }
+  ];
+
+  function renderPipeline() {
+    var sessions = getSessions();
+    var board    = document.getElementById('kanban-board');
+    board.innerHTML = '';
+
+    // Bucket sessions by stage
+    var buckets = {};
+    PIPELINE_COLS.forEach(function (c) { buckets[c.key] = []; });
+    sessions.forEach(function (s) {
+      var score = calcScore(s.events || []);
+      s._score = score; // cache
+
+      // Determine auto stage from score if not manually set
+      var stage = s.stage || 'anonimo';
+      if (['lead','contacto_iniciado','cita_agendada','vendida'].indexOf(stage) === -1) {
+        if (s.contact)   stage = 'lead';
+        else if (score >= 70) stage = 'comprador';
+        else if (score >= 45) stage = 'calificado';
+        else if (score >= 20) stage = 'interesado';
+        else                  stage = 'anonimo';
       }
+      if (!buckets[stage]) buckets['anonimo'].push(s);
+      else buckets[stage].push(s);
     });
 
-    // Export CSV
-    document.getElementById('btn-export-csv')?.addEventListener('click', function() {
-      var leads = getStoredLeads();
-      var headers = ["ID", "Fecha_Captura", "Contacto", "Canal", "Terreno", "Talla", "Modelo_Match", "Estado"];
-      var rows = leads.map(function(l) {
-        return [
-          l.id || "lead",
-          l.captured_at || new Date().toISOString(),
-          '"' + (l.contact || '') + '"',
-          l.channel || 'whatsapp',
-          l.terrain || l.terrain_interest || '',
-          l.size || l.user_size || '',
-          '"' + (l.model || l.model_matched || '') + '"',
-          l.status || 'Nuevo'
-        ];
+    PIPELINE_COLS.forEach(function (col) {
+      var cards = buckets[col.key] || [];
+
+      var header = el('div', { class:'kanban-col-header' }, [
+        el('div', { class:'kanban-col-dot', style:'background:' + col.dot }),
+        el('div', { class:'kanban-col-title' }, col.label),
+        el('div', { class:'kanban-col-count' }, String(cards.length))
+      ]);
+
+      var body = el('div', { class:'kanban-col-body', 'data-stage':col.key });
+
+      if (cards.length === 0) {
+        body.appendChild(el('div', { class:'kanban-empty' }, 'Sin prospectos'));
+      } else {
+        // Sort by score desc
+        cards.sort(function (a, b) { return b._score - a._score; }).slice(0, 20).forEach(function (s) {
+          body.appendChild(buildKanbanCard(s));
+        });
+      }
+
+      // Drag & Drop
+      body.addEventListener('dragover', function (e) { e.preventDefault(); body.classList.add('drag-over'); });
+      body.addEventListener('dragleave', function () { body.classList.remove('drag-over'); });
+      body.addEventListener('drop', function (e) {
+        e.preventDefault();
+        body.classList.remove('drag-over');
+        var sid = e.dataTransfer.getData('text/plain');
+        if (!sid) return;
+        moveSessionToStage(sid, col.key);
+        renderPipeline();
       });
 
-      var csvContent = "data:text/csv;charset=utf-8," + [headers.join(",")].concat(rows.map(function(e) { return e.join(","); })).join("\n");
-      var encodedUri = encodeURI(csvContent);
-      var link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "the_garage_leads_" + new Date().toISOString().slice(0, 10) + ".csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      var column = el('div', { class:'kanban-col' }, [header, body]);
+      board.appendChild(column);
+    });
+  }
+
+  function buildKanbanCard(s) {
+    var score   = s._score || 0;
+    var contact = (s.contact && s.contact.value) || (s.user && s.user.email) || null;
+    var terrain = (s.contact && s.contact.terrain) || '';
+    var model   = (s.contact && s.contact.model)   || '';
+    var pages   = (s.pages || []).slice(0, 3).join(' · ');
+
+    var scoreBadge = el('span', { class:'kanban-card-score ' + scoreClass(score) }, String(score) + ' pts');
+    var contactEl  = el('div', { class:'kanban-card-contact' },
+      contact
+        ? contact.substring(0, 30)
+        : (s.user ? s.user.name : 'Anónimo [' + s.id.substring(0, 6) + ']')
+    );
+    var metaEl  = el('div', { class:'kanban-card-meta' },
+      [terrain, model, s.device, fmt(s.started_at)].filter(Boolean).join(' · ')
+    );
+    var pagesEl = el('div', { class:'kanban-card-pages' }, pages);
+
+    var card = el('div', { class:'kanban-card', draggable:'true', 'data-session-id':s.id });
+    card.appendChild(scoreBadge);
+    card.appendChild(contactEl);
+    card.appendChild(metaEl);
+    if (pages) card.appendChild(pagesEl);
+
+    card.addEventListener('dragstart', function (e) {
+      e.dataTransfer.setData('text/plain', s.id);
+      card.style.opacity = '0.5';
+    });
+    card.addEventListener('dragend', function () { card.style.opacity = '1'; });
+
+    return card;
+  }
+
+  function moveSessionToStage(sid, newStage) {
+    var sessions = getSessions();
+    var idx = -1;
+    for (var i = 0; i < sessions.length; i++) {
+      if (sessions[i].id === sid) { idx = i; break; }
+    }
+    if (idx === -1) return;
+    sessions[idx].stage = newStage;
+    try { localStorage.setItem('tg_sessions', JSON.stringify(sessions)); } catch (_) {}
+  }
+
+  /* ══════════ LEADS TABLE ══════════ */
+  function renderLeadsTable(filter) {
+    var leads = buildEnrichedLeads();
+    if (!filter) filter = {};
+
+    var search  = (document.getElementById('leads-search')        || {}).value  || '';
+    var status  = (document.getElementById('leads-filter-status')  || {}).value || '';
+    var terrain = (document.getElementById('leads-filter-terrain') || {}).value || '';
+
+    var filtered = leads.filter(function (l) {
+      if (search && !(
+        (l.contact || '').toLowerCase().includes(search.toLowerCase()) ||
+        (l.model   || '').toLowerCase().includes(search.toLowerCase()) ||
+        (l.terrain || '').toLowerCase().includes(search.toLowerCase())
+      )) return false;
+      if (status  && l.status !== status)             return false;
+      if (terrain && l.terrain !== terrain)           return false;
+      return true;
     });
 
-  })();
+    var tbody = document.getElementById('leads-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="empty-row">No hay leads que coincidan.</td></tr>';
+      return;
+    }
+
+    filtered.forEach(function (l) {
+      var score     = l.score || 0;
+      var scoreSpan = '<span class="score-pill ' + scoreClass(score) + '">' + score + '</span>';
+
+      var waMsg = encodeURIComponent(
+        'Hola, me comunico de The Garage Bike Experts. Vi que estabas interesado en una bicicleta de ' +
+        (l.terrain || 'ciclismo') + '. ¿Puedo ayudarte a encontrar la ideal?'
+      );
+      var waLink = 'https://wa.me/529841381493?text=' + waMsg;
+
+      var statusOpts = ['Nuevo','Contactado','Cita Agendada','Vendida'];
+      var statusSel  = '<select class="status-select" data-lead-id="' + l.id + '">';
+      statusOpts.forEach(function (s) {
+        statusSel += '<option' + (l.status === s ? ' selected' : '') + '>' + s + '</option>';
+      });
+      statusSel += '</select>';
+
+      var row = document.createElement('tr');
+      row.innerHTML = [
+        '<td>' + (l.contact || '—') + '</td>',
+        '<td>' + scoreSpan + '</td>',
+        '<td>' + (l.terrain || '—') + '</td>',
+        '<td>' + (l.model   || '—') + '</td>',
+        '<td>' + (l.channel || '—') + '</td>',
+        '<td>' + statusSel           + '</td>',
+        '<td>' + fmt(l.captured_at)  + '</td>',
+        '<td><a href="' + waLink + '" target="_blank" rel="noopener" class="btn-wa">WA ↗</a></td>'
+      ].join('');
+
+      row.querySelector('.status-select').addEventListener('change', function () {
+        updateLeadStatus(l.id, this.value);
+      });
+
+      tbody.appendChild(row);
+    });
+  }
+
+  function updateLeadStatus(id, newStatus) {
+    try {
+      var leads = JSON.parse(localStorage.getItem('the_garage_leads') || '[]');
+      leads = leads.map(function (l) {
+        if (l.id === id) l.status = newStatus;
+        return l;
+      });
+      localStorage.setItem('the_garage_leads', JSON.stringify(leads));
+    } catch (_) {}
+  }
+
+  function initLeadsFilters() {
+    ['leads-search','leads-filter-status','leads-filter-terrain'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function () { renderLeadsTable(); });
+    });
+  }
+
+  /* ══════════ SESSIONS LIST ══════════ */
+  function renderSessions() {
+    var sessions  = getSessions().slice().reverse(); // newest first
+    var stageFilter  = (document.getElementById('sessions-filter-stage')  || {}).value || '';
+    var deviceFilter = (document.getElementById('sessions-filter-device') || {}).value || '';
+
+    var filtered = sessions.filter(function (s) {
+      var score = calcScore(s.events || []);
+      s._score  = score;
+      if (stageFilter) {
+        var stageMap = { comprador:'70+', calificado:'45-69', interesado:'20-44', anonimo:'0-19' };
+        var passes = false;
+        if (stageFilter === 'comprador'  && score >= 70) passes = true;
+        if (stageFilter === 'calificado' && score >= 45 && score < 70) passes = true;
+        if (stageFilter === 'interesado' && score >= 20 && score < 45) passes = true;
+        if (stageFilter === 'anonimo'    && score < 20)  passes = true;
+        if (!passes) return false;
+      }
+      if (deviceFilter && s.device !== deviceFilter) return false;
+      return true;
+    }).slice(0, 200);
+
+    var list = document.getElementById('sessions-list');
+    list.innerHTML = '';
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="kanban-empty" style="padding:3rem;text-align:center;color:#3f3f46;">Sin sesiones registradas aún.</div>';
+      return;
+    }
+
+    filtered.forEach(function (s) {
+      var score   = s._score;
+      var contact = (s.contact && s.contact.value) || null;
+      var name    = (s.user && (s.user.name || s.user.email)) || contact || ('Anónimo ' + s.id.substring(0, 6));
+      var events  = (s.events || []).map(function (e) { return e.type.replace(/_/g, ' '); }).join(' · ').substring(0, 80);
+      var stageCol = stageColor(s.stage || 'anonimo');
+
+      var row = el('div', { class:'session-row' });
+
+      var badge = el('div', { class:'session-score-badge', style:
+        'background:' + stageCol + '20;color:' + stageColor(s.stage || 'anonimo') + ';border:1px solid ' + stageCol + '40;'
+      }, String(score));
+
+      var info = el('div', { class:'session-info' });
+      var nameEl = el('div', { class:'session-name' }, name.substring(0, 40));
+      var metaEl = el('div', { class:'session-meta' },
+        [s.device, s.utm_source, fmt(s.started_at), (s.pages || []).length + ' páginas'].filter(Boolean).join(' · ')
+      );
+      var evEl = el('div', { class:'session-events' }, events);
+      info.appendChild(nameEl);
+      info.appendChild(metaEl);
+      if (events) info.appendChild(evEl);
+
+      var stageTag = el('span', { class:'session-stage-tag',
+        style:'background:' + stageCol + '20;color:' + stageCol + ';border:1px solid ' + stageCol + '40;'
+      }, stageLabel(s.stage || 'anonimo').toUpperCase());
+
+      var sid = el('div', { class:'session-id' }, s.id.substring(0, 8) + '…');
+
+      row.appendChild(badge);
+      row.appendChild(info);
+      row.appendChild(stageTag);
+      row.appendChild(sid);
+      list.appendChild(row);
+    });
+  }
+
+  function initSessionsFilters() {
+    ['sessions-filter-stage','sessions-filter-device'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', renderSessions);
+    });
+  }
+
+  /* ══════════ ANALYTICS ══════════ */
+  function renderBar(containerId, data, colorFn) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    var max = Math.max.apply(null, data.map(function (d) { return d.value; })) || 1;
+    data.slice(0, 10).forEach(function (d) {
+      var pct = Math.round((d.value / max) * 100);
+      var row = el('div', { class:'bar-row' });
+      row.appendChild(el('div', { class:'bar-label' }, d.label));
+      var track = el('div', { class:'bar-track' });
+      var fill  = el('div', { class:'bar-fill', style:'width:' + pct + '%;background:' + (colorFn ? colorFn(d) : '#3f3f46') });
+      track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el('div', { class:'bar-val' }, String(d.value)));
+      container.appendChild(row);
+    });
+    if (data.length === 0) {
+      container.innerHTML = '<div style="color:#3f3f46;font-size:0.75rem;text-align:center;padding:1rem;">Sin datos aún</div>';
+    }
+  }
+
+  function renderAnalytics() {
+    var sessions = getSessions();
+
+    /* Score distribution */
+    var bins = { '0–19':0, '20–44':0, '45–69':0, '70–100':0 };
+    sessions.forEach(function (s) {
+      var sc = calcScore(s.events || []);
+      if (sc < 20)       bins['0–19']++;
+      else if (sc < 45)  bins['20–44']++;
+      else if (sc < 70)  bins['45–69']++;
+      else               bins['70–100']++;
+    });
+    renderBar('score-dist-chart', Object.keys(bins).map(function (k) {
+      return { label: k, value: bins[k] };
+    }), function (d) {
+      return d.label === '70–100' ? '#22c55e' : d.label === '45–69' ? '#ef4444' : d.label === '20–44' ? '#d97706' : '#3f3f46';
+    });
+
+    /* Event frequencies */
+    var evCounts = {};
+    sessions.forEach(function (s) {
+      (s.events || []).forEach(function (e) {
+        evCounts[e.type] = (evCounts[e.type] || 0) + 1;
+      });
+    });
+    var evData = Object.keys(evCounts).sort(function (a, b) {
+      return evCounts[b] - evCounts[a];
+    }).map(function (k) { return { label: k.replace(/_/g, ' '), value: evCounts[k] }; });
+    renderBar('events-chart', evData);
+
+    /* UTM Sources */
+    var utmCounts = {};
+    sessions.forEach(function (s) {
+      var src = s.utm_source || 'direct';
+      utmCounts[src] = (utmCounts[src] || 0) + 1;
+    });
+    var utmData = Object.keys(utmCounts).sort(function (a, b) {
+      return utmCounts[b] - utmCounts[a];
+    }).map(function (k) { return { label: k, value: utmCounts[k] }; });
+    renderBar('utm-chart', utmData, function (d) {
+      return d.label === 'instagram' ? '#e1306c' : d.label === 'facebook' ? '#1877f2' : '#3f3f46';
+    });
+
+    /* Device split */
+    var devCounts = {};
+    sessions.forEach(function (s) {
+      var d = s.device || 'desktop';
+      devCounts[d] = (devCounts[d] || 0) + 1;
+    });
+    renderBar('device-chart', Object.keys(devCounts).map(function (k) {
+      return { label: k, value: devCounts[k] };
+    }), function (d) {
+      return d.label === 'mobile' ? '#6366f1' : '#3b82f6';
+    });
+
+    /* Pages ranking */
+    var pageCounts = {};
+    sessions.forEach(function (s) {
+      (s.pages || []).forEach(function (p) {
+        pageCounts[p] = (pageCounts[p] || 0) + 1;
+      });
+    });
+    var pagesData = Object.keys(pageCounts).sort(function (a, b) {
+      return pageCounts[b] - pageCounts[a];
+    }).slice(0, 12).map(function (k) { return { label: k, value: pageCounts[k] }; });
+    renderBar('pages-chart', pagesData);
+
+    /* Returning vs new */
+    var returning = sessions.filter(function (s) { return s.is_returning; }).length;
+    var newVis    = sessions.length - returning;
+    renderBar('returning-chart', [
+      { label: 'Visitante Nuevo',      value: newVis    },
+      { label: 'Visitante Recurrente', value: returning }
+    ], function (d) {
+      return d.label.includes('Nuevo') ? '#3b82f6' : '#22c55e';
+    });
+  }
+
+  /* ══════════ CSV EXPORT ══════════ */
+  function initCSV() {
+    var btn = document.getElementById('btn-export-csv');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var sessions = getSessions();
+      var rows     = [['ID','Nombre','Email','Contacto','Score','Stage','Dispositivo','UTM Source','Páginas','Eventos','Primera Visita','Última Actividad']];
+      sessions.forEach(function (s) {
+        var score   = calcScore(s.events || []);
+        var contact = (s.contact && s.contact.value) || '';
+        var name    = (s.user && s.user.name)  || '';
+        var email   = (s.user && s.user.email) || '';
+        var evList  = (s.events || []).map(function (e) { return e.type; }).join('|');
+        rows.push([
+          s.id, name, email, contact, score, s.stage || 'anonimo',
+          s.device || '', s.utm_source || '',
+          (s.pages || []).join('|'), evList,
+          s.started_at, s.last_active
+        ]);
+      });
+      var csv  = rows.map(function (r) { return r.map(function (c) { return '"' + String(c || '').replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+      var blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href     = url;
+      a.download = 'the-garage-crm-' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  /* ══════════ BOOT ══════════ */
+  function bootCRM() {
+    renderKPIs();
+    initTabs();
+    renderPipeline();
+    initLeadsFilters();
+    initSessionsFilters();
+    initCSV();
+  }
+
+})();
 </script>
+
+</Base>
