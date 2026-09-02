@@ -294,23 +294,23 @@
 
   // --- GARAGE ENGINE (Custom Local NLP) ---
   const intents = [
-    { pattern: /\\b(hola|buenas|que tal|hols|buenos dias|buenas tardes)\\b/i, 
+    { pattern: /\b(hola|buenas|que tal|hols|buenos dias|buenas tardes)\b/i, 
       responses: ["¡Hola! Soy Diego. ¿En qué te puedo ayudar hoy con tu próxima bicicleta?", "¡Qué tal! Bienvenido a The Garage. ¿Buscas algo en específico?"] },
-    { pattern: /\\b(comprar|quiero una|busco una|me interesa|bici)\\b/i,
+    { pattern: /\b(comprar|quiero una|busco una|me interesa|bici)\b/i,
       responses: ["Excelente decisión. Manejamos Ruta, Gravel y Montaña. ¿Qué disciplina te gusta más?", "Tengo opciones listas para rodar. ¿Para qué terreno la buscas?"] },
-    { pattern: /\\b(ruta|asfalto|carrera)\\b/i,
+    { pattern: /\b(ruta|asfalto|carrera)\b/i,
       responses: ["La velocidad es lo nuestro. Manejamos marcas top como Merida y Basso. ¿Qué presupuesto tienes en mente?", "Perfecto para asfalto. Te puedo mandar fotos reales del inventario. ¿Me pasas tu WhatsApp?"] },
-    { pattern: /\\b(montaña|mtb|terraceria|senderos)\\b/i,
+    { pattern: /\b(montaña|mtb|terraceria|senderos)\b/i,
       responses: ["Nada como el MTB. Tenemos desde suspensiones rígidas hasta dobles. Si me dejas tu WhatsApp te mando el catálogo con precios.", "¡Rudos senderos! Tengo unas Trek y Giant listas. ¿Te paso la info por WhatsApp?"] },
-    { pattern: /\\b(gravel|mixto)\\b/i,
+    { pattern: /\b(gravel|mixto)\b/i,
       responses: ["Gravel es la disciplina más versátil hoy en día. Tengo unas joyas en tienda. ¿Me compartes tu cel a 10 dígitos para mandarte fotos?"] },
-    { pattern: /\\b(precio|cuesta|costo|cuanto|caro)\\b/i,
+    { pattern: /\b(precio|cuesta|costo|cuanto|caro)\b/i,
       responses: ["Nuestros equipos van desde los $7,900 MXN hasta gama premium. Todo se entrega ajustado y con servicio gratis. ¿Me pasas tu WhatsApp y te armo una cotización?", "Depende mucho de los componentes (Shimano, SRAM). ¿Quieres que te contacte un experto por WhatsApp para darte precios exactos?"] },
-    { pattern: /\\b(garantia|servicio|taller)\\b/i,
+    { pattern: /\b(garantia|servicio|taller)\b/i,
       responses: ["Somos centro de servicio certificado. Todas traen garantía y tu primer servicio va por nuestra cuenta. ¿Te animas a venir a la tienda?"] },
-    { pattern: /\\b(donde|ubicacion|direccion|tienda)\\b/i,
+    { pattern: /\b(donde|ubicacion|direccion|tienda)\b/i,
       responses: ["Estamos en Av. Ich Xeel CASA 19, Cataluña, Playa del Carmen. ¿Te gustaría agendar una cita?"] },
-    { pattern: /\\b(quien eres|con quien tengo el gusto|como te llamas)\\b/i,
+    { pattern: /\b(quien eres|con quien tengo el gusto|como te llamas)\b/i,
       responses: ["Soy Diego, asesor especializado de The Garage. ¡Un gusto! ¿Con quién tengo el gusto yo?"] }
   ];
 
@@ -318,8 +318,8 @@
     let t = text.toLowerCase();
     
     // 1. Capture Contacts First
-    const phoneRegex = /\\b\\d{10}\\b/;
-    const emailRegex = /\\S+@\\S+\\.\\S+/;
+    const phoneRegex = /\b\d{10}\b/;
+    const emailRegex = /\S+@\S+\.\S+/;
     if (phoneRegex.test(t) || emailRegex.test(t)) {
       let match = t.match(phoneRegex) || t.match(emailRegex);
       captureCRMContact(match[0]);
@@ -330,7 +330,7 @@
 
     // 2. Name Capture Heuristics
     // If we asked for their name, or they say "soy X", "me llamo X"
-    const nameMatch = t.match(/\\b(soy|me llamo|mi nombre es)\\s+([a-záéíóúñ]+)/i);
+    const nameMatch = t.match(/\b(soy|me llamo|mi nombre es)\s+([a-záéíóúñ]+)/i);
     if (nameMatch) {
       saveCRMName(nameMatch[2]);
       return `¡Mucho gusto, ${nameMatch[2].charAt(0).toUpperCase() + nameMatch[2].slice(1)}! ¿Qué tipo de bici tienes en mente?`;
