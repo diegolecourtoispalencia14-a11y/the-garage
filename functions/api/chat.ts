@@ -66,8 +66,9 @@ Instrucciones:
     }
 
     const replyText = data.candidates[0].content.parts[0].text;
+    const finishReason = data.candidates[0].finishReason;
     
-    return new Response(JSON.stringify({ reply: replyText }), {
+    return new Response(JSON.stringify({ reply: replyText, finishReason }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
