@@ -10,6 +10,32 @@ export async function onRequestPost(context) {
       return new Response(JSON.stringify({ error: "Falta la API KEY de Gemini en Cloudflare" }), { status: 500 });
     }
 
+    // 1. OBTENER MODELOS DISPONIBLES DINÁMICAMENTE
+    const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+    if (!modelsRes.ok) {
+        const err = await modelsRes.text();
+        return new Response(JSON.stringify({ error: "Error obteniendo modelos: " + err }), { status: 500 });
+    }
+    const modelsData = await modelsRes.json();
+    const availableModels = modelsData.models || [];
+    
+    // Filtrar modelos que soporten generateContent y sean gemini
+    const validModels = availableModels.filter(m => 
+      m.supportedGenerationMethods && 
+      m.supportedGenerationMethods.includes('generateContent') && 
+      m.name.includes('gemini')
+    );
+
+    if (validModels.length === 0) {
+        return new Response(JSON.stringify({ error: "No hay modelos Gemini disponibles para esta API KEY." }), { status: 500 });
+    }
+
+    // Preferir 1.5-flash, luego 1.5-pro, luego el primero disponible
+    let selectedModel = validModels.find(m => m.name.includes('1.5-flash'))?.name 
+                     || validModels.find(m => m.name.includes('1.5-pro'))?.name 
+                     || validModels.find(m => m.name.includes('pro'))?.name 
+                     || validModels[0].name;
+
     const systemInstruction = `Eres Diego, el asesor experto en bicicletas de 'The Garage Bike Experts' en Playa del Carmen.
 REGLAS ESTRICTAS:
 1. Nunca uses emojis.
@@ -24,23 +50,19 @@ REGLAS ESTRICTAS:
     const contents = [];
     
     // El API de Gemini EXIGE que el historial comience con el rol "user" y que los roles se alternen.
-    // Si el historial comienza con un mensaje del "bot", agregamos un "user" fantasma inicial.
     if (history.length > 0 && history[0].sender === 'bot') {
         contents.push({ role: 'user', parts: [{ text: "Hola, me interesa ver bicicletas." }] });
     }
 
     for (const msg of history) {
-      // Evitar que dos roles iguales se envíen seguidos (Gemini lanza 400 Bad Request)
       const role = msg.sender === 'user' ? 'user' : 'model';
       if (contents.length > 0 && contents[contents.length - 1].role === role) {
-          // Fusionar mensajes consecutivos del mismo rol
           contents[contents.length - 1].parts[0].text += `\n${msg.text}`;
       } else {
           contents.push({ role, parts: [{ text: msg.text }] });
       }
     }
 
-    // Agregar el mensaje actual del usuario
     if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
         contents[contents.length - 1].parts[0].text += `\n${userMessage}`;
     } else {
@@ -56,8 +78,7 @@ REGLAS ESTRICTAS:
       }
     };
 
-    let model = 'gemini-1.5-flash';
-    let url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    let url = `https://generativelanguage.googleapis.com/v1beta/${selectedModel}:generateContent?key=${apiKey}`;
     
     let res = await fetch(url, {
       method: 'POST',
@@ -65,29 +86,29 @@ REGLAS ESTRICTAS:
       body: JSON.stringify(payload)
     });
 
-    if (!res.ok) {
-      // Fallback a gemini-pro (Gemini 1.0) si 1.5-flash falla
-      model = 'gemini-pro';
-      url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      
-      const fallbackContents = [...contents];
-      fallbackContents[0].parts[0].text = `[Instrucciones de sistema: ${systemInstruction}]\n\n${fallbackContents[0].parts[0].text}`;
-      
-      const fallbackPayload = {
-        contents: fallbackContents,
-        generationConfig: { temperature: 0.4, maxOutputTokens: 250 }
-      };
+    // Si falla porque el modelo no soporta system_instruction (modelos legacy), hacemos fallback inyectándolo en el texto
+    if (!res.ok && res.status === 400) {
+      const errorCheck = await res.clone().text();
+      if (errorCheck.includes("system_instruction")) {
+          const fallbackContents = [...contents];
+          fallbackContents[0].parts[0].text = `[Instrucciones de sistema: ${systemInstruction}]\n\n${fallbackContents[0].parts[0].text}`;
+          
+          const fallbackPayload = {
+            contents: fallbackContents,
+            generationConfig: { temperature: 0.4, maxOutputTokens: 250 }
+          };
 
-      res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(fallbackPayload)
-      });
+          res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(fallbackPayload)
+          });
+      }
     }
 
     if (!res.ok) {
       const errorText = await res.text();
-      throw new Error(`API Error: ${res.status} - ${errorText}`);
+      throw new Error(`Model ${selectedModel} failed: ${res.status} - ${errorText}`);
     }
 
     const data = await res.json();
