@@ -4,13 +4,10 @@
 //
 // SETUP REQUIRED (one-time, 5 min):
 // 1. Go to console.cloud.google.com
-// 2. Create a project (or use existing one)
-// 3. APIs & Services → Credentials → Create OAuth 2.0 Client ID
-// 4. Application type: Web application
-// 5. Authorized JS origins: https://the-garage-dw4.pages.dev
-// 6. Copy the Client ID and paste it below replacing YOUR_GOOGLE_CLIENT_ID
-//
-// Until the Client ID is configured, this component is silent and does nothing.
+// 2. Proyecto: the-garage (ya configurado)
+// 3. Client ID activo: 727148939594-h5l331vu9mqq7nc61lsv6b21ed6uhjdt.apps.googleusercontent.com
+// 4. Origen autorizado: https://the-garage-dw4.pages.dev
+// Status: ACTIVO
 ---
 
 <!-- Google Identity Services SDK -->
@@ -55,7 +52,7 @@
       position:absolute;top:1rem;right:1rem;
       background:none;border:none;
       color:#888;cursor:pointer;font-size:1.2rem;
-    ">✕</button>
+    ">&times;</button>
 
     <p class="font-mono" style="
       font-size:0.7rem;letter-spacing:0.1em;
@@ -210,7 +207,7 @@
   window.TGGoogleOneTap = {
     prompt: function () {
       var clientCfg = document.getElementById('g_id_onload');
-      if (!clientCfg || clientCfg.dataset.client_id === 'YOUR_GOOGLE_CLIENT_ID') return;
+      if (!clientCfg || !clientCfg.dataset.client_id) return;
       if (window.google && window.google.accounts) {
         google.accounts.id.prompt();
       }
