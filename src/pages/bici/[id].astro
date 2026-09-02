@@ -134,13 +134,21 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
               </div>
             </div>
 
+            <!-- Urgency Indicator -->
+            {bici.disponibilidad !== 'Vendida' && (
+              <div class="urgency-banner font-mono text-rose-400 font-bold text-sm mb-4 flex items-center gap-2" style="padding: 0.5rem 0; border-top: 1px dashed rgba(255,255,255,0.1); border-bottom: 1px dashed rgba(255,255,255,0.1);">
+                <span class="status-dot" style="background:#f43f5e; animation: pulse 2s infinite; display: inline-block; width: 8px; height: 8px; border-radius: 50%;"></span> 
+                ALTA DEMANDA: ÚLTIMA UNIDAD DISPONIBLE EN TALLA {bici.talla}
+              </div>
+            )}
+
             <!-- Conversion Action -->
             <div class="detail-action-group">
               <a
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="btn btn-whatsapp detail-main-btn"
+                class="btn btn-whatsapp detail-main-btn urgency-pulse"
               >
                 <span>{textoBoton}</span>
               </a>
