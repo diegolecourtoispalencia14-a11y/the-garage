@@ -4,79 +4,44 @@ export async function onRequestPost(context) {
     const body = await request.json();
     const userMessage = body.message;
     const history = body.history || [];
+    const currentState = body.state || 'STATE_IDLE_NEW';
     
-    const apiKey = env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Falta la API KEY de Gemini en Cloudflare" }), { status: 500 });
+    // Verificamos si el motor de IA de Cloudflare está vinculado
+    if (!env.AI) {
+      return new Response(JSON.stringify({ error: "Cloudflare Workers AI no está activado. Verifica el binding 'AI'." }), { status: 500 });
     }
 
-    const systemInstruction = `Eres Diego, el Asesor Experto y Vendedor Estrella de 'The Garage Bike Experts' en Playa del Carmen.
-REGLAS Y PERSONALIDAD:
-1. Eres un experto total en ciclismo (Ruta, Montaña, Gravel, Urbana). Conoces a fondo la historia del ciclismo internacional y nacional, competiciones, componentes (Shimano, SRAM, Campagnolo, suspensiones Fox, RockShox, etc.).
-2. Tu objetivo principal es ofrecer atención de primer nivel, resolver cualquier duda con razonamiento profundo y empatía, y finalmente pedir el número de WhatsApp a 10 dígitos para concretar la venta y enviar el catálogo.
-3. Debes sostener conversaciones fluidas y naturales. Si el cliente dice "mejor por whatsapp", tú respondes: "¡Perfecto! Pásame tu número a 10 dígitos por aquí y te escribo enseguida."
-4. Manejamos marcas: Lee Cougan, Merida, Basso, Giant, Trek, Specialized, Pinarello, Cervelo, BMC, Alubike.
-5. Precios desde $7,900 MXN con facilidades de meses sin intereses.
-6. Nunca uses emojis.
-7. Nunca uses jerga de desarrolladores o de sistema. Habla como un vendedor amable y experto.`;
+    const systemInstruction = `Eres Diego, Asesor Senior de The Garage Bike Experts (Playa del Carmen).
+REGLAS ESTRICTAS:
+1. Experto absoluto en historia del ciclismo, marcas (Trek, Merida, Giant, Basso) y componentes técnicos (Shimano, SRAM, Fox).
+2. Tono persuasivo, empático, sin emojis, sin jerga informática. Eres humano.
+3. El motor de estado interno indica que el cliente actualmente está en la fase: [${currentState}]. Usa este contexto para guiar tu respuesta.
+4. Si el estado es STATE_AWAITING_LEAD_INFO, tu objetivo es que el cliente nos dé su WhatsApp a 10 dígitos.
+5. Si el estado es STATE_OBJECTION_COMPETITOR, redirige la venta sutilmente hacia nuestras marcas.
+6. Nunca des precios de bicicletas por debajo de $7,900 MXN.
+7. Mantén tus respuestas en un solo párrafo, fluidas y muy conversacionales.`;
 
-    const contents = [];
-    
-    if (history.length > 0 && history[0].sender === 'bot') {
-        contents.push({ role: 'user', parts: [{ text: "Hola, me interesa platicar con el asesor de bicicletas." }] });
-    }
+    const messages = [
+        { role: 'system', content: systemInstruction }
+    ];
 
     for (const msg of history) {
-      const role = msg.sender === 'user' ? 'user' : 'model';
-      if (contents.length > 0 && contents[contents.length - 1].role === role) {
-          contents[contents.length - 1].parts[0].text += `\n${msg.text}`;
-      } else {
-          contents.push({ role, parts: [{ text: msg.text }] });
-      }
-    }
-
-    if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
-        contents[contents.length - 1].parts[0].text += `\n${userMessage}`;
-    } else {
-        contents.push({ role: 'user', parts: [{ text: userMessage }] });
-    }
-
-    const payload = {
-      system_instruction: { parts: [{ text: systemInstruction }] },
-      contents: contents,
-      generationConfig: {
-        temperature: 0.5,
-        maxOutputTokens: 300,
-      }
-    };
-
-    // Intentamos con el modelo FLASH que tiene cuotas mucho más amplias (15 requests por minuto en capa gratuita)
-    // en lugar del PRO que es el que arrojó el Error 429 de límite de cuota.
-    const modelsToTry = ['gemini-3.1-flash-preview', 'gemini-3.1-pro-preview'];
-    let lastRes;
-    
-    for (const modelName of modelsToTry) {
-        let url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-        
-        let res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+        messages.push({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.text
         });
-
-        lastRes = res;
-        if (res.ok) break; // Si tuvimos éxito, salimos del loop
     }
 
-    if (!lastRes.ok) {
-      const errorText = await lastRes.text();
-      throw new Error(`API Error: ${lastRes.status} - ${errorText}`);
-    }
+    messages.push({ role: 'user', content: userMessage });
 
-    const data = await lastRes.json();
-    const botReply = data.candidates[0].content.parts[0].text;
+    // Ejecutamos Llama 3 8B (Nativo y Gratuito en Cloudflare)
+    const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+        messages: messages,
+        max_tokens: 250,
+        temperature: 0.6
+    });
 
-    return new Response(JSON.stringify({ reply: botReply }), {
+    return new Response(JSON.stringify({ reply: response.response }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
