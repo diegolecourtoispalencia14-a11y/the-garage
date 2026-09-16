@@ -27,7 +27,7 @@
           const raw = localStorage.getItem(CONTRACTS_STORAGE_KEY);
           if (raw) return JSON.parse(raw);
         } catch(e) {}
-        const initial = JSON.parse(initialContractsJson);
+        const initial = [];
         localStorage.setItem(CONTRACTS_STORAGE_KEY, JSON.stringify(initial));
         return initial;
       }

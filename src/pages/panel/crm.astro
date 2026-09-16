@@ -639,7 +639,7 @@ import { Icon } from 'astro-icon/components';
   /* ── Merge Logic: pulls from all 3 sources ── */
   function buildUnifiedDirectory() {
     // 1. Panel clients (source of truth for in-store records)
-    let clients = loadPanel() || JSON.parse(JSON.stringify(seedClients));
+    let clients = loadPanel() || [];
 
     // 2. Read legacy leads from old CRM (the_garage_leads)
     try {

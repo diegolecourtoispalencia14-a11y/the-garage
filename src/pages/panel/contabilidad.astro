@@ -1358,9 +1358,9 @@ import { Icon } from 'astro-icon/components';
         } catch(e) {}
       }
     }
-    const generated = getMonthlySeed(month);
-    localStorage.setItem(key, JSON.stringify(generated));
-    return generated;
+    const emptyData = { income: [], expenses: [], cobrar: [], pagar: [] };
+    localStorage.setItem(key, JSON.stringify(emptyData));
+    return emptyData;
   }
 
   function saveMonthData(month, data) {
@@ -1429,7 +1429,7 @@ import { Icon } from 'astro-icon/components';
     currentMonth = selectedNewMonth;
 
     // Initialize clean month data with opening float
-    const freshData = getMonthlySeed(selectedNewMonth);
+    const freshData = { income: [], expenses: [], cobrar: [], pagar: [] };
     saveMonthData(selectedNewMonth, freshData);
 
     modalNewMonth.style.display = 'none';
@@ -1705,64 +1705,56 @@ import { Icon } from 'astro-icon/components';
   function renderCuentasTab() {
     const debtList = document.getElementById('workshop-debt-list');
     if (debtList) {
-      debtList.innerHTML = `
-        <div class="escrow-row">
-          <div>
-            <div class="escrow-title">Trek Marlin 5 (SRV-2026-092)</div>
-            <div class="escrow-meta">Cliente: Carlos Ruiz · Listo para entrega</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="escrow-amount" style="color:var(--accent-orange);">$650 MXN</div>
-            <span style="font-size:0.7rem; color:var(--accent-green);">Anticipo: $200 Pagado</span>
-          </div>
-        </div>
-        <div class="escrow-row">
-          <div>
-            <div class="escrow-title">Basso Palta 2 Carbon (Venta + Calas)</div>
-            <div class="escrow-meta">Cliente: Rodrigo Palacios · Entrega este sábado</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="escrow-amount" style="color:var(--accent-orange);">$3,500 MXN</div>
-            <span style="font-size:0.7rem; color:var(--accent-green);">Anticipo: $81,500 Pagado</span>
-          </div>
-        </div>
-        <div class="escrow-row">
-          <div>
-            <div class="escrow-title">Merida Scultura 300 (Layaway Apartado)</div>
-            <div class="escrow-meta">Cliente: Sofía Mendizábal · Vence 15 Nov</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="escrow-amount" style="color:var(--accent-orange);">$6,500 MXN</div>
-            <span style="font-size:0.7rem; color:var(--accent-green);">Anticipo: $6,000 Pagado</span>
-          </div>
-        </div>
-      `;
+      try {
+        const rawOrders = localStorage.getItem('bicisaas_workshop_orders');
+        const orders = rawOrders ? JSON.parse(rawOrders) : [];
+        const pendingOrders = orders.filter(o => o.status !== 'entregado' && (o.balanceDue || 0) > 0);
+        if (pendingOrders.length === 0) {
+          debtList.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem; font-size:0.85rem;">No hay saldos pendientes por cobrar en taller</div>';
+        } else {
+          debtList.innerHTML = pendingOrders.map(o => `
+            <div class="escrow-row">
+              <div>
+                <div class="escrow-title">${o.bikeBrand || ''} ${o.bikeModel || ''} (${o.folio || ''})</div>
+                <div class="escrow-meta">Cliente: ${o.clientName || 'Cliente'} · ${o.status || ''}</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="escrow-amount" style="color:var(--accent-orange);">$${Number(o.balanceDue || 0).toLocaleString('es-MX')} MXN</div>
+                <span style="font-size:0.7rem; color:var(--accent-green);">Total: $${Number(o.totalCost || 0).toLocaleString('es-MX')}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch(e) {
+        debtList.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem; font-size:0.85rem;">No hay saldos pendientes por cobrar en taller</div>';
+      }
     }
 
     const escrowList = document.getElementById('escrow-list');
     if (escrowList) {
-      escrowList.innerHTML = `
-        <div class="escrow-row">
-          <div>
-            <div class="escrow-title">Basso Palta Gravel (Folio REN-8102)</div>
-            <div class="escrow-meta">Cliente: Sarah Jenkins · Hotel Fairmont Mayakoba</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="escrow-amount" style="color:#af52de;">$3,000 MXN</div>
-            <span style="font-size:0.7rem; color:var(--text-secondary);">En Retención Temporal</span>
-          </div>
-        </div>
-        <div class="escrow-row">
-          <div>
-            <div class="escrow-title">Trek Marlin 5 MTB (Folio REN-8104)</div>
-            <div class="escrow-meta">Cliente: Alexander Klein · Hotel HM Playa</div>
-          </div>
-          <div style="text-align:right;">
-            <div class="escrow-amount" style="color:#af52de;">$1,000 MXN</div>
-            <span style="font-size:0.7rem; color:var(--text-secondary);">En Retención Temporal</span>
-          </div>
-        </div>
-      `;
+      try {
+        const rawContracts = localStorage.getItem('thegarage_rental_contracts');
+        const contracts = rawContracts ? JSON.parse(rawContracts) : [];
+        const activeEscrows = contracts.filter(c => c.status === 'activa' && c.depositStatus === 'retenido');
+        if (activeEscrows.length === 0) {
+          escrowList.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem; font-size:0.85rem;">No hay depósitos en garantía activos</div>';
+        } else {
+          escrowList.innerHTML = activeEscrows.map(c => `
+            <div class="escrow-row">
+              <div>
+                <div class="escrow-title">${c.bikeModel || 'Bicicleta'} (${c.folio || ''})</div>
+                <div class="escrow-meta">Cliente: ${c.clientName || 'Cliente'} · ${c.hotelOrAddress || ''}</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="escrow-amount" style="color:#af52de;">$${Number(c.depositFee || 0).toLocaleString('es-MX')} MXN</div>
+                <span style="font-size:0.7rem; color:var(--text-secondary);">En Retención Temporal</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch(e) {
+        escrowList.innerHTML = '<div style="color:var(--text-secondary); text-align:center; padding:1.5rem; font-size:0.85rem;">No hay depósitos en garantía activos</div>';
+      }
     }
   }
 

@@ -68,16 +68,16 @@ import { Icon } from "astro-icon/components";
     <div class="bento-kpi-card highlight-green" onclick="window.location.href='/panel/contabilidad'" title="Ver libro diario y corte de caja">
       <div class="bento-kpi-header">
         <span class="bento-kpi-title">Pulso de Caja (Hoy)</span>
-        <span class="bento-kpi-badge badge-green">Día Activo</span>
+        <span class="bento-kpi-badge badge-green" id="badge-cash-day">Día Activo</span>
       </div>
-      <div class="bento-kpi-val" id="val-kpi-cash">$18,450.00 <span class="val-currency">MXN</span></div>
+      <div class="bento-kpi-val" id="val-kpi-cash">$0.00 <span class="val-currency">MXN</span></div>
       <div class="bento-kpi-breakdown">
-        <span class="breakdown-item">Efectivo en Gaveta: <strong id="val-cash-drawer">$3,850</strong></span>
+        <span class="breakdown-item">Efectivo en Gaveta: <strong id="val-cash-drawer">$0</strong></span>
         <span class="breakdown-divider">·</span>
-        <span class="breakdown-item">Tarjeta/MP: <strong id="val-cash-cards">$14,600</strong></span>
+        <span class="breakdown-item">Tarjeta/MP: <strong id="val-cash-cards">$0</strong></span>
       </div>
-      <div class="bento-kpi-sub">
-        <span style="color:var(--accent-green); font-weight:600;">Arqueo verificado</span> · Total mes Sep: <strong>$166,650 MXN</strong>
+      <div class="bento-kpi-sub" id="val-cash-sub">
+        <span style="color:var(--accent-green); font-weight:600;">Arqueo en cero</span> · Total mes: <strong>$0 MXN</strong>
       </div>
     </div>
 
@@ -85,18 +85,18 @@ import { Icon } from "astro-icon/components";
     <div class="bento-kpi-card highlight-blue" onclick="window.location.href='/panel/taller'" title="Ver banco de trabajo y cirugías activas">
       <div class="bento-kpi-header">
         <span class="bento-kpi-title">Cirugía en Taller</span>
-        <span class="bento-kpi-badge badge-blue">6 Órdenes</span>
+        <span class="bento-kpi-badge badge-blue" id="badge-workshop-orders">0 Órdenes</span>
       </div>
-      <div class="bento-kpi-val" id="val-kpi-workshop">2 <span class="val-sublabel">Listas Entrega</span></div>
-      <div class="bento-kpi-breakdown">
-        <span class="breakdown-item" style="color:var(--accent-green);">2 listos</span>
+      <div class="bento-kpi-val" id="val-kpi-workshop">0 <span class="val-sublabel">Listas Entrega</span></div>
+      <div class="bento-kpi-breakdown" id="val-workshop-breakdown">
+        <span class="breakdown-item" style="color:var(--accent-green);">0 listos</span>
         <span class="breakdown-divider">·</span>
-        <span class="breakdown-item" style="color:var(--accent-blue);">3 en proceso</span>
+        <span class="breakdown-item" style="color:var(--accent-blue);">0 en proceso</span>
         <span class="breakdown-divider">·</span>
-        <span class="breakdown-item" style="color:var(--accent-orange);">1 espera pieza</span>
+        <span class="breakdown-item" style="color:var(--accent-orange);">0 espera pieza</span>
       </div>
-      <div class="bento-kpi-sub">
-        Marco Ramírez: <strong>5 asignadas</strong> · SLA: <strong style="color:var(--accent-green);">96.4%</strong>
+      <div class="bento-kpi-sub" id="val-workshop-sub">
+        Banco de trabajo: <strong>Despejado</strong> · SLA: <strong style="color:var(--accent-green);">100%</strong>
       </div>
     </div>
 
@@ -104,18 +104,18 @@ import { Icon } from "astro-icon/components";
     <div class="bento-kpi-card highlight-orange" onclick="window.location.href='/panel/rentas'" title="Ver estado de unidades en alquiler">
       <div class="bento-kpi-header">
         <span class="bento-kpi-title">Flota de Rentas</span>
-        <span class="bento-kpi-badge badge-orange">8 Unidades</span>
+        <span class="bento-kpi-badge badge-orange" id="badge-rentals-units">8 Unidades</span>
       </div>
-      <div class="bento-kpi-val" id="val-kpi-rentals">1 <span class="val-sublabel">En Calle (Turista)</span></div>
-      <div class="bento-kpi-breakdown">
-        <span class="breakdown-item" style="color:var(--accent-blue);">1 rodando</span>
+      <div class="bento-kpi-val" id="val-kpi-rentals">0 <span class="val-sublabel">En Calle (Turista)</span></div>
+      <div class="bento-kpi-breakdown" id="val-rentals-breakdown">
+        <span class="breakdown-item" style="color:var(--accent-blue);">0 rodando</span>
         <span class="breakdown-divider">·</span>
-        <span class="breakdown-item" style="color:var(--accent-green);">6 disponibles</span>
+        <span class="breakdown-item" style="color:var(--accent-green);">8 disponibles</span>
         <span class="breakdown-divider">·</span>
-        <span class="breakdown-item" style="color:var(--accent-red);">1 servicio</span>
+        <span class="breakdown-item" style="color:var(--accent-red);">0 servicio</span>
       </div>
-      <div class="bento-kpi-sub">
-        <span style="color:var(--accent-red); font-weight:600;">1 unidad horómetro 47h</span> · Depósitos: <strong>$4,500 MXN</strong>
+      <div class="bento-kpi-sub" id="val-rentals-sub">
+        <span style="color:var(--accent-green); font-weight:600;">Flota al 100% disponible</span> · Depósitos: <strong>$0 MXN</strong>
       </div>
     </div>
 
@@ -123,18 +123,14 @@ import { Icon } from "astro-icon/components";
     <div class="bento-kpi-card highlight-purple" onclick="window.location.href='/panel/empleados'" title="Ver checador y colaboradores en turno">
       <div class="bento-kpi-header">
         <span class="bento-kpi-title">Colaboradores Hoy</span>
-        <span class="bento-kpi-badge badge-purple">100% Presentes</span>
+        <span class="bento-kpi-badge badge-purple" id="badge-team-present">0 En Turno</span>
       </div>
-      <div class="bento-kpi-val" id="val-kpi-team">3 <span class="val-sublabel">En Turno Activo</span></div>
-      <div class="bento-kpi-breakdown">
-        <span class="breakdown-item">Diego L. (Admin)</span>
-        <span class="breakdown-divider">·</span>
-        <span class="breakdown-item">Marco R. (Mecánico)</span>
-        <span class="breakdown-divider">·</span>
-        <span class="breakdown-item">Sofía M.</span>
+      <div class="bento-kpi-val" id="val-kpi-team">0 <span class="val-sublabel">En Turno Activo</span></div>
+      <div class="bento-kpi-breakdown" id="val-team-breakdown">
+        <span class="breakdown-item">Sin turnos abiertos</span>
       </div>
-      <div class="bento-kpi-sub">
-        Puntualidad de tienda: <strong style="color:var(--accent-green);">100%</strong> · Sin ausencias
+      <div class="bento-kpi-sub" id="val-team-sub">
+        Checador: <strong>Usa el botón superior</strong> para registrar entrada
       </div>
     </div>
 
@@ -150,116 +146,23 @@ import { Icon } from "astro-icon/components";
       <div class="dash-card">
         <div class="dash-card-header">
           <div style="display:flex; align-items:center; gap:0.5rem;">
-            <div class="icon-bubble red"><Icon name="mdi:alert-circle-outline" width="18" height="18" /></div>
+            <div class="icon-bubble green"><Icon name="mdi:check-circle-outline" width="18" height="18" /></div>
             <div>
               <h2 class="dash-card-title">Radar de Urgencias &amp; Entregas Programadas (Hoy)</h2>
-              <p class="dash-card-desc">Bicicletas listas por entregar, saldos por cobrar y unidades que retornan hoy 7 de Septiembre.</p>
+              <p class="dash-card-desc">Bicicletas listas por entregar, saldos por cobrar y retornos de renta del día.</p>
             </div>
           </div>
-          <span class="urgent-badge" id="radar-count-badge">4 Prioritarias</span>
+          <span class="urgent-badge" id="radar-count-badge" style="background:rgba(52,199,89,0.12); color:var(--accent-green); border-color:rgba(52,199,89,0.3);">Todo al Día</span>
         </div>
 
-        <div class="urgent-list">
-          
-          <!-- Item 1: Basso Palta 2 (Listo para entrega con saldo pendiente) -->
-          <div class="urgent-item border-red">
-            <div class="urgent-left">
-              <div class="urgent-folio">SRV-2026-089 · Taller</div>
-              <div class="urgent-name">Basso Palta 2 Carbon Gravel</div>
-              <div class="urgent-client">Cliente: <strong>Rodrigo Palacios</strong> (984-120-3344) · Mecánico: Marco Ramírez</div>
-              <div class="urgent-detail">
-                <span>Servicio: <strong>Cirugía Mayor / Purga Hidráulica</strong></span>
-                <span class="tag-status ready">Listo para Entrega</span>
-              </div>
+        <div class="urgent-list" id="radar-urgent-container">
+          <div class="urgent-empty-state" style="padding:2.5rem 1rem; text-align:center; color:var(--text-secondary);">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(52,199,89,0.12); color:var(--accent-green); display:flex; align-items:center; justify-content:center; margin:0 auto 0.75rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             </div>
-            <div class="urgent-right">
-              <div class="urgent-amount-box">
-                <span class="amount-label">Saldo por Cobrar:</span>
-                <span class="amount-val red">$1,300.00 MXN</span>
-              </div>
-              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
-                <button class="btn-action-urgent primary" type="button" onclick="openQuickCollectModal('SRV-2026-089', 'Rodrigo Palacios', 'Basso Palta 2 Carbon', 1300, 2800)">
-                  Cobrar en POS
-                </button>
-                <a href="https://wa.me/529841203344?text=Hola%20Rodrigo,%20tu%20Basso%20Palta%202%20ya%20est%C3%A1%20lista%20en%20The%20Garage.%20Saldo%20pendiente:%20$1,300%20MXN." target="_blank" class="btn-action-urgent icon-only" title="Avisar por WhatsApp">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                </a>
-              </div>
-            </div>
+            <div style="font-weight:700; color:var(--text-primary); font-size:1rem; margin-bottom:0.25rem;">Todo al Día en la Tienda</div>
+            <p style="font-size:0.85rem; margin:0; max-width:380px; margin:0 auto;">No hay órdenes urgentes ni bicicletas por entregar hoy. El radar se actualizará automáticamente al ingresar órdenes o rentas.</p>
           </div>
-
-          <!-- Item 2: Specialized Allez Sport (Garantía 30 días, saldo $0) -->
-          <div class="urgent-item border-green">
-            <div class="urgent-left">
-              <div class="urgent-folio">SRV-2026-090 · Taller</div>
-              <div class="urgent-name">Specialized Allez Sport Carretera</div>
-              <div class="urgent-client">Cliente: <strong>Mariana Gómez</strong> (984-765-4321) · Mecánico: Marco Ramírez</div>
-              <div class="urgent-detail">
-                <span>Servicio: <strong>Primer chequeo gratuito 30 días</strong></span>
-                <span class="tag-status ready">QA Aprobado</span>
-              </div>
-            </div>
-            <div class="urgent-right">
-              <div class="urgent-amount-box">
-                <span class="amount-label">Saldo por Cobrar:</span>
-                <span class="amount-val green">$0.00 (Pagado)</span>
-              </div>
-              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
-                <button class="btn-action-urgent secondary" type="button" onclick="completeDelivery('SRV-2026-090', 'Mariana Gómez')">
-                  Marcar Entregada
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Item 3: Trek Marlin 5 Gen 3 (Renta Turista que retorna hoy) -->
-          <div class="urgent-item border-blue">
-            <div class="urgent-left">
-              <div class="urgent-folio">REN-2026-041 · Alquiler Flota</div>
-              <div class="urgent-name">Trek Marlin 5 Gen 3 (Unidad #04)</div>
-              <div class="urgent-client">Turista: <strong>Alexander Klein</strong> (Alemania) · Hotel Playacar</div>
-              <div class="urgent-detail">
-                <span>Vencimiento: <strong>Hoy a las 18:00 hrs</strong></span>
-                <span class="tag-status active">En Renta</span>
-              </div>
-            </div>
-            <div class="urgent-right">
-              <div class="urgent-amount-box">
-                <span class="amount-label">Depósito en Garantía:</span>
-                <span class="amount-val blue">$1,500.00 MXN</span>
-              </div>
-              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
-                <a href="/panel/rentas" class="btn-action-urgent primary">
-                  Check-in Recepción
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Item 4: Scott Scale 965 (Esperando refacción Magura) -->
-          <div class="urgent-item border-orange">
-            <div class="urgent-left">
-              <div class="urgent-folio">SRV-2026-093 · Taller</div>
-              <div class="urgent-name">Scott Scale 965 XC Hardtail</div>
-              <div class="urgent-client">Cliente: <strong>Gabriel Garza</strong> · Mecánico: Marco Ramírez</div>
-              <div class="urgent-detail">
-                <span>Estado: <strong>Esperando Kit Sellos &amp; Oliva Magura</strong></span>
-                <span class="tag-status warning">Pieza por Recibir</span>
-              </div>
-            </div>
-            <div class="urgent-right">
-              <div class="urgent-amount-box">
-                <span class="amount-label">Costo Total:</span>
-                <span class="amount-val orange">$1,130.00 MXN</span>
-              </div>
-              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
-                <a href="/panel/taller" class="btn-action-urgent secondary">
-                  Ver en Taller
-                </a>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -278,55 +181,45 @@ import { Icon } from "astro-icon/components";
 
         <div class="bays-grid">
           
-          <!-- Bahía 1: Ocupada por Marco -->
-          <div class="bay-box active">
-            <div class="bay-header">
-              <div style="display:flex; align-items:center; gap:0.4rem;">
-                <span class="bay-badge occupied">Bahía 1 · En Operación</span>
-                <span class="bay-tech">Marco Ramírez</span>
-              </div>
-              <span class="bay-timer">42 min transcurridos</span>
-            </div>
-            <div class="bay-body">
-              <div class="bay-bike-title">Basso Palta 2 Carbon Gravel</div>
-              <div class="bay-task">Purga de frenos hidráulicos GRX + centrado de disco 160mm</div>
-              <!-- Mini Progress Bar -->
-              <div class="progress-bar-wrap">
-                <div class="progress-bar-fill" style="width: 85%;"></div>
-              </div>
-              <div class="bay-checklist">
-                <span class="chk-item done">Torque manubrio (6 Nm)</span>
-                <span class="chk-item done">Purga aceite Shimano</span>
-                <span class="chk-item done">Calibración cambios</span>
-                <span class="chk-item pending">Rodada de prueba final</span>
-              </div>
-            </div>
-            <div class="bay-footer">
-              <span style="font-size:0.75rem; color:var(--text-secondary);">Tiempo restante est: <strong>15 minutos</strong></span>
-              <button class="btn-bay-finish" type="button" onclick="alert('Servicio finalizado. Orden movida a Lista para Entrega y notificada a caja.');">
-                Concluir Servicio
-              </button>
-            </div>
-          </div>
-
-          <!-- Bahía 2: Disponible para ensamble express -->
+          <!-- Bahía 1: Disponible -->
           <div class="bay-box free">
             <div class="bay-header">
-              <span class="bay-badge available">Bahía 2 · Disponible</span>
-              <span class="bay-tech" style="color:var(--text-muted);">Sin mecánico asignado</span>
+              <span class="bay-badge available">Bahía 1 · Disponible</span>
+              <span class="bay-tech" style="color:var(--text-muted);">Sin orden activa</span>
             </div>
             <div class="bay-body free-body">
               <div style="display:flex; justify-content:center; margin-bottom:0.4rem;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-              <div style="font-size:0.95rem; font-weight:700; color:var(--text-primary);">Banco de Trabajo Despejado</div>
+              <div style="font-size:0.95rem; font-weight:700; color:var(--text-primary);">Banco de Trabajo 1 Despejado</div>
               <p style="font-size:0.8rem; color:var(--text-secondary); margin:0.2rem 0 0.8rem;">
-                Listo para recibir revisión express de 15 min, ensamble de bici nueva o mantenimiento de flota.
+                Listo para recibir mantenimiento general, purga de frenos o ajuste de transmisión.
+              </p>
+              <a href="/panel/taller" class="btn-secondary" style="font-size:0.8rem; padding:0.4rem 0.85rem; border-radius:8px; text-decoration:none;">
+                + Abrir Orden de Taller
+              </a>
+            </div>
+            <div class="bay-footer">
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Herramientas listas para operar.</span>
+            </div>
+          </div>
+
+          <!-- Bahía 2: Disponible -->
+          <div class="bay-box free">
+            <div class="bay-header">
+              <span class="bay-badge available">Bahía 2 · Disponible</span>
+              <span class="bay-tech" style="color:var(--text-muted);">Sin orden activa</span>
+            </div>
+            <div class="bay-body free-body">
+              <div style="display:flex; justify-content:center; margin-bottom:0.4rem;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+              <div style="font-size:0.95rem; font-weight:700; color:var(--text-primary);">Banco de Trabajo 2 Despejado</div>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin:0.2rem 0 0.8rem;">
+                Listo para recibir revisión express de 15 min, ensamble o mantenimiento de flota.
               </p>
               <a href="/panel/taller" class="btn-secondary" style="font-size:0.8rem; padding:0.4rem 0.85rem; border-radius:8px; text-decoration:none;">
                 + Asignar Trabajo a Bahía
               </a>
             </div>
             <div class="bay-footer">
-              <span style="font-size:0.75rem; color:var(--text-secondary);">Herramientas Park Tool y torquímetros calibrados hoy.</span>
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Torquímetros calibrados hoy.</span>
             </div>
           </div>
 
@@ -342,7 +235,7 @@ import { Icon } from "astro-icon/components";
       <div class="dash-card">
         <div class="dash-card-header">
           <div style="display:flex; align-items:center; gap:0.5rem;">
-            <div class="icon-bubble orange"><Icon name="mdi:finance" width="18" height="18" /></div>
+            <div class="icon-bubble green"><Icon name="mdi:cash-register" width="18" height="18" /></div>
             <div>
               <h2 class="dash-card-title">Arqueo de Cajón &amp; Finanzas</h2>
               <p class="dash-card-desc">Desglose de liquidez disponible en tienda física.</p>
@@ -357,10 +250,10 @@ import { Icon } from "astro-icon/components";
               <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></span>
               <div>
                 <strong>Efectivo Físico en Cajón</strong>
-                <span class="fd-sub">Fondo $2,000 + $1,850 ventas en efectivo</span>
+                <span class="fd-sub" id="fd-cash-sub">Fondo $0 + $0 ventas en efectivo</span>
               </div>
             </div>
-            <div class="fd-val green">$3,850.00 MXN</div>
+            <div class="fd-val green" id="fd-cash-val">$0.00 MXN</div>
           </div>
 
           <div class="finance-drawer-row">
@@ -368,10 +261,10 @@ import { Icon } from "astro-icon/components";
               <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
               <div>
                 <strong>Terminales Bancarias &amp; MP</strong>
-                <span class="fd-sub">Clip / Mercado Pago (Lote activo hoy)</span>
+                <span class="fd-sub" id="fd-cards-sub">Clip / Mercado Pago (Hoy)</span>
               </div>
             </div>
-            <div class="fd-val blue">$14,600.00 MXN</div>
+            <div class="fd-val blue" id="fd-cards-val">$0.00 MXN</div>
           </div>
 
           <div class="finance-drawer-row">
@@ -379,10 +272,10 @@ import { Icon } from "astro-icon/components";
               <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
               <div>
                 <strong>Cuentas por Cobrar (Taller)</strong>
-                <span class="fd-sub">Saldos pendientes al entregar bicicletas</span>
+                <span class="fd-sub" id="fd-cxc-sub">Saldos pendientes al entregar</span>
               </div>
             </div>
-            <div class="fd-val red">$3,930.00 MXN</div>
+            <div class="fd-val orange" id="fd-cxc-val">$0.00 MXN</div>
           </div>
 
           <div class="finance-drawer-row">
@@ -390,19 +283,19 @@ import { Icon } from "astro-icon/components";
               <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
               <div>
                 <strong>Depósitos en Custodia (Rentas)</strong>
-                <span class="fd-sub">Garantías activas devueltas al retornar</span>
+                <span class="fd-sub" id="fd-escrow-sub">Garantías activas</span>
               </div>
             </div>
-            <div class="fd-val purple">$4,500.00 MXN</div>
+            <div class="fd-val purple" id="fd-escrow-val">$0.00 MXN</div>
           </div>
 
           <!-- Bottom Summary -->
           <div class="finance-drawer-total">
             <div>
-              <span style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700; display:block;">Resultado Mes (Sep 2026)</span>
-              <strong style="font-size:1.15rem; color:var(--text-primary);">+$134,400.00 MXN Netos</strong>
+              <span style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700; display:block;">Resultado Mes Actual</span>
+              <strong style="font-size:1.15rem; color:var(--text-primary);" id="fd-month-result">+$0.00 MXN Netos</strong>
             </div>
-            <span class="margin-pill">Margen: 80.6%</span>
+            <span class="margin-pill" id="fd-month-margin">Margen: 0.0%</span>
           </div>
         </div>
       </div>
@@ -1663,6 +1556,181 @@ import { Icon } from "astro-icon/components";
         if (lensBox) lensBox.style.display = 'none';
       }
     } catch(e) {}
+
+    // ─── 4. Dynamic Dashboard Hydration from Real Storage ───
+    function hydrateDashboardMetrics() {
+      try {
+        // Taller
+        const ordersRaw = localStorage.getItem('bicisaas_workshop_orders');
+        const orders = ordersRaw ? JSON.parse(ordersRaw) : [];
+        const activeOrders = orders.filter(o => o.status !== 'entregado');
+        const readyOrders = orders.filter(o => o.status === 'listo_entrega');
+        const processOrders = orders.filter(o => o.status === 'en_proceso');
+        const waitOrders = orders.filter(o => o.status === 'esperando_refaccion');
+        const pendingWorkshopBalance = activeOrders.reduce((acc, o) => acc + (o.balanceDue || 0), 0);
+
+        const badgeWorkshop = document.getElementById('badge-workshop-orders');
+        if (badgeWorkshop) badgeWorkshop.textContent = `${activeOrders.length} Órdenes`;
+        const valWorkshop = document.getElementById('val-kpi-workshop');
+        if (valWorkshop) valWorkshop.innerHTML = `${readyOrders.length} <span class="val-sublabel">Listas Entrega</span>`;
+        const breakdownWorkshop = document.getElementById('val-workshop-breakdown');
+        if (breakdownWorkshop) {
+          breakdownWorkshop.innerHTML = `
+            <span class="breakdown-item" style="color:var(--accent-green);">${readyOrders.length} listos</span>
+            <span class="breakdown-divider">·</span>
+            <span class="breakdown-item" style="color:var(--accent-blue);">${processOrders.length} en proceso</span>
+            <span class="breakdown-divider">·</span>
+            <span class="breakdown-item" style="color:var(--accent-orange);">${waitOrders.length} espera pieza</span>
+          `;
+        }
+
+        // Rentas
+        const fleetRaw = localStorage.getItem('thegarage_rental_fleet');
+        const fleet = fleetRaw ? JSON.parse(fleetRaw) : [];
+        const contractsRaw = localStorage.getItem('thegarage_rental_contracts');
+        const contracts = contractsRaw ? JSON.parse(contractsRaw) : [];
+        const activeContracts = contracts.filter(c => c.status === 'activa');
+        const heldDeposits = activeContracts.filter(c => c.depositStatus === 'retenido').reduce((acc, c) => acc + (c.depositFee || 0), 0);
+        const rentedBikesCount = fleet.filter(b => b.status === 'en_renta').length || activeContracts.length;
+        const availableBikesCount = fleet.filter(b => b.status === 'disponible').length || Math.max(0, 8 - rentedBikesCount);
+
+        const valRentals = document.getElementById('val-kpi-rentals');
+        if (valRentals) valRentals.innerHTML = `${rentedBikesCount} <span class="val-sublabel">En Calle (Turista)</span>`;
+        const breakdownRentals = document.getElementById('val-rentals-breakdown');
+        if (breakdownRentals) {
+          breakdownRentals.innerHTML = `
+            <span class="breakdown-item" style="color:var(--accent-blue);">${rentedBikesCount} rodando</span>
+            <span class="breakdown-divider">·</span>
+            <span class="breakdown-item" style="color:var(--accent-green);">${availableBikesCount} disponibles</span>
+            <span class="breakdown-divider">·</span>
+            <span class="breakdown-item" style="color:var(--accent-red);">${fleet.filter(b => b.status === 'en_taller').length} servicio</span>
+          `;
+        }
+        const subRentals = document.getElementById('val-rentals-sub');
+        if (subRentals) subRentals.innerHTML = `<span style="color:var(--accent-green); font-weight:600;">Flota al 100% disponible</span> · Depósitos: <strong>$${heldDeposits.toLocaleString('es-MX')} MXN</strong>`;
+
+        // Finanzas / Arqueo
+        const currentMonthKey = '2026_09';
+        const ledgerRaw = localStorage.getItem('bicisaas_ledger_' + currentMonthKey) || localStorage.getItem('bicisaas_ledger');
+        const ledger = ledgerRaw ? JSON.parse(ledgerRaw) : { income: [], expenses: [] };
+        const incomeList = ledger.income || [];
+        const expensesList = ledger.expenses || [];
+        const totalIncome = incomeList.reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+        const totalExpenses = expensesList.reduce((acc, e) => acc + (Number(e.amount) || 0), 0);
+        const netResult = totalIncome - totalExpenses;
+        const cashIncome = incomeList.filter(i => i.method === 'Efectivo').reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+        const cardIncome = incomeList.filter(i => i.method === 'Tarjeta' || i.method === 'MercadoPago').reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+
+        const valCash = document.getElementById('val-kpi-cash');
+        if (valCash) valCash.innerHTML = `$${cashIncome.toLocaleString('es-MX')}.00 <span class="val-currency">MXN</span>`;
+        const valDrawer = document.getElementById('val-cash-drawer');
+        if (valDrawer) valDrawer.textContent = `$${cashIncome.toLocaleString('es-MX')}`;
+        const valCards = document.getElementById('val-cash-cards');
+        if (valCards) valCards.textContent = `$${cardIncome.toLocaleString('es-MX')}`;
+        const valCashSub = document.getElementById('val-cash-sub');
+        if (valCashSub) valCashSub.innerHTML = `<span style="color:var(--accent-green); font-weight:600;">Arqueo verificado</span> · Total mes: <strong>$${totalIncome.toLocaleString('es-MX')} MXN</strong>`;
+
+        // Arqueo Box
+        const fdCashVal = document.getElementById('fd-cash-val');
+        if (fdCashVal) fdCashVal.textContent = `$${cashIncome.toLocaleString('es-MX')}.00 MXN`;
+        const fdCardsVal = document.getElementById('fd-cards-val');
+        if (fdCardsVal) fdCardsVal.textContent = `$${cardIncome.toLocaleString('es-MX')}.00 MXN`;
+        const fdCxcVal = document.getElementById('fd-cxc-val');
+        if (fdCxcVal) fdCxcVal.textContent = `$${pendingWorkshopBalance.toLocaleString('es-MX')}.00 MXN`;
+        const fdEscrowVal = document.getElementById('fd-escrow-val');
+        if (fdEscrowVal) fdEscrowVal.textContent = `$${heldDeposits.toLocaleString('es-MX')}.00 MXN`;
+        const fdMonthResult = document.getElementById('fd-month-result');
+        if (fdMonthResult) fdMonthResult.textContent = `${netResult >= 0 ? '+' : ''}$${netResult.toLocaleString('es-MX')}.00 MXN Netos`;
+
+        // Radar Dynamic Rendering if there are items
+        const radarContainer = document.getElementById('radar-urgent-container');
+        const radarBadge = document.getElementById('radar-count-badge');
+        const urgentItems = [];
+
+        readyOrders.forEach(o => {
+          urgentItems.push({
+            type: 'ready',
+            folio: o.folio,
+            bike: `${o.bikeBrand} ${o.bikeModel}`,
+            client: o.clientName,
+            phone: o.clientPhone,
+            tech: o.assignedMechanicName,
+            balance: o.balanceDue || 0,
+            total: o.totalCost || 0
+          });
+        });
+
+        activeContracts.forEach(c => {
+          urgentItems.push({
+            type: 'rent',
+            folio: c.folio,
+            bike: c.bikeModel,
+            client: c.clientName,
+            phone: c.clientPhone,
+            tech: 'Recepción',
+            balance: c.depositFee || 0,
+            total: c.totalCharged || 0
+          });
+        });
+
+        if (urgentItems.length === 0) {
+          if (radarBadge) {
+            radarBadge.textContent = 'Todo al Día';
+            radarBadge.style.background = 'rgba(52,199,89,0.12)';
+            radarBadge.style.color = 'var(--accent-green)';
+            radarBadge.style.borderColor = 'rgba(52,199,89,0.3)';
+          }
+          if (radarContainer) {
+            radarContainer.innerHTML = `
+              <div class="urgent-empty-state" style="padding:2.5rem 1rem; text-align:center; color:var(--text-secondary);">
+                <div style="width:48px; height:48px; border-radius:50%; background:rgba(52,199,89,0.12); color:var(--accent-green); display:flex; align-items:center; justify-content:center; margin:0 auto 0.75rem;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div style="font-weight:700; color:var(--text-primary); font-size:1rem; margin-bottom:0.25rem;">Todo al Día en la Tienda</div>
+                <p style="font-size:0.85rem; margin:0; max-width:380px; margin:0 auto;">No hay órdenes urgentes ni bicicletas por entregar hoy. El radar se actualizará automáticamente al ingresar órdenes o rentas.</p>
+              </div>
+            `;
+          }
+        } else {
+          if (radarBadge) {
+            radarBadge.textContent = `${urgentItems.length} Prioritarias`;
+            radarBadge.style.background = 'rgba(255,59,48,0.12)';
+            radarBadge.style.color = 'var(--accent-red)';
+            radarBadge.style.borderColor = 'rgba(255,59,48,0.3)';
+          }
+          if (radarContainer) {
+            radarContainer.innerHTML = urgentItems.map(item => `
+              <div class="urgent-item border-red">
+                <div class="urgent-left">
+                  <div class="urgent-folio">${item.folio} · ${item.type === 'rent' ? 'Alquiler Flota' : 'Taller'}</div>
+                  <div class="urgent-name">${item.bike}</div>
+                  <div class="urgent-client">Cliente: <strong>${item.client}</strong> (${item.phone}) · Asignado: ${item.tech}</div>
+                  <div class="urgent-detail">
+                    <span class="tag-status ready">${item.type === 'rent' ? 'En Renta Activa' : 'Listo para Entrega'}</span>
+                  </div>
+                </div>
+                <div class="urgent-right">
+                  <div class="urgent-amount-box">
+                    <span class="amount-label">${item.type === 'rent' ? 'Depósito:' : 'Saldo por Cobrar:'}</span>
+                    <span class="amount-val red">$${item.balance.toLocaleString('es-MX')}.00 MXN</span>
+                  </div>
+                  <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+                    <button class="btn-action-urgent primary" type="button" onclick="openQuickCollectModal('${item.folio}', '${item.client}', '${item.bike}', ${item.balance}, ${item.total})">
+                      Cobrar en POS
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('');
+          }
+        }
+      } catch(e) {
+        console.warn('Error hydrating dashboard metrics:', e);
+      }
+    }
+
+    // Run on load
+    hydrateDashboardMetrics();
   </script>
 
 </PanelLayout>

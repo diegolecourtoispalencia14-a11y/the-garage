@@ -490,10 +490,10 @@ const { title = "Panel Maestro | The Garage" } = Astro.props;
 
   <main class="main-wrapper">
     <header class="topbar">
-      <!-- Demo Data Seeder Button for Video/Pitch -->
-      <button class="btn-demo-seed" id="btn-seed-demo-data" title="Cargar datos de prueba hiper-realistas para demo comercial o video">
-        <Icon name="mdi:movie-open-play-outline" style="display:inline; vertical-align:middle; margin-right:4px;" />
-        <span>Datos Demo</span>
+      <!-- Reset All to Zeros Action Button -->
+      <button class="btn-demo-seed" id="btn-reset-all-zeros" title="Vaciar y poner toda la operación de BiciSaaS en ceros para inicio real" style="background:rgba(255,59,48,0.1); border-color:rgba(255,59,48,0.3); color:#ff3b30;">
+        <Icon name="mdi:broom" style="display:inline; vertical-align:middle; margin-right:4px;" />
+        <span>Poner en Ceros</span>
       </button>
 
       <!-- Checador de Empleados / Asistencia -->
@@ -687,10 +687,68 @@ const { title = "Panel Maestro | The Garage" } = Astro.props;
       });
     }
 
-    // Demo Data Seeder Button for Commercial Video / Pitch
-    const seedBtn = document.getElementById('btn-seed-demo-data');
-    if (seedBtn) {
-      seedBtn.addEventListener('click', () => {
+    // Auto-clean old demo keys on first run to ensure clean start
+    const CLEAN_INIT_KEY = 'bicisaas_zero_init_v2';
+    if (!localStorage.getItem(CLEAN_INIT_KEY)) {
+      const keysToRemove = [
+        'bicisaas_workshop_orders',
+        'the_garage_workshop_orders',
+        'bicisaas_ledger_2026',
+        'bicisaas_ledger_2026_09',
+        'bicisaas_ledger',
+        'the_garage_crm_directory',
+        'the_garage_leads',
+        'thegarage_rental_contracts',
+        'thegarage_rental_fleet',
+        'bicisaas_cierre_z',
+        'bicisaas_clock_records',
+        'bicisaas_tasks'
+      ];
+      keysToRemove.forEach(k => localStorage.removeItem(k));
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('bicisaas_ledger_') || k.startsWith('the_garage_leads') || k.startsWith('the_garage_crm_'))) {
+          localStorage.removeItem(k);
+        }
+      }
+      localStorage.setItem(CLEAN_INIT_KEY, 'true');
+    }
+
+    // Reset All to Zeros Button
+    const resetZerosBtn = document.getElementById('btn-reset-all-zeros');
+    if (resetZerosBtn) {
+      resetZerosBtn.addEventListener('click', () => {
+        const ok = confirm('¿Deseas vaciar y reiniciar toda la operación de BiciSaaS a CEROS?\n\nEsta acción vaciará:\n• Todas las órdenes de taller simuladas\n• Contratos de renta y depósitos en garantía activos\n• Movimientos del libro contable y arqueos\n• Clientes de prueba del CRM\n• Registros de checador de asistencia\n\n✓ Tu cuenta de Administrador y credenciales de acceso se mantendrán intactas.');
+        if (!ok) return;
+
+        const keysToRemove = [
+          'bicisaas_workshop_orders',
+          'the_garage_workshop_orders',
+          'bicisaas_ledger_2026',
+          'bicisaas_ledger_2026_09',
+          'bicisaas_ledger',
+          'the_garage_crm_directory',
+          'the_garage_leads',
+          'thegarage_rental_contracts',
+          'thegarage_rental_fleet',
+          'bicisaas_cierre_z',
+          'bicisaas_clock_records',
+          'bicisaas_tasks'
+        ];
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && (k.startsWith('bicisaas_ledger_') || k.startsWith('the_garage_leads') || k.startsWith('the_garage_crm_'))) {
+            localStorage.removeItem(k);
+          }
+        }
+        alert('BiciSaaS ha sido vaciado exitosamente a ceros para tu operación real.');
+        window.location.reload();
+      });
+    }
+
+    // Optional Demo Seeder Helper
+    window.seedDemoData = function() {
         const ok = confirm('¿Deseas inicializar los datos demo comerciales corporativos?\n\nEsta acción cargará:\n• CRM 360° con clientes VIP, scores y deudas\n• Contabilidad con $160k+ MXN en ingresos, compras y gastos\n• Plantilla completa de empleados y checador\n• Tablero Kanban con tareas reales de taller y ventas\n• Catálogo maestro de 40 productos sincronizados');
         if (!ok) return;
 

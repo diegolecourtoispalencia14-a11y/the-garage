@@ -3,7 +3,7 @@ import PanelLayout from '../../layouts/PanelLayout.astro';
 import { Icon } from 'astro-icon/components';
 import { INITIAL_SERVICE_ORDERS } from '../../data/workshopOrders';
 
-const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
+const initialOrdersJson = '[]';
 ---
 
 <PanelLayout title="Taller & Órdenes de Servicio | BiciSaaS">
@@ -42,7 +42,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
         <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Órdenes Activas</span>
         <Icon name="mdi:wrench-outline" width="18" height="18" style="color:var(--text-secondary);" />
       </div>
-      <div id="kpi-total-orders" style="font-size:1.6rem; font-weight:700; color:var(--text-primary);">6</div>
+      <div id="kpi-total-orders" style="font-size:1.6rem; font-weight:700; color:var(--text-primary);">0</div>
       <div style="font-size:0.75rem; color:var(--text-secondary);">Bicicletas en taller</div>
     </div>
 
@@ -51,7 +51,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
         <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-green);">Listas Entrega</span>
         <Icon name="mdi:check-circle-outline" width="18" height="18" style="color:var(--accent-green);" />
       </div>
-      <div id="kpi-ready-orders" style="font-size:1.6rem; font-weight:700; color:var(--accent-green);">2</div>
+      <div id="kpi-ready-orders" style="font-size:1.6rem; font-weight:700; color:var(--accent-green);">0</div>
       <div style="font-size:0.75rem; color:var(--text-secondary);">Esperando al cliente</div>
     </div>
 
@@ -60,7 +60,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
         <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-red);">Por Cobrar en Caja</span>
         <Icon name="mdi:cash-remove" width="18" height="18" style="color:var(--accent-red);" />
       </div>
-      <div id="kpi-pending-balance" style="font-size:1.6rem; font-weight:700; color:var(--accent-red);">$3,930</div>
+      <div id="kpi-pending-balance" style="font-size:1.6rem; font-weight:700; color:var(--accent-red);">$0</div>
       <div style="font-size:0.75rem; color:var(--text-secondary);">Saldos pendientes entrega</div>
     </div>
 
@@ -69,7 +69,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
         <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-blue);">Marco Ramírez</span>
         <Icon name="mdi:account-tie-hat" width="18" height="18" style="color:var(--accent-blue);" />
       </div>
-      <div id="kpi-marco-orders" style="font-size:1.6rem; font-weight:700; color:var(--accent-blue);">5</div>
+      <div id="kpi-marco-orders" style="font-size:1.6rem; font-weight:700; color:var(--accent-blue);">0</div>
       <div style="font-size:0.75rem; color:var(--text-secondary);">Jefe de Taller (Asignadas)</div>
     </div>
 
@@ -78,7 +78,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
         <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-orange);">Facturación Taller</span>
         <Icon name="mdi:cash-register" width="18" height="18" style="color:var(--accent-orange);" />
       </div>
-      <div id="kpi-total-revenue" style="font-size:1.6rem; font-weight:700; color:var(--accent-orange);">$7,930</div>
+      <div id="kpi-total-revenue" style="font-size:1.6rem; font-weight:700; color:var(--accent-orange);">$0</div>
       <div style="font-size:0.75rem; color:var(--text-secondary);">Valor total de órdenes</div>
     </div>
   </div>
@@ -140,7 +140,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
           <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-blue);"></span>
           <span>EN BANCO DE TRABAJO</span>
         </div>
-        <span class="badge-col-count" id="count-col-en_proceso" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">3</span>
+        <span class="badge-col-count" id="count-col-en_proceso" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">0</span>
       </div>
       <div class="kanban-cards-list" id="cards-col-en_proceso" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
     </div>
@@ -152,7 +152,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
           <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-orange);"></span>
           <span>ESPERANDO REFACCIÓN</span>
         </div>
-        <span class="badge-col-count" id="count-col-esperando_refaccion" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">1</span>
+        <span class="badge-col-count" id="count-col-esperando_refaccion" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">0</span>
       </div>
       <div class="kanban-cards-list" id="cards-col-esperando_refaccion" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
     </div>
@@ -164,7 +164,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
           <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-green);"></span>
           <span>LISTO PARA ENTREGA</span>
         </div>
-        <span class="badge-col-count" id="count-col-listo_entrega" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">2</span>
+        <span class="badge-col-count" id="count-col-listo_entrega" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">0</span>
       </div>
       <div class="kanban-cards-list" id="cards-col-listo_entrega" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
     </div>
@@ -501,7 +501,7 @@ const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw) return JSON.parse(raw);
         } catch(e) {}
-        const initial = JSON.parse(initialOrdersJson);
+        const initial = [];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
         return initial;
       }
