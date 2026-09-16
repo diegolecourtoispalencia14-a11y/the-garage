@@ -136,6 +136,8 @@ create table if not exists public.orders (
   total numeric(12,2) not null check (total >= 0),
   status text not null default 'completed',
   payment_method text not null,
+  payment_id text,
+  payment_metadata jsonb default '{}'::jsonb,
   created_at timestamptz default now(),
   unique (tenant_id, order_number)
 );
@@ -248,6 +250,8 @@ create table if not exists public.tenant_config (
   phone text,
   currency text not null default 'MXN',
   logo_url text,
+  mercadopago_settings jsonb default '{"mode": "production", "configured": true, "webhook_url": "https://the-garage-dw4.pages.dev/api/mercadopago-webhook"}'::jsonb,
+  google_profile_settings jsonb default '{"place_id": "thegarage-pdc-cataluna", "business_name": "The Garage Bike Experts", "address": "Av. Ich Xeel, Cataluña, Playa del Carmen", "verified_phone": "+529841381493", "maps_url": "https://www.google.com/maps/search/?api=1&query=The+Garage+Bike+Experts+Av+Ich+Xeel+Catalu%C3%B1a+Playa+del+Carmen"}'::jsonb,
   theme_settings jsonb default '{}'::jsonb
 );
 
