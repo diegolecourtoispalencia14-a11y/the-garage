@@ -17,7 +17,7 @@ export interface PaymentGatewayConfig {
 }
 
 export const DEFAULT_PAYMENT_CONFIG: PaymentGatewayConfig = {
-  mode: 'sandbox', // 'sandbox' para pruebas | 'production' para cobros reales
+  mode: 'production', // 'production' para cobros y pedidos verificados
   provider: 'mercadopago',
   mpPublicKey: '',
   mpAccessToken: '',

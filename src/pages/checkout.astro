@@ -187,7 +187,7 @@ import Base from '../layouts/Base.astro';
 
 <script is:inline>
   const payCfg = JSON.parse(localStorage.getItem('bicisaas_payment_config') || 'null') || {
-    mode: 'sandbox',
+    mode: 'production',
     onlineFeePercent: 3.5,
     freeShippingThreshold: 500,
     shippingCost: 80,
@@ -359,14 +359,10 @@ import Base from '../layouts/Base.astro';
     btn.disabled = true;
 
     setTimeout(() => {
-      if (isLive) {
-        if (payCfg.mpPaymentLink) {
-          window.open(payCfg.mpPaymentLink, '_blank');
-        }
-        window.location.href = '/checkout/exito?status=approved';
-      } else {
-        window.location.href = '/checkout/exito?status=approved&sandbox=true';
+      if (payCfg.mpPaymentLink) {
+        window.open(payCfg.mpPaymentLink, '_blank');
       }
+      window.location.href = '/checkout/exito?status=approved';
     }, 1500);
   }
 
