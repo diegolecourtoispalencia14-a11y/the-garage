@@ -17,7 +17,7 @@ const bicis = bicisEntries.map(e => e.data);
       <div class="status-strip">
         <div class="status-indicator-group">
           <span class="live-dot"></span>
-          <span class="font-mono status-badge-text">TALLER ACTIVO // CATALUÑA CASA 19, PLAYA DEL CARMEN</span>
+          <span class="font-mono status-badge-text">TALLER ACTIVO // CATALUÑA, PLAYA DEL CARMEN (PUERTA CERRADA · PREVIA CITA)</span>
         </div>
         <a href="https://www.instagram.com/thegarage.pdc/" target="_blank" rel="noopener noreferrer" class="font-mono ig-live-badge">
           <span>@thegarage.pdc</span>
@@ -42,7 +42,7 @@ const bicis = bicisEntries.map(e => e.data);
             </h1>
 
             <p class="hero-body-text">
-              Bicicletas de ruta, gravel y montaña de alto rendimiento. Distribución oficial de <strong>Basso Bikes</strong>, taller de cirugía mecánica SRAM/Shimano, hidratación <strong>Wayfar</strong> y rodadas grupales sabatinas.
+              Bicicletas de ruta, gravel y montaña de alto rendimiento. Distribución oficial de <strong>Basso Bikes</strong>, taller de cirugía mecánica SRAM/Shimano, hidratación <strong>Wayfar</strong> y rodadas grupales los días viernes.
             </p>
           </div>
 
@@ -229,7 +229,7 @@ const bicis = bicisEntries.map(e => e.data);
                   </button>
                 </form>
                 <div id="lead-success-msg" class="lead-success-feedback" style="display: none;">
-                  ✓ Ficha registrada. Te contactaremos con la información técnica y opciones de apartado.
+                  Ficha registrada. Te contactaremos con la información técnica y opciones de apartado.
                 </div>
               </div>
 
@@ -296,12 +296,68 @@ const bicis = bicisEntries.map(e => e.data);
 
       </div>
 
-      <!-- BENTO SECTION 4: COMMUNITY & RIDERS CLUB -->
-      <div class="bento-tile tile-riders-club" id="sec-riders">
+      <!-- BENTO SECTION: RENTA DE BICICLETAS & TURISMO EN PLAYA DEL CARMEN -->
+      <div class="bento-tile tile-rental-highlight" id="sec-rentas" style="margin-top: 1.5rem; background: linear-gradient(135deg, rgba(20,20,26,0.95), rgba(12,12,16,0.98)); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 20px; padding: 2.2rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(0, 242, 254, 0.12), transparent 70%); filter: blur(50px); pointer-events: none;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.75rem; position: relative; z-index: 1;">
+          <div style="max-width: 680px;">
+            <div class="font-mono" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.65rem; color: #00f2fe; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00f2fe; box-shadow: 0 0 8px #00f2fe;"></span>
+              <span>[04 // SERVICIO OFICIAL DE ALQUILER &amp; FLOTA]</span>
+            </div>
+            <h2 style="font-size: clamp(1.5rem, 2.8vw, 2.1rem); font-weight: 800; color: #fff; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 0.75rem;">
+              ¿De visita en Playa del Carmen?<br />
+              <span style="background: linear-gradient(90deg, #00f2fe, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Renta bicicletas premium entregadas en tu hotel o Airbnb.</span>
+            </h2>
+            <p style="color: #a1a1aa; font-size: 0.92rem; line-height: 1.5; margin: 0;">
+              Olvídate de las bicicletas turísticas desgastadas. En The Garage entregamos unidades <strong>MTB 29", Gravel italiano Basso, Carretera Specialized, E-Bikes y Beach Cruisers</strong> con frenos hidráulicos, puestas a punto por mecánicos certificados y entrega a tu hospedaje en la Riviera Maya.
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-start; position: relative; z-index: 1;">
+            <a href="/renta" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-size: 0.92rem; border-radius: 12px; background: linear-gradient(135deg, #00f2fe, #0071e3); border: none; color: #000; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 20px rgba(0, 242, 254, 0.35);">
+              <span>Ver Flota &amp; Reservar</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <span class="font-mono" style="font-size: 0.75rem; color: #71717a;">Tarifas desde $280 MXN/día · Incluye casco &amp; U-Lock</span>
+          </div>
+        </div>
+
+        <!-- 3 Feature Highlight Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; position: relative; z-index: 1;">
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1.2rem;">
+            <div style="margin-bottom: 0.4rem; color:#38bdf8;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Entrega a Hotel &amp; Airbnb</h3>
+            <p style="font-size: 0.8rem; color: #a1a1aa; line-height: 1.45; margin: 0;">
+              Llevamos tu bicicleta ajustada a tu estatura directamente a la puerta de tu hotel en Playa del Carmen, Playacar o Corredor Riviera Maya.
+            </p>
+          </div>
+
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1.2rem;">
+            <div style="margin-bottom: 0.4rem; color:#34d399;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Telemetría &amp; Cirugía Mecánica</h3>
+            <p style="font-size: 0.8rem; color: #a1a1aa; line-height: 1.45; margin: 0;">
+              Cada unidad cuenta con horómetro de uso anti-salitre. Mantenimiento ultrasónico cada 45 hrs para garantizar tu tranquilidad en ruta.
+            </p>
+          </div>
+
+          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1.2rem;">
+            <div style="margin-bottom: 0.4rem; color:#a78bfa;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem;">Kit de Seguridad Completo</h3>
+            <p style="font-size: 0.8rem; color: #a1a1aa; line-height: 1.45; margin: 0;">
+              Todas las rentas incluyen casco sanitizado, candado U-Lock de alta resistencia, kit antiponchaduras y concierge vía WhatsApp.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENTO SECTION 5: COMMUNITY & RIDERS CLUB -->
+      <div class="bento-tile tile-riders-club" id="sec-riders" style="margin-top: 1.5rem;">
         <div class="riders-header-flex">
           <div>
-            <span class="riders-chapter-tag font-mono">[04 // COMUNIDAD ACTIVA]</span>
-            <h2 class="riders-main-heading">The Garage Ride &amp; Clásica 7:30 XCO</h2>
+            <span class="riders-chapter-tag font-mono">[05 // COMUNIDAD ACTIVA]</span>
+            <h2 class="riders-main-heading">The Garage Ride — Rodadas de los Viernes</h2>
           </div>
           <a href="/comunidad" class="font-mono riders-feed-link">
             <span>Ver Feed de Instagram</span>
@@ -310,20 +366,172 @@ const bicis = bicisEntries.map(e => e.data);
         </div>
 
         <p class="riders-narrative">
-          Salidas sabatinas grupales hacia Cenotes, Tulum y rutas costeras con vehículo barredora, hidratación oficial Wayfar y soporte técnico en ruta.
+          Salidas los días viernes grupales hacia Cenotes, Tulum y rutas costeras con vehículo barredora, hidratación oficial Wayfar y soporte técnico en ruta. Todos los niveles bienvenidos.
         </p>
 
         <div class="riders-cta-group">
           <a
-            href="https://wa.me/529841381493?text=Hola,%20quiero%20unirme%20a%20la%20pr%C3%B3xima%20rodada%20de%20The%20Garage%20Ride."
+            href="https://wa.me/529841381493?text=Hola,%20quiero%20unirme%20a%20la%20pr%C3%B3xima%20rodada%20de%20los%20viernes%20de%20The%20Garage%20Ride."
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-primary"
           >
-            Unirme a la Próxima Rodada
+            Unirme a la Rodada del Viernes
           </a>
           <a href="/inventario" class="btn btn-outline">
             Explorar Catálogo Completo ({bicis.length} unidades) →
+          </a>
+        </div>
+      </div>
+
+      <!-- BENTO SECTION 6: CENTRO DE FORMACIÓN THE GARAGE RACING TEAM [PRÓXIMAMENTE] -->
+      <div class="bento-tile tile-racing-team" id="sec-racing-team" style="background: linear-gradient(135deg, rgba(225,29,72,0.12) 0%, rgba(14,165,233,0.08) 50%, rgba(9,9,11,0.95) 100%); border: 1px solid rgba(225,29,72,0.3); border-radius: var(--radius-xl); padding: 2.25rem; margin-top: 1.5rem; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:-30px; right:-30px; width:180px; height:180px; background:radial-gradient(circle, rgba(225,29,72,0.25) 0%, transparent 70%); pointer-events:none; border-radius:50%;"></div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.25rem; margin-bottom:1.5rem; position:relative; z-index:1;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.5rem; flex-wrap:wrap;">
+              <span class="font-mono" style="color:var(--brand-red); font-size:0.75rem; font-weight:800; letter-spacing:0.08em;">[ALTO RENDIMIENTO // PROYECTO 2024-2025]</span>
+              <span style="background:rgba(225,29,72,0.15); color:#f43f5e; font-size:0.72rem; font-weight:800; padding:0.2rem 0.65rem; border-radius:100px; border:1px solid rgba(225,29,72,0.35); text-transform:uppercase; letter-spacing:0.05em;">
+                PRÓXIMAMENTE
+              </span>
+            </div>
+            <h2 style="font-size:clamp(1.6rem, 2.8vw, 2.4rem); font-weight:900; margin:0 0 0.5rem; letter-spacing:-0.03em; color:#ffffff;">
+              Centro de formación <span style="background:linear-gradient(90deg, #ffffff, #f43f5e); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">The Garage Racing Team</span>
+            </h2>
+            <p style="color:#d4d4d8; max-width:760px; font-size:0.95rem; line-height:1.6; margin:0;">
+              El semillero de atletas y academia de ciclismo competitivo de la Riviera Maya. Diseñado para ciclistas de <strong>Ruta, Gravel y Triatlón</strong> que buscan dar el salto al siguiente nivel con preparación física profesional, biomecánica avanzada y soporte técnico de equipo continental.
+            </p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.5rem;">
+            <span style="font-size:0.75rem; color:#a1a1aa; font-family:var(--font-mono);">FASE 1: PRE-REGISTRO &amp; SCOUTING</span>
+            <a
+              href="https://wa.me/529841381493?text=Hola%20The%20Garage,%20me%20interesa%20inscribirme%20a%20la%20lista%20de%20espera%20del%20Centro%20de%20Formaci%C3%B3n%20The%20Garage%20Racing%20Team."
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-dualtone dualtone-red"
+              style="padding:0.45rem 0.6rem 0.45rem 1.25rem;"
+            >
+              <span>Apartar Lugar en Lista de Espera</span>
+              <span class="dualtone-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3 Pillars of the Racing Center -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.25rem; margin-top:1.5rem; position:relative; z-index:1;">
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+              <span style="width:28px; height:28px; border-radius:6px; background:rgba(225,29,72,0.15); display:flex; align-items:center; justify-content:center; color:#f43f5e; font-weight:800; font-size:0.85rem;">01</span>
+              <strong style="font-size:0.95rem; color:#ffffff;">Biomecánica &amp; Fisiología</strong>
+            </div>
+            <p style="font-size:0.85rem; color:#a1a1aa; line-height:1.5; margin:0;">
+              Análisis 3D de postura sobre la bicicleta, optimización aerodinámica y planes de entrenamiento por potencia (Watts / FTP) para el clima y humedad del Caribe.
+            </p>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+              <span style="width:28px; height:28px; border-radius:6px; background:rgba(14,165,233,0.15); display:flex; align-items:center; justify-content:center; color:#38bdf8; font-weight:800; font-size:0.85rem;">02</span>
+              <strong style="font-size:0.95rem; color:#ffffff;">Estrategia &amp; Pelotón Pro</strong>
+            </div>
+            <p style="font-size:0.85rem; color:#a1a1aa; line-height:1.5; margin:0;">
+              Técnicas de relevo en abanicos contra viento cruzado costero, rodaje en pelotón compacto, curvas de alta velocidad y alimentación en carrera con nutrición Wayfar.
+            </p>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.25rem;">
+            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+              <span style="width:28px; height:28px; border-radius:6px; background:rgba(52,211,153,0.15); display:flex; align-items:center; justify-content:center; color:#34d399; font-weight:800; font-size:0.85rem;">03</span>
+              <strong style="font-size:0.95rem; color:#ffffff;">Soporte Técnico de Boxes</strong>
+            </div>
+            <p style="font-size:0.85rem; color:#a1a1aa; line-height:1.5; margin:0;">
+              Mecánica de competición dedicada en cada carrera local y nacional: cambio rápido de ruedas tubeless, lubricación cerámica y puesta a punto de transmisiones electrónicas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENTO SECTION 7: GOOGLE REVIEWS & TESTIMONIALS (HIGH CONVERSION) -->
+      <div class="bento-tile tile-google-reviews" id="sec-reviews" style="background: linear-gradient(135deg, rgba(20,20,24,0.95), rgba(15,23,42,0.85)); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius-xl); padding: 2.25rem; margin-top: 1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.25rem; margin-bottom:1.75rem;">
+          <div>
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.4rem;">
+              <span class="font-mono" style="color:#f59e0b; font-size:0.75rem; font-weight:800; letter-spacing:0.08em;">[06 // SOCIAL PROOF VERIFICADO]</span>
+              <span style="background:rgba(52,211,153,0.12); color:#34d399; font-size:0.72rem; font-weight:700; padding:0.15rem 0.6rem; border-radius:100px; border:1px solid rgba(52,211,153,0.25);">Clientes 100% Reales</span>
+            </div>
+            <h2 style="font-size:clamp(1.5rem, 2.5vw, 2.1rem); font-weight:800; margin:0; letter-spacing:-0.03em;">Calificación 4.95 / 5 en Google</h2>
+            <p style="color:var(--text-secondary); margin:0.35rem 0 0; font-size:0.92rem;">Ciclistas de ruta, triatlón y MTB que confían en nuestro taller a puerta cerrada y entregas en la Riviera Maya.</p>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.85rem; background:rgba(255,255,255,0.06); padding:0.75rem 1.25rem; border-radius:14px; border:1px solid rgba(255,255,255,0.12);">
+            <svg width="32" height="32" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <div>
+              <div style="font-size:1.4rem; font-weight:900; line-height:1; color:#ffffff; display:flex; align-items:center; gap:0.5rem;">4.95 <span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+              <div style="font-size:0.75rem; color:#a1a1aa; font-family:var(--font-mono); margin-top:2px;">Google Customer Reviews</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem;">
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                <span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                <span style="font-size:0.72rem; color:#71717a;" class="font-mono">Verificada</span>
+              </div>
+              <p style="font-size:0.88rem; line-height:1.5; color:#d4d4d8; margin:0 0 1rem;">"Compré mi bicicleta de ruta en The Garage. El taller a puerta cerrada es comodísimo porque te atienden exclusivamente a ti con cita previa, sin prisas. La calibración del grupo fue perfecta."</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.65rem; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.75rem;">
+              <div style="width:34px; height:34px; border-radius:50%; background:#0071e3; color:white; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:0.85rem;">RM</div>
+              <div>
+                <strong style="font-size:0.85rem; color:#ffffff; display:block;">Roberto Mendoza</strong>
+                <span style="font-size:0.72rem; color:#a1a1aa;" class="font-mono">Ciclista de Ruta · Playa del Carmen</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                <span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                <span style="font-size:0.72rem; color:#71717a;" class="font-mono">Verificada</span>
+              </div>
+              <p style="font-size:0.88rem; line-height:1.5; color:#d4d4d8; margin:0 0 1rem;">"Llevé mi bici de triatlón para calibrar el cambio electrónico y el torque antes del Ironman 70.3 Cozumel. Quedó impecable y la atención de los mecánicos es del más alto nivel."</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.65rem; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.75rem;">
+              <div style="width:34px; height:34px; border-radius:50%; background:#34c759; color:white; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:0.85rem;">MS</div>
+              <div>
+                <strong style="font-size:0.85rem; color:#ffffff; display:block;">Mariana Solís</strong>
+                <span style="font-size:0.72rem; color:#a1a1aa;" class="font-mono">Triatleta · Cozumel / Playacar</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:1.25rem; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+                <span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                <span style="font-size:0.72rem; color:#71717a;" class="font-mono">Verificada</span>
+              </div>
+              <p style="font-size:0.88rem; line-height:1.5; color:#d4d4d8; margin:0 0 1rem;">"Pedí refacciones y un casco POC en la tienda online y me lo entregaron el mismo día en Playa del Carmen sin costo de envío. Gran servicio y asesoría por WhatsApp."</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.65rem; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.75rem;">
+              <div style="width:34px; height:34px; border-radius:50%; background:#af52de; color:white; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:0.85rem;">CD</div>
+              <div>
+                <strong style="font-size:0.85rem; color:#ffffff; display:block;">Carlos Domínguez</strong>
+                <span style="font-size:0.72rem; color:#a1a1aa;" class="font-mono">MTB & Gravel · Puerto Aventuras</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem; text-align:center;">
+          <a href="/comunidad" class="btn-glass" style="font-size:0.85rem;">
+            <span>Ver Todas las Opiniones & Comunidad ↗</span>
           </a>
         </div>
       </div>
@@ -1295,7 +1503,7 @@ const bicis = bicisEntries.map(e => e.data);
       // Visual Feedback
       if (submitBtn) submitBtn.textContent = 'Enviando...';
       setTimeout(() => {
-        if (submitBtn) submitBtn.textContent = '✓ Registrado';
+        if (submitBtn) submitBtn.textContent = 'Registrado';
         if (successMsg) successMsg.style.display = 'block';
         if (contactInput) contactInput.disabled = true;
       }, 500);

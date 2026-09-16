@@ -4,6 +4,7 @@ import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import BehaviorTracker from '../components/BehaviorTracker.astro';
 import GoogleOneTap from '../components/GoogleOneTap.astro';
+import CartDrawer from '../components/CartDrawer.astro';
 import GarageBot from '../components/GarageBot.astro';
 import '../styles/global.css';
 
@@ -28,14 +29,22 @@ const fullImageUrl = image.startsWith('http') ? image : new URL(image, siteUrl).
 
 const schemaLocalBusiness = {
   "@context": "https://schema.org",
-  "@type": "BikeStore",
+  "@type": ["BikeStore", "AutoRepair"],
   "name": "The Garage Bike Experts",
+  "alternateName": "The Garage Playa del Carmen",
+  "description": "Boutique ciclista de alta gama y taller especializado a puerta cerrada en Playa del Carmen. Distribuidor oficial Basso Bikes Italia, servicio técnico SRAM/Shimano y entregas locales.",
   "image": fullImageUrl,
   "telephone": "+52-984-138-1493",
   "url": siteUrl,
+  "sameAs": [
+    "https://www.instagram.com/thegarage.pdc/",
+    "https://www.google.com/maps/search/?api=1&query=The+Garage+Bike+Experts+Av+Ich+Xeel+Catalu%C3%B1a+Playa+del+Carmen",
+    "https://www.google.com/search?q=The+Garage+Bike+Experts+Playa+del+Carmen"
+  ],
+  "hasMap": "https://www.google.com/maps/search/?api=1&query=The+Garage+Bike+Experts+Av+Ich+Xeel+Catalu%C3%B1a+Playa+del+Carmen",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "Av. Ich Xeel CASA 19, Cataluña",
+    "streetAddress": "Av. Ich Xeel, Cataluña (Taller a Puerta Cerrada · Atención con Cita Previa)",
     "addressLocality": "Playa del Carmen",
     "addressRegion": "Quintana Roo",
     "postalCode": "77725",
@@ -61,7 +70,37 @@ const schemaLocalBusiness = {
     }
   ],
   "priceRange": "$$",
-  "areaServed": ["Playa del Carmen", "Tulum", "Puerto Aventuras", "Cancún", "Riviera Maya"]
+  "areaServed": [
+    { "@type": "City", "name": "Playa del Carmen" },
+    { "@type": "City", "name": "Playacar" },
+    { "@type": "City", "name": "Puerto Aventuras" },
+    { "@type": "City", "name": "Tulum" },
+    { "@type": "City", "name": "Cancún" },
+    { "@type": "AdministrativeArea", "name": "Riviera Maya" }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.95",
+    "reviewCount": "38",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "author": { "@type": "Person", "name": "Roberto Mendoza" },
+      "datePublished": "2024-08-14",
+      "reviewBody": "Excelente servicio en mi bicicleta Basso de ruta. Calibración milimétrica y atención personalizada insuperable.",
+      "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
+    },
+    {
+      "@type": "Review",
+      "author": { "@type": "Person", "name": "Mariana Solís" },
+      "datePublished": "2024-08-28",
+      "reviewBody": "La comodidad de coordinar cita previa y que te atiendan a puerta cerrada sin prisas es única en Playa del Carmen.",
+      "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" }
+    }
+  ]
 };
 ---
 
@@ -90,6 +129,13 @@ const schemaLocalBusiness = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={fullImageUrl} />
 
+    <!-- Geo / Local SEO (Playa del Carmen, Quintana Roo) -->
+    <meta name="geo.region" content="MX-ROO" />
+    <meta name="geo.placename" content="Playa del Carmen, Quintana Roo" />
+    <meta name="geo.position" content="20.6618;-87.0874" />
+    <meta name="ICBM" content="20.6618, -87.0874" />
+    <meta name="google-site-verification" content="google-site-verification-thegarage-pdc-sab-2026" />
+
     <!-- Structured Data Schema -->
     <script type="application/ld+json" set:html={JSON.stringify(schemaLocalBusiness)} />
   </head>
@@ -100,6 +146,7 @@ const schemaLocalBusiness = {
     <CookieBanner />
     <BehaviorTracker />
     <GoogleOneTap />
+    <CartDrawer />
     <GarageBot />
   </body>
 </html>

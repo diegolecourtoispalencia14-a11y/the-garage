@@ -1,74 +1,227 @@
 ---
 import Base from '../layouts/Base.astro';
-import BiciCard from '../components/BiciCard.astro';
-import Filtros from '../components/Filtros.astro';
 import { getCollection } from 'astro:content';
+import { MASTER_PRODUCTS } from '../data/allProducts';
+const masterCatalogJson = JSON.stringify(MASTER_PRODUCTS);
+import { Icon } from 'astro-icon/components';
 
+// Build-time baseline for static collection bikes
 const bicisEntries = await getCollection('bicis');
-const orderMap: Record<string, number> = {
-  Disponible: 1,
-  Apartada: 2,
-  Vendida: 3,
-};
-
-const bicis = bicisEntries
-  .map(e => e.data)
-  .sort((a, b) => {
-    const orderA = orderMap[a.disponibilidad] || 99;
-    const orderB = orderMap[b.disponibilidad] || 99;
-    if (orderA !== orderB) return orderA - orderB;
-    return (b.destacada ? 1 : 0) - (a.destacada ? 1 : 0);
-  });
+const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
 ---
 
 <Base
-  title="Catálogo & Inventario Oficial | The Garage Playa del Carmen"
-  description="Inventario de bicicletas nuevas, seminuevas y custom builds disponibles en tienda física en Playa del Carmen. Distribuidores Basso, Merida, Giant, Specialized y Trek."
+  title="Tienda & Catálogo Oficial | The Garage Bike Experts"
+  description="Catálogo oficial con inventario físico en tienda en Playa del Carmen: bicicletas de montaña, ruta y gravel, componentes Shimano, cascos POC, nutrición y accesorios. Envío gratis en compras desde $500 MXN."
 >
-  <div class="inventory-page-wrap">
+  <div class="store-page-wrap">
     <div class="container-fluid">
       
-      <!-- Header de Catálogo -->
-      <section class="inventory-header-section">
-        <div class="inventory-header-content">
-          <div class="inventory-badges font-mono">
-            <span class="inv-tag-red">[INVENTARIO FÍSICO EN TIENDA]</span>
-            <span class="inv-tag-loc">CATALUÑA CASA 19, PDC</span>
+      <!-- Top Announcement Banner -->
+      <div class="store-banner">
+        <span style="display:inline-flex; align-items:center; gap:0.4rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <strong>Envío Gratis</strong> en compras desde $500 MXN en Playa del Carmen
+        </span>
+        <span class="dot-sep">•</span>
+        <span style="display:inline-flex; align-items:center; gap:0.4rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/></svg>
+          Pick-up en Boutique Cataluña con cita previa (PDC)
+        </span>
+        <span class="dot-sep">•</span>
+        <span style="display:inline-flex; align-items:center; gap:0.4rem;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <strong>4.95 / 5.0 en Google Reviews</strong> (38 opiniones)
+        </span>
+      </div>
+
+      <!-- Hero Header -->
+      <header class="store-hero">
+        <div class="store-hero-content">
+          <div class="store-badges">
+            <span class="tag-red font-mono">[TIENDA & CATÁLOGO OFICIAL]</span>
+            <span class="tag-loc font-mono">PLAYA DEL CARMEN, Q. ROO</span>
           </div>
-          <h1 class="title-xl inventory-main-title">
-            Bicicletas Listas para Rodar.
-          </h1>
-          <p class="subtitle inventory-subtitle">
-            Unidades inspeccionadas con torquímetro mecánico en taller, calibración de transmisión certificada y <strong>1er servicio de reajuste gratis a los 30 días</strong>.
+          <h1 class="store-title">Equipamiento & Bicicletas Listas para Rodar.</h1>
+          <p class="store-sub">
+            Explora nuestro catálogo universal de bicicletas, refacciones, componentes de alta gama y accesorios. Compara modelos lado a lado y compra con envío directo a tu puerta.
           </p>
         </div>
 
-        <a
-          href="https://wa.me/529841381493?text=Hola,%20busco%20una%20bicicleta%20espec%C3%ADfica%20del%20cat%C3%A1logo.%20%C2%BFMe%20pueden%20asesorar?"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-whatsapp"
-        >
-          <span>Asesoría Directa por WhatsApp</span>
-        </a>
-      </section>
-
-      <!-- Toolbar de Filtros -->
-      <section class="inventory-toolbar-section">
-        <Filtros />
-      </section>
-
-      <!-- Grilla de Bicicletas -->
-      <section class="inventory-grid-section">
-        <div class="bici-grid">
-          {bicis.map((bici, index) => (
-            <BiciCard bici={bici} priority={index === 0} />
-          ))}
+        <div class="store-hero-actions">
+          <a
+            href="https://wa.me/529841381493?text=Hola,%20busco%20asesor%C3%ADa%20para%20elegir%20un%20producto%20o%20bicicleta%20del%20cat%C3%A1logo."
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-wa-hero"
+          >
+            <Icon name="mdi:whatsapp" width="20" height="20" />
+            <span>Asesoría Directa por WhatsApp</span>
+          </a>
         </div>
-      </section>
+      </header>
 
-      <!-- Custom Build Basso Callout -->
-      <section class="basso-custom-banner">
+      <!-- Main E-commerce Layout (Nike / Adidas Style: Sticky Sidebar + Product Grid) -->
+      <div class="store-layout">
+
+        <!-- ══════════ LEFT COLUMN: FILTROS TIPO NIKE / ADIDAS ══════════ -->
+        <aside class="store-filters-sidebar">
+          <div class="filters-header">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <Icon name="mdi:filter-variant" width="20" height="20" color="var(--accent-color)" />
+              <h3 style="font-size:1.1rem; font-weight:700; margin:0; letter-spacing:-0.02em;">Filtros</h3>
+            </div>
+            <button id="btn-clear-filters" class="btn-clear">Limpiar Todo</button>
+          </div>
+
+          <!-- Filter Group: Search -->
+          <div class="filter-group">
+            <div class="filter-search-box">
+              <Icon name="mdi:magnify" width="18" height="18" style="color:var(--text-muted);" />
+              <input type="text" id="store-search-input" placeholder="Buscar producto, marca o SKU..." />
+            </div>
+          </div>
+
+          <!-- Filter Group: Categorías -->
+          <div class="filter-group">
+            <h4 class="filter-title">Categorías</h4>
+            <div class="filter-options-list" id="cat-options-container">
+              <!-- Rendered by JS with live counts -->
+            </div>
+          </div>
+
+          <!-- Filter Group: Rango de Precio -->
+          <div class="filter-group">
+            <h4 class="filter-title">Rango de Precio</h4>
+            <div class="filter-options-list">
+              <label class="filter-radio-label">
+                <input type="radio" name="price-range" value="all" checked />
+                <span>Todos los precios</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price-range" value="under500" />
+                <span>Menos de $500 MXN</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price-range" value="500to2000" />
+                <span>$500 a $2,000 MXN</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price-range" value="2000to10000" />
+                <span>$2,000 a $10,000 MXN</span>
+              </label>
+              <label class="filter-radio-label">
+                <input type="radio" name="price-range" value="over10000" />
+                <span>Más de $10,000 MXN</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Filter Group: Marcas Populares -->
+          <div class="filter-group">
+            <h4 class="filter-title">Marcas</h4>
+            <div class="brand-chips-grid" id="brand-chips-container">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Filter Group: Disponibilidad -->
+          <div class="filter-group" style="border-bottom:none;">
+            <h4 class="filter-title">Disponibilidad</h4>
+            <label class="filter-checkbox-label">
+              <input type="checkbox" id="chk-only-instock" checked />
+              <span>Solo unidades en stock inmediato</span>
+            </label>
+            <label class="filter-checkbox-label" style="margin-top:0.4rem;">
+              <input type="checkbox" id="chk-free-shipping" />
+              <span>Envío Gratis en Playa del Carmen (≥$500)</span>
+            </label>
+          </div>
+
+        </aside>
+
+        <!-- ══════════ RIGHT COLUMN: TOOLBAR & PRODUCT GRID ══════════ -->
+        <main class="store-products-main">
+
+          <!-- Top Toolbar: Count + Sort + Compare Toggle -->
+          <div class="store-top-toolbar">
+            <div class="store-count-label">
+              Mostrando <strong id="store-count-num">0</strong> productos
+            </div>
+
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <!-- Sort Selector -->
+              <div class="sort-selector-wrap">
+                <label for="store-sort-select">Ordenar por:</label>
+                <select id="store-sort-select" class="sort-select">
+                  <option value="featured">Destacados & Recomendados</option>
+                  <option value="price-asc">Precio: Menor a Mayor</option>
+                  <option value="price-desc">Precio: Mayor a Menor</option>
+                  <option value="name-asc">Nombre: A - Z</option>
+                </select>
+              </div>
+
+              <!-- Quick Compare Toggle Button -->
+              <button id="btn-toggle-compare-mode" class="btn-compare-mode" title="Activa casillas para comparar especificaciones">
+                <Icon name="mdi:scale-balance" width="18" height="18" />
+                <span id="compare-mode-btn-text">Comparar Productos</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Filter Tags Row -->
+          <div id="active-filter-tags" class="active-tags-row" style="display:none;"></div>
+
+          <!-- Product Grid (Nike / Adidas Style Cards) -->
+          <div class="nike-product-grid" id="store-product-grid">
+            <!-- Rendered by JS -->
+          </div>
+
+        </main>
+      </div>
+
+      <!-- ══════════ BOTTOM FLOATING COMPARE BAR ══════════ -->
+      <div id="floating-compare-bar" class="floating-compare-bar" style="display:none;">
+        <div class="compare-bar-content">
+          <div class="compare-bar-left">
+            <span class="compare-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>
+            <div>
+              <strong id="compare-bar-count">0 productos seleccionados</strong>
+              <div style="font-size:0.78rem; color:var(--text-muted);">Compara componentes, peso, geometría y precio</div>
+            </div>
+            <div id="compare-mini-thumbs" class="compare-mini-thumbs"></div>
+          </div>
+          <div class="compare-bar-actions">
+            <button id="btn-clear-compare" class="btn-clear-compare">Limpiar</button>
+            <button id="btn-open-compare-modal" class="btn-primary-compare">
+              Ver Comparación Detallada →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ MODAL DE COMPARACIÓN LADO A LADO ══════════ -->
+      <div id="compare-modal" class="compare-modal-overlay" style="display:none;">
+        <div class="compare-modal-box">
+          <div class="compare-modal-header">
+            <div>
+              <h2 style="font-size:1.4rem; font-weight:700; margin:0; display:flex; align-items:center; gap:0.5rem;">
+                <Icon name="mdi:scale-balance" width="24" height="24" color="var(--accent-color)" />
+                Comparativa de Productos Lado a Lado
+              </h2>
+              <p style="color:var(--text-muted); font-size:0.85rem; margin:0.25rem 0 0;">Analiza especificaciones técnicas, precio y disponibilidad para tomar la mejor decisión.</p>
+            </div>
+            <button id="btn-close-compare-modal" class="btn-close-modal">&times;</button>
+          </div>
+
+          <div class="compare-modal-body" id="compare-modal-body">
+            <!-- Dynamic Side-by-Side Table rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Build Basso Banner (Footer) -->
+      <section class="basso-custom-banner" style="margin-top:4rem;">
         <div class="basso-custom-content">
           <span class="font-mono text-xs text-rose-400 font-bold uppercase tracking-wider">
             [BASSO BIKES ITALIA // CUSTOM BUILD]
@@ -77,7 +230,7 @@ const bicis = bicisEntries
             ¿Buscas un cuadro o ensamble específico?
           </h2>
           <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; max-width: 680px;">
-            Como distribuidores oficiales de Basso Bikes, podemos cotizar e importar tu cuadro de carbono italiano Torayca con el grupo electrónico SRAM AXS/Shimano Di2 y ruedas a tu medida.
+            Como distribuidores oficiales de Basso Bikes, cotizamos e importamos tu cuadro de carbono italiano Torayca con grupo SRAM AXS / Shimano Di2 y ruedas a tu medida.
           </p>
         </div>
 
@@ -95,68 +248,1391 @@ const bicis = bicisEntries
   </div>
 </Base>
 
-<style>
-  .inventory-page-wrap {
-    padding: var(--space-6) 0 var(--space-9) 0;
+<style is:global>
+  /* ── Store Layout & Base ── */
+  .store-page-wrap {
+    padding: 1.5rem 0 5rem 0;
+    color: #f5f5f7;
   }
 
-  .inventory-header-section {
+  .store-banner {
+    background: linear-gradient(90deg, #18181b, #27272a);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.82rem;
+    color: #d4d4d8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .dot-sep { opacity: 0.4; }
+
+  .store-hero {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     flex-wrap: wrap;
-    gap: var(--space-4);
-    padding-bottom: var(--space-6);
-    border-bottom: 1px solid var(--border-hairline);
-    margin-bottom: var(--space-6);
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 2rem;
+  }
+  .store-hero-content { max-width: 780px; }
+  .store-badges { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; font-size: 0.75rem; }
+  .tag-red { color: #ff3b30; font-weight: 700; letter-spacing: 0.06em; }
+  .tag-loc { color: #86868b; }
+  .store-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .store-sub {
+    font-size: 1rem;
+    color: #a1a1aa;
+    line-height: 1.6;
+  }
+  .btn-wa-hero {
+    background: #25d366;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .btn-wa-hero:hover { background: #20ba5a; transform: translateY(-2px); }
+
+  /* ── 2-Column Store Layout ── */
+  .store-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+  @media (max-width: 980px) {
+    .store-layout { grid-template-columns: 1fr; }
   }
 
-  .inventory-header-content {
-    max-width: 780px;
+  /* ── Sticky Sidebar Filters (Nike / Adidas Style) ── */
+  .store-filters-sidebar {
+    position: sticky;
+    top: 90px;
+    background: #141416;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
   }
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .btn-clear {
+    background: none;
+    border: none;
+    color: #a1a1aa;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .btn-clear:hover { color: #ffffff; }
 
-  .inventory-badges {
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .filter-title {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: #d4d4d8;
+    margin: 0;
+  }
+  .filter-search-box {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-3);
+    gap: 0.5rem;
+    background: #1c1c1f;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+  }
+  .filter-search-box input {
+    background: transparent;
+    border: none;
+    color: #f5f5f7;
+    font-size: 0.85rem;
+    outline: none;
+    width: 100%;
+  }
+
+  .filter-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .filter-cat-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: #a1a1aa;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .filter-cat-btn:hover { background: rgba(255,255,255,0.05); color: #ffffff; }
+  .filter-cat-btn.active { background: rgba(0,113,227,0.15); color: #2997ff; font-weight: 700; }
+  .filter-badge-num {
     font-size: 0.72rem;
+    background: #27272a;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    color: #d4d4d8;
   }
 
-  .inv-tag-red {
-    color: #FB7185;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+  .filter-radio-label, .filter-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.84rem;
+    color: #a1a1aa;
+    cursor: pointer;
+    user-select: none;
   }
-  .inv-tag-loc {
-    color: var(--text-muted);
-  }
-
-  .inventory-main-title {
-    margin-bottom: var(--space-2);
-  }
-
-  .inventory-subtitle {
-    max-width: 680px;
+  .filter-radio-label:hover, .filter-checkbox-label:hover { color: #f5f5f7; }
+  .filter-radio-label input, .filter-checkbox-label input {
+    accent-color: #0071e3;
+    width: 16px; height: 16px;
   }
 
-  .inventory-toolbar-section {
-    margin-bottom: var(--space-6);
+  .brand-chips-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .brand-chip {
+    background: #1c1c1f;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 100px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.78rem;
+    color: #a1a1aa;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .brand-chip:hover { border-color: rgba(255,255,255,0.25); color: #ffffff; }
+  .brand-chip.active { background: #0071e3; border-color: #0071e3; color: #ffffff; font-weight: 700; }
+
+  /* ── Right Main Area: Toolbar & Product Grid ── */
+  .store-products-main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .inventory-grid-section {
-    margin-bottom: var(--space-8);
-  }
-
-  .basso-custom-banner {
-    background: linear-gradient(135deg, #18181C 0%, #101013 100%);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-xl);
-    padding: clamp(2rem, 4vw, 3.5rem);
+  .store-top-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: var(--space-5);
+    gap: 1rem;
+    background: #141416;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 0.85rem 1.25rem;
+  }
+  .store-count-label { font-size: 0.9rem; color: #a1a1aa; }
+  .store-count-label strong { color: #ffffff; }
+
+  .sort-selector-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #a1a1aa;
+  }
+  .sort-select {
+    background: #1c1c1f;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .btn-compare-mode {
+    background: rgba(0,113,227,0.1);
+    border: 1px solid rgba(0,113,227,0.25);
+    color: #2997ff;
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s;
+  }
+  .btn-compare-mode:hover { background: rgba(0,113,227,0.2); }
+
+  /* ── Nike / Adidas Product Card Grid ── */
+  .nike-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .nike-card {
+    background: #141416;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .nike-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.25);
+    box-shadow: 0 16px 36px rgba(0,0,0,0.5);
+  }
+
+  /* Card Image Area */
+  .nike-card-img-wrap {
+    height: 240px;
+    width: 100%;
+    background: #1c1c1f;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nike-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+  .nike-card:hover .nike-card-img-wrap img {
+    transform: scale(1.05);
+  }
+
+  /* Placeholder for items without image */
+  .nike-no-img-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,113,227,0.05));
+  }
+  .nike-no-img-icon { font-size: 3.5rem; }
+  .nike-no-img-text { font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: #71717a; letter-spacing: 0.05em; }
+
+  /* Floating Badges */
+  .nike-badge-top-left {
+    position: absolute; top: 0.75rem; left: 0.75rem;
+    display: flex; flex-direction: column; gap: 0.3rem; z-index: 2;
+  }
+  .badge-pill-shipping {
+    background: rgba(52,199,89,0.9);
+    color: #000000;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+  }
+  .badge-pill-stock {
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* Compare Checkbox Button (Top Right Glassmorphic Pill) */
+  .btn-card-compare {
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    background: rgba(20,20,24,0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 100px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 3;
+  }
+  .btn-card-compare:hover {
+    background: rgba(0,113,227,0.85);
+    border-color: #38bdf8;
+    transform: translateY(-1px);
+  }
+  .btn-card-compare.active {
+    background: #0071e3;
+    border-color: #38bdf8;
+    color: white;
+    box-shadow: 0 0 12px rgba(0,113,227,0.5);
+  }
+
+  /* Card Body */
+  .nike-card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .nike-brand-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ff9500;
+    margin-bottom: 0.35rem;
+  }
+  .nike-prod-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+  .nike-prod-sub {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  /* Price Row */
+  .nike-price-row {
+    margin-top: auto;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+  .nike-price-main {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+  .nike-fee-note {
+    font-size: 0.7rem;
+    color: #71717a;
+  }
+
+  /* Card Actions (Glassmorphic & Dual-Tone Collection) */
+  .nike-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .btn-detail-glass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #f4f4f5;
+    font-weight: 600;
+    font-size: 0.82rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-detail-glass:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  .btn-dualtone-cart {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.35rem 0.4rem 0.35rem 0.95rem;
+    border-radius: 100px;
+    background: #ffffff;
+    color: #09090b;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-dualtone-cart:hover {
+    background: #f4f4f5;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.18);
+  }
+  .dualtone-cart-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #0071e3;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 113, 227, 0.4);
+  }
+
+  .btn-wa-round {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #22c55e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(34, 197, 94, 0.35);
+    transition: all 0.2s;
+  }
+  .btn-wa-round:hover {
+    background: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(34, 197, 94, 0.5);
+  }
+
+  /* Sidebar Category Button */
+  .filter-cat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.55rem 0.85rem;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #a1a1aa;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+  }
+  .filter-cat-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
+  }
+  .filter-cat-btn.active {
+    background: rgba(0, 113, 227, 0.12);
+    border-color: rgba(0, 113, 227, 0.3);
+    color: #38bdf8;
+  }
+  .cat-btn-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .cat-icon-badge {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d4d4d8;
+  }
+  .filter-cat-btn.active .cat-icon-badge {
+    background: rgba(0, 113, 227, 0.25);
+    color: #38bdf8;
+  }
+
+  .tech-blueprint-icon {
+    opacity: 0.45;
+    color: #38bdf8;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Floating Compare Bar ── */
+  .floating-compare-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(850px, 94vw);
+    background: rgba(20,20,22,0.95);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    z-index: 850;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translate(-50%, 50px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+  .compare-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .compare-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .compare-icon { font-size: 1.5rem; }
+  .compare-mini-thumbs {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .comp-thumb {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid #0071e3;
+    object-fit: cover;
+    background: #27272a;
+  }
+  .comp-thumb-empty {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: #71717a;
+  }
+  .compare-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .btn-clear-compare {
+    background: transparent;
+    border: none;
+    color: #a1a1aa;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .btn-clear-compare:hover { color: #ffffff; }
+  .btn-primary-compare {
+    background: #0071e3;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 0.55rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-primary-compare:hover { background: #0077ed; }
+
+  /* ── Fullscreen Compare Modal ── */
+  .compare-modal-overlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .compare-modal-box {
+    background: #141416;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 1100px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.8);
+  }
+  .compare-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .btn-close-modal {
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: #ffffff;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .compare-modal-body {
+    padding: 1.5rem 2rem;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* Comparison Grid / Table */
+  .compare-grid-table {
+    display: grid;
+    gap: 1.25rem;
+    min-width: 600px;
+  }
+  .comp-col-card {
+    background: #1c1c1f;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .comp-col-img {
+    height: 160px;
+    background: #121214;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .comp-col-img img { width: 100%; height: 100%; object-fit: cover; }
+  .comp-row-spec {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .comp-spec-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #71717a;
+    font-weight: 700;
+  }
+  .comp-spec-val {
+    font-size: 0.88rem;
+    color: #e4e4e7;
   }
 </style>
+
+<script is:inline define:vars={{ staticBikes, masterCatalogJson }}>
+(function() {
+  const INV_KEY = 'bicisaas_inventory';
+  const WEB_KEY = 'bicisaas_web_bikes';
+
+  /* ── Universal Product Aliasing & Canonical Identifiers ── */
+  const PRODUCT_ALIASES = {
+    'mer-scu300': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
+    'merida-scultura-tiagra': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
+    'merida-scultura-300-tiagra': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
+    'trk-mar5': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
+    'trk-m5-24': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
+    'trek-marlin-5-2024': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
+    '2': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
+    'bas-palt2': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
+    'bas-plt2-c': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
+    'basso-palta-ii-custom': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
+    '1': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
+    'spz-alz-sp': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
+    'spz-alz-e5': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
+    'specialized-allez-e5': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
+    '3': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
+    'gnt-tal2': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
+    'gnt-tl2-29': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
+    'giant-talon-2-2024': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
+    '4': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4']
+  };
+
+  function getAliases(id) {
+    if (!id) return [];
+    const str = String(id);
+    const lower = str.toLowerCase();
+    const set = new Set([str, lower, str.toUpperCase()]);
+    const list = PRODUCT_ALIASES[lower] || PRODUCT_ALIASES[str] || [];
+    list.forEach(a => {
+      set.add(a);
+      set.add(a.toLowerCase());
+      set.add(a.toUpperCase());
+    });
+    return Array.from(set);
+  }
+
+  function getCanonicalKey(item) {
+    const raw = String(item.sku || item.id || '').toLowerCase();
+    const name = String(item.name || '').toLowerCase();
+    if (raw.includes('mer-scu') || raw.includes('scultura') || name.includes('scultura')) return 'MER-SCU300';
+    if (raw.includes('trk-mar') || raw.includes('marlin') || name.includes('marlin')) return 'TRK-MAR5';
+    if (raw.includes('bas-pal') || raw.includes('palta') || name.includes('palta')) return 'BAS-PALT2';
+    if (raw.includes('spz-alz') || raw.includes('allez') || name.includes('allez')) return 'SPZ-ALZ-SP';
+    if (raw.includes('gnt-tal') || raw.includes('talon') || name.includes('talon')) return 'GNT-TAL2';
+    return item.sku || item.id || name;
+  }
+
+  function findProductOverride(prod, overrides) {
+    if (!overrides || typeof overrides !== 'object') return {};
+
+    // 1. Direct and aliased keys check
+    const candidateKeys = [
+      ...getAliases(prod.sku),
+      ...getAliases(prod.id),
+      getCanonicalKey(prod),
+      String(prod.id || ''),
+      String(prod.sku || '')
+    ];
+
+    for (const key of candidateKeys) {
+      if (key && overrides[key] && typeof overrides[key] === 'object') {
+        return overrides[key];
+      }
+    }
+
+    // 2. Fuzzy name matching in overrides keys and values
+    const prodName = String(prod.name || '').toLowerCase().trim();
+    for (const [k, v] of Object.entries(overrides)) {
+      if (!v || typeof v !== 'object') continue;
+      const kLower = k.toLowerCase();
+      if (v.name && String(v.name).toLowerCase().trim() === prodName) return v;
+      if (prodName.includes('scultura') && (kLower.includes('scultura') || kLower.includes('mer-scu') || kLower.includes('merida'))) return v;
+      if (prodName.includes('marlin') && (kLower.includes('marlin') || kLower.includes('trk-m') || kLower.includes('trek'))) return v;
+      if (prodName.includes('palta') && (kLower.includes('palta') || kLower.includes('bas-p') || kLower.includes('basso'))) return v;
+      if (prodName.includes('allez') && (kLower.includes('allez') || kLower.includes('spz-a') || kLower.includes('specialized'))) return v;
+      if (prodName.includes('talon') && (kLower.includes('talon') || kLower.includes('gnt-t') || kLower.includes('giant'))) return v;
+    }
+
+    return {};
+  }
+
+  function fmt(n) { return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }); }
+
+  /* ── Load Unified Catalog (combining localStorage + defaults) ── */
+  const masterCatalog = (function() {
+    try { return JSON.parse(masterCatalogJson || '[]'); }
+    catch(e) { return []; }
+  })();
+
+  const masterMap = {};
+  masterCatalog.forEach(p => {
+    if (p.sku) masterMap[p.sku] = p;
+    if (p.id) masterMap[p.id] = p;
+    if (p.slug) masterMap[p.slug] = p;
+    const can = getCanonicalKey(p);
+    masterMap[can] = p;
+  });
+
+  function getFullStoreProducts() {
+    let localInv = [];
+    try {
+      localInv = JSON.parse(localStorage.getItem(INV_KEY) || '[]');
+    } catch(e) { localInv = []; }
+
+    let overrides = {};
+    try {
+      overrides = JSON.parse(localStorage.getItem(WEB_KEY) || '{}');
+    } catch(e) { overrides = {}; }
+
+    // If local inventory is empty, seed it with the master 40 products
+    if (!localInv || !localInv.length) {
+      localInv = [...masterCatalog];
+      try {
+        localStorage.setItem(INV_KEY, JSON.stringify(localInv));
+      } catch(e) {}
+    } else {
+      // Ensure all master catalog items exist in local inventory
+      masterCatalog.forEach(mp => {
+        const mpKey = getCanonicalKey(mp);
+        const exists = localInv.find(item => getCanonicalKey(item) === mpKey || (item.name && item.name.toLowerCase() === mp.name.toLowerCase()));
+        if (!exists) localInv.push(mp);
+      });
+    }
+
+    // Exclude rental fleet items (rental fleet is managed exclusively in /panel/rentas and displayed on /renta)
+    const retailOnly = localInv.filter(p => {
+      const id = String(p.id || '');
+      const sku = String(p.sku || '');
+      const cat = String(p.cat || '');
+      const name = String(p.name || '').toLowerCase();
+      if (id.startsWith('RENT-') || sku.startsWith('RENT-')) return false;
+      if (cat === 'Renta' || cat === 'Flota Rentas' || cat === 'Rentas') return false;
+      if (name.includes('renta de') || name.includes('flota renta')) return false;
+      return true;
+    });
+
+    // Deduplicate items by canonical key
+    const seenMap = new Map();
+    const uniqueInv = [];
+    for (const item of retailOnly) {
+      const key = getCanonicalKey(item);
+      if (!seenMap.has(key)) {
+        seenMap.set(key, true);
+        uniqueInv.push(item);
+      }
+    }
+
+    // Map and apply overrides from /panel/sitio-web
+    return uniqueInv.map(prod => {
+      const canonicalSku = getCanonicalKey(prod);
+      const sku = prod.sku || canonicalSku || prod.id;
+      const ov = findProductOverride(prod, overrides);
+      const masterRef = masterMap[sku] || masterMap[prod.id] || masterMap[canonicalSku] || {};
+
+      const basePrice = ov.price !== undefined ? Number(ov.price) : Number(prod.price || masterRef.price || 0);
+      const webPrice = Math.round(basePrice * 1.035);
+      const stock = ov.stock !== undefined ? Number(ov.stock) : Number(prod.stock !== undefined ? prod.stock : (masterRef.stock !== undefined ? masterRef.stock : 1));
+
+      // Publication logic: in /panel/sitio-web, an item can be published or hidden
+      let isPublished = true;
+      if (ov.publishedOnWeb !== undefined) {
+        isPublished = ov.publishedOnWeb === true;
+      } else if (prod.publishedOnWeb !== undefined) {
+        isPublished = prod.publishedOnWeb === true;
+      } else if (prod.isPublished !== undefined) {
+        isPublished = prod.isPublished === true;
+      }
+
+      // Photos & specs fallback to master catalog
+      const fotos = (ov.fotos && ov.fotos.length) ? ov.fotos : (prod.fotos && prod.fotos.length ? prod.fotos : (masterRef.fotos || []));
+      const specs = ov.specs || prod.specs || masterRef.specs || `${prod.brand || 'The Garage'} de alta durabilidad y rendimiento en el Caribe.`;
+      const talla = ov.talla || prod.talla || masterRef.talla;
+
+      return {
+        ...masterRef,
+        ...prod,
+        ...ov,
+        id: sku,
+        sku: sku,
+        name: ov.name || prod.name || masterRef.name,
+        brand: ov.brand || prod.brand || masterRef.brand || 'The Garage',
+        cat: ov.cat || prod.cat || masterRef.cat || 'Accesorios Varios',
+        price: basePrice,
+        webPrice: webPrice,
+        stock: stock,
+        isPublished: isPublished,
+        fotos: fotos,
+        specs: specs,
+        talla: talla
+      };
+    }).filter(p => p.isPublished === true); // Strictly require isPublished to be true!
+  }
+
+  /* ── State ── */
+  let activeCategory = 'all';
+  let activePriceRange = 'all';
+  let activeBrand = 'all';
+  let onlyInStock = true;
+  let onlyFreeShipping = false;
+  let searchQuery = '';
+  let activeSort = 'featured';
+  let compareList = []; // array of product objects (max 4)
+
+  const SVG_CAT_ICONS = {
+    'all': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`,
+    'Bicicletas': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/><path d="M8 14h5"/></svg>`,
+    'Transmisión & Drivetrain': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    'Frenos & Rotores': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5"/><path d="M12 16v5"/><path d="M3 12h5"/><path d="M16 12h5"/></svg>`,
+    'Frenos': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5"/><path d="M12 16v5"/><path d="M3 12h5"/><path d="M16 12h5"/></svg>`,
+    'Ruedas & Llantas': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.5"/><line x1="12" y1="3" x2="12" y2="10.5"/><line x1="12" y1="13.5" x2="12" y2="21"/><line x1="3" y1="12" x2="10.5" y2="12"/><line x1="13.5" y1="12" x2="21" y2="12"/></svg>`,
+    'Manubrio & Tija': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h16M12 8v10M8 18h8"/></svg>`,
+    'Sillín & Poste': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9c0-2 2-3 6-3s6 1 6 3c0 2-3 3-6 3s-6-1-6-3zM12 12v9"/></svg>`,
+    'Cascos & Seguridad': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-9 9c0 3.2 1.67 6 4.17 7.5L8 16h8l.83 3.5c2.5-1.5 4.17-4.3 4.17-7.5a9 9 0 0 0-9-9z"/><path d="M6 10h12"/><path d="M9 13h6"/></svg>`,
+    'Ropa & Calzado': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.5a2 2 0 0 0 1.97 1.67H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10.86h1.17a2 2 0 0 0 1.97-1.67l.58-3.5a2 2 0 0 0-1.34-2.23z"/></svg>`,
+    'Nutrición & Hidratación': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
+    'Electrónica & GPS': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/><path d="M9 6h6"/><path d="M9 10h6"/></svg>`,
+    'Herramientas & Taller': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
+    'Iluminación & Bolsas': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5z"/></svg>`
+  };
+
+  /* ── Filter Execution ── */
+  function filterProducts(all) {
+    return all.filter(p => {
+      // Category
+      if (activeCategory !== 'all' && p.cat !== activeCategory) return false;
+
+      // Price Range
+      if (activePriceRange === 'under500' && p.webPrice >= 500) return false;
+      if (activePriceRange === '500to2000' && (p.webPrice < 500 || p.webPrice > 2000)) return false;
+      if (activePriceRange === '2000to10000' && (p.webPrice < 2000 || p.webPrice > 10000)) return false;
+      if (activePriceRange === 'over10000' && p.webPrice <= 10000) return false;
+
+      // Brand
+      if (activeBrand !== 'all' && p.brand !== activeBrand) return false;
+
+      // Stock
+      if (onlyInStock && p.stock <= 0) return false;
+
+      // Free shipping (threshold >= $500 MXN)
+      if (onlyFreeShipping && p.webPrice < 500) return false;
+
+      // Search
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const mName = (p.name || '').toLowerCase().includes(q);
+        const mBrand = (p.brand || '').toLowerCase().includes(q);
+        const mCat = (p.cat || '').toLowerCase().includes(q);
+        const mSku = (p.sku || '').toLowerCase().includes(q);
+        if (!mName && !mBrand && !mCat && !mSku) return false;
+      }
+
+      return true;
+    });
+  }
+
+  function sortProducts(list) {
+    const copy = [...list];
+    if (activeSort === 'price-asc') copy.sort((a,b) => a.webPrice - b.webPrice);
+    else if (activeSort === 'price-desc') copy.sort((a,b) => b.webPrice - a.webPrice);
+    else if (activeSort === 'name-asc') copy.sort((a,b) => a.name.localeCompare(b.name));
+    else {
+      // Featured: bikes first, then high stock items
+      copy.sort((a,b) => {
+        if (a.cat === 'Bicicletas' && b.cat !== 'Bicicletas') return -1;
+        if (b.cat === 'Bicicletas' && a.cat !== 'Bicicletas') return 1;
+        return b.stock - a.stock;
+      });
+    }
+    return copy;
+  }
+
+  /* ── Render Sidebar Category & Brand Options ── */
+  function renderSidebarFilters(all) {
+    // Categories count
+    const catContainer = document.getElementById('cat-options-container');
+    const categories = ['all', ...new Set(all.map(p => p.cat).filter(Boolean))];
+
+    catContainer.innerHTML = categories.map(cat => {
+      const count = cat === 'all' ? all.length : all.filter(p => p.cat === cat).length;
+      const svgIcon = SVG_CAT_ICONS[cat] || SVG_CAT_ICONS['all'];
+      const label = cat === 'all' ? 'Todas las Categorías' : cat;
+      const isActive = activeCategory === cat;
+      return `
+        <button class="filter-cat-btn ${isActive ? 'active' : ''}" onclick="selectCategory('${cat}')">
+          <span class="cat-btn-inner">
+            <span class="cat-icon-badge">${svgIcon}</span>
+            <span>${label}</span>
+          </span>
+          <span class="filter-badge-num">${count}</span>
+        </button>
+      `;
+    }).join('');
+
+    // Brands chips
+    const brandContainer = document.getElementById('brand-chips-container');
+    const brands = ['all', ...new Set(all.map(p => p.brand).filter(Boolean))];
+
+    brandContainer.innerHTML = brands.map(b => {
+      const isActive = activeBrand === b;
+      return `
+        <button class="brand-chip ${isActive ? 'active' : ''}" onclick="selectBrand('${b}')">
+          ${b === 'all' ? 'Todas' : b}
+        </button>
+      `;
+    }).join('');
+  }
+
+  /* ── Render Products Grid (Nike / Adidas Style Cards with Vector UI) ── */
+  function renderGrid() {
+    const all = getFullStoreProducts();
+    const filtered = filterProducts(all);
+    const sorted = sortProducts(filtered);
+
+    document.getElementById('store-count-num').textContent = sorted.length;
+
+    const grid = document.getElementById('store-product-grid');
+    grid.innerHTML = '';
+
+    if (!sorted.length) {
+      const isGlobalEmpty = all.length === 0;
+      grid.innerHTML = `
+        <div style="grid-column:1/-1; text-align:center; padding:4rem 1.5rem; background:#141416; border:1px dashed rgba(255,255,255,0.1); border-radius:16px;">
+          <div style="opacity:0.4; margin-bottom:0.75rem;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:0.35rem;">
+            ${isGlobalEmpty ? 'No hay productos publicados en la tienda en este momento' : 'No encontramos productos con estos filtros'}
+          </h3>
+          <p style="color:#a1a1aa; font-size:0.9rem; margin-bottom:1.25rem; max-width:480px; margin-left:auto; margin-right:auto;">
+            ${isGlobalEmpty
+              ? 'El catálogo en línea se encuentra en actualización. Si buscas bicicletas completas, componentes o servicio de taller en Playa del Carmen, contáctanos por WhatsApp.'
+              : 'Prueba limpiando los filtros o cambiando el término de búsqueda.'}
+          </p>
+          ${isGlobalEmpty
+            ? `<a href="https://wa.me/529841234567?text=Hola%20The%20Garage,%20me%20gustar%C3%ADa%20consultar%20disponibilidad%20de%20bicicletas%20y%20piezas" target="_blank" style="display:inline-flex; align-items:center; gap:0.5rem; background:#25D366; color:white; padding:0.6rem 1.5rem; border-radius:100px; font-weight:700; text-decoration:none; font-size:0.9rem;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.531 1.931.812 2.79.812 3.179 0 5.767-2.587 5.768-5.766 0-3.181-2.588-5.768-5.767-5.768zm0 10.362c-.792 0-1.637-.24-2.348-.661l-.168-.1-1.748.458.467-1.704-.11-.176c-.461-.736-.704-1.579-.704-2.446 0-2.535 2.062-4.597 4.601-4.597 2.538 0 4.602 2.063 4.602 4.601 0 2.538-2.064 4.602-4.602 4.602z"/></svg>
+                Contactar por WhatsApp
+              </a>`
+            : `<button onclick="resetAllFilters()" style="background:#0071e3; color:white; border:none; padding:0.6rem 1.5rem; border-radius:100px; font-weight:700; cursor:pointer;">Limpiar Todos los Filtros</button>`}
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = sorted.map(p => {
+      const imageSrc = (p.fotos && p.fotos[0]) ? p.fotos[0] : null;
+      const isFreeShipping = p.webPrice >= 500;
+      const isComparing = compareList.some(c => c.sku === p.sku || c.id === p.id);
+      const prodId = p.sku || p.id;
+      const catSvg = SVG_CAT_ICONS[p.cat] || SVG_CAT_ICONS['all'];
+
+      return `
+        <article class="nike-card">
+          <!-- Image Box (Clickable to Product Detail) -->
+          <a href="/bici/${prodId}" class="nike-card-img-wrap" style="text-decoration:none; display:block;">
+            ${imageSrc ? `
+              <img src="${imageSrc}" alt="${p.name}" loading="lazy" />
+            ` : `
+              <div class="nike-no-img-box">
+                <div class="tech-blueprint-icon">
+                  <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/><path d="M8 14h5"/></svg>
+                </div>
+                <span class="nike-no-img-text font-mono">[${p.cat.toUpperCase()}]</span>
+              </div>
+            `}
+
+            <!-- Badges -->
+            <div class="nike-badge-top-left">
+              ${isFreeShipping ? `<span class="badge-pill-shipping"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Envío Gratis (PDC)</span>` : ''}
+              <span class="badge-pill-stock">${p.stock > 0 ? `${p.stock} en tienda` : 'Agotado'}</span>
+            </div>
+
+            <!-- Compare Button (Glassmorphic Pill with Vector Scales Glyph) -->
+            <button
+              class="btn-card-compare ${isComparing ? 'active' : ''}"
+              onclick="event.preventDefault(); event.stopPropagation(); toggleCompare('${prodId}')"
+              title="Comparar especificaciones técnicas"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+              <span>${isComparing ? 'Comparando' : 'Comparar'}</span>
+            </button>
+          </a>
+
+          <!-- Body -->
+          <div class="nike-card-body">
+            <span class="nike-brand-tag">${p.brand || 'The Garage'} · ${p.cat}</span>
+            <h3 class="nike-prod-title">
+              <a href="/bici/${prodId}" style="color:inherit; text-decoration:none;">${p.name}</a>
+            </h3>
+            <p class="nike-prod-sub">${p.talla ? `Talla: <strong>${p.talla}</strong> · ` : ''}${p.specs ? p.specs.slice(0, 75) + '...' : ''}</p>
+
+            <div class="nike-price-row">
+              <div>
+                <div class="nike-price-main">${fmt(p.webPrice)}</div>
+                <div class="nike-fee-note">Incluye comisión web (3.5%)</div>
+              </div>
+              <div style="font-size:0.75rem; color:#34c759; font-weight:600; text-align:right;">
+                ${isFreeShipping ? 'Envío gratis en Playa' : 'Envío $80 MXN'}
+              </div>
+            </div>
+
+            <!-- Card Actions (Glassmorphic + Dual-Tone Collection) -->
+            <div class="nike-card-actions">
+              <!-- Glassmorphic Button 1: Ver Detalle -->
+              <a href="/bici/${prodId}" class="btn-detail-glass" title="Ver detalle y especificaciones">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>Detalle</span>
+              </a>
+
+              <!-- Dual-Tone Button 2: Agregar con Icono Carrito Vectorial -->
+              <button class="btn-dualtone-cart" onclick="addToCartStore('${prodId}')" title="Agregar al carrito">
+                <span class="dualtone-cart-label">Agregar</span>
+                <span class="dualtone-cart-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                </span>
+              </button>
+
+              <!-- WhatsApp Vector Pill -->
+              <a
+                href="https://wa.me/529841381493?text=${encodeURIComponent('Hola The Garage, me interesa el producto: ' + p.name + ' (' + fmt(p.webPrice) + '). ¿Tienen entrega hoy en Playa del Carmen?')}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-wa-round"
+                title="Consultar disponibilidad por WhatsApp"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.152.57 4.17 1.564 5.91l-1.564 5.708 5.867-1.538c1.701.928 3.652 1.458 5.727 1.458 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  /* ── Filter Actions ── */
+  window.selectCategory = function(cat) {
+    activeCategory = cat;
+    renderSidebarFilters(getFullStoreProducts());
+    renderGrid();
+  };
+
+  window.selectBrand = function(brand) {
+    activeBrand = brand;
+    renderSidebarFilters(getFullStoreProducts());
+    renderGrid();
+  };
+
+  window.resetAllFilters = function() {
+    activeCategory = 'all';
+    activePriceRange = 'all';
+    activeBrand = 'all';
+    onlyInStock = true;
+    onlyFreeShipping = false;
+    searchQuery = '';
+    activeSort = 'featured';
+
+    document.getElementById('store-search-input').value = '';
+    document.querySelector('input[name="price-range"][value="all"]').checked = true;
+    document.getElementById('chk-only-instock').checked = true;
+    document.getElementById('chk-free-shipping').checked = false;
+    document.getElementById('store-sort-select').value = 'featured';
+
+    renderSidebarFilters(getFullStoreProducts());
+    renderGrid();
+  };
+
+  document.getElementById('btn-clear-filters').addEventListener('click', window.resetAllFilters);
+
+  // Price range change
+  document.querySelectorAll('input[name="price-range"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      activePriceRange = this.value;
+      renderGrid();
+    });
+  });
+
+  // Checkboxes
+  document.getElementById('chk-only-instock').addEventListener('change', function() {
+    onlyInStock = this.checked;
+    renderGrid();
+  });
+  document.getElementById('chk-free-shipping').addEventListener('change', function() {
+    onlyFreeShipping = this.checked;
+    renderGrid();
+  });
+
+  // Search
+  document.getElementById('store-search-input').addEventListener('input', function() {
+    searchQuery = this.value.trim();
+    renderGrid();
+  });
+
+  // Sort
+  document.getElementById('store-sort-select').addEventListener('change', function() {
+    activeSort = this.value;
+    renderGrid();
+  });
+
+  /* ── Cart Interaction ── */
+  window.addToCartStore = function(id) {
+    const all = getFullStoreProducts();
+    const p = all.find(item => item.sku === id || item.id === id);
+    if (!p) return;
+
+    if (window.cartAdd) {
+      window.cartAdd({
+        id: p.sku || p.id,
+        name: p.name,
+        price: p.webPrice,
+        brand: p.brand || 'The Garage',
+        photo: (p.fotos && p.fotos[0]) ? p.fotos[0] : null
+      });
+    } else {
+      alert(`${p.name} agregado al carrito (${fmt(p.webPrice)}).`);
+    }
+  };
+
+  /* ── Compare Engine (Side-by-Side Comparison) ── */
+  window.toggleCompare = function(id) {
+    const all = getFullStoreProducts();
+    const p = all.find(item => item.sku === id || item.id === id);
+    if (!p) return;
+
+    const existsIdx = compareList.findIndex(c => c.sku === id || c.id === id);
+    if (existsIdx !== -1) {
+      compareList.splice(existsIdx, 1);
+    } else {
+      if (compareList.length >= 4) {
+        alert('Puedes comparar un máximo de 4 productos simultáneamente.');
+        return;
+      }
+      compareList.push(p);
+    }
+
+    updateCompareUI();
+    renderGrid(); // update check state on cards
+  };
+
+  function updateCompareUI() {
+    const bar = document.getElementById('floating-compare-bar');
+    const countEl = document.getElementById('compare-bar-count');
+    const thumbsContainer = document.getElementById('compare-mini-thumbs');
+
+    if (!compareList.length) {
+      bar.style.display = 'none';
+      return;
+    }
+
+    bar.style.display = 'block';
+    countEl.textContent = `${compareList.length} producto${compareList.length > 1 ? 's' : ''} seleccionado${compareList.length > 1 ? 's' : ''} para comparar`;
+
+    thumbsContainer.innerHTML = compareList.map(p => {
+      const img = p.fotos && p.fotos[0];
+      return img ? `<img src="${img}" class="comp-thumb" alt="${p.name}" title="${p.name}" />` : `<div class="comp-thumb comp-thumb-empty">${getCatSvg(p.cat)}</div>`;
+    }).join('');
+  }
+
+  document.getElementById('btn-clear-compare').addEventListener('click', () => {
+    compareList = [];
+    updateCompareUI();
+    renderGrid();
+  });
+
+  // Open Modal
+  document.getElementById('btn-open-compare-modal').addEventListener('click', () => {
+    if (!compareList.length) return;
+    renderCompareModal();
+    document.getElementById('compare-modal').style.display = 'flex';
+  });
+
+  document.getElementById('btn-close-compare-modal').addEventListener('click', () => {
+    document.getElementById('compare-modal').style.display = 'none';
+  });
+
+  function renderCompareModal() {
+    const body = document.getElementById('compare-modal-body');
+    const cols = compareList.length;
+
+    body.innerHTML = `
+      <div class="compare-grid-table" style="grid-template-columns: repeat(${cols}, minmax(240px, 1fr));">
+        ${compareList.map(p => {
+          const img = p.fotos && p.fotos[0];
+          const prodId = p.sku || p.id;
+          return `
+            <div class="comp-col-card">
+              <div class="comp-col-img">
+                ${img ? `<img src="${img}" alt="${p.name}" />` : `<span style="display:flex; justify-content:center;">${getCatSvg(p.cat)}</span>`}
+              </div>
+
+              <div>
+                <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:#ff9500; font-weight:800;">${p.brand}</span>
+                <h4 style="font-size:1rem; font-weight:700; margin:0.25rem 0 0.5rem; color:#ffffff;">${p.name}</h4>
+                <div style="font-size:1.35rem; font-weight:800; color:#2997ff;">${fmt(p.webPrice)} MXN</div>
+              </div>
+
+              <div class="comp-row-spec">
+                <span class="comp-spec-label">Categoría</span>
+                <span class="comp-spec-val">${p.cat}</span>
+              </div>
+
+              <div class="comp-row-spec">
+                <span class="comp-spec-label">Talla / Medida</span>
+                <span class="comp-spec-val">${p.talla || 'N/A / Ajustable'}</span>
+              </div>
+
+              <div class="comp-row-spec">
+                <span class="comp-spec-label">Disponibilidad en Tienda</span>
+                <span class="comp-spec-val" style="color:${p.stock > 0 ? '#34c759' : '#ff3b30'}; font-weight:700;">
+                  ${p.stock > 0 ? `En Stock (${p.stock} piezas)` : 'Agotado'}
+                </span>
+              </div>
+
+              <div class="comp-row-spec">
+                <span class="comp-spec-label">Envío a Domicilio</span>
+                <span class="comp-spec-val">${p.webPrice >= 500 ? 'Envío Gratis (Didi Moto / Paquetería)' : '$80 MXN'}</span>
+              </div>
+
+              <div class="comp-row-spec">
+                <span class="comp-spec-label">Especificaciones Técnicas</span>
+                <p style="font-size:0.8rem; color:#a1a1aa; line-height:1.4; margin:0.2rem 0 0;">${p.specs || 'Componentes de alta gama inspeccionados en taller The Garage.'}</p>
+              </div>
+
+              <div style="margin-top:auto; padding-top:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+                <button class="btn-add-cart-nike" style="width:100%;" onclick="addToCartStore('${prodId}'); document.getElementById('compare-modal').style.display='none';">
+                  Agregar al Carrito
+                </button>
+                <button style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:#a1a1aa; border-radius:100px; padding:0.4rem; font-size:0.75rem; cursor:pointer;" onclick="toggleCompare('${prodId}'); renderCompareModal();">
+                  Quitar de la comparativa
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  // Storage & focus listeners for real-time synchronization with /panel/sitio-web
+  window.addEventListener('storage', function(e) {
+    if (e.key === INV_KEY || e.key === WEB_KEY) {
+      const freshData = getFullStoreProducts();
+      renderSidebarFilters(freshData);
+      renderGrid();
+    }
+  });
+
+  window.addEventListener('focus', function() {
+    const freshData = getFullStoreProducts();
+    renderSidebarFilters(freshData);
+    renderGrid();
+  });
+
+  // Init
+  const initialData = getFullStoreProducts();
+  renderSidebarFilters(initialData);
+  renderGrid();
+})();
+</script>

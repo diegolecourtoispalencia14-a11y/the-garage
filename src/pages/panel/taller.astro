@@ -1,0 +1,1155 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { INITIAL_SERVICE_ORDERS } from '../../data/workshopOrders';
+
+const initialOrdersJson = JSON.stringify(INITIAL_SERVICE_ORDERS);
+---
+
+<PanelLayout title="Taller & Órdenes de Servicio | BiciSaaS">
+  <!-- Top Header & Breadcrumb -->
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+        <span style="background:rgba(52,199,89,0.12); color:var(--accent-green); font-size:0.75rem; font-weight:700; padding:0.2rem 0.65rem; border-radius:100px; display:inline-flex; align-items:center; gap:0.35rem;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span> Taller de Cirugía Mecánica
+        </span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">The Garage · Cataluña, Playa del Carmen</span>
+      </div>
+      <h1 style="font-size:1.75rem; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em; margin:0 0 0.25rem;">
+        Gestión de Taller & Órdenes de Servicio.
+      </h1>
+      <p style="color:var(--text-secondary); font-size:0.9rem; margin:0;">
+        Control de banco de trabajo, asignación de mecánicos, semáforos de cobro en caja y enlace directo a contabilidad.
+      </p>
+    </div>
+
+    <!-- Top Action Buttons -->
+    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+      <button class="btn-secondary" id="btn-filter-my-jobs" style="font-size:0.85rem; padding:0.55rem 1rem;">
+        <Icon name="mdi:account-wrench" width="18" height="18" /> Mis Trabajos Asignados
+      </button>
+      <button class="btn-primary" id="btn-open-new-order" style="font-size:0.88rem; padding:0.55rem 1.15rem; border-radius:10px;">
+        <Icon name="mdi:plus" width="18" height="18" /> + Nueva Orden de Servicio
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Metrics Row -->
+  <div class="kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Órdenes Activas</span>
+        <Icon name="mdi:wrench-outline" width="18" height="18" style="color:var(--text-secondary);" />
+      </div>
+      <div id="kpi-total-orders" style="font-size:1.6rem; font-weight:700; color:var(--text-primary);">6</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Bicicletas en taller</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-green);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-green);">Listas Entrega</span>
+        <Icon name="mdi:check-circle-outline" width="18" height="18" style="color:var(--accent-green);" />
+      </div>
+      <div id="kpi-ready-orders" style="font-size:1.6rem; font-weight:700; color:var(--accent-green);">2</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Esperando al cliente</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-red);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-red);">Por Cobrar en Caja</span>
+        <Icon name="mdi:cash-remove" width="18" height="18" style="color:var(--accent-red);" />
+      </div>
+      <div id="kpi-pending-balance" style="font-size:1.6rem; font-weight:700; color:var(--accent-red);">$3,930</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Saldos pendientes entrega</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-blue);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-blue);">Marco Ramírez</span>
+        <Icon name="mdi:account-tie-hat" width="18" height="18" style="color:var(--accent-blue);" />
+      </div>
+      <div id="kpi-marco-orders" style="font-size:1.6rem; font-weight:700; color:var(--accent-blue);">5</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Jefe de Taller (Asignadas)</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-orange);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-orange);">Facturación Taller</span>
+        <Icon name="mdi:cash-register" width="18" height="18" style="color:var(--accent-orange);" />
+      </div>
+      <div id="kpi-total-revenue" style="font-size:1.6rem; font-weight:700; color:var(--accent-orange);">$7,930</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Valor total de órdenes</div>
+    </div>
+  </div>
+
+  <!-- Filters & Search Bar -->
+  <div class="bento-card" style="padding:1rem 1.25rem; margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+    <div style="display:flex; gap:0.65rem; flex-wrap:wrap; align-items:center; flex:1; min-width:300px;">
+      <!-- Search Input -->
+      <div style="position:relative; flex:1; min-width:240px;">
+        <Icon name="mdi:magnify" width="18" height="18" style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-secondary);" />
+        <input type="text" id="search-orders" placeholder="Buscar folio, cliente, teléfono o modelo de bicicleta..." style="width:100%; padding:0.5rem 0.75rem 0.5rem 2.4rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+      </div>
+
+      <!-- Mechanic Filter -->
+      <select id="filter-mechanic" style="padding:0.5rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.82rem;">
+        <option value="all">Todos los Mecánicos</option>
+        <option value="Marco Ramírez">Marco Ramírez (Jefe de Taller)</option>
+        <option value="Diego Lecourtois">Diego Lecourtois</option>
+      </select>
+
+      <!-- Payment Status Filter -->
+      <select id="filter-payment" style="padding:0.5rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.82rem;">
+        <option value="all">Todos los Estados de Pago</option>
+        <option value="pagado_total">Pagado Completo (Listo entregar)</option>
+        <option value="anticipo">Con Anticipo (Resta Saldo)</option>
+        <option value="pendiente_cobro">Por Cobrar en Mostrador (100%)</option>
+      </select>
+    </div>
+
+    <!-- View Switcher Tabs -->
+    <div style="display:flex; gap:0.25rem; background:var(--bg-base); padding:0.25rem; border-radius:8px; border:1px solid var(--border-subtle);">
+      <button class="view-mode-btn active" data-view="kanban" style="padding:0.35rem 0.75rem; border:none; border-radius:6px; background:var(--bg-panel); color:var(--text-primary); font-size:0.78rem; font-weight:700; cursor:pointer;">
+        Tablero Kanban
+      </button>
+      <button class="view-mode-btn" data-view="table" style="padding:0.35rem 0.75rem; border:none; border-radius:6px; background:transparent; color:var(--text-secondary); font-size:0.78rem; font-weight:600; cursor:pointer;">
+        Lista Contable
+      </button>
+    </div>
+  </div>
+
+  <!-- VIEW 1: KANBAN BOARD -->
+  <div id="view-kanban" class="kanban-wrapper" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem; align-items:start;">
+    <!-- Column 1: Agendado / Recepción -->
+    <div class="kanban-column bento-card" style="padding:1rem; min-height:500px; background:var(--bg-panel);">
+      <div class="col-title-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--border-subtle);">
+        <div style="font-weight:700; font-size:0.85rem; color:var(--text-primary); display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:#86868b;"></span>
+          <span>RECEPCIÓN / AGENDADO</span>
+        </div>
+        <span class="badge-col-count" id="count-col-agendado" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">0</span>
+      </div>
+      <div class="kanban-cards-list" id="cards-col-agendado" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
+    </div>
+
+    <!-- Column 2: En Proceso / Banco de Trabajo -->
+    <div class="kanban-column bento-card" style="padding:1rem; min-height:500px; background:var(--bg-panel); border-top:3px solid var(--accent-blue);">
+      <div class="col-title-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--border-subtle);">
+        <div style="font-weight:700; font-size:0.85rem; color:var(--accent-blue); display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-blue);"></span>
+          <span>EN BANCO DE TRABAJO</span>
+        </div>
+        <span class="badge-col-count" id="count-col-en_proceso" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">3</span>
+      </div>
+      <div class="kanban-cards-list" id="cards-col-en_proceso" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
+    </div>
+
+    <!-- Column 3: Esperando Refacción -->
+    <div class="kanban-column bento-card" style="padding:1rem; min-height:500px; background:var(--bg-panel); border-top:3px solid var(--accent-orange);">
+      <div class="col-title-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--border-subtle);">
+        <div style="font-weight:700; font-size:0.85rem; color:var(--accent-orange); display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-orange);"></span>
+          <span>ESPERANDO REFACCIÓN</span>
+        </div>
+        <span class="badge-col-count" id="count-col-esperando_refaccion" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">1</span>
+      </div>
+      <div class="kanban-cards-list" id="cards-col-esperando_refaccion" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
+    </div>
+
+    <!-- Column 4: Listo para Entrega -->
+    <div class="kanban-column bento-card" style="padding:1rem; min-height:500px; background:var(--bg-panel); border-top:3px solid var(--accent-green);">
+      <div class="col-title-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--border-subtle);">
+        <div style="font-weight:700; font-size:0.85rem; color:var(--accent-green); display:flex; align-items:center; gap:0.4rem;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--accent-green);"></span>
+          <span>LISTO PARA ENTREGA</span>
+        </div>
+        <span class="badge-col-count" id="count-col-listo_entrega" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">2</span>
+      </div>
+      <div class="kanban-cards-list" id="cards-col-listo_entrega" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
+    </div>
+
+    <!-- Column 5: Entregado & Liquidado -->
+    <div class="kanban-column bento-card" style="padding:1rem; min-height:500px; background:var(--bg-panel); opacity:0.85;">
+      <div class="col-title-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--border-subtle);">
+        <div style="font-weight:700; font-size:0.85rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.4rem;">
+          <Icon name="mdi:archive-check-outline" width="16" height="16" />
+          <span>ENTREGADO & LIQUIDADO</span>
+        </div>
+        <span class="badge-col-count" id="count-col-entregado" style="font-size:0.75rem; background:var(--bg-base); padding:0.15rem 0.5rem; border-radius:100px; font-weight:700;">0</span>
+      </div>
+      <div class="kanban-cards-list" id="cards-col-entregado" style="display:flex; flex-direction:column; gap:0.85rem;"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: DETAILED ACCOUNTING TABLE -->
+  <div id="view-table" class="bento-card" style="display:none; padding:1.25rem;">
+    <div style="overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.88rem; text-align:left;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border-color); color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">
+            <th style="padding:0.75rem 0.5rem;">Folio</th>
+            <th style="padding:0.75rem 0.5rem;">Cliente</th>
+            <th style="padding:0.75rem 0.5rem;">Bicicleta</th>
+            <th style="padding:0.75rem 0.5rem;">Mecánico</th>
+            <th style="padding:0.75rem 0.5rem;">Servicio</th>
+            <th style="padding:0.75rem 0.5rem;">Entrega</th>
+            <th style="padding:0.75rem 0.5rem;">Total</th>
+            <th style="padding:0.75rem 0.5rem;">Pagado</th>
+            <th style="padding:0.75rem 0.5rem;">Saldo Pendiente</th>
+            <th style="padding:0.75rem 0.5rem;">Estatus Cobro</th>
+            <th style="padding:0.75rem 0.5rem; text-align:right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="workshop-table-body">
+          <!-- Populated via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ MODALS ═══════════════════════ -->
+
+  <!-- MODAL 1: NUEVA ORDEN DE SERVICIO -->
+  <div id="modal-new-order" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:680px; width:95%; max-height:90vh; overflow-y:auto; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Ingresar Orden de Taller</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;">Recepción de bicicleta, asignación de mecánico y registro de anticipo en caja.</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-new-order" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-new-order" style="display:flex; flex-direction:column; gap:1.1rem;">
+        <!-- Datos de Cliente -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Nombre del Cliente *</label>
+            <input type="text" id="order-client-name" required placeholder="Ej. Rodrigo Palacios" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Teléfono / WhatsApp *</label>
+            <input type="tel" id="order-client-phone" required placeholder="Ej. 984 123 4567" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+        </div>
+
+        <!-- Servicio & Categoría -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Bicicleta (Marca y Modelo) *</label>
+            <input type="text" id="order-bike-model" required placeholder="Ej. Basso Palta 2 Carbon" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Tipo / Disciplina</label>
+            <select id="order-bike-type" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+              <option value="Gravel">Gravel</option>
+              <option value="Ruta">Ruta</option>
+              <option value="MTB">MTB</option>
+              <option value="Urbana">Urbana</option>
+              <option value="E-Bike">E-Bike</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mecánico Asignado y Promesa de Entrega -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Mecánico Asignado *</label>
+            <select id="order-assigned-mechanic" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+              <option value="Marco Ramírez">Marco Ramírez (Jefe de Taller)</option>
+              <option value="Diego Lecourtois">Diego Lecourtois</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Fecha Promesa de Entrega *</label>
+            <input type="date" id="order-due-date" required style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+        </div>
+
+        <!-- Paquete de Servicio y Prioridad -->
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:0.75rem;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Paquete / Cirugía Solicitada</label>
+            <select id="order-service-package" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+              <option value="Servicio General Gravel/Ruta" data-price="1200">Servicio General Gravel/Ruta ($1,200)</option>
+              <option value="Afinación y Calibración Shimano" data-price="650">Afinación y Calibración Shimano ($650)</option>
+              <option value="Purga Hidráulica Frenos Par" data-price="550">Purga Hidráulica Frenos Par ($550)</option>
+              <option value="Mantenimiento de Mazas y Baleros" data-price="450">Mantenimiento de Mazas y Baleros ($450)</option>
+              <option value="Armado y Nivelación de Ruedas" data-price="400">Armado y Nivelación de Ruedas ($400)</option>
+              <option value="Inspección y Diagnóstico Express" data-price="250">Inspección y Diagnóstico Express ($250)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Prioridad</label>
+            <select id="order-priority" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+              <option value="normal">Normal</option>
+              <option value="alta">Alta</option>
+              <option value="urgente">Urgente (+ Express)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Notas / Diagnóstico Inicial -->
+        <div>
+          <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Diagnóstico Inicial / Síntomas reportados por cliente</label>
+          <textarea id="order-diagnosis" rows="2" placeholder="Ej. Ruidos en centro, purga de frenos y cambio de balatas traseras..." style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem; resize:vertical;"></textarea>
+        </div>
+
+        <!-- Finanzas: Costo total y Anticipo en Caja -->
+        <div style="background:var(--bg-base); border:1px solid var(--border-color); border-radius:10px; padding:1rem;">
+          <div style="font-weight:700; font-size:0.85rem; color:var(--text-primary); margin-bottom:0.6rem; display:flex; align-items:center; gap:0.4rem;">
+            <Icon name="mdi:cash-register" width="18" height="18" color="var(--accent-blue)" /> Cotización & Cobro de Anticipo en Caja
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <div>
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Costo Total Estimado (MXN)</label>
+              <input type="number" id="order-total-cost" value="1200" min="0" step="50" style="width:100%; padding:0.45rem 0.65rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.9rem; font-weight:700;" />
+            </div>
+            <div>
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Anticipo Cobrado Hoy (MXN)</label>
+              <input type="number" id="order-amount-paid" value="350" min="0" step="50" style="width:100%; padding:0.45rem 0.65rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.9rem; font-weight:700;" />
+            </div>
+          </div>
+
+          <div style="margin-top:0.75rem; padding-top:0.5rem; border-top:1px dashed var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:0.82rem;">
+            <div>
+              <span style="color:var(--text-secondary);">Saldo Restante a Cobrar en Entrega: </span>
+              <strong id="order-calc-balance" style="color:var(--accent-red); font-size:0.95rem;">$850 MXN</strong>
+            </div>
+            <div>
+              <select id="order-payment-method" style="padding:0.35rem 0.6rem; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.78rem;">
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="MercadoPago">MercadoPago</option>
+                <option value="SPEI">SPEI</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+          <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-new-order">Cancelar</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem;">
+            <Icon name="mdi:check-circle" width="18" height="18" /> Crear Orden & Asignar a Taller
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: BITÁCORA MECÁNICA & CHECKLIST QA -->
+  <div id="modal-qa-checklist" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:580px; width:95%; max-height:90vh; overflow-y:auto; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Control de Calidad & Inspección</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;" id="qa-modal-subtitle">Folio: SRV-2026-089</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-qa-checklist" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-qa-checklist" style="display:flex; flex-direction:column; gap:1.1rem;">
+        <input type="hidden" id="qa-order-id" />
+
+        <div style="background:var(--bg-base); padding:0.85rem 1rem; border-radius:10px;">
+          <div id="qa-bike-name" style="font-weight:700; color:var(--text-primary); font-size:0.95rem;">Basso Palta 2 Carbon</div>
+          <div id="qa-customer-notes" style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.25rem; line-height:1.4;">
+            Reporte: Purga de frenos y lubricación anti-salitre.
+          </div>
+        </div>
+
+        <!-- Checklist de Cirugía Mecánica -->
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--text-primary); margin-bottom:0.5rem;">Checklist de Inspección de Salida</div>
+          <div style="display:flex; flex-direction:column; gap:0.45rem; font-size:0.82rem; color:var(--text-primary);">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="qa-chk-torque" /> Verificación de torque con torquímetro calibrado (tornillos potencia, sillín, ejes)
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="qa-chk-brakes" /> Purga y prueba de mordaza de frenos hidráulicos
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="qa-chk-tires" /> Presión de neumáticos regulada según peso y disciplina
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="qa-chk-chain" /> Cadena desengrasada y lubricada con cera seca cerámica
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="qa-chk-test" /> Prueba dinámica en rodillo o calle completada sin crujidos
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Bitácora del Mecánico (Trabajos Realizados)</label>
+          <textarea id="qa-worklog" rows="2" placeholder="Detalla las calibraciones o piezas reemplazadas..." style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;"></textarea>
+        </div>
+
+        <div>
+          <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Estado de la Orden</label>
+          <select id="qa-status-select" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+            <option value="en_proceso">En Banco de Trabajo</option>
+            <option value="esperando_refaccion">Esperando Refacción</option>
+            <option value="listo_entrega">Listo para Entrega (Avisar Cliente)</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+          <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-qa-checklist">Cancelar</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem;">
+            <Icon name="mdi:content-save" width="18" height="18" /> Guardar Bitácora &amp; Estado
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: LIQUIDACIÓN DE SALDO EN POS & ENTREGA -->
+  <div id="modal-settle-payment" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:520px; width:95%; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Liquidar Servicio &amp; Entregar</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;" id="settle-subtitle">Folio: SRV-2026-089</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-settle-payment" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-settle-payment" style="display:flex; flex-direction:column; gap:1.1rem;">
+        <input type="hidden" id="settle-order-id" />
+
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px;">
+          <div id="settle-client-info" style="font-weight:700; color:var(--text-primary); font-size:1rem;">Rodrigo Palacios</div>
+          <div id="settle-bike-info" style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.2rem;">Basso Palta 2 Carbon Gravel</div>
+        </div>
+
+        <div style="background:rgba(0,113,227,0.06); border:1px solid rgba(0,113,227,0.2); border-radius:10px; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">Costo Total Servicio</div>
+            <div id="settle-total-cost" style="font-size:1.1rem; font-weight:700; color:var(--text-primary);">$2,800 MXN</div>
+            <div id="settle-paid-already" style="font-size:0.75rem; color:var(--accent-green);">Anticipo: $1,500 MXN</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:0.75rem; color:var(--accent-red); font-weight:700;">SALDO RESTANTE A COBRAR</div>
+            <div id="settle-balance-amount" style="font-size:1.5rem; font-weight:800; color:var(--accent-red);">$1,300 MXN</div>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:0.8rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Método de Pago para Liquidación</label>
+          <select id="settle-payment-method" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+            <option value="Tarjeta">Tarjeta de Débito / Crédito</option>
+            <option value="Efectivo">Efectivo (Caja Mostrador)</option>
+            <option value="MercadoPago">MercadoPago / QR</option>
+            <option value="SPEI">Transferencia SPEI</option>
+          </select>
+        </div>
+
+        <div style="font-size:0.75rem; color:var(--text-secondary); line-height:1.4;">
+          Al confirmar el cobro, el ingreso entrará automáticamente al libro de caja de <strong>Contabilidad</strong> y la bicicleta quedará marcada como <strong>Entregada & Liquidada</strong>.
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+          <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-settle-payment">Cancelar</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem; background:var(--accent-green);">
+            <Icon name="mdi:cash-check" width="18" height="18" /> Cobrar en Caja &amp; Entregar Bici
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .service-kanban-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.95rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: grab;
+    }
+    .service-kanban-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(0, 113, 227, 0.4);
+    }
+  </style>
+
+  <!-- Client-Side State Management Script -->
+  <script is:inline define:vars={{ initialOrdersJson }}>
+    (function() {
+      const STORAGE_KEY = 'bicisaas_workshop_orders';
+
+      function getStoredOrders() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch(e) {}
+        const initial = JSON.parse(initialOrdersJson);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+        return initial;
+      }
+
+      function saveOrders(orders) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+        renderAll();
+      }
+
+      // Filter state
+      let activeMechanicFilter = 'all';
+      let activePaymentFilter = 'all';
+      let searchTerm = '';
+
+      // View switcher
+      document.querySelectorAll('.view-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.view-mode-btn').forEach(b => {
+            b.classList.remove('active');
+            b.style.background = 'transparent';
+            b.style.color = 'var(--text-secondary)';
+          });
+          btn.classList.add('active');
+          btn.style.background = 'var(--bg-panel)';
+          btn.style.color = 'var(--text-primary)';
+
+          const view = btn.getAttribute('data-view');
+          document.getElementById('view-kanban').style.display = view === 'kanban' ? 'grid' : 'none';
+          document.getElementById('view-table').style.display = view === 'table' ? 'block' : 'none';
+        });
+      });
+
+      // Mechanic & Payment filter listeners
+      document.getElementById('filter-mechanic')?.addEventListener('change', (e) => {
+        activeMechanicFilter = e.target.value;
+        renderAll();
+      });
+
+      document.getElementById('filter-payment')?.addEventListener('change', (e) => {
+        activePaymentFilter = e.target.value;
+        renderAll();
+      });
+
+      document.getElementById('search-orders')?.addEventListener('input', (e) => {
+        searchTerm = e.target.value.toLowerCase();
+        renderAll();
+      });
+
+      // Quick filter: "Mis Trabajos Asignados"
+      document.getElementById('btn-filter-my-jobs')?.addEventListener('click', () => {
+        try {
+          const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+          const myName = session.name || 'Marco Ramírez';
+          const select = document.getElementById('filter-mechanic');
+          if (select) {
+            select.value = myName.includes('Marco') ? 'Marco Ramírez' : 'Diego Lecourtois';
+            activeMechanicFilter = select.value;
+            renderAll();
+          }
+        } catch(e) {}
+      });
+
+      // Render KPIs
+      function renderKPIs(orders) {
+        const active = orders.filter(o => o.status !== 'entregado').length;
+        const ready = orders.filter(o => o.status === 'listo_entrega').length;
+        const pendingBalance = orders
+          .filter(o => o.status !== 'entregado')
+          .reduce((sum, o) => sum + (o.balanceDue || 0), 0);
+        const marcoCount = orders
+          .filter(o => o.status !== 'entregado' && o.assignedMechanicName.includes('Marco')).length;
+        const totalRevenue = orders.reduce((sum, o) => sum + (o.totalCost || 0), 0);
+
+        document.getElementById('kpi-total-orders').textContent = active;
+        document.getElementById('kpi-ready-orders').textContent = ready;
+        document.getElementById('kpi-pending-balance').textContent = '$' + pendingBalance.toLocaleString('es-MX');
+        document.getElementById('kpi-marco-orders').textContent = marcoCount;
+        document.getElementById('kpi-total-revenue').textContent = '$' + totalRevenue.toLocaleString('es-MX');
+      }
+
+      // Render Kanban Cards
+      function renderKanban(orders) {
+        const cols = {
+          agendado: document.getElementById('cards-col-agendado'),
+          en_proceso: document.getElementById('cards-col-en_proceso'),
+          esperando_refaccion: document.getElementById('cards-col-esperando_refaccion'),
+          listo_entrega: document.getElementById('cards-col-listo_entrega'),
+          entregado: document.getElementById('cards-col-entregado')
+        };
+
+        const counts = {
+          agendado: 0,
+          en_proceso: 0,
+          esperando_refaccion: 0,
+          listo_entrega: 0,
+          entregado: 0
+        };
+
+        // Clear all columns
+        Object.values(cols).forEach(col => { if (col) col.innerHTML = ''; });
+
+        const filtered = orders.filter(o => {
+          const matchMech = activeMechanicFilter === 'all' || o.assignedMechanicName === activeMechanicFilter;
+          const matchPay = activePaymentFilter === 'all' || o.paymentStatus === activePaymentFilter;
+          const matchSearch = !searchTerm || 
+            o.folio.toLowerCase().includes(searchTerm) ||
+            o.clientName.toLowerCase().includes(searchTerm) ||
+            o.bikeModel.toLowerCase().includes(searchTerm) ||
+            o.clientPhone.includes(searchTerm);
+          return matchMech && matchPay && matchSearch;
+        });
+
+        filtered.forEach(o => {
+          const colEl = cols[o.status];
+          if (!colEl) return;
+          counts[o.status] = (counts[o.status] || 0) + 1;
+
+          // Priority badge
+          let priorityBadge = '';
+          if (o.priority === 'urgente') {
+            priorityBadge = '<span style="background:rgba(255,59,48,0.15); color:var(--accent-red); font-size:0.7rem; font-weight:700; padding:0.15rem 0.45rem; border-radius:4px;">URGENTE</span>';
+          } else if (o.priority === 'alta') {
+            priorityBadge = '<span style="background:rgba(255,149,0,0.15); color:var(--accent-orange); font-size:0.7rem; font-weight:700; padding:0.15rem 0.45rem; border-radius:4px;">ALTA</span>';
+          } else {
+            priorityBadge = '<span style="background:var(--bg-base); color:var(--text-secondary); font-size:0.7rem; font-weight:600; padding:0.15rem 0.45rem; border-radius:4px;">NORMAL</span>';
+          }
+
+          // Payment badge (The critical feature)
+          let paymentBadge = '';
+          if (o.paymentStatus === 'pagado_total' || o.balanceDue === 0) {
+            paymentBadge = `
+              <div style="background:rgba(52,199,89,0.12); color:var(--accent-green); border:1px solid rgba(52,199,89,0.25); padding:0.35rem 0.55rem; border-radius:6px; font-size:0.72rem; font-weight:700; display:flex; align-items:center; gap:0.3rem;">
+                <span>PAGADO COMPLETO</span>
+                <span style="margin-left:auto; color:var(--text-secondary); font-weight:500;">($${o.totalCost})</span>
+              </div>
+            `;
+          } else if (o.paymentStatus === 'anticipo') {
+            paymentBadge = `
+              <div style="background:rgba(255,149,0,0.12); color:var(--accent-orange); border:1px solid rgba(255,149,0,0.3); padding:0.35rem 0.55rem; border-radius:6px; font-size:0.72rem; font-weight:700;">
+                <div style="display:flex; justify-content:space-between;">
+                  <span>ANTICIPO: $${o.amountPaid}</span>
+                  <span style="color:var(--accent-red);">RESTA $${o.balanceDue} MXN</span>
+                </div>
+              </div>
+            `;
+          } else {
+            paymentBadge = `
+              <div style="background:rgba(255,59,48,0.12); color:var(--accent-red); border:1px solid rgba(255,59,48,0.35); padding:0.35rem 0.55rem; border-radius:6px; font-size:0.72rem; font-weight:700; display:flex; justify-content:space-between;">
+                <span>COBRAR EN CAJA</span>
+                <span>$${o.balanceDue} MXN</span>
+              </div>
+            `;
+          }
+
+          // Action buttons per card
+          let actionBtn = '';
+          if (o.status === 'listo_entrega') {
+            if (o.balanceDue > 0) {
+              actionBtn = `
+                <button class="btn-primary btn-settle-order" data-order-id="${o.id}" style="width:100%; font-size:0.78rem; padding:0.4rem; background:var(--accent-orange); color:#000; font-weight:700; justify-content:center;">
+                  Cobrar Saldo $${o.balanceDue} & Entregar
+                </button>
+              `;
+            } else {
+              actionBtn = `
+                <button class="btn-primary btn-deliver-free" data-order-id="${o.id}" style="width:100%; font-size:0.78rem; padding:0.4rem; background:var(--accent-green); justify-content:center;">
+                  Entregar al Cliente (Pagado)
+                </button>
+              `;
+            }
+          } else if (o.status === 'en_proceso' || o.status === 'esperando_refaccion') {
+            actionBtn = `
+              <button class="btn-primary btn-mark-ready" data-order-id="${o.id}" style="width:100%; font-size:0.78rem; padding:0.4rem; background:var(--accent-blue); justify-content:center;">
+                Marcar Listo para Entrega
+              </button>
+            `;
+          }
+
+          const cardHtml = `
+            <div class="service-kanban-card">
+              <!-- Top Header: Folio & Priority -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <span style="font-family:monospace; font-weight:700; font-size:0.75rem; color:var(--accent-blue);">${o.folio}</span>
+                ${priorityBadge}
+              </div>
+
+              <!-- Bike Title -->
+              <h4 style="font-size:0.92rem; font-weight:700; color:var(--text-primary); margin:0 0 0.2rem; line-height:1.3;">
+                ${o.bikeBrand} ${o.bikeModel}
+              </h4>
+              <div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">
+                ${o.serviceCategory} · ${o.bikeType}
+              </div>
+
+              <!-- Customer Info -->
+              <div style="background:var(--bg-base); padding:0.45rem 0.6rem; border-radius:6px; font-size:0.75rem; margin-bottom:0.65rem;">
+                <div style="font-weight:600; color:var(--text-primary);">${o.clientName}</div>
+                <div style="color:var(--text-secondary); display:flex; justify-content:space-between; margin-top:0.15rem;">
+                  <span>${o.clientPhone}</span>
+                  <a href="https://wa.me/52${o.clientPhone.replace(/\D/g,'')}?text=Hola%20${encodeURIComponent(o.clientName)},%20te%20escribimos%20de%20The%20Garage%20sobre%20tu%20${encodeURIComponent(o.bikeModel)}" target="_blank" style="color:var(--accent-green); text-decoration:none; font-weight:700;">WhatsApp ↗</a>
+                </div>
+              </div>
+
+              <!-- Mechanic Assignment -->
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.75rem; margin-bottom:0.65rem;">
+                <span style="color:var(--text-secondary);">Mecánico:</span>
+                <span style="font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:0.25rem;">
+                  ${o.assignedMechanicName}
+                </span>
+              </div>
+
+              <!-- Delivery Date -->
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.75rem; margin-bottom:0.65rem;">
+                <span style="color:var(--text-secondary);">Promesa Entrega:</span>
+                <span style="font-weight:700; color:var(--accent-orange);">${o.dueDate}</span>
+              </div>
+
+              <!-- Financial Status Badge -->
+              <div style="margin-bottom:0.65rem;">
+                ${paymentBadge}
+              </div>
+
+              <!-- Card Action Bar -->
+              <div style="display:flex; flex-direction:column; gap:0.4rem; margin-top:0.5rem; border-top:1px solid var(--border-subtle); padding-top:0.5rem;">
+                ${actionBtn}
+                <div style="display:flex; gap:0.35rem;">
+                  <button class="btn-secondary btn-open-qa" data-order-id="${o.id}" title="Abrir bitácora y checklist de calidad" style="flex:1; font-size:0.75rem; padding:0.35rem; justify-content:center;">
+                    Bitácora QA
+                  </button>
+                  <button class="btn-secondary btn-reassign" data-order-id="${o.id}" title="Reasignar mecánico" style="padding:0.35rem 0.55rem; display:flex; align-items:center; justify-content:center;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          colEl.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        // Update column count badges
+        Object.keys(counts).forEach(k => {
+          const badge = document.getElementById('count-col-' + k);
+          if (badge) badge.textContent = counts[k];
+        });
+
+        attachCardListeners();
+      }
+
+      // Render Table View
+      function renderTable(orders) {
+        const tbody = document.getElementById('workshop-table-body');
+        if (!tbody) return;
+
+        const filtered = orders.filter(o => {
+          const matchMech = activeMechanicFilter === 'all' || o.assignedMechanicName === activeMechanicFilter;
+          const matchPay = activePaymentFilter === 'all' || o.paymentStatus === activePaymentFilter;
+          const matchSearch = !searchTerm || 
+            o.folio.toLowerCase().includes(searchTerm) ||
+            o.clientName.toLowerCase().includes(searchTerm) ||
+            o.bikeModel.toLowerCase().includes(searchTerm);
+          return matchMech && matchPay && matchSearch;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="11" style="text-align:center; padding:2rem; color:var(--text-secondary);">No se encontraron órdenes</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(o => {
+          let payBadge = '';
+          if (o.balanceDue === 0) {
+            payBadge = '<span style="color:var(--accent-green); font-weight:700;">Pagado Total</span>';
+          } else if (o.amountPaid > 0) {
+            payBadge = '<span style="color:var(--accent-orange); font-weight:700;">Anticipo ($' + o.amountPaid + ')</span>';
+          } else {
+            payBadge = '<span style="color:var(--accent-red); font-weight:700;">Por Cobrar</span>';
+          }
+
+          return `
+            <tr style="border-bottom:1px solid var(--border-subtle); font-size:0.85rem;">
+              <td style="padding:0.75rem 0.5rem; font-family:monospace; font-weight:700; color:var(--accent-blue);">${o.folio}</td>
+              <td style="padding:0.75rem 0.5rem;">
+                <div style="font-weight:600; color:var(--text-primary);">${o.clientName}</div>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">${o.clientPhone}</div>
+              </td>
+              <td style="padding:0.75rem 0.5rem;">${o.bikeBrand} ${o.bikeModel}</td>
+              <td style="padding:0.75rem 0.5rem; font-weight:600;">${o.assignedMechanicName}</td>
+              <td style="padding:0.75rem 0.5rem; font-size:0.8rem;">${o.serviceCategory}</td>
+              <td style="padding:0.75rem 0.5rem; font-size:0.8rem;">${o.dueDate}</td>
+              <td style="padding:0.75rem 0.5rem; font-weight:600;">$${o.totalCost}</td>
+              <td style="padding:0.75rem 0.5rem; color:var(--accent-green);">$${o.amountPaid}</td>
+              <td style="padding:0.75rem 0.5rem; font-weight:700; color:${o.balanceDue > 0 ? 'var(--accent-red)' : 'var(--accent-green)'};">
+                $${o.balanceDue}
+              </td>
+              <td style="padding:0.75rem 0.5rem;">${payBadge}</td>
+              <td style="padding:0.75rem 0.5rem; text-align:right;">
+                ${o.balanceDue > 0 && o.status === 'listo_entrega' ? `
+                  <button class="btn-primary btn-settle-order" data-order-id="${o.id}" style="font-size:0.75rem; padding:0.3rem 0.6rem; background:var(--accent-orange); color:#000;">
+                    Cobrar
+                  </button>
+                ` : `
+                  <button class="btn-secondary btn-open-qa" data-order-id="${o.id}" style="font-size:0.75rem; padding:0.3rem 0.6rem;">
+                    Ver
+                  </button>
+                `}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        attachCardListeners();
+      }
+
+      // Attach event listeners to buttons
+      function attachCardListeners() {
+        // Settle payment modal button
+        document.querySelectorAll('.btn-settle-order').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const orderId = btn.getAttribute('data-order-id');
+            openSettlePaymentModal(orderId);
+          });
+        });
+
+        // Open QA checklist modal
+        document.querySelectorAll('.btn-open-qa').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const orderId = btn.getAttribute('data-order-id');
+            openQAModal(orderId);
+          });
+        });
+
+        // Mark ready button
+        document.querySelectorAll('.btn-mark-ready').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const orderId = btn.getAttribute('data-order-id');
+            const orders = getStoredOrders();
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            order.status = 'listo_entrega';
+            saveOrders(orders);
+
+            const msgBalance = order.balanceDue > 0
+              ? ' Saldo pendiente a liquidar en mostrador: $' + order.balanceDue + ' MXN.'
+              : ' Tu servicio se encuentra 100% pagado.';
+
+            if (confirm('Bicicleta marcada como LISTA PARA ENTREGA.\n\n¿Deseas abrir WhatsApp para notificar a ' + order.clientName + '?')) {
+              const text = '¡Hola ' + order.clientName + '! Te escribimos de The Garage. Tu bicicleta ' + order.bikeBrand + ' ' + order.bikeModel + ' ya completó su servicio y está lista para entrega en mostrador.' + msgBalance + ' Te esperamos.';
+              window.open('https://wa.me/52' + order.clientPhone.replace(/\D/g,'') + '?text=' + encodeURIComponent(text), '_blank');
+            }
+          });
+        });
+
+        // Deliver free (if already paid)
+        document.querySelectorAll('.btn-deliver-free').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const orderId = btn.getAttribute('data-order-id');
+            if (confirm('¿Confirmar entrega de esta bicicleta al cliente? La orden se archivará como entregada.')) {
+              const orders = getStoredOrders();
+              const order = orders.find(o => o.id === orderId);
+              if (order) {
+                order.status = 'entregado';
+                saveOrders(orders);
+                alert('Bicicleta entregada satisfactoriamente.');
+              }
+            }
+          });
+        });
+
+        // Quick reassign mechanic button
+        document.querySelectorAll('.btn-reassign').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const orderId = btn.getAttribute('data-order-id');
+            const orders = getStoredOrders();
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const next = order.assignedMechanicName.includes('Marco') ? 'Diego Lecourtois' : 'Marco Ramírez';
+            if (confirm('¿Reasignar orden ' + order.folio + ' a ' + next + '?')) {
+              order.assignedMechanicName = next;
+              order.assignedMechanicId = next.includes('Marco') ? 'e2' : 'e1';
+              saveOrders(orders);
+            }
+          });
+        });
+      }
+
+      // Modals Logic
+      const modalNewOrder = document.getElementById('modal-new-order');
+      const modalQA = document.getElementById('modal-qa-checklist');
+      const modalSettle = document.getElementById('modal-settle-payment');
+
+      document.querySelectorAll('.close-modal-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mId = btn.getAttribute('data-modal');
+          const el = document.getElementById(mId);
+          if (el) el.style.display = 'none';
+        });
+      });
+
+      // Open New Order Modal
+      document.getElementById('btn-open-new-order')?.addEventListener('click', () => {
+        const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        document.getElementById('order-due-date').value = tomorrow;
+        updateNewOrderCalculations();
+        modalNewOrder.style.display = 'flex';
+      });
+
+      // Price calculation in New Order Modal
+      function updateNewOrderCalculations() {
+        const labor = parseFloat(document.getElementById('order-labor-fee').value || 0);
+        const parts = parseFloat(document.getElementById('order-parts-fee').value || 0);
+        const paid = parseFloat(document.getElementById('order-paid-now').value || 0);
+
+        const total = labor + parts;
+        const balance = Math.max(0, total - paid);
+
+        document.getElementById('order-calc-total').textContent = '$' + total.toLocaleString('es-MX');
+        document.getElementById('order-calc-balance').textContent = '$' + balance.toLocaleString('es-MX') + ' MXN';
+      }
+
+      document.getElementById('order-labor-fee')?.addEventListener('input', updateNewOrderCalculations);
+      document.getElementById('order-parts-fee')?.addEventListener('input', updateNewOrderCalculations);
+      document.getElementById('order-paid-now')?.addEventListener('input', updateNewOrderCalculations);
+      document.getElementById('order-category')?.addEventListener('change', (e) => {
+        const labor = e.target.options[e.target.selectedIndex].getAttribute('data-labor');
+        if (labor !== null) {
+          document.getElementById('order-labor-fee').value = labor;
+          updateNewOrderCalculations();
+        }
+      });
+
+      // Submit New Order
+      document.getElementById('form-new-order')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const clientName = document.getElementById('order-client-name').value.trim();
+        const clientPhone = document.getElementById('order-client-phone').value.trim();
+        const bikeBrand = document.getElementById('order-bike-brand').value.trim();
+        const bikeModel = document.getElementById('order-bike-model').value.trim();
+        const bikeType = document.getElementById('order-bike-type').value;
+        const mechSelect = document.getElementById('order-assigned-mechanic');
+        const mechName = mechSelect.value;
+        const mechId = mechSelect.options[mechSelect.selectedIndex].getAttribute('data-id') || 'e2';
+        const dueDate = document.getElementById('order-due-date').value;
+        const priority = document.getElementById('order-priority').value;
+        const category = document.getElementById('order-category').value;
+        const diagnosis = document.getElementById('order-diagnosis').value.trim();
+        const labor = parseFloat(document.getElementById('order-labor-fee').value || 0);
+        const parts = parseFloat(document.getElementById('order-parts-fee').value || 0);
+        const paid = parseFloat(document.getElementById('order-paid-now').value || 0);
+        const paymentMethod = document.getElementById('order-payment-method').value;
+
+        const total = labor + parts;
+        const balance = Math.max(0, total - paid);
+
+        let payStatus = 'pendiente_cobro';
+        if (paid >= total && total > 0) {
+          payStatus = 'pagado_total';
+        } else if (paid > 0) {
+          payStatus = 'anticipo';
+        } else if (total === 0) {
+          payStatus = 'pagado_total';
+        }
+
+        let randHex = '';
+        if (window.crypto && window.crypto.getRandomValues) {
+          const bytes = new Uint8Array(3);
+          window.crypto.getRandomValues(bytes);
+          randHex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+        } else {
+          randHex = Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+        const folio = 'SRV-2026-' + randHex;
+
+        const newOrder = {
+          id: 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + randHex,
+          folio: folio,
+          createdAt: new Date().toISOString(),
+          dueDate: dueDate,
+          clientName: clientName,
+          clientPhone: clientPhone,
+          bikeBrand: bikeBrand,
+          bikeModel: bikeModel,
+          bikeType: bikeType,
+          assignedMechanicId: mechId,
+          assignedMechanicName: mechName,
+          serviceCategory: category,
+          diagnosisNotes: diagnosis || 'Revisión general en taller.',
+          mechanicWorklog: '',
+          partsInstalled: [],
+          status: 'en_proceso',
+          priority: priority,
+          laborFee: labor,
+          partsFee: parts,
+          totalCost: total,
+          amountPaid: paid,
+          balanceDue: balance,
+          paymentStatus: payStatus,
+          paymentMethod: paymentMethod,
+          qaChecklist: {
+            torqueVerified: false,
+            brakesTested: false,
+            tirePressureSet: false,
+            chainLubricated: false,
+            testRode: false
+          }
+        };
+
+        const orders = getStoredOrders();
+        orders.unshift(newOrder);
+        saveOrders(orders);
+
+        // Record in accounting ledger if advance was paid
+        if (paid > 0) {
+          try {
+            const ledger = JSON.parse(localStorage.getItem('bicisaas_ledger') || '{"income":[]}');
+            ledger.income = ledger.income || [];
+            ledger.income.unshift({
+              id: Date.now(),
+              desc: 'Anticipo Taller ' + folio + ' (' + clientName + ' - ' + bikeModel + ')',
+              cat: 'Servicio de Taller',
+              amount: paid,
+              date: new Date().toISOString().split('T')[0]
+            });
+            localStorage.setItem('bicisaas_ledger', JSON.stringify(ledger));
+          } catch(e) {}
+        }
+
+        modalNewOrder.style.display = 'none';
+        document.getElementById('form-new-order').reset();
+
+        alert('Orden ' + folio + ' generada con éxito y asignada a ' + mechName + '.\n' + (paid > 0 ? 'Anticipo de $' + paid + ' registrado en caja.' : 'Pendiente de cobro total al entregar.'));
+      });
+
+      // Open QA Modal
+      function openQAModal(orderId) {
+        const orders = getStoredOrders();
+        const order = orders.find(o => o.id === orderId);
+        if (!order) return;
+
+        document.getElementById('qa-order-id').value = order.id;
+        document.getElementById('qa-modal-subtitle').textContent = 'Folio: ' + order.folio + ' · Mecánico: ' + order.assignedMechanicName;
+        document.getElementById('qa-bike-name').textContent = order.bikeBrand + ' ' + order.bikeModel + ' (' + order.clientName + ')';
+        document.getElementById('qa-customer-notes').textContent = 'Diagnóstico: ' + (order.diagnosisNotes || 'Ajuste general.');
+        document.getElementById('qa-worklog').value = order.mechanicWorklog || '';
+        document.getElementById('qa-status-select').value = order.status === 'agendado' ? 'en_proceso' : order.status;
+
+        document.getElementById('qa-chk-torque').checked = !!order.qaChecklist?.torqueVerified;
+        document.getElementById('qa-chk-brakes').checked = !!order.qaChecklist?.brakesTested;
+        document.getElementById('qa-chk-tires').checked = !!order.qaChecklist?.tirePressureSet;
+        document.getElementById('qa-chk-chain').checked = !!order.qaChecklist?.chainLubricated;
+        document.getElementById('qa-chk-test').checked = !!order.qaChecklist?.testRode;
+
+        modalQA.style.display = 'flex';
+      }
+
+      // Submit QA Modal
+      document.getElementById('form-qa-checklist')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const orderId = document.getElementById('qa-order-id').value;
+        const worklog = document.getElementById('qa-worklog').value.trim();
+        const newStatus = document.getElementById('qa-status-select').value;
+
+        const orders = getStoredOrders();
+        const order = orders.find(o => o.id === orderId);
+        if (!order) return;
+
+        order.mechanicWorklog = worklog;
+        order.status = newStatus;
+        order.qaChecklist = {
+          torqueVerified: document.getElementById('qa-chk-torque').checked,
+          brakesTested: document.getElementById('qa-chk-brakes').checked,
+          tirePressureSet: document.getElementById('qa-chk-tires').checked,
+          chainLubricated: document.getElementById('qa-chk-chain').checked,
+          testRode: document.getElementById('qa-chk-test').checked
+        };
+
+        saveOrders(orders);
+        modalQA.style.display = 'none';
+
+        alert('Bitácora y control de calidad guardados para ' + order.folio);
+      });
+
+      // Open Settle Payment Modal
+      function openSettlePaymentModal(orderId) {
+        const orders = getStoredOrders();
+        const order = orders.find(o => o.id === orderId);
+        if (!order) return;
+
+        document.getElementById('settle-order-id').value = order.id;
+        document.getElementById('settle-subtitle').textContent = 'Folio: ' + order.folio + ' · Cliente: ' + order.clientName;
+        document.getElementById('settle-client-info').textContent = order.clientName + ' (' + order.clientPhone + ')';
+        document.getElementById('settle-bike-info').textContent = order.bikeBrand + ' ' + order.bikeModel + ' · ' + order.serviceCategory;
+        document.getElementById('settle-total-cost').textContent = '$' + order.totalCost.toLocaleString('es-MX') + ' MXN';
+        document.getElementById('settle-paid-already').textContent = 'Anticipo previo: $' + order.amountPaid.toLocaleString('es-MX') + ' MXN';
+        document.getElementById('settle-balance-amount').textContent = '$' + order.balanceDue.toLocaleString('es-MX') + ' MXN';
+
+        modalSettle.style.display = 'flex';
+      }
+
+      // Submit Settle Payment Modal
+      document.getElementById('form-settle-payment')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const orderId = document.getElementById('settle-order-id').value;
+        const method = document.getElementById('settle-payment-method').value;
+
+        const orders = getStoredOrders();
+        const order = orders.find(o => o.id === orderId);
+        if (!order) return;
+
+        const collectedAmount = order.balanceDue;
+        order.amountPaid = order.totalCost;
+        order.balanceDue = 0;
+        order.paymentStatus = 'pagado_total';
+        order.paymentMethod = method;
+        order.status = 'entregado';
+
+        saveOrders(orders);
+
+        // Record in accounting ledger
+        try {
+          const ledger = JSON.parse(localStorage.getItem('bicisaas_ledger') || '{"income":[]}');
+          ledger.income = ledger.income || [];
+          ledger.income.unshift({
+            id: Date.now(),
+            desc: 'Liquidación Taller ' + order.folio + ' (' + order.clientName + ' - ' + order.bikeModel + ')',
+            cat: 'Servicio de Taller',
+            amount: collectedAmount,
+            date: new Date().toISOString().split('T')[0]
+          });
+          localStorage.setItem('bicisaas_ledger', JSON.stringify(ledger));
+        } catch(e) {}
+
+        modalSettle.style.display = 'none';
+        alert('Cobro de $' + collectedAmount.toLocaleString('es-MX') + ' MXN registrado exitosamente en Caja.\nLa orden ' + order.folio + ' ha sido archivada como ENTREGADA.');
+      });
+
+      // Master Render
+      function renderAll() {
+        const orders = getStoredOrders();
+        renderKPIs(orders);
+        renderKanban(orders);
+        renderTable(orders);
+      }
+
+      // Init on load
+      renderAll();
+    })();
+  </script>
+</PanelLayout>

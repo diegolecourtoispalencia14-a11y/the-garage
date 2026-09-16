@@ -1,0 +1,490 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+---
+<PanelLayout title="Mi Perfil & Tareas | BiciSaaS">
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+    <div>
+      <h1 class="page-title">Mi Perfil de Empleado.</h1>
+      <p class="text-muted">Actualiza tus datos de contacto, registra tu asistencia y gestiona tus tareas asignadas.</p>
+    </div>
+    <div style="display:flex; gap:0.75rem; align-items:center;">
+      <button class="btn-primary" id="btn-clock-action" style="font-size:0.95rem; padding:0.6rem 1.5rem; border-radius:100px;">
+        <Icon name="mdi:clock-check-outline" width="20" height="20" style="margin-right:4px;" />
+        <span id="my-clock-btn-label">Checar Entrada</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bento Grid / Zoho Style Sections -->
+  <div class="profile-grid">
+
+    <!-- Column 1: Info & Edit Profile -->
+    <div class="zoho-card">
+      <div class="zoho-card-header">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div class="zoho-avatar-lg" id="my-avatar" style="background:#34c759;">M</div>
+          <div>
+            <h2 id="my-display-name" style="font-size:1.2rem; margin:0;">Marco Ramírez</h2>
+            <div id="my-display-role" style="font-size:0.82rem; color:var(--text-secondary); margin-top:0.15rem;">Mecánico de Taller · Turno Completo</div>
+          </div>
+        </div>
+        <span class="zoho-badge ok" id="my-status-badge">En Tienda</span>
+      </div>
+
+      <div class="zoho-section-title">DATOS DE USUARIO</div>
+      <div class="zoho-form">
+        <div class="form-row">
+          <label>Nombre Completo</label>
+          <input type="text" id="my-name-input" value="Marco Ramírez" />
+        </div>
+        <div class="form-row">
+          <label>Teléfono de Contacto</label>
+          <input type="tel" id="my-phone-input" value="9842345678" maxlength="10" />
+        </div>
+        <div class="form-row">
+          <label>Puesto / Especialidad</label>
+          <input type="text" id="my-role-input" value="Mecánico Especialista en Frenos y Suspensiones" />
+        </div>
+        <div class="form-row">
+          <label>Contacto de Emergencia</label>
+          <input type="text" id="my-emergency-input" placeholder="Nombre y teléfono de familiar..." value="María Ramírez - 9848765432" />
+        </div>
+        <div class="form-row">
+          <label>Notas de Perfil / Habilidades</label>
+          <textarea id="my-bio-input" rows="2" style="width:100%; resize:vertical; padding:0.6rem 0.8rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-primary); font-size:0.88rem; outline:none; font-family:inherit;">Certificación Shimano 2023, purgado hidráulico SRAM AXS, ensambles Basso.</textarea>
+        </div>
+        <button class="btn-primary" id="btn-save-profile" style="margin-top:0.5rem; width:fit-content;">
+          <Icon name="mdi:content-save-outline" width="18" height="18" /> Guardar Mis Datos
+        </button>
+      </div>
+
+      <!-- Schedule & Working Hours summary -->
+      <div class="zoho-section-title" style="margin-top:1.5rem;">MI HORARIO Y ASISTENCIA</div>
+      <div class="zoho-field-row">
+        <div class="zoho-field">
+          <span class="zoho-label">TURNO ASIGNADO</span>
+          <strong class="zoho-val" id="my-shift-val">Completo (10am – 7pm)</strong>
+        </div>
+        <div class="zoho-field">
+          <span class="zoho-label">DÍAS DE TRABAJO</span>
+          <strong class="zoho-val" id="my-days-val">Lunes a Sábado</strong>
+        </div>
+      </div>
+      <div class="zoho-field-row">
+        <div class="zoho-field">
+          <span class="zoho-label">HORA DE ENTRADA HOY</span>
+          <span class="zoho-val" id="my-clockin-val" style="color:var(--accent-green);">10:15 am</span>
+        </div>
+        <div class="zoho-field">
+          <span class="zoho-label">HORAS ACUMULADAS HOY</span>
+          <span class="zoho-val" id="my-hours-today">5.2 h</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2: My Assigned Tasks -->
+    <div class="zoho-card">
+      <div class="zoho-card-header" style="justify-content:space-between;">
+        <h3 style="font-size:1.05rem; margin:0; display:flex; align-items:center; gap:0.5rem;">
+          <Icon name="mdi:checkbox-marked-circle-outline" width="20" height="20" color="var(--accent-blue)" /> Mis Tareas Asignadas
+        </h3>
+        <span class="zoho-badge neutral" id="my-tasks-badge">0 tareas</span>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">
+        Aquí puedes ver las tareas que el administrador te asignó o delegó. Márcalas en progreso o complétalas conforme avances.
+      </p>
+
+      <div class="task-tabs">
+        <button class="ttab active" data-filter="all">Todas</button>
+        <button class="ttab" data-filter="pending">Pendientes</button>
+        <button class="ttab" data-filter="progress">En Progreso</button>
+        <button class="ttab" data-filter="done">Completadas</button>
+      </div>
+
+      <div class="my-tasks-list" id="my-tasks-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </div>
+</PanelLayout>
+
+<style is:global>
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 960px) {
+    .profile-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Zoho Card & Section Styles */
+  .zoho-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+  }
+  .zoho-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 1.25rem;
+  }
+  .zoho-avatar-lg {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+  .zoho-badge {
+    font-size: 0.78rem; font-weight: 700;
+    padding: 0.25rem 0.75rem; border-radius: 100px;
+    border: 1px solid transparent;
+  }
+  .zoho-badge.ok { background: rgba(52,199,89,0.12); color: var(--accent-green); border-color: rgba(52,199,89,0.25); }
+  .zoho-badge.out { background: rgba(255,59,48,0.1); color: var(--accent-red); border-color: rgba(255,59,48,0.25); }
+  .zoho-badge.neutral { background: var(--bg-base); color: var(--text-secondary); border-color: var(--border-subtle); }
+
+  .zoho-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding-bottom: 0.5rem;
+    border-bottom: 1.5px solid var(--border-subtle);
+    margin-bottom: 1rem;
+  }
+
+  .zoho-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .form-row:last-of-type {
+    border-bottom: none;
+  }
+  .form-row label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+  .form-row input, .form-row textarea {
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-row input:focus, .form-row textarea:focus {
+    border-color: var(--accent-blue);
+  }
+
+  .zoho-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .zoho-field {
+    padding: 0.75rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .zoho-field:first-child {
+    border-right: 1px solid var(--border-subtle);
+  }
+  .zoho-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+  .zoho-val {
+    font-size: 0.92rem;
+  }
+
+  /* Task Tabs */
+  .task-tabs {
+    display: flex; gap: 0.3rem; margin-bottom: 1rem;
+    background: var(--bg-base); padding: 0.25rem;
+    border-radius: 8px; border: 1px solid var(--border-subtle);
+  }
+  .ttab {
+    flex: 1; padding: 0.4rem 0.6rem; border-radius: 6px; border: none;
+    font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    background: transparent; color: var(--text-secondary); transition: all 0.2s;
+  }
+  .ttab.active {
+    background: var(--bg-surface); color: var(--text-primary); box-shadow: var(--shadow-soft);
+  }
+
+  .my-tasks-list {
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .my-task-card {
+    background: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    transition: transform 0.15s;
+  }
+  .my-task-card.alta { border-left-color: var(--accent-red); }
+  .my-task-card.media { border-left-color: var(--accent-orange); }
+  .my-task-card.baja { border-left-color: var(--accent-green); }
+  .my-task-header {
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;
+  }
+  .my-task-title { font-weight: 600; font-size: 0.95rem; }
+  .my-task-meta {
+    display: flex; gap: 0.75rem; font-size: 0.78rem; color: var(--text-secondary); flex-wrap: wrap;
+  }
+  .my-task-actions {
+    display: flex; gap: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border-subtle); margin-top: 0.25rem;
+  }
+  .task-act-btn {
+    padding: 0.35rem 0.8rem; border-radius: 100px; border: 1px solid var(--border-subtle);
+    background: var(--bg-surface); color: var(--text-primary); font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: all 0.2s;
+  }
+  .task-act-btn:hover { background: var(--bg-base); }
+  .task-act-btn.finish { background: rgba(52,199,89,0.12); color: var(--accent-green); border-color: rgba(52,199,89,0.3); }
+</style>
+
+<script is:inline>
+(function() {
+  const EMP_KEY = 'bicisaas_employees';
+  const TASK_KEY = 'bicisaas_tasks';
+
+  function getCurrentEmployeeId() {
+    try {
+      const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+      if (session && session.userId) return session.userId;
+    } catch(e) {}
+    const role = localStorage.getItem('bicisaas_user_role') || 'e2';
+    return role === 'admin' ? 'e1' : role;
+  }
+
+  function loadEmployees() {
+    return JSON.parse(localStorage.getItem(EMP_KEY) || '[]');
+  }
+  function saveEmployees(data) {
+    localStorage.setItem(EMP_KEY, JSON.stringify(data));
+  }
+  function loadTasks() {
+    return JSON.parse(localStorage.getItem(TASK_KEY) || '[]');
+  }
+  function saveTasks(data) {
+    localStorage.setItem(TASK_KEY, JSON.stringify(data));
+  }
+
+  let activeFilter = 'all';
+
+  function renderProfile() {
+    const empId = getCurrentEmployeeId();
+    const emps = loadEmployees();
+    const me = emps.find(e => e.id === empId) || emps[1] || {
+      id: 'e2', name: 'Marco Ramírez', initials: 'M', role: 'Taller', phone: '9842345678', shift: 'Completo (10am–7pm)', days: 'Lun–Sáb', color: '#34c759'
+    };
+
+    // Header & Avatar
+    document.getElementById('my-avatar').textContent = me.initials || me.name.charAt(0);
+    document.getElementById('my-avatar').style.background = me.color || '#34c759';
+    document.getElementById('my-display-name').textContent = me.name;
+    document.getElementById('my-display-role').textContent = `${me.role} · ${me.shift}`;
+
+    // Status Badge
+    const isIn = me.clockIn && !me.clockOut;
+    const badge = document.getElementById('my-status-badge');
+    badge.className = 'zoho-badge ' + (isIn ? 'ok' : 'out');
+    badge.textContent = isIn ? 'En Turno' : 'Fuera de Turno';
+
+    // Form inputs
+    document.getElementById('my-name-input').value = me.name || '';
+    document.getElementById('my-phone-input').value = me.phone || '';
+    document.getElementById('my-role-input').value = me.role || '';
+    if (me.emergency) document.getElementById('my-emergency-input').value = me.emergency;
+    if (me.bio) document.getElementById('my-bio-input').value = me.bio;
+
+    // Horarios
+    document.getElementById('my-shift-val').textContent = me.shift || 'Completo (10am – 7pm)';
+    document.getElementById('my-days-val').textContent = me.days || 'Lun–Sáb';
+    document.getElementById('my-clockin-val').textContent = me.clockIn ? `Entrada: ${me.clockIn}` : 'Sin registro hoy';
+
+    // Calculate hours today
+    if (me.clockIn) {
+      const now = new Date().toTimeString().slice(0,5);
+      const [ih, im] = me.clockIn.split(':').map(Number);
+      const [eh, em] = (me.clockOut || now).split(':').map(Number);
+      const hrs = Math.max(0, ((eh * 60 + em) - (ih * 60 + im)) / 60).toFixed(1);
+      document.getElementById('my-hours-today').textContent = `${hrs} h ${me.clockOut ? '(Cerrado)' : '(Activo)'}`;
+    } else {
+      document.getElementById('my-hours-today').textContent = '0 h';
+    }
+
+    // Top Clock Button
+    const clockBtn = document.getElementById('btn-clock-action');
+    const clockLabel = document.getElementById('my-clock-btn-label');
+    if (isIn) {
+      clockLabel.textContent = `Registrar Salida (${me.clockIn})`;
+      clockBtn.style.background = 'rgba(255,59,48,0.15)';
+      clockBtn.style.color = '#ff3b30';
+      clockBtn.style.border = '1px solid rgba(255,59,48,0.3)';
+    } else {
+      clockLabel.textContent = 'Checar Entrada';
+      clockBtn.style.background = '';
+      clockBtn.style.color = '';
+      clockBtn.style.border = '';
+    }
+
+    renderMyTasks(empId);
+  }
+
+  function renderMyTasks(empId) {
+    const allTasks = loadTasks();
+    const myTasks = allTasks.filter(t => t.assignee === empId);
+    document.getElementById('my-tasks-badge').textContent = `${myTasks.length} tareas`;
+
+    let filtered = myTasks;
+    if (activeFilter !== 'all') {
+      filtered = myTasks.filter(t => t.status === activeFilter);
+    }
+
+    const container = document.getElementById('my-tasks-list');
+    if (!filtered.length) {
+      container.innerHTML = `<div style="text-align:center; padding:2.5rem 1rem; color:var(--text-secondary); background:var(--bg-base); border-radius:10px; border:1px dashed var(--border-subtle);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin:0 auto 0.5rem; display:block; opacity:0.6;"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        <strong>Sin tareas en este filtro</strong>
+        <p style="font-size:0.82rem; margin:0.25rem 0 0;">Todo al día en tu área de trabajo.</p>
+      </div>`;
+      return;
+    }
+
+    container.innerHTML = filtered.map(t => {
+      const isDone = t.status === 'done';
+      const isProgress = t.status === 'progress';
+      const pLabel = { alta: 'Prioridad Alta', media: 'Prioridad Media', baja: 'Prioridad Baja' }[t.priority] || '';
+      return `
+        <div class="my-task-card ${t.priority}">
+          <div class="my-task-header">
+            <span class="my-task-title" style="${isDone ? 'text-decoration:line-through; opacity:0.6;' : ''}">${t.title}</span>
+            <span style="font-size:0.75rem; font-weight:700; padding:0.15rem 0.55rem; border-radius:100px; background:${isDone ? 'rgba(52,199,89,0.12)' : isProgress ? 'rgba(0,113,227,0.12)' : 'rgba(255,149,0,0.12)'}; color:${isDone ? 'var(--accent-green)' : isProgress ? 'var(--accent-blue)' : 'var(--accent-orange)'};">
+              ${isDone ? 'Completada' : isProgress ? 'En Progreso' : 'Pendiente'}
+            </span>
+          </div>
+          <div class="my-task-meta">
+            <span>${t.cat}</span>
+            <span>${pLabel}</span>
+            ${t.due ? `<span>Límite: ${t.due}</span>` : ''}
+          </div>
+          ${t.notes ? `<div style="font-size:0.8rem; color:var(--text-secondary); background:var(--bg-surface); padding:0.4rem 0.6rem; border-radius:6px;">${t.notes}</div>` : ''}
+          <div class="my-task-actions">
+            ${!isProgress && !isDone ? `<button class="task-act-btn" onclick="updateMyTaskStatus('${t.id}', 'progress')">Iniciar</button>` : ''}
+            ${!isDone ? `<button class="task-act-btn finish" onclick="updateMyTaskStatus('${t.id}', 'done')">Marcar Lista</button>` : ''}
+            ${isDone ? `<button class="task-act-btn" onclick="updateMyTaskStatus('${t.id}', 'pending')">Reabrir</button>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.updateMyTaskStatus = function(taskId, newStatus) {
+    const tasks = loadTasks();
+    const t = tasks.find(x => x.id === taskId);
+    if (t) {
+      t.status = newStatus;
+      saveTasks(tasks);
+      renderMyTasks(getCurrentEmployeeId());
+    }
+  };
+
+  // Clock in/out button handler
+  document.getElementById('btn-clock-action').addEventListener('click', () => {
+    const empId = getCurrentEmployeeId();
+    const emps = loadEmployees();
+    const me = emps.find(e => e.id === empId);
+    if (!me) return;
+
+    const now = new Date().toTimeString().slice(0,5);
+    if (me.clockIn && !me.clockOut) {
+      me.clockOut = now;
+      alert(`Registro de asistencia: Salida guardada a las ${now}.`);
+    } else {
+      me.clockIn = now;
+      me.clockOut = null;
+      alert(`Registro de asistencia: Entrada guardada a las ${now}.`);
+    }
+    saveEmployees(emps);
+    renderProfile();
+  });
+
+  // Save Profile Changes
+  document.getElementById('btn-save-profile').addEventListener('click', () => {
+    const empId = getCurrentEmployeeId();
+    const emps = loadEmployees();
+    const me = emps.find(e => e.id === empId);
+    if (!me) return;
+
+    const newName = document.getElementById('my-name-input').value.trim();
+    const newPhone = document.getElementById('my-phone-input').value.trim();
+    const newRole = document.getElementById('my-role-input').value.trim();
+    const newEmergency = document.getElementById('my-emergency-input').value.trim();
+    const newBio = document.getElementById('my-bio-input').value.trim();
+
+    if (!newName || !newPhone) {
+      alert('Nombre y teléfono son obligatorios.');
+      return;
+    }
+
+    me.name = newName;
+    me.phone = newPhone;
+    me.role = newRole;
+    me.emergency = newEmergency;
+    me.bio = newBio;
+    me.initials = newName.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+    saveEmployees(emps);
+    alert('Datos de perfil actualizados exitosamente.');
+    renderProfile();
+  });
+
+  // Task filter tabs
+  document.querySelectorAll('.ttab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.ttab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      activeFilter = this.dataset.filter;
+      renderMyTasks(getCurrentEmployeeId());
+    });
+  });
+
+  // Listen for external clock updates
+  window.addEventListener('emp:clock_updated', () => {
+    renderProfile();
+  });
+
+  renderProfile();
+})();
+</script>

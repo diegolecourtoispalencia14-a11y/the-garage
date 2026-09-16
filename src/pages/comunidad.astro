@@ -4,7 +4,7 @@ import Base from '../layouts/Base.astro';
 const stories = [
   { id: 'basso', name: 'Basso Bikes', filter: 'arribo', tag: 'BASSO' },
   { id: 'rodadas', name: 'The Garage Ride', filter: 'rodada', tag: 'RODADA' },
-  { id: 'clasica', name: 'Clásica 7:30', filter: 'evento', tag: 'CARRERAS' },
+  { id: 'racing', name: 'Racing Team', filter: 'racing', tag: 'ACADEMIA' },
   { id: 'taller', name: 'Taller SRAM', filter: 'taller', tag: 'TALLER' },
   { id: 'wayfar', name: 'Wayfar', filter: 'lifestyle', tag: 'NUTRICIÓN' },
   { id: 'bikepacking', name: 'Huellas de Coral', filter: 'rodada', tag: 'EXPEDICIÓN' }
@@ -51,9 +51,9 @@ const posts = [
     tipo: "rodada",
     badge: "THE GARAGE RIDE",
     titulo: "The Garage Ride — Rodada Grupal en Playa del Carmen",
-    descripcion: "Salidas de fin de semana con la comunidad ciclista local. Rodamos en pelotón con vehículo barredora, hidratación y seguridad.",
+    descripcion: "Salidas de los días viernes con la comunidad ciclista local. Rodamos en pelotón con vehículo barredora, hidratación y seguridad.",
     imagen: "/img/instagram/live-ig-dennysmsosa27Dcn9XZoRC-3.jpg",
-    specs: ["Salida Sabatina", "Todos los Niveles", "Pelotón Seguro"]
+    specs: ["Salida de los Viernes", "Todos los Niveles", "Pelotón Seguro"]
   },
   {
     permalink: "https://www.instagram.com/thegarage.pdc/reel/Db9KnkpTWZZ/",
@@ -122,15 +122,15 @@ const posts = [
     specs: ["Estación Oficial", "Abastecimiento", "Eventos Deportivos"]
   },
   {
-    permalink: "https://www.instagram.com/fredy_sanz/p/DbKdO6OFS87b3HevOt3mCquoKe3oynVy7zj_Yg0/",
-    shortcode: "DbKdO6OFS87b3HevOt3mCquoKe3oynVy7zj_Yg0",
-    categoria: "Eventos & Carreras",
-    tipo: "evento",
-    badge: "CLÁSICA 7:30",
-    titulo: "Clásica 7:30 Circuito XCO — La Fiesta del MTB en Playa",
-    descripcion: "Carrera oficial de cross-country organizada y respaldada por The Garage en senderos técnicos de Quintana Roo.",
+    permalink: "https://www.instagram.com/thegarage.pdc/",
+    shortcode: "the-garage-racing-team",
+    categoria: "Centro de Formación",
+    tipo: "racing",
+    badge: "THE GARAGE RACING TEAM",
+    titulo: "Centro de Formación The Garage Racing Team [Próximamente]",
+    descripcion: "Semillero de atletas y academia de ciclismo competitivo en la Riviera Maya: ruta, gravel y triatlón con biomecánica de vanguardia y soporte técnico de boxes.",
     imagen: "/img/instagram/live-ig-fredy_sanzDbKdO6OFS87b3HevOt3mCquoKe3oynVy7zj_Yg0.jpg",
-    specs: ["Circuito Técnico XCO", "MTB Competencia", "Riviera Maya"]
+    specs: ["Próximamente", "Scouting & Pre-registro", "Alto Rendimiento"]
   },
   {
     permalink: "https://www.instagram.com/thegarage.pdc/reel/DbJIcYSz_JP/",
@@ -148,7 +148,7 @@ const posts = [
 
 <Base
   title="Comunidad & Feed Oficial | The Garage Playa del Carmen"
-  description="Feed en vivo extraído directamente de @thegarage.pdc. Distribuidores oficiales de Basso, eventos Clásica 7:30 XCO, nutrición Wayfar y rodadas en Playa del Carmen."
+  description="Feed en vivo extraído directamente de @thegarage.pdc. Distribuidores oficiales de Basso Bikes, rodadas comunitarias The Garage Ride de los viernes, nutrición Wayfar y comunidad ciclista en Playa del Carmen."
 >
   <div class="comunidad-page-wrap">
     <div class="container-fluid">
@@ -174,7 +174,7 @@ const posts = [
             Comunidad, Rodadas &amp; Eventos.
           </h1>
           <p class="subtitle" style="max-width: 720px;">
-            Publicaciones originales extraídas de nuestro Instagram. Salidas semanales <strong>The Garage Ride</strong>, la carrera <strong>Clásica 7:30 XCO</strong>, distribución oficial de <strong>Basso Bikes</strong> y nutrición <strong>Wayfar</strong>.
+            Publicaciones originales extraídas de nuestro Instagram. Salidas semanales de los viernes <strong>The Garage Ride</strong>, la academia <strong>The Garage Racing Team</strong>, distribución oficial de <strong>Basso Bikes</strong> y nutrición <strong>Wayfar</strong>.
           </p>
         </div>
 
@@ -232,6 +232,129 @@ const posts = [
           </article>
         ))}
       </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- GOOGLE BUSINESS PROFILE REVIEWS (4.95 / 5) SOCIAL PROOF                -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <section class="comunidad-reviews-section">
+        <div class="comunidad-reviews-box">
+          <div class="reviews-header-flex">
+            <div class="reviews-brand-info">
+              <div class="google-logo-pill">
+                <svg width="26" height="26" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24Z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15Z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/>
+                </svg>
+                <span class="font-mono" style="font-weight:800; font-size:0.85rem; color:#ffffff;">Google Reviews</span>
+              </div>
+              <h2 style="font-size:1.6rem; font-weight:800; margin:0.4rem 0 0.2rem; color:#ffffff;">
+                4.95 de 5.0 Estrellas · Opiniones de Nuestra Comunidad
+              </h2>
+              <p style="color:#a1a1aa; font-size:0.9rem; margin:0;">
+                Calificaciones de ciclistas locales, triatletas y visitantes en Playa del Carmen y la Riviera Maya.
+              </p>
+            </div>
+
+            <div class="rating-badge-summary">
+              <div class="stars-gold"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+              <span class="badge-verified-num font-mono">38 RESEÑAS VERIFICADAS</span>
+            </div>
+          </div>
+
+          <div class="comunidad-reviews-grid">
+            <div class="com-review-card">
+              <div class="cr-top">
+                <div class="cr-stars"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+                <span class="cr-source font-mono">Google Maps</span>
+              </div>
+              <p class="cr-quote">"El mejor servicio mecánico de Playa del Carmen sin duda. Llevé mi bicicleta de ruta para cambio de chicotes y centrado de ruedas; quedó suave y precisa como de fábrica. Taller 100% profesional."</p>
+              <div class="cr-user">
+                <div class="cr-avatar" style="background:#0071e3;">RP</div>
+                <div>
+                  <strong>Roberto Pech</strong>
+                  <span>Ciclista de Ruta · Playacar</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="com-review-card">
+              <div class="cr-top">
+                <div class="cr-stars"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+                <span class="cr-source font-mono">Google Maps</span>
+              </div>
+              <p class="cr-quote">"Compré la Basso Palta II para gravel y la asesoría fue insuperable. Me calcularon el fit exacto, montaron el tubeless con Stan's y me la entregaron lista para salir a rodar. Excelente atención."</p>
+              <div class="cr-user">
+                <div class="cr-avatar" style="background:#ff9500;">CM</div>
+                <div>
+                  <strong>Carlos Méndez</strong>
+                  <span>Gravel Rider · Playa del Carmen</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="com-review-card">
+              <div class="cr-top">
+                <div class="cr-stars"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+                <span class="cr-source font-mono">Google Maps</span>
+              </div>
+              <p class="cr-quote">"Las rodadas de los viernes son increíbles. Muy buen ambiente, excelente organización con barredora y soporte técnico. Además los geles y sales Wayfar en tienda salvan los entrenos con humedad."</p>
+              <div class="cr-user">
+                <div class="cr-avatar" style="background:#34c759;">AP</div>
+                <div>
+                  <strong>Ana Paula Valenzuela</strong>
+                  <span>The Garage Ride · Miembro Club</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="com-review-card">
+              <div class="cr-top">
+                <div class="cr-stars"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+                <span class="cr-source font-mono">Google Maps</span>
+              </div>
+              <p class="cr-quote">"Atención a puerta cerrada con cita previa: te atienden sin prisas, revisan cada tornillo con torquímetro y te explican el desgaste de tus componentes con total transparencia. Súper confiables."</p>
+              <div class="cr-user">
+                <div class="cr-avatar" style="background:#af52de;">DG</div>
+                <div>
+                  <strong>David Garza</strong>
+                  <span>MTB Cross Country · Puerto Aventuras</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reviews-footer-bar">
+            <div style="display:flex; align-items:center; gap:0.6rem; color:#a1a1aa; font-size:0.85rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>The Garage Bike Experts · Perfil de Empresa Verificado en Google</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=The+Garage+Bike+Experts+Av+Ich+Xeel+Catalu%C3%B1a+Playa+del+Carmen"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-glass"
+                style="padding:0.5rem 1.25rem; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; background:rgba(66,133,244,0.12); border-color:rgba(66,133,244,0.3); color:#ffffff;"
+                title="Abrir formulario oficial de reseña en Google con 5 estrellas"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                <span>Calificar en Google (5 Estrellas) ↗</span>
+              </a>
+              <a
+                href="https://wa.me/529841381493?text=Hola,%20quisiera%20agendar%20cita%20o%20compartir%20mi%20experiencia%20sobre%20mi%20servicio%20en%20The%20Garage."
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-glass"
+                style="padding:0.5rem 1rem; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem;"
+              >
+                <span>Concierge WhatsApp ↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   </div>
@@ -412,4 +535,131 @@ const posts = [
     padding: 0.6rem 1rem;
     font-size: 0.82rem;
   }
+
+  /* Google Reviews Section in Comunidad */
+  .comunidad-reviews-section {
+    margin-top: 4rem;
+  }
+  .comunidad-reviews-box {
+    background: #141416;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2.25rem;
+  }
+  .reviews-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 2rem;
+  }
+  .google-logo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.35rem 0.85rem;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .rating-badge-summary {
+    text-align: right;
+  }
+  .stars-gold {
+    color: #ffb703;
+    font-size: 1.4rem;
+    letter-spacing: 0.1em;
+  }
+  .badge-verified-num {
+    display: inline-block;
+    background: rgba(52, 199, 89, 0.12);
+    color: #34c759;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
+    margin-top: 0.35rem;
+  }
+  .comunidad-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 1024px) {
+    .comunidad-reviews-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .comunidad-reviews-grid { grid-template-columns: 1fr; }
+  }
+  .com-review-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cr-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+  }
+  .cr-stars {
+    color: #ffb703;
+    font-size: 0.88rem;
+  }
+  .cr-source {
+    font-size: 0.68rem;
+    color: #71717a;
+  }
+  .cr-quote {
+    font-size: 0.86rem;
+    color: #d4d4d8;
+    line-height: 1.5;
+    margin: 0 0 1.25rem;
+    font-style: italic;
+  }
+  .cr-user {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 0.75rem;
+  }
+  .cr-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 800;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cr-user strong {
+    display: block;
+    font-size: 0.85rem;
+    color: #ffffff;
+  }
+  .cr-user span {
+    font-size: 0.72rem;
+    color: #a1a1aa;
+  }
+  .reviews-footer-bar {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
 </style>

@@ -1,0 +1,943 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { MASTER_PRODUCTS } from '../../data/allProducts';
+const masterProductsJson = JSON.stringify(MASTER_PRODUCTS);
+---
+<PanelLayout title="Inventario Maestro & POS | BiciSaaS">
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+        <span style="background:rgba(52,199,89,0.12); color:var(--accent-green); font-size:0.75rem; font-weight:700; padding:0.2rem 0.65rem; border-radius:100px; display:inline-flex; align-items:center; gap:0.35rem;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span> Catálogo en Vivo & POS
+        </span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">The Garage · Cataluña, Playa del Carmen</span>
+      </div>
+      <h1 class="page-title">Inventario Maestro & Punto de Venta.</h1>
+      <p class="text-muted">Gestión de stock, cobro en mostrador (POS) y catálogo unificado.</p>
+    </div>
+    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+      <button class="btn-secondary" id="btn-export">
+        <Icon name="mdi:download-outline" width="18" height="18" /> Exportar CSV
+      </button>
+      <button class="btn-primary" id="btn-add-product">
+        <Icon name="mdi:plus" width="18" height="18" /> Agregar Producto
+      </button>
+    </div>
+  </div>
+
+  <!-- Métricas Rápidas -->
+  <div class="metrics-row">
+    <div class="metric-pill">
+      <span class="metric-label">Total Modelos</span>
+      <span class="metric-val" id="m-total">0</span>
+    </div>
+    <div class="metric-pill">
+      <span class="metric-label">En Stock</span>
+      <span class="metric-val green" id="m-instock">0</span>
+    </div>
+    <div class="metric-pill">
+      <span class="metric-label">Stock Bajo</span>
+      <span class="metric-val orange" id="m-low">0</span>
+    </div>
+    <div class="metric-pill">
+      <span class="metric-label">Agotado</span>
+      <span class="metric-val red" id="m-out">0</span>
+    </div>
+    <div class="metric-pill" id="pill-inventory-valuation">
+      <span class="metric-label" id="m-value-label">Valor Total Inventario</span>
+      <span class="metric-val" id="m-value">$0</span>
+    </div>
+  </div>
+
+  <!-- Filtros y Búsqueda -->
+  <div class="filters-bar bento-card" style="flex-direction:row; align-items:center; gap:1rem; flex-wrap:wrap; padding:1rem 1.5rem; margin-bottom:1.5rem;">
+    <div class="search-box" style="flex:1; min-width:280px; position:relative;">
+      <Icon name="mdi:magnify" width="18" height="18" style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); color:var(--text-secondary);" />
+      <input type="text" id="search-input" placeholder="Buscar por producto, marca, SKU o código de barra..." style="width:100%; padding-left:2.5rem;" />
+    </div>
+    <select id="cat-filter" class="select-control">
+      <option value="">Todas las Categorías</option>
+      <option>Bicicletas</option>
+      <option>Transmisión & Drivetrain</option>
+      <option>Frenos</option>
+      <option>Ruedas & Llantas</option>
+      <option>Manubrio & Tija</option>
+      <option>Sillín & Poste</option>
+      <option>Cascos & Seguridad</option>
+      <option>Ropa & Calzado</option>
+      <option>Nutrición & Hidratación</option>
+      <option>Electrónica & GPS</option>
+      <option>Herramientas & Taller</option>
+      <option>Iluminación</option>
+      <option>Bolsas & Alforjas</option>
+      <option>Accesorios Varios</option>
+    </select>
+    <select id="status-filter" class="select-control">
+      <option value="">Todos los estados</option>
+      <option>En Stock</option>
+      <option>Stock Bajo</option>
+      <option>Agotado</option>
+    </select>
+  </div>
+
+  <!-- Tabla de Inventario -->
+  <div class="bento-card" style="padding:0; overflow:hidden;">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th style="width:40px;"></th>
+          <th>Producto</th>
+          <th>Categoría</th>
+          <th>SKU / Código</th>
+          <th>Precio Venta</th>
+          <th class="col-cost-admin">Precio Costo</th>
+          <th>Stock</th>
+          <th>Estado</th>
+          <th style="width:190px; text-align:center;">Acciones & POS</th>
+        </tr>
+      </thead>
+      <tbody id="inv-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- MODAL: Punto de Venta (POS) — Cobro Inmediato -->
+  <div id="pos-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header">
+        <h2 style="display:flex; align-items:center; gap:0.5rem; font-size:1.2rem;">
+          <Icon name="mdi:cash-register" width="22" height="22" color="var(--accent-green)" />
+          <span>Cobro en Mostrador (POS)</span>
+        </h2>
+        <button class="btn-icon" id="pos-modal-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1.15rem;">
+        <!-- Product Card Info -->
+        <div style="background:var(--bg-base); border:1px solid var(--border-subtle); border-radius:12px; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <strong id="pos-item-name" style="font-size:1rem; color:var(--text-primary); display:block;">—</strong>
+            <span id="pos-item-sku" style="font-size:0.8rem; font-family:monospace; color:var(--text-secondary);">SKU: —</span>
+          </div>
+          <div style="text-align:right;">
+            <div id="pos-item-unit-price" style="font-size:1.15rem; font-weight:700; color:var(--text-primary);">$0</div>
+            <span id="pos-item-stock-badge" style="font-size:0.75rem; color:var(--accent-green);">Stock: 0 pz</span>
+          </div>
+        </div>
+
+        <!-- Quantity Selector -->
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-base); padding:0.85rem 1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <span style="font-size:0.88rem; font-weight:600; color:var(--text-secondary);">Cantidad a cobrar:</span>
+          <div style="display:flex; align-items:center; gap:0.65rem;">
+            <button type="button" class="btn-secondary" id="btn-pos-qty-minus" style="padding:0.3rem 0.75rem; font-size:1rem; font-weight:700;">−</button>
+            <input type="number" id="pos-qty-input" value="1" min="1" max="99" style="width:60px; text-align:center; font-size:1.1rem; font-weight:700; background:transparent; border:none; color:var(--text-primary); outline:none;" />
+            <button type="button" class="btn-secondary" id="btn-pos-qty-plus" style="padding:0.3rem 0.75rem; font-size:1rem; font-weight:700;">+</button>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="form-group">
+          <label style="font-size:0.82rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.4rem;">Método de Pago</label>
+          <select id="pos-payment-method" style="width:100%; padding:0.65rem 0.85rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-primary); font-size:0.9rem; font-weight:600; outline:none;">
+            <option value="Efectivo (Caja Mostrador)">Efectivo (Caja Mostrador)</option>
+            <option value="MercadoPago QR / App">MercadoPago QR / App</option>
+            <option value="Terminal Bancaria (Tarjeta)">Terminal Bancaria (Tarjeta Débito/Crédito)</option>
+            <option value="SPEI / Transferencia Bancaria">SPEI / Transferencia Bancaria Directa</option>
+          </select>
+        </div>
+
+        <!-- Optional Customer Name -->
+        <div class="form-group">
+          <label style="font-size:0.82rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.4rem;">Cliente (Opcional)</label>
+          <input type="text" id="pos-customer-name" placeholder="Público General o Nombre del Ciclista..." style="width:100%; padding:0.6rem 0.85rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-primary); font-size:0.88rem; outline:none;" />
+        </div>
+
+        <!-- Total Calculation Callout -->
+        <div style="background:linear-gradient(135deg, rgba(0,113,227,0.12), rgba(52,199,89,0.12)); border:1px solid rgba(0,113,227,0.25); border-radius:12px; padding:1rem; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.92rem; font-weight:600; color:var(--text-secondary);">Total a Cobrar:</span>
+          <strong id="pos-total-display" style="font-size:1.6rem; font-weight:800; color:#34c759;">$0 MXN</strong>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="display:flex; justify-content:space-between; gap:0.75rem;">
+        <button class="btn-secondary" id="pos-modal-cancel">Cancelar</button>
+        <button class="btn-primary" id="btn-pos-confirm" style="flex:1; justify-content:center; background:linear-gradient(135deg, #34c759, #30d158); border:none; box-shadow:0 4px 16px rgba(52,199,89,0.35); font-weight:700;">
+          <Icon name="mdi:check-circle-outline" width="18" height="18" /> Confirmar Cobro & Generar Ticket
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Ticket de Venta Digital & Imprimible -->
+  <div id="ticket-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <h2 style="font-size:1.1rem; margin:0;">Ticket de Venta Oficial</h2>
+        <button class="btn-icon" id="ticket-modal-close"><Icon name="mdi:close" width="20" height="20" /></button>
+      </div>
+      <div class="modal-body">
+        <!-- Thermal Receipt Styling -->
+        <div id="printable-ticket" style="background:#fff; color:#111; font-family:'Courier New', Courier, monospace; padding:1.5rem; border-radius:8px; box-shadow:inset 0 0 0 1px #eee; font-size:0.85rem; line-height:1.4;">
+          <div style="text-align:center; margin-bottom:1rem;">
+            <div style="font-weight:900; font-size:1.15rem; letter-spacing:0.05em;">THE GARAGE BIKE EXPERTS</div>
+            <div style="font-size:0.75rem; color:#555;">Taller de Cirugía Mecánica & Boutique</div>
+            <div style="font-size:0.75rem; color:#555;">Av. Ich Xeel, Cataluña, Playa del Carmen</div>
+            <div style="font-size:0.75rem; color:#555;">WhatsApp: +52 984 138 1493</div>
+            <div style="border-bottom:1px dashed #444; margin:0.65rem 0;"></div>
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem;">
+              <span id="tk-folio">FOLIO: T-0000</span>
+              <span id="tk-date">07/09/2026 13:00</span>
+            </div>
+            <div style="text-align:left; font-size:0.78rem; margin-top:0.25rem;">
+              <span>ATENDIÓ: <strong id="tk-cashier">Diego Lecourtois</strong></span>
+            </div>
+            <div style="text-align:left; font-size:0.78rem;">
+              <span>CLIENTE: <strong id="tk-client">Público General</strong></span>
+            </div>
+            <div style="border-bottom:1px dashed #444; margin:0.65rem 0;"></div>
+          </div>
+
+          <!-- Items Table -->
+          <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:0.35rem; font-size:0.78rem;">
+            <span>CONCEPTO / CANT</span>
+            <span>TOTAL</span>
+          </div>
+          <div id="tk-item-row" style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <div>
+              <div id="tk-product-name" style="font-weight:700;">Producto</div>
+              <div id="tk-product-qty" style="color:#555; font-size:0.75rem;">1 pz x $0</div>
+            </div>
+            <strong id="tk-product-total">$0</strong>
+          </div>
+
+          <div style="border-bottom:1px dashed #444; margin:0.65rem 0;"></div>
+          <div style="display:flex; justify-content:space-between; font-size:1.05rem; font-weight:900; margin-bottom:0.45rem;">
+            <span>TOTAL PAGADO:</span>
+            <span id="tk-grand-total">$0 MXN</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:#555; margin-bottom:1rem;">
+            <span>FORMA DE PAGO:</span>
+            <strong id="tk-pay-method" style="color:#111;">Efectivo</strong>
+          </div>
+
+          <div style="text-align:center; font-size:0.72rem; color:#555; border-top:1px dashed #444; padding-top:0.65rem;">
+            <div>¡GRACIAS POR RODAR CON NOSOTROS!</div>
+            <div>Garantía de ajuste en tienda y servicio preventivo.</div>
+            <div style="margin-top:0.25rem; font-family:sans-serif; font-size:0.65rem; color:#888;">BiciSaaS Cloud POS • Sistema Certificado</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; gap:0.5rem;">
+        <button class="btn-secondary" id="btn-print-ticket">
+          <Icon name="mdi:printer" width="16" height="16" /> Imprimir Ticket
+        </button>
+        <button class="btn-secondary" id="btn-wa-ticket">
+          <Icon name="mdi:whatsapp" width="16" height="16" /> Enviar por WhatsApp
+        </button>
+        <button class="btn-primary" id="ticket-modal-done">
+          Finalizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Agregar/Editar Producto -->
+  <div id="product-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modal-title">Nuevo Producto</h2>
+        <button class="btn-icon" id="modal-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:span 2;">
+            <label>Nombre del Producto</label>
+            <input type="text" id="f-name" placeholder="Ej: Shimano Deore M6100 12v" />
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="f-cat">
+              <option>Bicicletas</option>
+              <option>Transmisión & Drivetrain</option>
+              <option>Frenos</option>
+              <option>Ruedas & Llantas</option>
+              <option>Manubrio & Tija</option>
+              <option>Sillín & Poste</option>
+              <option>Cascos & Seguridad</option>
+              <option>Ropa & Calzado</option>
+              <option>Nutrición & Hidratación</option>
+              <option>Electrónica & GPS</option>
+              <option>Herramientas & Taller</option>
+              <option>Iluminación</option>
+              <option>Bolsas & Alforjas</option>
+              <option>Accesorios Varios</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Marca</label>
+            <input type="text" id="f-brand" placeholder="Ej: Shimano, Basso, POC" />
+          </div>
+          <div class="form-group">
+            <label>SKU / Código</label>
+            <input type="text" id="f-sku" placeholder="Ej: SHI-M6100" />
+          </div>
+          <div class="form-group">
+            <label>Precio Venta (MXN)</label>
+            <input type="number" id="f-price" placeholder="0" />
+          </div>
+          <div class="form-group col-cost-admin" id="fg-cost">
+            <label>Precio Costo Distribuidor (MXN)</label>
+            <input type="number" id="f-cost" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label>Stock Inicial</label>
+            <input type="number" id="f-stock" placeholder="0" />
+          </div>
+          <div class="form-group">
+            <label>Stock Mínimo Alerta</label>
+            <input type="number" id="f-minstock" placeholder="2" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modal-cancel">Cancelar</button>
+        <button class="btn-primary" id="modal-save">Guardar Producto</button>
+      </div>
+    </div>
+  </div>
+</PanelLayout>
+
+<style>
+  .page-header { margin-bottom: 2rem; }
+  .page-title { font-size: 1.85rem; font-weight: 700; margin: 0 0 0.25rem; letter-spacing: -0.5px; }
+  .text-muted { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+
+  /* Metrics */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .metric-pill {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .metric-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
+  .metric-val { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+  .metric-val.green { color: var(--accent-green); }
+  .metric-val.orange { color: var(--accent-orange); }
+  .metric-val.red { color: var(--accent-red); }
+
+  /* Search & Select */
+  .select-control {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+  .search-box input {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--accent-color); }
+
+  /* Table */
+  .inv-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+  .inv-table th {
+    padding: 0.85rem 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--bg-surface);
+  }
+  .inv-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    vertical-align: middle;
+  }
+  .inv-table tr:hover td { background-color: var(--bg-surface-hover); }
+
+  .prod-icon {
+    width: 32px; height: 32px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* Status Pills */
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.25rem 0.65rem; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .pill-ok { background: rgba(48, 209, 88, 0.15); color: var(--accent-green); }
+  .pill-low { background: rgba(255, 159, 10, 0.15); color: var(--accent-orange); }
+  .pill-out { background: rgba(255, 69, 58, 0.15); color: var(--accent-red); }
+
+  /* Row Actions */
+  .row-actions { display: flex; align-items: center; gap: 0.35rem; justify-content: center; }
+  .btn-row {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    width: 28px; height: 28px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 0.85rem;
+    transition: background 0.15s;
+  }
+  .btn-row:hover { background: var(--bg-surface-hover); }
+
+  .btn-pos {
+    background: linear-gradient(135deg, rgba(52,199,89,0.15), rgba(48,209,88,0.25));
+    border: 1px solid rgba(52,199,89,0.4);
+    color: var(--accent-green);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.2s ease;
+  }
+  .btn-pos:hover {
+    background: var(--accent-green);
+    color: #fff;
+    transform: scale(1.03);
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+  }
+  .modal-box {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    width: 90%; max-width: 580px;
+    box-shadow: var(--shadow-float);
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-body { padding: 1.5rem; }
+  .modal-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex; justify-content: flex-end; gap: 0.75rem;
+    background: var(--bg-surface);
+  }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+  .form-group input, .form-group select {
+    background: var(--bg-base);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem; outline: none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--accent-color); }
+</style>
+
+<script is:inline define:vars={{ masterProductsJson }}>
+(function() {
+  const MASTER_PRODUCTS = JSON.parse(masterProductsJson);
+
+  // Check user session & RBAC
+  const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+  const isAdmin = session.role === 'admin';
+
+  // Apply RBAC UI visibility
+  document.querySelectorAll('.col-cost-admin').forEach(el => {
+    el.style.display = isAdmin ? '' : 'none';
+  });
+
+  const costGroup = document.getElementById('fg-cost');
+  if (costGroup) costGroup.style.display = isAdmin ? '' : 'none';
+
+  function getCatSvg(cat) {
+    if (cat === 'Bicicletas') {
+      return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5L8.5 7H12l2.5 4.5M12 11.5l3.5 6M5.5 17.5l4-10.5"/></svg>`;
+    } else if (cat === 'Herramientas & Taller' || cat === 'Manubrio & Tija') {
+      return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`;
+    } else if (cat === 'Transmisión & Drivetrain') {
+      return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
+    } else if (cat === 'Electrónica & GPS') {
+      return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>`;
+    }
+    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>`;
+  }
+
+  function loadProducts() {
+    try {
+      const saved = localStorage.getItem('bicisaas_inventory');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 35) {
+          return parsed;
+        }
+      }
+    } catch(e) {}
+
+    // Fallback & seed from MASTER_PRODUCTS
+    const seeded = MASTER_PRODUCTS.map(p => ({
+      id: p.id,
+      name: p.name,
+      brand: p.brand || 'The Garage',
+      cat: p.cat || 'Accesorios Varios',
+      sku: p.sku || 'SKU-' + p.id,
+      price: p.price || 0,
+      cost: Math.round((p.price || 0) * 0.62),
+      stock: p.stock !== undefined ? p.stock : 5,
+      min: 2
+    }));
+
+    localStorage.setItem('bicisaas_inventory', JSON.stringify(seeded));
+    return seeded;
+  }
+
+  function saveProducts(products) {
+    localStorage.setItem('bicisaas_inventory', JSON.stringify(products));
+  }
+
+  function getStatus(p) {
+    if (p.stock === 0) return { label: 'Agotado', cls: 'pill-out' };
+    if (p.stock <= (p.min || 2)) return { label: 'Stock Bajo', cls: 'pill-low' };
+    return { label: 'En Stock', cls: 'pill-ok' };
+  }
+
+  function formatMXN(n) {
+    return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 });
+  }
+
+  function updateMetrics(products) {
+    document.getElementById('m-total').textContent = products.length;
+    document.getElementById('m-instock').textContent = products.filter(p => p.stock > (p.min || 2)).length;
+    document.getElementById('m-low').textContent = products.filter(p => p.stock > 0 && p.stock <= (p.min || 2)).length;
+    document.getElementById('m-out').textContent = products.filter(p => p.stock === 0).length;
+
+    const valLabel = document.getElementById('m-value-label');
+    const valAmount = document.getElementById('m-value');
+
+    if (isAdmin) {
+      if (valLabel) valLabel.textContent = 'Valor Total Inventario';
+      const totalCost = products.reduce((acc, p) => acc + (p.stock * (p.cost || p.price * 0.6)), 0);
+      if (valAmount) valAmount.textContent = formatMXN(totalCost);
+    } else {
+      if (valLabel) valLabel.textContent = 'Catálogo para Venta';
+      if (valAmount) valAmount.textContent = products.length + ' artículos';
+    }
+  }
+
+  function renderTable(products) {
+    const tbody = document.getElementById('inv-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    products.forEach(p => {
+      const st = getStatus(p);
+      const icon = getCatSvg(p.cat);
+      tbody.innerHTML += `
+        <tr>
+          <td><div class="prod-icon" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:8px; background:var(--bg-surface); border:1px solid var(--border-subtle); color:var(--text-secondary);">${icon}</div></td>
+          <td>
+            <div style="font-weight:600; font-size:0.95rem;">${p.name}</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary);">${p.brand}</div>
+          </td>
+          <td style="color:var(--text-secondary); font-size:0.88rem;">${p.cat}</td>
+          <td style="font-family:monospace; font-size:0.85rem; color:var(--text-secondary);">${p.sku}</td>
+          <td style="font-weight:700; color:var(--text-primary);">${formatMXN(p.price)}</td>
+          <td class="col-cost-admin" style="color:var(--text-secondary); font-family:monospace; display:${isAdmin ? '' : 'none'};">
+            ${formatMXN(p.cost || p.price * 0.6)}
+          </td>
+          <td>
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <button class="btn-row" onclick="changeStock('${p.id}', -1)" title="Restar 1">−</button>
+              <strong style="min-width:20px; text-align:center;">${p.stock}</strong>
+              <button class="btn-row" onclick="changeStock('${p.id}', 1)" title="Sumar 1">+</button>
+            </div>
+          </td>
+          <td><span class="status-pill ${st.cls}">${st.label}</span></td>
+          <td>
+            <div class="row-actions">
+              <button class="btn-pos" onclick="openPOSItem('${p.sku || p.id}')" title="Cobrar venta en caja mostrador">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:3px; vertical-align:middle;"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> Cobrar
+              </button>
+              ${isAdmin ? `
+                <button class="btn-row" title="Editar" onclick="editProduct('${p.id}')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                </button>
+                <button class="btn-row" title="Eliminar" onclick="deleteProduct('${p.id}')" style="color:#ff453a;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+    updateMetrics(products);
+  }
+
+  function filterAndRender() {
+    let products = loadProducts();
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const cat = document.getElementById('cat-filter').value;
+    const status = document.getElementById('status-filter').value;
+
+    if (q) products = products.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || (p.sku && p.sku.toLowerCase().includes(q)));
+    if (cat) products = products.filter(p => p.cat === cat);
+    if (status === 'En Stock') products = products.filter(p => p.stock > (p.min || 2));
+    else if (status === 'Stock Bajo') products = products.filter(p => p.stock > 0 && p.stock <= (p.min || 2));
+    else if (status === 'Agotado') products = products.filter(p => p.stock === 0);
+
+    renderTable(products);
+  }
+
+  // Stock quick-change
+  window.changeStock = function(id, delta) {
+    const products = loadProducts();
+    const p = products.find(x => String(x.id) === String(id) || x.sku === id);
+    if (p) { 
+      p.stock = Math.max(0, p.stock + delta); 
+      saveProducts(products); 
+      filterAndRender(); 
+      try {
+        import('../../services/cloudSyncService').then(({ syncProductToCloud }) => {
+          syncProductToCloud(p);
+        }).catch(() => {});
+      } catch(e) {}
+    }
+  };
+
+  // Delete
+  window.deleteProduct = function(id) {
+    if (!isAdmin) { alert('Solo el Administrador puede eliminar productos del catálogo.'); return; }
+    if (!confirm('¿Eliminar este producto del inventario?')) return;
+    const products = loadProducts().filter(p => String(p.id) !== String(id));
+    saveProducts(products); 
+    filterAndRender();
+  };
+
+  // Edit
+  let editingId = null;
+  window.editProduct = function(id) {
+    if (!isAdmin) { alert('Solo el Administrador puede editar fichas técnicas del catálogo.'); return; }
+    const products = loadProducts();
+    const p = products.find(x => String(x.id) === String(id));
+    if (!p) return;
+    editingId = id;
+    document.getElementById('modal-title').textContent = 'Editar Producto';
+    document.getElementById('f-name').value = p.name;
+    document.getElementById('f-brand').value = p.brand;
+    document.getElementById('f-cat').value = p.cat;
+    document.getElementById('f-sku').value = p.sku;
+    document.getElementById('f-price').value = p.price;
+    document.getElementById('f-cost').value = p.cost;
+    document.getElementById('f-stock').value = p.stock;
+    document.getElementById('f-minstock').value = p.min || 2;
+    document.getElementById('product-modal').style.display = 'flex';
+  };
+
+  // Add / Save
+  const btnAddProd = document.getElementById('btn-add-product');
+  if (btnAddProd) {
+    btnAddProd.addEventListener('click', () => {
+      editingId = null;
+      document.getElementById('modal-title').textContent = 'Nuevo Producto';
+      ['f-name','f-brand','f-sku','f-price','f-cost','f-stock','f-minstock'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('product-modal').style.display = 'flex';
+    });
+  }
+
+  const btnModalSave = document.getElementById('modal-save');
+  if (btnModalSave) {
+    btnModalSave.addEventListener('click', () => {
+      const products = loadProducts();
+      const data = {
+        name: document.getElementById('f-name').value.trim(),
+        brand: document.getElementById('f-brand').value.trim() || 'The Garage',
+        cat: document.getElementById('f-cat').value,
+        sku: document.getElementById('f-sku').value.trim(),
+        price: parseFloat(document.getElementById('f-price').value) || 0,
+        cost: parseFloat(document.getElementById('f-cost').value) || 0,
+        stock: parseInt(document.getElementById('f-stock').value) || 0,
+        min: parseInt(document.getElementById('f-minstock').value) || 2,
+      };
+      if (!data.name) { alert('El nombre del producto es obligatorio.'); return; }
+
+      if (editingId) {
+        const idx = products.findIndex(p => String(p.id) === String(editingId));
+        if (idx > -1) products[idx] = { ...products[idx], ...data };
+      } else {
+        data.id = 'p-' + Date.now();
+        products.push(data);
+      }
+      saveProducts(products);
+      document.getElementById('product-modal').style.display = 'none';
+      filterAndRender();
+    });
+  }
+
+  // Close Product Modal
+  ['modal-close','modal-cancel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', () => {
+        document.getElementById('product-modal').style.display = 'none';
+      });
+    }
+  });
+
+  // Filters
+  document.getElementById('search-input').addEventListener('input', filterAndRender);
+  document.getElementById('cat-filter').addEventListener('change', filterAndRender);
+  document.getElementById('status-filter').addEventListener('change', filterAndRender);
+
+  // CSV Export
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const products = loadProducts();
+    const headers = ['ID','Nombre','Marca','Categoría','SKU','Precio Venta'];
+    if (isAdmin) headers.push('Precio Costo');
+    headers.push('Stock','Stock Mínimo','Estado');
+
+    const rows = products.map(p => {
+      const st = getStatus(p);
+      const row = [p.id, `"${p.name}"`, p.brand, p.cat, p.sku, p.price];
+      if (isAdmin) row.push(p.cost || p.price * 0.6);
+      row.push(p.stock, p.min || 2, st.label);
+      return row.join(',');
+    });
+    const csv = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+    const link = document.createElement('a');
+    link.href = encodeURI(csv);
+    link.download = `inventario_the_garage_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+  });
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // POINT OF SALE (POS) & TICKET ENGINE
+  // ═════════════════════════════════════════════════════════════════════════
+  let activePOSItem = null;
+
+  window.openPOSItem = function(id) {
+    const products = loadProducts();
+    activePOSItem = products.find(p => String(p.id) === String(id) || p.sku === id);
+    if (!activePOSItem) return;
+
+    if (activePOSItem.stock <= 0) {
+      if (!confirm(`El producto "${activePOSItem.name}" aparece como Agotado (stock: 0).\n\n¿Deseas registrar la venta de todas formas?`)) {
+        return;
+      }
+    }
+
+    document.getElementById('pos-item-name').textContent = activePOSItem.name;
+    document.getElementById('pos-item-sku').textContent = 'SKU: ' + (activePOSItem.sku || activePOSItem.id);
+    document.getElementById('pos-item-unit-price').textContent = formatMXN(activePOSItem.price);
+    document.getElementById('pos-item-stock-badge').textContent = `Stock: ${activePOSItem.stock} pz`;
+    document.getElementById('pos-qty-input').value = 1;
+    document.getElementById('pos-qty-input').max = Math.max(1, activePOSItem.stock);
+    document.getElementById('pos-customer-name').value = '';
+
+    updatePOSTotal();
+    document.getElementById('pos-modal').style.display = 'flex';
+  };
+
+  function updatePOSTotal() {
+    if (!activePOSItem) return;
+    const qty = Math.max(1, parseInt(document.getElementById('pos-qty-input').value) || 1);
+    const total = activePOSItem.price * qty;
+    document.getElementById('pos-total-display').textContent = formatMXN(total) + ' MXN';
+  }
+
+  document.getElementById('btn-pos-qty-minus').addEventListener('click', () => {
+    const input = document.getElementById('pos-qty-input');
+    input.value = Math.max(1, (parseInt(input.value) || 1) - 1);
+    updatePOSTotal();
+  });
+
+  document.getElementById('btn-pos-qty-plus').addEventListener('click', () => {
+    const input = document.getElementById('pos-qty-input');
+    input.value = (parseInt(input.value) || 1) + 1;
+    updatePOSTotal();
+  });
+
+  document.getElementById('pos-qty-input').addEventListener('input', updatePOSTotal);
+
+  // Close POS modal
+  ['pos-modal-close', 'pos-modal-cancel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', () => {
+        document.getElementById('pos-modal').style.display = 'none';
+        activePOSItem = null;
+      });
+    }
+  });
+
+  // Confirm POS Sale
+  document.getElementById('btn-pos-confirm').addEventListener('click', () => {
+    if (!activePOSItem) return;
+
+    const qty = Math.max(1, parseInt(document.getElementById('pos-qty-input').value) || 1);
+    const method = document.getElementById('pos-payment-method').value;
+    const customer = document.getElementById('pos-customer-name').value.trim() || 'Público General';
+    let posRand = '';
+    if (window.crypto && window.crypto.getRandomValues) {
+      const bytes = new Uint8Array(3);
+      window.crypto.getRandomValues(bytes);
+      posRand = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    } else {
+      posRand = Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+    const folio = 'T-' + new Date().getFullYear() + '-' + posRand;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const nowTimeStr = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    const cashierName = session.name || 'Personal en Turno';
+
+    // 1. Discount stock in inventory
+    const products = loadProducts();
+    const pIdx = products.findIndex(p => String(p.id) === String(activePOSItem.id) || p.sku === activePOSItem.sku);
+    if (pIdx > -1) {
+      products[pIdx].stock = Math.max(0, products[pIdx].stock - qty);
+      saveProducts(products);
+    }
+
+    // 2. Record income in accounting ledger
+    try {
+      const ledgerRaw = localStorage.getItem('bicisaas_ledger');
+      const ledger = ledgerRaw ? JSON.parse(ledgerRaw) : { income: [], expenses: [], cobrar: [], pagar: [] };
+      ledger.income = ledger.income || [];
+      ledger.income.unshift({
+        id: Date.now(),
+        desc: `POS: ${qty}x ${activePOSItem.name} (${method}) - Folio ${folio}`,
+        cat: activePOSItem.cat === 'Bicicletas' ? 'Venta de Bicicleta' : 'Venta de Accesorio',
+        amount: totalSale,
+        date: todayStr
+      });
+      localStorage.setItem('bicisaas_ledger', JSON.stringify(ledger));
+    } catch(e) {}
+
+    // 2.1 Sync Stock Reduction & Sale Record to Google Cloud Firestore
+    try {
+      import('../../services/cloudSyncService').then(({ syncStockReductionToCloud, syncSaleToCloud }) => {
+        syncStockReductionToCloud(activePOSItem.sku || activePOSItem.id, qty);
+        syncSaleToCloud({
+          ticketId: folio,
+          item: activePOSItem.name,
+          sku: activePOSItem.sku || activePOSItem.id,
+          qty: qty,
+          unitPrice: activePOSItem.price,
+          total: totalSale,
+          method: method,
+          customer: customer,
+          cashier: cashierName,
+          date: todayStr,
+          time: nowTimeStr
+        });
+      }).catch(() => {});
+    } catch(e) {}
+
+    // 3. Prepare Digital Ticket
+    document.getElementById('tk-folio').textContent = 'FOLIO: ' + folio;
+    document.getElementById('tk-date').textContent = todayStr + ' ' + nowTimeStr;
+    document.getElementById('tk-cashier').textContent = cashierName;
+    document.getElementById('tk-client').textContent = customer;
+    document.getElementById('tk-product-name').textContent = activePOSItem.name;
+    document.getElementById('tk-product-qty').textContent = `${qty} pz x ${formatMXN(activePOSItem.price)}`;
+    document.getElementById('tk-product-total').textContent = formatMXN(totalSale);
+    document.getElementById('tk-grand-total').textContent = formatMXN(totalSale) + ' MXN';
+    document.getElementById('tk-pay-method').textContent = method;
+
+    // Hide POS modal & show Ticket modal
+    document.getElementById('pos-modal').style.display = 'none';
+    document.getElementById('ticket-modal').style.display = 'flex';
+
+    // Rerender table
+    filterAndRender();
+
+    // Prepare WhatsApp ticket message
+    const waBtn = document.getElementById('btn-wa-ticket');
+    if (waBtn) {
+      const waMsg = encodeURIComponent(`*THE GARAGE BIKE EXPERTS*\n*Ticket de Compra #${folio}*\n\n• Producto: ${qty}x ${activePOSItem.name}\n• Total: ${formatMXN(totalSale)} MXN\n• Pago: ${method}\n• Fecha: ${todayStr} ${nowTimeStr}\n• Atendió: ${cashierName}\n\nGracias por su compra. Su garantía de taller está activa.`);
+      waBtn.onclick = () => {
+        window.open(`https://api.whatsapp.com/send?text=${waMsg}`, '_blank');
+      };
+    }
+  });
+
+  // Ticket Modal actions
+  document.getElementById('btn-print-ticket').addEventListener('click', () => {
+    window.print();
+  });
+
+  ['ticket-modal-close', 'ticket-modal-done'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', () => {
+        document.getElementById('ticket-modal').style.display = 'none';
+        activePOSItem = null;
+      });
+    }
+  });
+
+  // Initial load
+  filterAndRender();
+
+  // Cloud Sync Listener for Multi-Device Realtime Updates
+  try {
+    import('../../services/cloudSyncService').then(({ listenToCloudInventory, isFirebaseConfigured }) => {
+      if (isFirebaseConfigured()) {
+        listenToCloudInventory((cloudItems) => {
+          if (!cloudItems || cloudItems.length === 0) return;
+          const currentProds = loadProducts();
+          let changed = false;
+          cloudItems.forEach(ci => {
+            const idx = currentProds.findIndex(p => String(p.id) === String(ci.id) || (p.sku && p.sku === ci.sku));
+            if (idx > -1 && ci.stock !== undefined && currentProds[idx].stock !== ci.stock) {
+              currentProds[idx].stock = ci.stock;
+              changed = true;
+            }
+          });
+          if (changed) {
+            saveProducts(currentProds);
+            filterAndRender();
+          }
+        });
+      }
+    }).catch(() => {});
+  } catch(e) {}
+})();
+</script>

@@ -1,0 +1,751 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { INITIAL_RENTAL_FLEET, INITIAL_RENTAL_CONTRACTS } from '../../data/rentalFleet';
+
+const initialFleetJson = JSON.stringify(INITIAL_RENTAL_FLEET);
+const initialContractsJson = JSON.stringify(INITIAL_RENTAL_CONTRACTS);
+---
+
+<PanelLayout title="Flota & Rentas de Bicicletas | BiciSaaS">
+  <!-- Top Breadcrumb & Header -->
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+        <span style="background:rgba(0,113,227,0.12); color:var(--accent-blue); font-size:0.75rem; font-weight:700; padding:0.2rem 0.65rem; border-radius:100px; display:inline-flex; align-items:center; gap:0.35rem;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-blue);"></span> Flota en Alquiler & Horómetros
+        </span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">The Garage · Playa del Carmen & Riviera Maya</span>
+      </div>
+      <h1 style="font-size:1.75rem; font-weight:700; color:var(--text-primary); letter-spacing:-0.02em; margin:0 0 0.25rem;">
+        Gestión de Flota & Rentas.
+      </h1>
+      <p style="color:var(--text-secondary); font-size:0.9rem; margin:0;">
+        Control de unidades de alquiler, contratos digitales, custodia de depósitos y mantenimiento predictivo por horas de rodado.
+      </p>
+    </div>
+
+    <!-- Header Actions -->
+    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+      <a href="/renta" target="_blank" class="btn-secondary" style="font-size:0.85rem; text-decoration:none;">
+        <Icon name="mdi:open-in-new" width="16" height="16" /> Ver Catálogo Público ↗
+      </a>
+      <button class="btn-primary" id="btn-open-new-rental" style="font-size:0.88rem; padding:0.55rem 1.1rem; border-radius:10px;">
+        <Icon name="mdi:plus" width="18" height="18" /> Nueva Salida / Renta
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Metrics Row -->
+  <div class="kpi-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Total Flota</span>
+        <Icon name="mdi:bicycle" width="18" height="18" style="color:var(--text-secondary);" />
+      </div>
+      <div id="kpi-total-fleet" style="font-size:1.6rem; font-weight:700; color:var(--text-primary);">8</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Unidades registradas</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-blue);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-blue);">En Renta Activa</span>
+        <Icon name="mdi:bike-fast" width="18" height="18" style="color:var(--accent-blue);" />
+      </div>
+      <div id="kpi-active-rentals" style="font-size:1.6rem; font-weight:700; color:var(--accent-blue);">1</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">En calle / turista</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-green);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-green);">Disponibles</span>
+        <Icon name="mdi:check-circle-outline" width="18" height="18" style="color:var(--accent-green);" />
+      </div>
+      <div id="kpi-available-fleet" style="font-size:1.6rem; font-weight:700; color:var(--accent-green);">6</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Listas para entrega</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-red);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-red);">En Taller / Alerta</span>
+        <Icon name="mdi:wrench-clock" width="18" height="18" style="color:var(--accent-red);" />
+      </div>
+      <div id="kpi-maintenance-fleet" style="font-size:1.6rem; font-weight:700; color:var(--accent-red);">1</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Límite de horas alcanzado</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem; border-left:3px solid var(--accent-orange);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--accent-orange);">Depósitos en Custodia</span>
+        <Icon name="mdi:shield-lock-outline" width="18" height="18" style="color:var(--accent-orange);" />
+      </div>
+      <div id="kpi-held-deposits" style="font-size:1.6rem; font-weight:700; color:var(--accent-orange);">$1,000</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Garantías activas retenidas</div>
+    </div>
+
+    <div class="kpi-card bento-card" style="padding:1rem 1.25rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+        <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Horas Rodadas Flota</span>
+        <Icon name="mdi:timer-outline" width="18" height="18" style="color:var(--text-secondary);" />
+      </div>
+      <div id="kpi-total-hours" style="font-size:1.6rem; font-weight:700; color:var(--text-primary);">1,022 hrs</div>
+      <div style="font-size:0.75rem; color:var(--text-secondary);">Historial acumulado</div>
+    </div>
+  </div>
+
+  <!-- Navigation View Tabs -->
+  <div style="display:flex; gap:0.5rem; border-bottom:1px solid var(--border-subtle); margin-bottom:1.5rem; overflow-x:auto;">
+    <button class="view-tab active" data-tab="tab-fleet" style="padding:0.65rem 1.2rem; background:none; border:none; border-bottom:2px solid var(--accent-blue); color:var(--accent-blue); font-weight:600; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; gap:0.4rem; white-space:nowrap;">
+      <Icon name="mdi:bicycle" width="18" height="18" />
+      <span>Flota & Horómetros</span>
+      <span id="tab-fleet-badge" style="background:var(--bg-surface-hover); padding:0.15rem 0.45rem; border-radius:100px; font-size:0.75rem; color:var(--text-primary);">8</span>
+    </button>
+    <button class="view-tab" data-tab="tab-public-web" style="padding:0.65rem 1.2rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-secondary); font-weight:600; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; gap:0.4rem; white-space:nowrap;">
+      <Icon name="mdi:web" width="18" height="18" />
+      <span>Catálogo Web Público (/renta)</span>
+      <span id="tab-web-badge" style="background:rgba(0,113,227,0.12); color:var(--accent-blue); padding:0.15rem 0.45rem; border-radius:100px; font-size:0.75rem; font-weight:700;">8 en Línea</span>
+    </button>
+    <button class="view-tab" data-tab="tab-contracts" style="padding:0.65rem 1.2rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-secondary); font-weight:600; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; gap:0.4rem; white-space:nowrap;">
+      <Icon name="mdi:file-document-outline" width="18" height="18" />
+      <span>Contratos & Salidas</span>
+      <span id="tab-contracts-badge" style="background:var(--bg-surface-hover); padding:0.15rem 0.45rem; border-radius:100px; font-size:0.75rem; color:var(--text-secondary);">2</span>
+    </button>
+    <button class="view-tab" data-tab="tab-maintenance" style="padding:0.65rem 1.2rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-secondary); font-weight:600; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; gap:0.4rem; white-space:nowrap;">
+      <Icon name="mdi:wrench-outline" width="18" height="18" />
+      <span>Telemetría & Mantenimiento Preventivo</span>
+      <span id="tab-maint-badge" style="background:rgba(255,59,48,0.15); color:var(--accent-red); padding:0.15rem 0.45rem; border-radius:100px; font-size:0.75rem; font-weight:700;">1</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: FLOTA & HORÓMETROS -->
+  <section id="tab-fleet" class="tab-pane active">
+    <!-- Filter bar -->
+    <div class="bento-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; padding:0.85rem 1.25rem; margin-bottom:1.25rem;">
+      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <span style="font-size:0.82rem; font-weight:600; color:var(--text-secondary);">Filtrar por:</span>
+        <button class="filter-pill active" data-category="all" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--accent-blue); background:var(--accent-blue); color:#fff; font-size:0.8rem; font-weight:600; cursor:pointer;">Todas</button>
+        <button class="filter-pill" data-category="MTB" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">MTB</button>
+        <button class="filter-pill" data-category="Gravel" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">Gravel</button>
+        <button class="filter-pill" data-category="Ruta" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">Ruta</button>
+        <button class="filter-pill" data-category="Urbana" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">Cruisers</button>
+        <button class="filter-pill" data-category="E-Bike" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">E-Bikes</button>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <select id="status-filter" style="padding:0.4rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.82rem;">
+          <option value="all">Todos los Estados</option>
+          <option value="disponible">Solo Disponibles</option>
+          <option value="en_renta">Solo en Renta</option>
+          <option value="en_taller">En Taller / Mantenimiento</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Bikes Grid Container -->
+    <div id="fleet-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1.25rem;">
+      <!-- Populated via JavaScript -->
+    </div>
+  </section>
+
+  <!-- TAB WEB: CATÁLOGO WEB PÚBLICO (/renta) -->
+  <section id="tab-public-web" class="tab-pane" style="display:none;">
+    <!-- Public Web Hero Header -->
+    <div class="bento-card" style="padding:1.25rem 1.5rem; margin-bottom:1.25rem; background:linear-gradient(135deg, rgba(0,113,227,0.06) 0%, rgba(52,199,89,0.04) 100%); border:1px solid rgba(0,113,227,0.2);">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.35rem;">
+            <span style="background:rgba(0,113,227,0.15); color:var(--accent-blue); font-size:0.75rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:100px; display:inline-flex; align-items:center; gap:0.35rem;">
+              <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-blue);"></span> Escaparate Oficial /renta
+            </span>
+            <span style="font-size:0.8rem; color:var(--text-secondary);">Sincronización en Tiempo Real</span>
+          </div>
+          <h2 style="font-size:1.35rem; font-weight:700; color:var(--text-primary); margin:0 0 0.25rem;">
+            Catálogo Web Público de Renta (/renta)
+          </h2>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin:0; max-width:750px;">
+            Gestiona qué bicicletas ve el cliente en la página web pública, modifica las tarifas por temporalidad (1 día, 3 días fin de semana, semana completa), ajusta los depósitos en garantía y edita las fichas comerciales.
+          </p>
+        </div>
+
+        <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
+          <a href="/renta" target="_blank" class="btn-primary" style="font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.4rem; padding:0.55rem 1rem;">
+            <Icon name="mdi:open-in-new" width="16" height="16" /> Ver Página en Vivo ↗
+          </a>
+          <button type="button" class="btn-secondary" id="btn-batch-publish-all" style="font-size:0.82rem; padding:0.55rem 0.85rem;">
+            <Icon name="mdi:eye-check-outline" width="16" height="16" /> Publicar Todas
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Web KPIs Strip -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:0.85rem; margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--border-subtle);">
+        <div style="background:var(--bg-base); padding:0.75rem 1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.72rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">En Línea en /renta</div>
+          <div id="web-kpi-published" style="font-size:1.35rem; font-weight:700; color:var(--accent-blue);">8</div>
+          <div style="font-size:0.72rem; color:var(--accent-green);">Visibles para turistas</div>
+        </div>
+        <div style="background:var(--bg-base); padding:0.75rem 1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.72rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">Ocultas del Sitio</div>
+          <div id="web-kpi-hidden" style="font-size:1.35rem; font-weight:700; color:var(--text-secondary);">0</div>
+          <div style="font-size:0.72rem; color:var(--text-secondary);">Solo mostrador físico</div>
+        </div>
+        <div style="background:var(--bg-base); padding:0.75rem 1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.72rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">Tarifa Promedio Día</div>
+          <div id="web-kpi-avg-rate" style="font-size:1.35rem; font-weight:700; color:var(--text-primary);">$513 MXN</div>
+          <div style="font-size:0.72rem; color:var(--text-secondary);">Por cada 24 horas</div>
+        </div>
+        <div style="background:var(--bg-base); padding:0.75rem 1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.72rem; color:var(--text-secondary); text-transform:uppercase; font-weight:600;">Depósito Promedio</div>
+          <div id="web-kpi-avg-deposit" style="font-size:1.35rem; font-weight:700; color:var(--accent-orange);">$1,313 MXN</div>
+          <div style="font-size:0.72rem; color:var(--text-secondary);">Garantía reembolsable</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Web Filter Toolbar -->
+    <div class="bento-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; padding:0.85rem 1.25rem; margin-bottom:1.25rem;">
+      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; flex:1; min-width:280px;">
+        <input type="text" id="web-search-input" placeholder="Buscar unidad por modelo, marca o ID..." style="padding:0.45rem 0.85rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem; flex:1; max-width:320px;" />
+        <div style="display:flex; gap:0.35rem; align-items:center; flex-wrap:wrap;">
+          <button class="web-filter-pill active" data-web-cat="all" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--accent-blue); background:var(--accent-blue); color:#fff; font-size:0.8rem; font-weight:600; cursor:pointer;">Todas</button>
+          <button class="web-filter-pill" data-web-cat="MTB" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">MTB</button>
+          <button class="web-filter-pill" data-web-cat="Gravel" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">Gravel</button>
+          <button class="web-filter-pill" data-web-cat="Ruta" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">Ruta</button>
+          <button class="web-filter-pill" data-web-cat="Urbana" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">Cruisers</button>
+          <button class="web-filter-pill" data-web-cat="E-Bike" style="padding:0.35rem 0.75rem; border-radius:100px; border:1px solid var(--border-subtle); background:transparent; color:var(--text-secondary); font-size:0.8rem; font-weight:600; cursor:pointer;">E-Bikes</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <select id="web-status-filter" style="padding:0.4rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.82rem;">
+          <option value="all">Todas las Unidades</option>
+          <option value="published">Solo Publicadas en Web</option>
+          <option value="hidden">Solo Ocultas en Web</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Public Web Grid -->
+    <div id="public-web-fleet-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(350px, 1fr)); gap:1.25rem;">
+      <!-- Populated via JavaScript -->
+    </div>
+  </section>
+
+  <!-- TAB 2: CONTRATOS & SALIDAS -->
+  <section id="tab-contracts" class="tab-pane" style="display:none;">
+    <div class="bento-card" style="padding:1.25rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 style="font-size:1.15rem; font-weight:700; color:var(--text-primary); margin:0 0 0.25rem;">Contratos Digitales de Renta</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;">Registro de salidas, folios, cobros y estatus de depósitos en garantía.</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <input type="text" id="search-contracts" placeholder="Buscar folio, cliente o teléfono..." style="padding:0.45rem 0.85rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem; min-width:260px;" />
+        </div>
+      </div>
+
+      <!-- Contracts Table -->
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.88rem; text-align:left;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border-color); color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">
+              <th style="padding:0.75rem 0.5rem;">Folio</th>
+              <th style="padding:0.75rem 0.5rem;">Cliente</th>
+              <th style="padding:0.75rem 0.5rem;">Bicicleta Asignada</th>
+              <th style="padding:0.75rem 0.5rem;">Modalidad</th>
+              <th style="padding:0.75rem 0.5rem;">Vigencia</th>
+              <th style="padding:0.75rem 0.5rem;">Total Renta</th>
+              <th style="padding:0.75rem 0.5rem;">Depósito</th>
+              <th style="padding:0.75rem 0.5rem;">Estado</th>
+              <th style="padding:0.75rem 0.5rem; text-align:right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="contracts-table-body">
+            <!-- Populated via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 3: TELEMETRÍA & MANTENIMIENTO PREVENTIVO -->
+  <section id="tab-maintenance" class="tab-pane" style="display:none;">
+    <!-- Alert banner about coastal environment -->
+    <div style="background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.3); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; display:flex; gap:0.75rem; align-items:flex-start;">
+      <Icon name="mdi:weather-partly-cloudy" width="24" height="24" style="color:var(--accent-orange); flex-shrink:0; margin-top:2px;" />
+      <div>
+        <div style="font-weight:700; color:var(--text-primary); font-size:0.92rem; margin-bottom:0.25rem;">
+          Protocolo de Salinidad & Desgaste Costero (Riviera Maya)
+        </div>
+        <p style="font-size:0.83rem; color:var(--text-secondary); margin:0; line-height:1.45;">
+          El aire salino y la arena de Playa del Carmen degradan la lubricación de cadena y balatas 3x más rápido que en clima seco. El BiciSaaS impone un límite preventivo estricto de <strong>45 a 60 horas de rodado</strong> por unidad. Al alcanzar el umbral, la unidad se bloquea automáticamente de renta y se envía a revisión con Marco Ramírez.
+        </p>
+      </div>
+    </div>
+
+    <!-- Maintenance Overview Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:1.25rem;" id="maintenance-cards-grid">
+      <!-- Populated via JavaScript -->
+    </div>
+  </section>
+
+  <!-- MODAL 1: NUEVA SALIDA / RENTA MOSTRADOR -->
+  <div id="modal-new-rental" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:680px; width:95%; max-height:90vh; overflow-y:auto; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Registrar Salida de Renta</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;">Genera contrato digital, registra depósito y descuenta disponibilidad de flota.</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-new-rental" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-new-rental" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <!-- Step 1: Seleccionar Bicicleta -->
+        <div>
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.4rem;">
+            1. Bicicleta a Rentar (Solo unidades disponibles) *
+          </label>
+          <select id="rental-bike-select" required style="width:100%; padding:0.6rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.88rem;">
+            <!-- Options populated via JS -->
+          </select>
+          <div id="selected-bike-preview" style="margin-top:0.5rem; font-size:0.8rem; color:var(--text-secondary); padding:0.5rem 0.75rem; background:var(--bg-surface-hover); border-radius:8px;">
+            Selecciona una bicicleta para ver sus especificaciones y depósitos.
+          </div>
+        </div>
+
+        <!-- Step 2: Datos del Cliente -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem;">
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Nombre Completo *</label>
+            <input type="text" id="renter-name" required placeholder="Ej. Michael Scott" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">WhatsApp / Teléfono *</label>
+            <input type="tel" id="renter-phone" required placeholder="Ej. 984 123 4567" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Doc. Identidad (INE/Pasaporte) *</label>
+            <input type="text" id="renter-doc" required placeholder="Ej. PASS-USA-992182" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+        </div>
+
+        <!-- Step 3: Modalidad de Entrega & Fechas -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.75rem;">
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Modalidad de Entrega</label>
+            <select id="rental-delivery-type" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+              <option value="tienda">Retiro en Tienda (The Garage)</option>
+              <option value="hotel">Entrega a Hotel / Airbnb</option>
+            </select>
+          </div>
+          <div id="hotel-address-group" style="display:none; grid-column:1 / -1;">
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Nombre del Hotel o Dirección Airbnb</label>
+            <input type="text" id="renter-hotel" placeholder="Ej. Hotel Thompson Playa del Carmen / Depto Calle 38" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Fecha Inicio</label>
+            <input type="date" id="rental-start-date" required style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+          <div>
+            <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Fecha Devolución</label>
+            <input type="date" id="rental-end-date" required style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          </div>
+        </div>
+
+        <!-- Step 4: Preferencia de Pedales & Accesorios -->
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--text-primary); margin-bottom:0.5rem;">Configuración de Pedales</div>
+          <select id="rental-pedals" style="width:100%; padding:0.45rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-panel); color:var(--text-primary); font-size:0.85rem; margin-bottom:0.75rem;">
+            <option value="Plataforma normal">Plataforma normal (tenis convencionales)</option>
+            <option value="Shimano SPD MTB">Shimano SPD MTB (Cletas 2 tornillos)</option>
+            <option value="Look Keo / SPD-SL Ruta">Look Keo / Shimano SPD-SL Ruta (3 tornillos)</option>
+            <option value="Trae pedales propios">Cliente trae pedales propios (Instalación sin costo)</option>
+          </select>
+
+          <div style="font-size:0.82rem; font-weight:700; color:var(--text-primary); margin-bottom:0.4rem;">Accesorios Incluidos Sin Costo</div>
+          <div style="display:flex; gap:1.25rem; flex-wrap:wrap; font-size:0.82rem; color:var(--text-primary);">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="acc-helmet" checked /> Casco sanitizado
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="acc-lock" checked /> Candado U-Lock + Llave
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="acc-repair" checked /> Kit antiponchaduras
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="acc-lights" /> Luces LED recargables
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 5: Liquidación y Pago -->
+        <div style="background:rgba(0,113,227,0.06); border:1px solid rgba(0,113,227,0.2); border-radius:10px; padding:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">Tarifa de Renta Calculada</div>
+            <div id="calc-rental-fee" style="font-size:1.3rem; font-weight:700; color:var(--accent-blue);">$0 MXN</div>
+            <div id="calc-days-label" style="font-size:0.75rem; color:var(--text-secondary);">1 día(s)</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">Depósito en Garantía (Reembolsable)</div>
+            <div id="calc-deposit-fee" style="font-size:1.15rem; font-weight:700; color:var(--accent-orange);">$1,000 MXN</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">Retenido hasta check-in</div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem; color:var(--text-secondary);">Total a Cobrar en Mostrador</div>
+            <div id="calc-total-charge" style="font-size:1.45rem; font-weight:800; color:var(--text-primary);">$1,000 MXN</div>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Método de Pago</label>
+          <select id="rental-payment-method" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+            <option value="Tarjeta">Tarjeta de Débito / Crédito</option>
+            <option value="Efectivo">Efectivo (Mostrador)</option>
+            <option value="MercadoPago">MercadoPago / QR</option>
+            <option value="SPEI">Transferencia SPEI</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+          <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-new-rental">Cancelar</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem;">
+            <Icon name="mdi:check-decagram" width="18" height="18" /> Confirmar Salida & Generar Folio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: CHECK-IN / DEVOLUCIÓN DE UNIDAD -->
+  <div id="modal-checkin" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:620px; width:95%; max-height:90vh; overflow-y:auto; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.3rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Check-In / Retorno de Unidad</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;" id="checkin-subtitle">Folio: REN-8104 · Cliente: Alexander Klein</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-checkin" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-checkin" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <input type="hidden" id="checkin-contract-id" />
+        <input type="hidden" id="checkin-bike-id" />
+
+        <!-- Resumen de Unidad -->
+        <div style="background:var(--bg-base); padding:0.85rem 1rem; border-radius:10px; display:flex; gap:1rem; align-items:center;">
+          <div id="checkin-bike-img" style="width:60px; height:60px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0;"></div>
+          <div>
+            <div id="checkin-bike-title" style="font-weight:700; color:var(--text-primary); font-size:0.95rem;">Trek Marlin 5 Gen 3 (L)</div>
+            <div id="checkin-hours-before" style="font-size:0.8rem; color:var(--text-secondary);">Horas actuales antes de este retorno: 36 hrs</div>
+          </div>
+        </div>
+
+        <!-- Telemetría: Horas estimadas en esta renta -->
+        <div>
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">
+            Horas de Rodado Registradas en esta Renta *
+          </label>
+          <input type="number" id="checkin-hours-used" required min="1" max="200" value="12" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+          <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">
+            Promedio turístico sugerido: 4 a 6 horas por día transcurrido.
+          </div>
+        </div>
+
+        <!-- Checklist de Inspección Física -->
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:0.5rem;">Checklist de Inspección Mecánica</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.82rem; color:var(--text-primary);">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="chk-frame" checked /> Cuadro sin fisuras ni abolladuras por impacto
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="chk-brakes" checked /> Frenos hidráulicos operativos con presión óptima
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="chk-chain" checked /> Cadena y cambios alineados sin torceduras
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="chk-wheels" checked /> Ruedas centradas y llantas sin ponchadura
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" id="chk-accessories" checked /> Candado U-Lock, llaves y accesorios devueltos completos
+            </label>
+          </div>
+        </div>
+
+        <!-- Telemetry Trigger Warning -->
+        <div id="checkin-maintenance-warning" style="display:none; background:rgba(255,59,48,0.12); border:1px solid var(--accent-red); border-radius:10px; padding:0.85rem 1rem;">
+          <div style="font-size:0.85rem; font-weight:700; color:var(--accent-red); display:flex; align-items:center; gap:0.35rem;">
+            <Icon name="mdi:alert-circle" width="18" height="18" /> UMBRAL DE MANTENIMIENTO ALCANZADO
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-primary); margin-top:0.25rem;" id="checkin-warning-text">
+            Con este retorno, la unidad acumulará 48 hrs (límite: 45 hrs). La bicicleta se marcará automáticamente como "En Taller" para purga y desengrase anti-salitre.
+          </div>
+        </div>
+
+        <!-- Estado del Depósito -->
+        <div>
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Resolución del Depósito en Garantía</label>
+          <select id="checkin-deposit-action" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+            <option value="devuelto">Reembolsar 100% Depósito (Unidad en orden)</option>
+            <option value="aplicado_a_danos">Retener Parcial o Total por Daños / Extravío</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Notas de Recepción</label>
+          <textarea id="checkin-notes" rows="2" placeholder="Unidad devuelta limpia, sin detalles mecánicos..." style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;"></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+          <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-checkin">Cancelar</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem;">
+            <Icon name="mdi:check-all" width="18" height="18" /> Finalizar Check-In & Liberar Depósito
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: RESET MANTENIMIENTO / TALLER -->
+  <div id="modal-service-reset" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:540px; width:95%; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Completar Mantenimiento Preventivo</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;" id="service-reset-subtitle">Resetear horómetro de horas a cero</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-service-reset" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-service-reset" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <input type="hidden" id="reset-bike-id" />
+
+        <div style="background:var(--bg-base); padding:0.85rem 1rem; border-radius:10px;">
+          <div id="reset-bike-name" style="font-weight:700; color:var(--text-primary); font-size:0.95rem;">Giant Talon 2 29er (S)</div>
+          <div id="reset-bike-hours-info" style="font-size:0.8rem; color:var(--accent-red); margin-top:0.25rem;">Horas acumuladas desde último servicio: 47 hrs (Umbral: 45 hrs)</div>
+        </div>
+
+        <div>
+          <label style="font-size:0.82rem; font-weight:700; color:var(--text-primary); display:block; margin-bottom:0.35rem;">Mecánico Responsable</label>
+          <select id="reset-mechanic" style="width:100%; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;">
+            <option value="Marco Ramírez">Marco Ramírez (Mecánico Jefe Taller)</option>
+            <option value="Diego Lecourtois">Diego Lecourtois</option>
+          </select>
+        </div>
+
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--text-primary); margin-bottom:0.5rem;">Trabajos Realizados (Checklist Anti-Salitre)</div>
+          <div style="display:flex; flex-direction:column; gap:0.4rem; font-size:0.82rem; color:var(--text-primary);">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" checked /> Limpieza ultrasónica de cadena y transmisión
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" checked /> Re-lubricación de cera seca resistente a arena
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" checked /> Purga y verificación de espesor de balatas de freno
+            </label>
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" checked /> Calibrado de torque en tornillería y dirección
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:0.5rem;">
+          <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-service-reset">Cancelar</button>
+          <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem; background:var(--accent-green);">
+            <Icon name="mdi:check-bold" width="18" height="18" /> Certificar Servicio & Poner a 0 Horas
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: EDITAR FICHA & TARIFAS WEB (/renta) -->
+  <div id="modal-edit-web-bike" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:640px; width:95%; max-height:90vh; overflow-y:auto; padding:2rem; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; margin:0 0 0.2rem; color:var(--text-primary);">Editar Ficha & Tarifas Web (/renta)</h2>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;">Ajusta la visibilidad pública y los precios oficiales para turistas en la página de renta.</p>
+        </div>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-edit-web-bike" style="font-size:1.25rem; cursor:pointer;">&times;</button>
+      </div>
+
+      <form id="form-edit-web-bike" style="display:flex; flex-direction:column; gap:1.15rem;">
+        <input type="hidden" id="edit-web-bike-id" />
+
+        <!-- Bike Header Info -->
+        <div style="display:flex; gap:1rem; align-items:center; background:var(--bg-base); padding:0.85rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <img id="edit-web-img" src="" alt="Bicicleta" style="width:75px; height:52px; object-fit:cover; border-radius:6px; background:#1e1e24;" />
+          <div>
+            <div id="edit-web-model" style="font-weight:700; font-size:0.95rem; color:var(--text-primary);"></div>
+            <div id="edit-web-meta" style="font-size:0.78rem; color:var(--text-secondary); margin-top:2px;"></div>
+          </div>
+        </div>
+
+        <!-- Visibility Switch -->
+        <div style="background:rgba(0,113,227,0.06); border:1px solid rgba(0,113,227,0.25); border-radius:10px; padding:0.85rem 1rem; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-weight:700; font-size:0.88rem; color:var(--text-primary);">Publicar en Catálogo Web Oficial (/renta)</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">Si está activo, los turistas verán esta unidad disponible en la página pública para reservar.</div>
+          </div>
+          <label style="position:relative; display:inline-block; width:46px; height:24px; cursor:pointer; flex-shrink:0;">
+            <input type="checkbox" id="edit-web-published" style="opacity:0; width:0; height:0;" />
+            <span class="slider-round"></span>
+          </label>
+        </div>
+
+        <!-- Rates Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.75rem;">
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Tarifa 1 Día (MXN) *</label>
+            <input type="number" id="edit-web-daily-rate" required min="50" step="10" style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.9rem; font-weight:700;" />
+          </div>
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Fin de Semana (3d) *</label>
+            <input type="number" id="edit-web-weekend-rate" required min="100" step="50" style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.9rem; font-weight:700;" />
+          </div>
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Semana (7 días) *</label>
+            <input type="number" id="edit-web-weekly-rate" required min="200" step="50" style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.9rem; font-weight:700;" />
+          </div>
+          <div>
+            <label style="font-size:0.78rem; font-weight:700; color:var(--accent-orange); display:block; margin-bottom:0.25rem;">Depósito Garantía *</label>
+            <input type="number" id="edit-web-deposit" required min="0" step="100" style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--accent-orange); font-size:0.9rem; font-weight:700;" />
+          </div>
+        </div>
+
+        <!-- Rider Height Recommendation -->
+        <div>
+          <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Rango de Estatura Recomendado</label>
+          <input type="text" id="edit-web-height" placeholder="Ej. 165 - 176 cm" style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+        </div>
+
+        <!-- Feature Bullets -->
+        <div>
+          <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Puntos Clave / Equipamiento Incluido (Separados por coma)</label>
+          <input type="text" id="edit-web-features" placeholder="Frenos Hidráulicos Tektro, Suspensión 100mm, Canastilla..." style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem;" />
+        </div>
+
+        <!-- Public Description -->
+        <div>
+          <label style="font-size:0.78rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:0.25rem;">Ficha Pública / Componentes</label>
+          <textarea id="edit-web-summary" rows="3" placeholder="Descripción atractiva para el turista..." style="width:100%; padding:0.55rem; border-radius:8px; border:1px solid var(--border-color); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem; resize:vertical;"></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem; flex-wrap:wrap; gap:0.75rem;">
+          <button type="button" class="btn-secondary" id="btn-preview-from-edit" style="font-size:0.85rem;">
+            Vista Previa Turista
+          </button>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn-secondary close-modal-btn" data-modal="modal-edit-web-bike">Cancelar</button>
+            <button type="submit" class="btn-primary" style="padding:0.6rem 1.4rem;">
+              Guardar y Publicar en Web
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: PREVISUALIZACIÓN TURISTA (/renta) -->
+  <div id="modal-preview-web-bike" class="modal-backdrop" style="display:none;">
+    <div class="modal-box bento-card" style="max-width:440px; width:95%; padding:1.5rem; position:relative; background:#18181b; color:#fff; border:1px solid rgba(255,255,255,0.15);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.5rem;">
+        <span style="font-size:0.75rem; font-weight:700; color:#34c759; text-transform:uppercase; letter-spacing:0.05em; display:flex; align-items:center; gap:0.35rem;">
+          <span style="width:6px; height:6px; border-radius:50%; background:#34c759;"></span> Vista Turista en /renta
+        </span>
+        <button type="button" class="btn-icon close-modal-btn" data-modal="modal-preview-web-bike" style="font-size:1.2rem; cursor:pointer; color:#fff; background:none; border:none;">&times;</button>
+      </div>
+
+      <div id="preview-card-content">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .view-tab.active {
+      border-bottom-color: var(--accent-blue) !important;
+      color: var(--accent-blue) !important;
+    }
+    .bike-fleet-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .bike-fleet-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .slider-round {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border-color);
+      transition: .25s ease;
+      border-radius: 34px;
+    }
+    .slider-round:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s ease;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    input:checked + .slider-round {
+      background-color: var(--accent-blue);
+    }
+    input:checked + .slider-round:before {
+      transform: translateX(20px);
+    }
+    .public-web-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+    }
+    .public-web-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  </style>
+
+  <!-- Data hydration via JSON elements (Astro 5 compatible pattern) -->
+  <script type="application/json" id="initial-fleet-data" set:html={initialFleetJson}></script>
+  <script type="application/json" id="initial-contracts-data" set:html={initialContractsJson}></script>
+
+  <!-- Client-Side State Management Script -->
+  <script is:inline src="/js/rentas-panel.js"></script>
+</PanelLayout>

@@ -1,0 +1,55 @@
+================================================================================
+THE GARAGE BIKE EXPERTS · CAMPAÑA LANZAMIENTO WEB + 2º ANIVERSARIO
+DÍA 1 · LUNES 14 DE SEPTIEMBRE
+FASE: CONCIENTIZACIÓN TÉCNICA & EXPECTATIVA
+FECHA DE LANZAMIENTO OFICIAL: SÁBADO 19 DE SEPTIEMBRE
+(IMPORTANTE: NO REVELAR ENLACE WEB HASTA EL SÁBADO 19)
+================================================================================
+
+PUBLICACIÓN 1: CARRUSEL EDUCATIVO DE 5 SLIDES (FEED)
+--------------------------------------------------------------------------------
+• Hora sugerida de publicación: 07:30 AM (Antes de salidas matutinas y jornada laboral)
+• Objetivo: Autoridad técnica, retención por lectura secuencial y generación de expectativa hacia el 19 de Septiembre.
+• Archivos a subir en orden a Meta Business Suite (Feed Post > Carrusel):
+  1. assets/dia1_lunes/carrusel_slide1_portada.png (Portada con frame de taller Veo 3)
+  2. assets/dia1_lunes/carrusel_slide2_baleros.png (Peligro 01: Baleros y Masas)
+  3. assets/dia1_lunes/carrusel_slide3_tornillos.png (Peligro 02: Tornillería y Titanio)
+  4. assets/dia1_lunes/carrusel_slide4_transmision.png (Peligro 03: AXS & Di2)
+  5. assets/dia1_lunes/carrusel_slide5_solucion.png (La Solución The Garage + Fecha 19 Sept)
+
+• TÍTULO INTERNO (Meta Suite): Lunes 14 - Carrusel Salitre Caribeño
+
+• COPY / CAPTION COMPLETO (Copiar y pegar):
+El salitre de Playa del Carmen no perdona. Desliza para ver lo que le hace a tu bici en silencio. 🌊🚲👉
+
+En la Riviera Maya, la humedad relativa supera el 85% casi todo el año. Cuando ruedas cerca de la costa, la combinación de vapor de agua y sales microscópicas desencadena corrosión galvánica y microabrasión que no se quitan lavando la bici con manguera.
+
+En este carrusel te mostramos los 3 puntos críticos que inspeccionamos en nuestro protocolo de taller:
+1️⃣ Baleros de centro y masas expuestos a cristales salinos.
+2️⃣ Tornillería de titanio y aluminio fusionada a cuadros de carbono por falta de grasa antisize marina.
+3️⃣ Terminales y componentes electrónicos de transmisiones SRAM AXS y Shimano Di2 descalibrados por sulfatación.
+
+En The Garage aplicamos cirugía mecánica de precisión: mantenimiento especializado a puerta cerrada con cita previa, torquímetros certificados a especificación de fábrica y protección hidrofóbica marina.
+
+⚡️ Este SÁBADO 19 DE SEPTIEMBRE celebramos nuestro 2º ANIVERSARIO con el estreno de nuestra nueva plataforma digital oficial. Podrás agendar tu servicio y monitorear el estado de tu bici en segundos. Activa notificaciones.
+
+¿Cuándo fue la última vez que revisaron a fondo la tornillería y baleros de tu bicicleta? Cuéntanos en los comentarios. 👇
+
+---
+• HASHTAGS:
+#TheGaragePDC #PlayaDelCarmen #CiclistasRivieraMaya #MecanicaCiclista #SRAMAXS #ShimanoDi2 #CiclismoDeRuta #MTBMexico #BassoBikes #TallerCiclista #RivieraMayaCycling #BikeMaintenance #TorqueCheck #LanzamientoOficial #19DeSeptiembre #SegundoAniversario
+
+--------------------------------------------------------------------------------
+PUBLICACIÓN 2: STORIES SECUENCIALES (Publicar entre 11:30 AM y 02:00 PM)
+--------------------------------------------------------------------------------
+• Story 1 (Imagen): assets/dia1_lunes/story_encuesta_taller.png
+  - Sticker de Encuesta interactiva:
+    Pregunta: "¿Cuándo revisaron el torque de tu tija por última vez?"
+    Opción A: "Hace poco (con torquímetro)"
+    Opción B: "Ni me acuerdo / A ojo"
+
+• Story 2 (Texto en fondo negro):
+  "El 85% de los cuadros de carbono que recibimos en taller tienen sobreapriete por haber sido ajustados 'al tanteo'. Una fisura en el carbono es irreparable."
+
+• Story 3:
+  "En The Garage cada tornillo se ajusta a especificación de fabricante (Nm exactos). El SÁBADO 19 DE SEPTIEMBRE en nuestro 2º Aniversario sabrás cómo agendar tu chequeo express en 30 segundos. Atentos."

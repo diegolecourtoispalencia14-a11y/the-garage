@@ -31,10 +31,14 @@ const year = new Date().getFullYear();
 
       <!-- Columna 2: Ubicación & Contacto -->
       <div class="footer-col">
-        <h2 class="footer-col-title font-mono">[01 // UBICACIÓN]</h2>
+        <h2 class="footer-col-title font-mono">[01 // UBICACIÓN & CITAS]</h2>
         <p class="footer-text">
-          Av. Ich Xeel CASA 19, Cataluña<br />
-          C.P. 77725 Playa del Carmen, Q.R.
+          <strong style="color:#ffffff; font-size:0.88rem;">Taller &amp; Boutique a Puerta Cerrada</strong><br />
+          Av. Ich Xeel, Cataluña · C.P. 77725<br />
+          Playa del Carmen, Quintana Roo<br />
+          <span style="display:inline-block; margin-top:0.4rem; font-size:0.75rem; color:#34d399; background:rgba(52,211,153,0.1); padding:0.25rem 0.6rem; border-radius:6px; border:1px solid rgba(52,211,153,0.25);">
+            Visitas presenciales únicamente con cita previa
+          </span>
         </p>
         <div class="footer-contact-link">
           <span class="font-mono text-xs text-zinc-500">Concierge WhatsApp:</span><br />
@@ -47,18 +51,39 @@ const year = new Date().getFullYear();
         <h2 class="footer-col-title font-mono">[02 // HORARIOS]</h2>
         <ul class="footer-schedule font-mono">
           <li>
-            <span>Lunes – Viernes:</span>
+            <span>Lunes – Jueves:</span>
             <strong>9:00 am – 7:00 pm</strong>
           </li>
           <li>
+            <span>Viernes:</span>
+            <strong style="color:#38bdf8;">9:00 am – 6:00 pm (Rodada The Garage Ride)</strong>
+          </li>
+          <li>
             <span>Sábado:</span>
-            <strong>9:00 am – 2:00 pm</strong>
+            <strong>9:00 am – 2:00 pm (Previa Cita)</strong>
           </li>
           <li>
             <span>Domingo:</span>
-            <span style="color: #71717A;">Rodadas Comunitarias</span>
+            <span style="color: #71717A;">Cerrado</span>
           </li>
         </ul>
+
+        <!-- Google Reviews Trust Badge -->
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=The+Garage+Bike+Experts+Av+Ich+Xeel+Catalu%C3%B1a+Playa+del+Carmen"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="text-decoration:none; margin-top:1rem; padding:0.6rem 0.85rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; display:flex; align-items:center; gap:0.65rem; transition:border-color 0.2s, background 0.2s;"
+          title="Ver perfil oficial de The Garage y opiniones en Google (4.95 / 5)"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+          <div>
+            <div style="font-size:0.8rem; font-weight:700; color:#ffffff; display:flex; align-items:center; gap:0.35rem;">
+              <span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> 4.95 / 5.0
+            </div>
+            <div style="font-size:0.7rem; color:#a1a1aa;">38 opiniones en Google ↗</div>
+          </div>
+        </a>
       </div>
 
       <!-- Columna 4: Navegación -->
@@ -67,7 +92,7 @@ const year = new Date().getFullYear();
         <ul class="footer-nav-list">
           <li><a href="/inventario">Catálogo &amp; Inventario</a></li>
           <li><a href="/#sec-matchmaker">Asesor de Bicicleta</a></li>
-          <li><a href="/comunidad">Comunidad &amp; Rodadas</a></li>
+          <li><a href="/comunidad">Comunidad &amp; Rodadas de los Viernes</a></li>
           <li><a href="/guia-tallas">Calculadora de Talla</a></li>
           <li><a href="/guias">Guías &amp; Mantenimiento</a></li>
           <li><a href="/aviso-privacidad" class="text-xs text-zinc-500">Aviso de Privacidad</a></li>

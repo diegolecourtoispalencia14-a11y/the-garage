@@ -1,0 +1,243 @@
+<!-- CartDrawer.astro — Global cart + drawer for the public website -->
+<div id="cart-drawer-overlay" onclick="closeCart()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:900; backdrop-filter:blur(4px);"></div>
+
+<aside id="cart-drawer" style="
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: min(420px, 95vw);
+  background: #111113;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  z-index: 901;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex; flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+">
+  <!-- Header -->
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div>
+      <h3 style="color:#f5f5f7; font-size:1.1rem; font-weight:600; margin:0;">Tu Carrito</h3>
+      <p id="cart-count-text" style="color:#86868b; font-size:0.8rem; margin:0.1rem 0 0;">0 artículos</p>
+    </div>
+    <button onclick="closeCart()" style="background:rgba(255,255,255,0.08); border:none; color:#f5f5f7; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center;">&times;</button>
+  </div>
+
+  <!-- Items -->
+  <div id="cart-items-list" style="flex:1; overflow-y:auto; padding:1rem 1.5rem;">
+    <div id="cart-empty-state" style="text-align:center; padding:3rem 1rem; color:#86868b;">
+      <div style="display:flex; justify-content:center; margin-bottom:0.75rem;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:#86868b;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></div>
+      <p style="margin:0; font-size:0.95rem;">Tu carrito está vacío</p>
+      <p style="margin:0.25rem 0 0; font-size:0.82rem;">Agrega accesorios desde el catálogo</p>
+    </div>
+    <div id="cart-items-container" style="display:none; flex-direction:column; gap:0.75rem;"></div>
+  </div>
+
+  <!-- Summary + Checkout -->
+  <div id="cart-footer" style="padding:1.5rem; border-top:1px solid rgba(255,255,255,0.08); display:none; flex-direction:column; gap:0.75rem;">
+    <div style="display:flex; flex-direction:column; gap:0.4rem;">
+      <div style="display:flex; justify-content:space-between; font-size:0.88rem; color:#86868b;">
+        <span>Subtotal</span><span id="cart-subtotal">$0</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:0.88rem; color:#86868b;">
+        <span>Comisión pago en línea (3.5%)</span><span id="cart-fee">$0</span>
+      </div>
+      <div id="cart-shipping-row" style="display:flex; justify-content:space-between; font-size:0.88rem; color:#86868b;">
+        <span>Envío (Didi Moto)</span><span id="cart-shipping">$80</span>
+      </div>
+      <div id="cart-free-shipping" style="display:none; font-size:0.8rem; color:#34c759; text-align:center; background:rgba(52,199,89,0.1); padding:0.35rem; border-radius:8px;">
+        Envío gratis en pedidos mayores a $500
+      </div>
+      <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.05rem; color:#f5f5f7; padding-top:0.5rem; border-top:1px solid rgba(255,255,255,0.08);">
+        <span>Total</span><span id="cart-total">$0</span>
+      </div>
+    </div>
+    <a id="btn-checkout" href="/checkout" style="
+      display:block; text-align:center;
+      background:#0071e3; color:white;
+      padding:0.85rem; border-radius:100px;
+      font-weight:700; font-size:1rem; text-decoration:none;
+      transition:background 0.2s;
+    ">Pagar Ahora →</a>
+    <button onclick="closeCart()" style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:#86868b; padding:0.65rem; border-radius:100px; font-size:0.9rem; cursor:pointer;">Seguir Comprando</button>
+  </div>
+</aside>
+
+<!-- Floating Cart Badge (injected into navbar via JS) -->
+<button id="cart-fab" onclick="openCart()" style="
+  display:none;
+  position:fixed; bottom:90px; right:1.5rem;
+  width:56px; height:56px; border-radius:50%;
+  background:#1c1c1e; border:1px solid rgba(255,255,255,0.12);
+  color:#f5f5f7; font-size:1.25rem;
+  cursor:pointer; z-index:800;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  display:flex; align-items:center; justify-content:center;
+" aria-label="Ver carrito">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+  <span id="cart-fab-badge" style="
+    display:none; position:absolute; top:4px; right:4px;
+    background:#ff3b30; color:white; font-size:0.65rem; font-weight:700;
+    width:18px; height:18px; border-radius:50%;
+    align-items:center; justify-content:center;
+  ">0</span>
+</button>
+
+<script is:inline>
+(function() {
+  const CART_KEY = 'bicisaas_cart';
+  const COMMISSION = 0.035;
+  const SHIPPING_THRESHOLD = 500;
+  const SHIPPING_COST = 80;
+
+  /* ── Cart State ── */
+  window.cartGetItems = function() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+    catch(e) { return []; }
+  };
+  window.cartSave = function(items) {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    window.cartRender();
+    window.cartUpdateBadge();
+  };
+
+  window.cartAdd = function(product) {
+    const items = window.cartGetItems();
+    const existing = items.find(i => i.id === product.id);
+    if (existing) { existing.qty += 1; }
+    else { items.push({ ...product, qty: 1 }); }
+    window.cartSave(items);
+    openCart();
+    // Dispatch event for panel sync
+    window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items } }));
+  };
+
+  window.cartRemove = function(id) {
+    const items = window.cartGetItems().filter(i => i.id !== id);
+    window.cartSave(items);
+  };
+
+  window.cartUpdateQty = function(id, delta) {
+    const items = window.cartGetItems();
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    window.cartSave(items);
+  };
+
+  window.cartClear = function() { localStorage.removeItem(CART_KEY); window.cartRender(); window.cartUpdateBadge(); };
+
+  function fmt(n) { return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }); }
+
+  window.cartCalcTotals = function(items) {
+    const subtotal = items.reduce((s, i) => s + (i.price * i.qty), 0);
+    const fee = Math.round(subtotal * COMMISSION);
+    const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+    const total = subtotal + fee + shipping;
+    return { subtotal, fee, shipping, total };
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  window.cartRender = function() {
+    const items = window.cartGetItems();
+    const emptyEl = document.getElementById('cart-empty-state');
+    const containerEl = document.getElementById('cart-items-container');
+    const footerEl = document.getElementById('cart-footer');
+    if (!emptyEl) return;
+
+    if (!items.length) {
+      emptyEl.style.display = 'block';
+      containerEl.style.display = 'none';
+      footerEl.style.display = 'none';
+      return;
+    }
+
+    emptyEl.style.display = 'none';
+    containerEl.style.display = 'flex';
+    footerEl.style.display = 'flex';
+
+    containerEl.innerHTML = items.map(item => {
+      const safeId = String(item.id || '').replace(/[^a-zA-Z0-9_-]/g, '');
+      const safeName = escapeHtml(item.name || 'Producto');
+      const safeBrand = escapeHtml(item.brand || '');
+      const safeQty = Number(item.qty) || 1;
+      const safePrice = Number(item.price) || 0;
+
+      return `
+      <div style="background:rgba(255,255,255,0.04); border-radius:12px; padding:0.85rem; display:flex; gap:0.75rem; align-items:flex-start;">
+        <div style="width:48px; height:48px; background:rgba(255,255,255,0.06); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg></div>
+        <div style="flex:1; min-width:0;">
+          <div style="font-weight:600; font-size:0.9rem; color:#f5f5f7; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${safeName}</div>
+          <div style="font-size:0.78rem; color:#86868b;">${safeBrand}</div>
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem;">
+            <button onclick="window.cartUpdateQty('${safeId}', -1)" style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#f5f5f7;cursor:pointer;font-size:0.9rem;">−</button>
+            <span style="color:#f5f5f7; font-size:0.9rem; font-weight:600; min-width:20px; text-align:center;">${safeQty}</span>
+            <button onclick="window.cartUpdateQty('${safeId}', 1)" style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#f5f5f7;cursor:pointer;font-size:0.9rem;">+</button>
+            <span style="margin-left:auto; font-weight:700; color:#f5f5f7;">${fmt(safePrice * safeQty)}</span>
+            <button onclick="window.cartRemove('${safeId}')" style="background:none;border:none;color:#86868b;cursor:pointer;font-size:1rem;line-height:1;">&times;</button>
+          </div>
+        </div>
+      </div>
+    `;
+    }).join('');
+
+    const { subtotal, fee, shipping, total } = window.cartCalcTotals(items);
+    document.getElementById('cart-subtotal').textContent = fmt(subtotal);
+    document.getElementById('cart-fee').textContent = fmt(fee);
+    document.getElementById('cart-total').textContent = fmt(total);
+
+    const shippingRow = document.getElementById('cart-shipping-row');
+    const freeRow = document.getElementById('cart-free-shipping');
+    if (shipping === 0) {
+      shippingRow.style.display = 'none';
+      freeRow.style.display = 'block';
+    } else {
+      shippingRow.style.display = 'flex';
+      freeRow.style.display = 'none';
+      document.getElementById('cart-shipping').textContent = fmt(shipping);
+    }
+
+    document.getElementById('cart-count-text').textContent = items.length + (items.length === 1 ? ' artículo' : ' artículos');
+  };
+
+  window.cartUpdateBadge = function() {
+    const items = window.cartGetItems();
+    const qty = items.reduce((s, i) => s + i.qty, 0);
+    const badge = document.getElementById('cart-fab-badge');
+    const fab = document.getElementById('cart-fab');
+    if (badge) {
+      if (qty > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = qty;
+        fab.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  };
+
+  window.openCart = function() {
+    document.getElementById('cart-drawer').style.transform = 'translateX(0)';
+    document.getElementById('cart-drawer-overlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    window.cartRender();
+  };
+
+  window.closeCart = function() {
+    document.getElementById('cart-drawer').style.transform = 'translateX(100%)';
+    document.getElementById('cart-drawer-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  // Init
+  window.cartRender();
+  window.cartUpdateBadge();
+})();
+</script>

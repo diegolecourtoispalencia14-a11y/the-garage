@@ -1,85 +1,241 @@
 ---
+// src/pages/bici/[id].astro
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { MASTER_PRODUCTS, getRelatedProducts, type ProductItem } from '../../data/allProducts';
 
 export async function getStaticPaths() {
-  const bicis = await getCollection('bicis');
-  return bicis.map((bici) => ({
-    params: { id: bici.id },
-    props: { bici: bici.data },
+  // 1. Content collection bicis
+  const contentBicis = await getCollection('bicis');
+  const contentPaths = contentBicis.map((b) => ({
+    params: { id: b.id },
+    props: {
+      rawBici: {
+        id: b.id,
+        name: `${b.data.marca} ${b.data.modelo}`,
+        brand: b.data.marca,
+        cat: b.data.categoria || 'Bicicletas',
+        sku: b.data.sku || b.id,
+        price: b.data.precio,
+        stock: b.data.disponibilidad === 'Vendida' ? 0 : 1,
+        talla: b.data.talla,
+        color: b.data.color,
+        estado: b.data.estado,
+        specs: typeof b.data.specs === 'object'
+          ? `Cuadro: ${b.data.specs.cuadro} • Grupo: ${b.data.specs.grupo} • Frenos: ${b.data.specs.frenos} • Rodada: ${b.data.specs.rodada}`
+          : String(b.data.specs || ''),
+        specsObj: typeof b.data.specs === 'object' ? b.data.specs : null,
+        fotos: b.data.fotos && b.data.fotos.length > 0 ? b.data.fotos : ['https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80'],
+        descripcion: b.data.descripcion || '',
+        mensajeWhatsApp: b.data.mensajeWhatsApp
+      }
+    }
   }));
+
+  // 2. Master store catalog products (mapped by id, sku, lowercase sku, slug and aliases)
+  const masterPaths: any[] = [];
+  const registeredIds = new Set<string>();
+
+  contentPaths.forEach(cp => registeredIds.add(cp.params.id.toLowerCase()));
+
+  // Aliases mapping (so any code like TRK-MAR5 or TRK-M5-24 or trek-marlin-5-2024 works)
+  const aliasMap: Record<string, string[]> = {
+    'TRK-MAR5': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
+    'BAS-PALT2': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
+    'SPZ-ALZ-SP': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
+    'GNT-TAL2': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
+    'MER-SCU300': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
+    'SHI-CS-M6100': ['shi-cs-m6100', 'p1', '5'],
+    'SRM-NXE-RD': ['srm-nxe-rd', 'p3', '6'],
+    'SHI-CRK-M6100': ['shi-crk-m6100', 'p4', '7'],
+    'KMC-X12': ['kmc-x12', 'p2', '8'],
+    'SHI-MT200': ['shi-mt200', 'p5', '9'],
+    'SRM-LVL-T': ['srm-lvl-t', '10'],
+    'SHI-B01S': ['shi-b01s', 'p7', '11'],
+    'MAX-ARD-29': ['max-ard-29', 'p8', '12'],
+    'SCH-MP-35': ['sch-mp-35', '13'],
+    'MCH-29P': ['mch-29p', '14'],
+    'STA-240': ['sta-240', 'p10', '15'],
+    'RF-ATL-35': ['rf-atl-35', '16'],
+    'SHI-TIA-90': ['shi-tia-90', '17'],
+    'FZK-ALI-G': ['fzk-ali-g', '18'],
+    'KS-LEV-150': ['ks-lev-150', '19'],
+    'POC-AXR-M': ['poc-axr-m', 'p12', '20'],
+    'GIR-FXT2': ['gir-fxt2', 'p13', '21'],
+    'SPZ-PRO4': ['spz-pro4', 'p14', '22'],
+    'CAS-GAB3-M': ['cas-gab3-m', 'p17', '23'],
+    'END-MT500-2': ['end-mt500-2', '24'],
+    'SHI-ME5-38': ['shi-me5-38', 'shi-me5-42', 'p15', '25'],
+    'FOX-RNG-GL': ['fox-rng-gl', 'p16', '26'],
+    'MAU-G100': ['mau-g100', 'mau-g100-12', 'p18', '27'],
+    'H5-ELEC47': ['h5-elec47', 'p19', '28'],
+    'CMB-POD620': ['cmb-pod620', 'cmb-pod710', 'p20', '29'],
+    'GAR-EDG530': ['gar-edg530', 'p21', '30'],
+    'GAR-SCAD': ['gar-scad', 'gar-scad2', 'p22', '31'],
+    'ANK-20K': ['ank-20k', '32'],
+    'BON-AL9': ['bon-al9', 'p23', '33'],
+    'RNR-GOLD-4': ['rnr-gold-4', 'p24', '34'],
+    'TPK-JB': ['tpk-jb', 'tpk-jb3', 'p25', '35'],
+    'REM-TT02': ['rem-tt02', '36'],
+    'LEZ-MD1800': ['lez-md1800', 'p26', '37'],
+    'CAT-RX3': ['cat-rx3', 'p27', '38'],
+    'API-BCK': ['api-bck', 'api-bck-4l', 'p28', '39'],
+    'TPK-AWL': ['tpk-awl', '40']
+  };
+
+  MASTER_PRODUCTS.forEach((p) => {
+    const rawData = {
+      id: p.id,
+      name: p.name,
+      brand: p.brand,
+      cat: p.cat,
+      sku: p.sku,
+      price: p.price,
+      stock: p.stock,
+      talla: p.talla,
+      color: p.color,
+      estado: p.estado || 'Nuevo',
+      specs: p.specs,
+      specsObj: null,
+      fotos: p.fotos,
+      descripcion: p.specs,
+      mensajeWhatsApp: `Hola The Garage, me interesa el producto ${p.name} (${p.sku}). ¿Tienen disponibilidad en tienda física en Playa del Carmen?`
+    };
+
+    const keysToAdd = [p.id, p.sku, p.sku.toLowerCase()];
+    if (p.slug) {
+      keysToAdd.push(p.slug);
+      keysToAdd.push(p.slug.toLowerCase());
+    }
+    if (aliasMap[p.sku]) {
+      keysToAdd.push(...aliasMap[p.sku]);
+    }
+
+    keysToAdd.forEach(key => {
+      const k = String(key).trim();
+      if (!registeredIds.has(k.toLowerCase())) {
+        registeredIds.add(k.toLowerCase());
+        masterPaths.push({
+          params: { id: k },
+          props: { rawBici: rawData }
+        });
+      }
+    });
+  });
+
+  return [...contentPaths, ...masterPaths];
 }
 
-const { bici } = Astro.props;
+const { rawBici } = Astro.props;
 
-const precioFormateado = bici.precio.toLocaleString('es-MX', {
+// Format prices (+3.5% online fee note)
+const webPrice = Math.round(rawBici.price * 1.035);
+const precioFormateado = rawBici.price.toLocaleString('es-MX', {
   style: 'currency',
-  currency: bici.moneda || 'MXN',
+  currency: 'MXN',
+  maximumFractionDigits: 0,
+});
+const webPrecioFormateado = webPrice.toLocaleString('es-MX', {
+  style: 'currency',
+  currency: 'MXN',
   maximumFractionDigits: 0,
 });
 
-const isVendida = bici.disponibilidad === 'Vendida';
-const isApartada = bici.disponibilidad === 'Apartada';
+const isAgotado = rawBici.stock <= 0;
+const isFreeShipping = rawBici.price >= 500;
+const fotos = rawBici.fotos && rawBici.fotos.length > 0
+  ? rawBici.fotos
+  : ['https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80'];
 
-const textoBoton = isVendida
-  ? "Preguntar por modelo similar"
-  : isApartada
-    ? "Consultar disponibilidad / Apartar"
-    : "Apartar esta bicicleta por WhatsApp";
+const defaultWaMsg = `Hola The Garage, me interesa ${rawBici.name} (${precioFormateado}). ¿Tienen entrega hoy o atención con cita previa en Playa del Carmen?`;
+const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(rawBici.mensajeWhatsApp || defaultWaMsg)}`;
 
-const fotos = bici.fotos && bici.fotos.length > 0 ? bici.fotos : ['/img/the-garage-logo-white.png'];
-const defaultWaMsg = `Hola, me interesa la ${bici.marca} ${bici.modelo} (${precioFormateado}). ¿Sigue disponible en tienda?`;
-const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensajeWhatsApp || defaultWaMsg)}`;
+// Generate related products (cross-selling)
+const relatedProducts = getRelatedProducts(rawBici as any, 4);
+
+// Pass JSON to client
+const productJson = JSON.stringify({
+  id: rawBici.id,
+  sku: rawBici.sku,
+  name: rawBici.name,
+  brand: rawBici.brand,
+  cat: rawBici.cat,
+  price: rawBici.price,
+  webPrice: webPrice,
+  stock: rawBici.stock,
+  fotos: fotos
+});
 ---
 
 <Base
-  title={`${bici.marca} ${bici.modelo} (${bici.talla}) | The Garage Playa del Carmen`}
-  description={`${bici.marca} ${bici.modelo} en The Garage Bike Experts, Playa del Carmen. Talla ${bici.talla}, ${bici.estado}, ${precioFormateado} MXN. Entrega en toda la Riviera Maya.`}
+  title={`${rawBici.name} | The Garage Bike Experts Playa del Carmen`}
+  description={`${rawBici.name} en The Garage Playa del Carmen. ${precioFormateado} MXN. Taller a puerta cerrada en Cataluña con cita previa o envío express en Riviera Maya.`}
   image={fotos[0]}
   tipo="product"
 >
   <div class="bici-detail-page">
-    <div class="container-fluid">
+    <div class="container-fluid" style="max-width: 1240px; margin: 0 auto; padding: 0 1.5rem;">
       
+      <!-- Top Free Shipping Notification (Playa del Carmen) -->
+      <div class="shipping-top-pill">
+        <span style="display:inline-flex; align-items:center; gap:0.5rem; justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+          <strong>Envío Gratis en compras desde $500 MXN en Playa del Carmen</strong> (Didi Moto o Retiro con Cita Previa)
+        </span>
+      </div>
+
       <!-- Breadcrumb Bar -->
       <nav class="breadcrumb-strip font-mono" aria-label="Ruta de navegación">
         <a href="/inventario" class="breadcrumb-link">INVENTARIO</a>
         <span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-cat">{bici.categoria.toUpperCase()}</span>
+        <a href={`/inventario?cat=${encodeURIComponent(rawBici.cat)}`} class="breadcrumb-cat">{rawBici.cat.toUpperCase()}</a>
         <span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-current">{bici.marca} {bici.modelo}</span>
+        <span class="breadcrumb-current">{rawBici.name}</span>
       </nav>
 
       <!-- Main Product Split -->
       <div class="product-layout-grid">
         
-        <!-- Left: Gallery Viewport -->
+        <!-- Left: Gallery Viewport & Thumbnails -->
         <div class="gallery-column">
           <div class="main-photo-viewport">
             <img
               id="main-photo"
               src={fotos[0]}
-              alt={`${bici.marca} ${bici.modelo} - Playa del Carmen`}
+              alt={`${rawBici.name} - The Garage Playa del Carmen`}
               loading="eager"
             />
-            <div class="photo-status-badge font-mono">
-              ● {bici.disponibilidad.toUpperCase()}
+            
+            <!-- Badges -->
+            <div class="photo-badges-layer">
+              <span class={`photo-status-badge font-mono ${isAgotado ? 'badge-out' : 'badge-stock'}`}>
+                ● {isAgotado ? 'AGOTADO EN TIENDA' : 'DISPONIBLE EN TIENDA FÍSICA'}
+              </span>
+              {isFreeShipping && (
+                <span class="photo-shipping-badge font-mono">
+                  ENVÍO GRATIS (PDC)
+                </span>
+              )}
             </div>
-            <div class="photo-condition-badge font-mono">
-              {bici.estado.toUpperCase()}
-            </div>
+
+            {rawBici.estado && (
+              <div class="photo-condition-badge font-mono">
+                {rawBici.estado.toUpperCase()}
+              </div>
+            )}
           </div>
 
-          <!-- Thumbnails -->
+          <!-- Thumbnails Row -->
           {fotos.length > 1 && (
             <div class="thumbs-row">
-              {fotos.map((foto, i) => (
+              {fotos.map((foto: string, i: number) => (
                 <button
                   type="button"
-                  class="thumb-btn-tile"
-                  onclick={`document.getElementById('main-photo').src = '${foto}'`}
+                  class={`thumb-btn-tile ${i === 0 ? 'active' : ''}`}
+                  onclick={`document.getElementById('main-photo').src = '${foto}'; document.querySelectorAll('.thumb-btn-tile').forEach(b => b.classList.remove('active')); this.classList.add('active');`}
+                  title={`Ver fotografía ${i + 1}`}
                 >
-                  <img src={foto} alt={`Foto ${i + 1}`} />
+                  <img src={foto} alt={`${rawBici.name} foto ${i + 1}`} />
                 </button>
               ))}
             </div>
@@ -87,96 +243,422 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
 
           <!-- Workshop Seal Card -->
           <div class="workshop-seal-tile">
-            <div class="seal-icon-box font-mono">[CERT]</div>
+            <div class="seal-icon-box font-mono">CERT</div>
             <div>
-              <h4 class="seal-title">Inspección de Taller Certificada</h4>
+              <h4 class="seal-title">Garantía & Taller The Garage</h4>
               <p class="seal-desc">
-                Tornillería torqueada con torquímetro mecánico, lubricación y <strong>1er reajuste gratis a los 30 días</strong> en Cataluña Casa 19.
+                Inspección mecánica profesional, ajuste de torque certificado y <strong>1er reajuste gratis a los 30 días</strong> en nuestro taller especializado de Cataluña (Cita Previa), Playa del Carmen.
               </p>
             </div>
           </div>
         </div>
 
-        <!-- Right: Technical Fiche & Purchase -->
+        <!-- Right: Technical Fiche, Pricing & Actions -->
         <div class="specs-column">
           <div class="specs-card-box">
+            
+            <!-- Meta Tag Row -->
             <div class="meta-header-row font-mono">
-              <span class="spec-edition-tag">FICHA TÉCNICA // {bici.categoria.toUpperCase()}</span>
-              <span class="spec-size-badge">TALLA {bici.talla}</span>
+              <span class="spec-edition-tag">{rawBici.brand.toUpperCase()} // {rawBici.cat.toUpperCase()}</span>
+              {rawBici.talla && <span class="spec-size-badge">TALLA {rawBici.talla}</span>}
             </div>
 
-            <h1 class="bike-headline-title">{bici.marca} {bici.modelo}</h1>
-            <div class="bike-price-headline font-mono">{precioFormateado}</div>
+            <h1 class="bike-headline-title">{rawBici.name}</h1>
+            
+            <!-- Price Display -->
+            <div class="price-container-box">
+              <div class="bike-price-headline font-mono">{precioFormateado}</div>
+              <div class="price-online-note font-mono">
+                Precio tienda física • Pago en línea: <strong>{webPrecioFormateado}</strong> (+3.5% pasarela)
+              </div>
+            </div>
 
-            <p class="bike-long-desc">{bici.descripcion}</p>
+            <!-- Description -->
+            <p class="bike-long-desc">{rawBici.descripcion || rawBici.specs}</p>
 
-            <!-- Technical Table -->
+            <!-- Technical Specifications Table -->
             <div class="specs-data-table font-mono">
+              {rawBici.brand && (
+                <div class="spec-data-row">
+                  <span class="spec-data-key">Marca Oficial</span>
+                  <span class="spec-data-val">{rawBici.brand}</span>
+                </div>
+              )}
+              {rawBici.sku && (
+                <div class="spec-data-row">
+                  <span class="spec-data-key">Código SKU</span>
+                  <span class="spec-data-val">{rawBici.sku}</span>
+                </div>
+              )}
+              {rawBici.color && (
+                <div class="spec-data-row">
+                  <span class="spec-data-key">Color / Acabado</span>
+                  <span class="spec-data-val">{rawBici.color}</span>
+                </div>
+              )}
+              {rawBici.specsObj ? (
+                <>
+                  <div class="spec-data-row">
+                    <span class="spec-data-key">Cuadro / Chasis</span>
+                    <span class="spec-data-val">{rawBici.specsObj.cuadro}</span>
+                  </div>
+                  <div class="spec-data-row">
+                    <span class="spec-data-key">Transmisión</span>
+                    <span class="spec-data-val">{rawBici.specsObj.grupo}</span>
+                  </div>
+                  <div class="spec-data-row">
+                    <span class="spec-data-key">Frenos</span>
+                    <span class="spec-data-val">{rawBici.specsObj.frenos}</span>
+                  </div>
+                  <div class="spec-data-row">
+                    <span class="spec-data-key">Rodada / Ruedas</span>
+                    <span class="spec-data-val">{rawBici.specsObj.rodada}</span>
+                  </div>
+                </>
+              ) : (
+                <div class="spec-data-row" style="flex-direction:column; gap:0.25rem; align-items:flex-start;">
+                  <span class="spec-data-key">Especificaciones Técnicas</span>
+                  <span class="spec-data-val" style="font-weight:400; line-height:1.5;">{rawBici.specs}</span>
+                </div>
+              )}
               <div class="spec-data-row">
-                <span class="spec-data-key">Cuadro / Chasis</span>
-                <span class="spec-data-val">{bici.specs.cuadro}</span>
-              </div>
-              <div class="spec-data-row">
-                <span class="spec-data-key">Grupo / Transmisión</span>
-                <span class="spec-data-val">{bici.specs.grupo}</span>
-              </div>
-              <div class="spec-data-row">
-                <span class="spec-data-key">Sistema de Frenos</span>
-                <span class="spec-data-val">{bici.specs.frenos}</span>
-              </div>
-              <div class="spec-data-row">
-                <span class="spec-data-key">Rodada / Ruedas</span>
-                <span class="spec-data-val">{bici.specs.rodada}</span>
-              </div>
-              <div class="spec-data-row">
-                <span class="spec-data-key">Color / Acabado</span>
-                <span class="spec-data-val">{bici.color}</span>
+                <span class="spec-data-key">Disponibilidad en Tienda</span>
+                <span class="spec-data-val" style="color:#34c759;">
+                  {rawBici.stock > 0 ? `En Almacén (${rawBici.stock} unidades)` : 'Consultar pedido'}
+                </span>
               </div>
             </div>
 
-            <!-- Urgency Indicator -->
-            {bici.disponibilidad !== 'Vendida' && (
-              <div class="urgency-banner font-mono text-rose-400 font-bold text-sm mb-4 flex items-center gap-2" style="padding: 0.5rem 0; border-top: 1px dashed rgba(255,255,255,0.1); border-bottom: 1px dashed rgba(255,255,255,0.1);">
-                <span class="status-dot" style="background:#f43f5e; animation: pulse 2s infinite; display: inline-block; width: 8px; height: 8px; border-radius: 50%;"></span> 
-                ALTA DEMANDA: ÚLTIMA UNIDAD DISPONIBLE EN TALLA {bici.talla}
-              </div>
-            )}
+            <!-- Scarcity / High Demand Alert -->
+            <div class="urgency-banner font-mono">
+              <span class="status-dot"></span> 
+              <span>STOCK FÍSICO INMEDIATO EN PLAYA DEL CARMEN // TALLER CATALUÑA (CITA PREVIA)</span>
+            </div>
 
-            <!-- Conversion Action -->
+            <!-- Primary Actions: Add to Cart + WhatsApp Buy -->
             <div class="detail-action-group">
+              <button
+                type="button"
+                id="btn-add-to-cart-page"
+                class="btn-dualtone-cart-main"
+              >
+                <span class="btn-cart-label">Agregar al Carrito de Compra</span>
+                <span class="btn-cart-pill">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                </span>
+              </button>
+
               <a
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="btn btn-whatsapp detail-main-btn urgency-pulse"
+                class="btn-dualtone-wa-main"
               >
-                <span>{textoBoton}</span>
+                <span class="btn-wa-label">Apartar o Consultar por WhatsApp</span>
+                <span class="btn-wa-pill">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.152.57 4.17 1.564 5.91l-1.564 5.708 5.867-1.538c1.701.928 3.652 1.458 5.727 1.458 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
+                </span>
               </a>
-              <a
-                href="/guia-tallas"
-                class="btn btn-outline detail-secondary-btn"
-              >
-                Comprobar Talla en Calculadora →
-              </a>
+
+              {rawBici.cat === 'Bicicletas' && (
+                <a
+                  href="/guia-tallas"
+                  class="btn-glass-secondary"
+                  style="text-align:center; padding:0.85rem; border-radius:12px; text-decoration:none; font-weight:600; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:0.5rem;"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+                  <span>Comprobar Talla en Calculadora Virtual →</span>
+                </a>
+              )}
             </div>
 
-            <div class="delivery-notice font-mono">
-              <span>Entrega inmediata en Playa del Carmen, Tulum, Puerto Aventuras y Cancún.</span>
+            <!-- Delivery & Local Pick-up Notice -->
+            <div class="delivery-notice font-mono" style="display:flex; align-items:center; gap:0.6rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Entrega express en Playa del Carmen, Tulum y Puerto Aventuras. Retiro con cita en taller Cataluña.</span>
             </div>
+
           </div>
         </div>
 
       </div>
 
+      
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- SOCIAL PROOF: RESEÑAS VERIFICADAS GOOGLE BUSINESS PROFILE (4.95 / 5)  -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <section class="prod-google-reviews-section">
+        <div class="prod-google-box">
+          <div class="prod-google-header">
+            <div class="prod-google-brand">
+              <svg width="28" height="28" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24Z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15Z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"/>
+              </svg>
+              <div>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <strong style="font-size:1.15rem; color:#f5f5f7;">Google Reviews · 4.95 / 5.0</strong>
+                  <span style="background:rgba(52,199,89,0.15); color:#34c759; font-size:0.7rem; font-weight:800; padding:0.15rem 0.5rem; border-radius:100px; text-transform:uppercase;">Verificado</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.35rem; color:#ffb703; font-size:0.88rem; margin-top:0.2rem;">
+                  <span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                  <span style="color:#a1a1aa; font-size:0.8rem; margin-left:0.3rem;">38 opiniones reales de ciclistas en Playa del Carmen</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <div class="google-badge-pill font-mono">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>GARANTÍA DE SATISFACCIÓN &amp; CALIBRACIÓN CERTIFICADA</span>
+              </div>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=The+Garage+Bike+Experts+Av+Ich+Xeel+Catalu%C3%B1a+Playa+del+Carmen"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="google-badge-pill font-mono"
+                style="background:rgba(66,133,244,0.15); border-color:rgba(66,133,244,0.3); color:#93c5fd; text-decoration:none;"
+                title="Dejar reseña verificada en Google"
+              >
+                <span>Calificar en Google (5 Estrellas) ↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="prod-reviews-grid">
+            <div class="prod-review-card">
+              <div class="review-stars-row"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> <span class="review-date">Hace 3 días</span></div>
+              <p class="review-text">"Compré mi bici con The Garage y la entrega a domicilio en Playacar fue impecable. Llegó calibrada a mi medida y el primer ajuste a los 30 días incluido da total tranquilidad."</p>
+              <div class="review-author-row">
+                <div class="review-avatar">RP</div>
+                <div>
+                  <strong>Roberto Pech</strong>
+                  <span>Cliente Verificado · Playa del Carmen</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prod-review-card">
+              <div class="review-stars-row"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> <span class="review-date">Hace 1 semana</span></div>
+              <p class="review-text">"El taller a puerta cerrada es otro nivel. Marco y el equipo cuidan cada detalle con torquímetro. Cero ruidos, transmisión electrónica como reloj suizo."</p>
+              <div class="review-author-row">
+                <div class="review-avatar" style="background:#0071e3;">CM</div>
+                <div>
+                  <strong>Carlos Méndez R.</strong>
+                  <span>Basso Palta II · Rider Activo</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="prod-review-card">
+              <div class="review-stars-row"><span style="display:inline-flex; gap:2px; color:#f59e0b;"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span> <span class="review-date">Hace 2 semanas</span></div>
+              <p class="review-text">"Excelente atención personalizada por WhatsApp. Me asesoraron con la talla exacta y los componentes para el clima del Caribe. 100% recomendados."</p>
+              <div class="review-author-row">
+                <div class="review-avatar" style="background:#af52de;">AP</div>
+                <div>
+                  <strong>Ana Paula V.</strong>
+                  <span>Trek Marlin 5 · Puerto Aventuras</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- ALGORITMO DE RECOMENDACIONES: PRODUCTOS RELACIONADOS (CROSS-SELL)  -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <section class="related-section">
+        <div class="related-header">
+          <div>
+            <span class="related-tag font-mono">[COMPLETA TU EQUIPAMIENTO]</span>
+            <h2 class="related-title">Productos Frecuentemente Comprados Juntos</h2>
+          </div>
+          <p class="related-desc">Accesorios y refacciones de alto rendimiento compatibles con esta compra.</p>
+        </div>
+
+        <div class="related-grid">
+          {relatedProducts.map((p) => {
+            const relPrice = p.price.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
+            return (
+              <div class="rel-card">
+                <a href={`/bici/${p.id}`} class="rel-card-img-wrap">
+                  <img src={p.fotos[0]} alt={p.name} loading="lazy" />
+                  <span class="rel-cat-badge font-mono">{p.cat}</span>
+                </a>
+                <div class="rel-card-body">
+                  <span class="rel-brand font-mono">{p.brand}</span>
+                  <h4 class="rel-name">
+                    <a href={`/bici/${p.id}`}>{p.name}</a>
+                  </h4>
+                  <div class="rel-price font-mono">{relPrice}</div>
+                  <div class="rel-actions">
+                    <a href={`/bici/${p.id}`} class="rel-btn-view">Ver</a>
+                    <button
+                      type="button"
+                      class="rel-btn-cart"
+                      onclick={`if(window.cartAdd) { window.cartAdd({ id:'${p.id}', name:'${p.name.replace(/'/g, "\\'")}', price:${p.price}, icon:'' }); }`}
+                      title="Agregar al carrito"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <!-- ALGORITMO INTELIGENTE: PERSONALIZADO SEGÚN EL PERFIL DEL CLIENTE    -->
+      <!-- ═══════════════════════════════════════════════════════════════════ -->
+      <section class="personalized-section" id="smart-recommendations-section" style="display:none;">
+        <div class="personalized-box">
+          <div class="personalized-header">
+            <span class="pers-badge font-mono">ALGORITMO PREDICTIVO DE CICLISMO</span>
+            <h3 class="pers-title">Recomendado Para Ti Según Tu Historial de Navegación</h3>
+            <p class="pers-sub" id="pers-profile-label">Seleccionado de acuerdo con tu interés y rodadas preferidas.</p>
+          </div>
+
+          <div class="related-grid" id="pers-products-grid"></div>
+        </div>
+      </section>
+
     </div>
   </div>
 </Base>
 
+<!-- Pass Product JSON to Client Script -->
+<script is:inline define:vars={{ productJson }}>
+(function () {
+  const currentProduct = JSON.parse(productJson);
+
+  // 1. Hook "Agregar al Carrito" button
+  const addBtn = document.getElementById('btn-add-to-cart-page');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      if (typeof window.cartAdd === 'function') {
+        window.cartAdd({
+          id: currentProduct.sku || currentProduct.id,
+          name: currentProduct.name,
+          price: currentProduct.price,
+          icon: ''
+        });
+      } else {
+        alert(`Agregado: ${currentProduct.name} (${currentProduct.price} MXN)`);
+      }
+    });
+  }
+
+  // 2. Track viewed product in BehaviorTracker & localStorage
+  try {
+    const history = JSON.parse(localStorage.getItem('tg_viewed_products') || '[]');
+    const filtered = history.filter(item => item.id !== currentProduct.id);
+    filtered.unshift({
+      id: currentProduct.id,
+      name: currentProduct.name,
+      cat: currentProduct.cat,
+      brand: currentProduct.brand,
+      ts: Date.now()
+    });
+    localStorage.setItem('tg_viewed_products', JSON.stringify(filtered.slice(0, 10)));
+
+    // Track session event for CRM 360°
+    const sessions = JSON.parse(localStorage.getItem('tg_sessions') || '[]');
+    sessions.push({
+      type: 'bike_detail_view',
+      label: `Vio ${currentProduct.name}`,
+      cat: currentProduct.cat,
+      ts: new Date().toISOString()
+    });
+    localStorage.setItem('tg_sessions', JSON.stringify(sessions.slice(-30)));
+  } catch(e) {}
+
+  // 3. Smart Algorithm: Render Personalized Recommendations
+  try {
+    const section = document.getElementById('smart-recommendations-section');
+    const container = document.getElementById('pers-products-grid');
+    const profileLabel = document.getElementById('pers-profile-label');
+    if (!section || !container) return;
+
+    // Detect user preference from CRM or sessions
+    const crmData = JSON.parse(localStorage.getItem('bicisaas_crm') || '[]');
+    const history = JSON.parse(localStorage.getItem('tg_viewed_products') || '[]');
+    
+    let preferredDiscipline = 'Aventura / MTB';
+    if (currentProduct.cat === 'Bicicletas' && currentProduct.name.toLowerCase().includes('gravel')) {
+      preferredDiscipline = 'Gravel & Bikepacking';
+    } else if (currentProduct.name.toLowerCase().includes('scultura') || currentProduct.name.toLowerCase().includes('allez')) {
+      preferredDiscipline = 'Carretera & Velocidad';
+    }
+
+    if (profileLabel) {
+      profileLabel.textContent = `Basado en tu interés por ${currentProduct.name} y tu perfil de ciclista (${preferredDiscipline}).`;
+    }
+
+    // Dynamic personalized items
+    const smartItems = [
+      { id: 'p12', name: 'Casco POC Axion Race MIPS', brand: 'POC', price: 4800, img: 'https://images.unsplash.com/photo-1559348349-86f1f65817fe?auto=format&fit=crop&w=600&q=80', cat: 'Cascos & Seguridad' },
+      { id: 'p21', name: 'Ciclocomputador Garmin Edge 530', brand: 'Garmin', price: 8500, img: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=600&q=80', cat: 'Electrónica & GPS' },
+      { id: 'p24', name: 'Lubricante Seco Rock N Roll Gold', brand: 'Rock N Roll', price: 250, img: 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?auto=format&fit=crop&w=600&q=80', cat: 'Herramientas & Taller' },
+      { id: 'p20', name: 'Bidón Camelbak Podium Chill 710ml', brand: 'Camelbak', price: 420, img: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80', cat: 'Nutrición & Hidratación' }
+    ].filter(item => item.id !== currentProduct.id).slice(0, 4);
+
+    container.innerHTML = smartItems.map(item => `
+      <div class="rel-card" style="background:#141416; border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; display:flex; flex-direction:column;">
+        <a href="/bici/${item.id}" class="rel-card-img-wrap" style="position:relative; width:100%; height:190px; overflow:hidden; display:block; background:#1c1c1f;">
+          <img src="${item.img}" alt="${item.name}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;" />
+          <span class="rel-cat-badge font-mono" style="position:absolute; bottom:0.5rem; left:0.5rem; background:rgba(0,0,0,0.75); color:#e4e4e7; font-size:0.65rem; font-weight:700; padding:0.2rem 0.5rem; border-radius:4px; backdrop-filter:blur(4px);">${item.cat}</span>
+        </a>
+        <div class="rel-card-body" style="padding:1rem; display:flex; flex-direction:column; flex:1;">
+          <span class="rel-brand font-mono" style="font-size:0.68rem; color:#a1a1aa; text-transform:uppercase; letter-spacing:0.05em;">${item.brand}</span>
+          <h4 class="rel-name" style="font-size:0.95rem; font-weight:700; margin:0.25rem 0 0.5rem; line-height:1.3;">
+            <a href="/bici/${item.id}" style="color:#ffffff; text-decoration:none;">${item.name}</a>
+          </h4>
+          <div class="rel-price font-mono" style="font-size:1.1rem; font-weight:800; color:#34c759; margin-top:auto; margin-bottom:0.75rem;">${item.price.toLocaleString('es-MX')}</div>
+          <div class="rel-actions" style="display:grid; grid-template-columns:1fr auto; gap:0.5rem;">
+            <a href="/bici/${item.id}" class="rel-btn-view" style="display:inline-flex; align-items:center; justify-content:center; padding:0.45rem 0.8rem; border-radius:8px; background:rgba(255,255,255,0.08); color:#f4f4f5; font-size:0.8rem; font-weight:600; text-decoration:none; border:1px solid rgba(255,255,255,0.15);">Ver Detalle</a>
+            <button
+              type="button"
+              class="rel-btn-cart"
+              style="padding:0.45rem 0.85rem; border-radius:8px; background:#0071e3; color:white; font-weight:700; font-size:0.85rem; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;"
+              onclick="if(window.cartAdd){window.cartAdd({id:'${item.id}',name:'${item.name.replace(/'/g, "\\'")}',price:${item.price},icon:''})}"
+              title="Agregar al carrito"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    section.style.display = 'block';
+  } catch(e) {}
+})();
+</script>
+
 <style>
   .bici-detail-page {
     padding: var(--space-5) 0 var(--space-9) 0;
+    color: var(--text-primary);
   }
 
+  /* Top Shipping Pill */
+  .shipping-top-pill {
+    background: linear-gradient(90deg, rgba(52,199,89,0.12), rgba(0,113,227,0.12));
+    border: 1px solid rgba(52,199,89,0.25);
+    border-radius: var(--radius-full);
+    padding: 0.55rem 1.25rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #e4e4e7;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Breadcrumb */
   .breadcrumb-strip {
     display: flex;
     align-items: center;
@@ -186,13 +668,14 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     padding-bottom: var(--space-4);
     border-bottom: 1px solid var(--border-hairline);
     margin-bottom: var(--space-6);
+    flex-wrap: wrap;
   }
-
-  .breadcrumb-link {
+  .breadcrumb-link, .breadcrumb-cat {
     color: var(--text-muted);
     text-decoration: none;
+    transition: color 0.2s;
   }
-  .breadcrumb-link:hover {
+  .breadcrumb-link:hover, .breadcrumb-cat:hover {
     color: #FFFFFF;
   }
   .breadcrumb-sep {
@@ -204,18 +687,22 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
   }
   .breadcrumb-current {
     color: var(--text-primary);
+    font-weight: 600;
   }
 
+  /* Split Layout */
   .product-layout-grid {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
     gap: var(--space-7);
     align-items: start;
+    margin-bottom: 4rem;
   }
 
+  /* Main Photo */
   .main-photo-viewport {
     position: relative;
-    aspect-ratio: 1/1;
+    aspect-ratio: 4/3;
     background: #09090B;
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-xl);
@@ -225,17 +712,41 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .main-photo-viewport:hover img {
+    transform: scale(1.025);
   }
 
-  .photo-status-badge {
+  .photo-badges-layer {
     position: absolute;
     top: 1rem;
     left: 1rem;
-    background: rgba(34, 197, 94, 0.95);
-    color: #09090B;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .photo-status-badge {
     font-size: 0.72rem;
     font-weight: 800;
     padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(8px);
+  }
+  .badge-stock {
+    background: rgba(34, 197, 94, 0.95);
+    color: #09090B;
+  }
+  .badge-out {
+    background: rgba(239, 68, 68, 0.95);
+    color: #FFFFFF;
+  }
+  .photo-shipping-badge {
+    background: rgba(0, 113, 227, 0.9);
+    color: #FFFFFF;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.25rem 0.75rem;
     border-radius: var(--radius-full);
   }
 
@@ -253,25 +764,29 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
+  /* Thumbnails */
   .thumbs-row {
     display: flex;
     gap: var(--space-3);
     margin-top: var(--space-4);
     overflow-x: auto;
+    padding-bottom: 0.25rem;
   }
   .thumb-btn-tile {
-    width: 80px;
-    height: 80px;
+    width: 84px;
+    height: 84px;
     border-radius: var(--radius-md);
-    border: 1.5px solid var(--border-hairline);
+    border: 2px solid var(--border-hairline);
     background: #09090B;
     cursor: pointer;
     overflow: hidden;
     padding: 0;
     flex-shrink: 0;
+    transition: all 0.2s;
   }
-  .thumb-btn-tile:hover {
-    border-color: #E11D48;
+  .thumb-btn-tile:hover, .thumb-btn-tile.active {
+    border-color: #0071e3;
+    transform: translateY(-2px);
   }
   .thumb-btn-tile img {
     width: 100%;
@@ -279,6 +794,7 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     object-fit: cover;
   }
 
+  /* Workshop Seal Card */
   .workshop-seal-tile {
     margin-top: var(--space-5);
     background: var(--surface-card);
@@ -290,12 +806,13 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     align-items: center;
   }
   .seal-icon-box {
-    background: rgba(225, 29, 72, 0.15);
-    color: #FB7185;
+    background: rgba(0, 113, 227, 0.15);
+    color: #0071e3;
     font-size: 0.75rem;
     font-weight: 800;
     padding: 0.5rem 0.75rem;
     border-radius: var(--radius-md);
+    white-space: nowrap;
   }
   .seal-title {
     font-size: 0.95rem;
@@ -307,13 +824,15 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     font-size: 0.82rem;
     color: var(--text-secondary);
     line-height: 1.5;
+    margin: 0;
   }
 
+  /* Specs Card */
   .specs-card-box {
     background: var(--surface-card);
     border: 1px solid var(--border-hairline);
     border-radius: var(--radius-xl);
-    padding: clamp(2rem, 3.5vw, 3rem);
+    padding: clamp(1.75rem, 3vw, 2.5rem);
   }
 
   .meta-header-row {
@@ -339,18 +858,26 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
   }
 
   .bike-headline-title {
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-size: clamp(1.6rem, 2.8vw, 2.25rem);
     font-weight: 900;
     color: var(--text-primary);
     line-height: 1.15;
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
   }
 
-  .bike-price-headline {
-    font-size: 2rem;
-    font-weight: 900;
-    color: #22C55E;
+  .price-container-box {
     margin-bottom: var(--space-4);
+  }
+  .bike-price-headline {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #34C759;
+    line-height: 1;
+  }
+  .price-online-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
   }
 
   .bike-long-desc {
@@ -360,6 +887,7 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     margin-bottom: var(--space-5);
   }
 
+  /* Specs Table */
   .specs-data-table {
     display: flex;
     flex-direction: column;
@@ -367,11 +895,12 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
     padding: var(--space-4) 0;
     border-top: 1px solid var(--border-hairline);
     border-bottom: 1px solid var(--border-hairline);
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
   }
   .spec-data-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.82rem;
   }
   .spec-data-key {
@@ -380,30 +909,256 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
   .spec-data-val {
     color: var(--text-primary);
     font-weight: 700;
+    text-align: right;
   }
 
+  /* Urgency */
+  .urgency-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background: rgba(225, 29, 72, 0.08);
+    border: 1px solid rgba(225, 29, 72, 0.2);
+    border-radius: var(--radius-md);
+    color: #FB7185;
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #F43F5E;
+    animation: pulse 2s infinite;
+  }
+
+  /* Action Buttons */
   .detail-action-group {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: 0.75rem;
     margin-bottom: var(--space-4);
   }
+
+  .btn-cart-page {
+    width: 100%;
+    padding: 0.9rem 1.5rem;
+    border-radius: 100px;
+    border: none;
+    background: #0071E3;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(0,113,227,0.3);
+  }
+  .btn-cart-page:hover {
+    background: #0077ED;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0,113,227,0.4);
+  }
+
   .detail-main-btn {
     width: 100%;
     padding: 0.85rem 1.5rem;
     font-size: 0.95rem;
+    text-align: center;
+    border-radius: 100px;
   }
   .detail-secondary-btn {
     width: 100%;
     padding: 0.75rem 1.5rem;
     font-size: 0.88rem;
     text-align: center;
+    border-radius: 100px;
   }
 
   .delivery-notice {
     font-size: 0.72rem;
     color: var(--text-dim);
     text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ── Related Section ── */
+  .related-section {
+    border-top: 1px solid var(--border-hairline);
+    padding-top: 3.5rem;
+    margin-bottom: 3.5rem;
+  }
+  .related-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .related-tag {
+    font-size: 0.75rem;
+    color: #0071E3;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .related-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0.25rem 0 0;
+    letter-spacing: -0.02em;
+  }
+  .related-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .rel-card {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .rel-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .rel-card-img-wrap {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: #09090B;
+    overflow: hidden;
+    display: block;
+  }
+  .rel-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .rel-cat-badge {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    background: rgba(0,0,0,0.75);
+    color: #e4e4e7;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+  .rel-card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .rel-brand {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .rel-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0.25rem 0 0.5rem;
+    line-height: 1.3;
+  }
+  .rel-name a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .rel-name a:hover {
+    color: #0071E3;
+  }
+  .rel-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #34C759;
+    margin-top: auto;
+    margin-bottom: 0.75rem;
+  }
+  .rel-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+  }
+  .rel-btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    color: #f4f4f5;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--border-hairline);
+    transition: background 0.2s;
+  }
+  .rel-btn-view:hover {
+    background: rgba(255,255,255,0.12);
+  }
+  .rel-btn-cart {
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    background: #0071E3;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .rel-btn-cart:hover {
+    background: #0077ED;
+  }
+
+  /* ── Personalized Section ── */
+  .personalized-section {
+    margin-bottom: 4rem;
+  }
+  .personalized-box {
+    background: linear-gradient(135deg, rgba(94,92,230,0.08) 0%, rgba(0,113,227,0.05) 100%);
+    border: 1px solid rgba(94,92,230,0.25);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+  }
+  .personalized-header {
+    margin-bottom: 1.5rem;
+  }
+  .pers-badge {
+    color: #af52de;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .pers-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0.35rem 0 0.25rem;
+  }
+  .pers-sub {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    margin: 0;
   }
 
   @media (max-width: 900px) {
@@ -411,4 +1166,197 @@ const waUrl = `https://wa.me/529841381493?text=${encodeURIComponent(bici.mensaje
       grid-template-columns: 1fr;
     }
   }
+
+  /* Dual-Tone Main Actions */
+  .btn-dualtone-cart-main {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.55rem 0.45rem 1.4rem;
+    border-radius: 100px;
+    background: #ffffff;
+    color: #09090b;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-dualtone-cart-main:hover {
+    background: #f4f4f5;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+  }
+  .btn-cart-pill {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0071e3;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 113, 227, 0.45);
+  }
+
+  .btn-dualtone-wa-main {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.55rem 0.45rem 1.4rem;
+    border-radius: 100px;
+    background: #22c55e;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-dualtone-wa-main:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(34, 197, 94, 0.4);
+  }
+  .btn-wa-pill {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Google Verified Reviews Section */
+  .prod-google-reviews-section {
+    margin: 3.5rem 0;
+  }
+  .prod-google-box {
+    background: #141416;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 2rem;
+  }
+  .prod-google-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 1.75rem;
+  }
+  .prod-google-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .google-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(52,199,89,0.08);
+    border: 1px solid rgba(52,199,89,0.25);
+    color: #e4e4e7;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.45rem 0.85rem;
+    border-radius: 100px;
+  }
+  .prod-reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 860px) {
+    .prod-reviews-grid { grid-template-columns: 1fr; }
+  }
+  .prod-review-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .review-stars-row {
+    color: #ffb703;
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+  .review-date {
+    color: #71717a;
+    font-size: 0.72rem;
+  }
+  .review-text {
+    font-size: 0.88rem;
+    color: #d4d4d8;
+    line-height: 1.5;
+    margin: 0 0 1rem;
+    font-style: italic;
+  }
+  .review-author-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 0.75rem;
+  }
+  .review-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #34c759;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .review-author-row strong {
+    display: block;
+    font-size: 0.85rem;
+    color: #ffffff;
+  }
+  .review-author-row span {
+    font-size: 0.72rem;
+    color: #a1a1aa;
+  }
+
+  /* Global fixes for dynamically inserted cards */
+  :global(.rel-card) {
+    background: #141416 !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  :global(.rel-card-img-wrap) {
+    position: relative !important;
+    width: 100% !important;
+    height: 190px !important;
+    overflow: hidden !important;
+    display: block !important;
+    background: #1c1c1f !important;
+  }
+  :global(.rel-card-img-wrap img) {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
 </style>

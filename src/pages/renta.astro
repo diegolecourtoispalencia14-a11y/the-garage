@@ -1,0 +1,1365 @@
+---
+import Base from '../layouts/Base.astro';
+import { Icon } from 'astro-icon/components';
+import { INITIAL_RENTAL_FLEET } from '../data/rentalFleet';
+
+const rentalFleetJson = JSON.stringify(INITIAL_RENTAL_FLEET);
+---
+
+<Base 
+  title="Renta de Bicicletas en Playa del Carmen | The Garage Bike Experts" 
+  description="Renta de bicicletas de montaña (MTB), gravel, ruta, cruisers y e-bikes en Playa del Carmen. Entrega en tu hotel o Airbnb, casco y candado incluidos."
+>
+  <!-- Hero Section -->
+  <section class="rental-hero">
+    <div class="hero-backdrop"></div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        <span>Flota Oficial · Playa del Carmen & Riviera Maya</span>
+      </div>
+      
+      <h1 class="hero-title">
+        Renta Bicicletas <span class="gradient-text">Calibradas por Mecánicos</span> para el Caribe
+      </h1>
+      
+      <p class="hero-subtitle">
+        Desde paseos relajados por la 5ta Avenida y Playacar, hasta rodadas de fondo hacia Tulum o senderos de cenotes. 
+        Bicicletas impecables, lubricadas contra salitre y con entrega en tu hotel o Airbnb.
+      </p>
+
+      <!-- Included Perks Pill Bar -->
+      <div class="perks-row">
+        <div class="perk-item">
+          <Icon name="mdi:shield-check-outline" width="20" height="20" class="perk-icon" />
+          <span>Casco Higienizado Incluido</span>
+        </div>
+        <div class="perk-item">
+          <Icon name="mdi:lock-outline" width="20" height="20" class="perk-icon" />
+          <span>Candado U-Lock Antirrobo</span>
+        </div>
+        <div class="perk-item">
+          <Icon name="mdi:truck-delivery-outline" width="20" height="20" class="perk-icon" />
+          <span>Entrega en Hotel / Airbnb</span>
+        </div>
+        <div class="perk-item">
+          <Icon name="mdi:tools" width="20" height="20" class="perk-icon" />
+          <span>Asistencia Mecánica en Ruta</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Catalog Section -->
+  <section class="rental-catalog-section">
+    <div class="container">
+      
+      <!-- Filter Bar -->
+      <div class="filter-wrapper">
+        <div class="category-pills" id="category-filters">
+          <button class="cat-pill active" data-cat="all">Todas las Bicicletas</button>
+          <button class="cat-pill" data-cat="Urbana">Urbanas de Playa &amp; Cruisers</button>
+          <button class="cat-pill" data-cat="MTB">Montaña &amp; Cenotes (MTB)</button>
+          <button class="cat-pill" data-cat="Gravel">Gravel Aventura</button>
+          <button class="cat-pill" data-cat="Ruta">Ruta &amp; Fondo Tulum</button>
+          <button class="cat-pill" data-cat="E-Bike">E-Bikes Eléctricas</button>
+        </div>
+
+        <div class="duration-hint">
+          <span><strong>Tip viajero:</strong> A partir de 3 días de renta, la entrega y recogida en tu hotel es <strong>completamente gratuita</strong>.</span>
+        </div>
+      </div>
+
+      <!-- Fleet Grid -->
+      <div class="fleet-grid" id="fleet-grid">
+        <!-- Rendered by client JS -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <div class="section-heading">
+        <span class="subheading-tag">Cero Fila · Cero Complicaciones</span>
+        <h2>¿Cómo Funciona la Renta en The Garage?</h2>
+        <p>Proceso 100% transparente pensado tanto para turistas internacionales como residentes de Playa del Carmen.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon-wrap">
+            <Icon name="mdi:calendar-clock" width="28" height="28" />
+          </div>
+          <h3>Elige tu Bici y Fechas</h3>
+          <p>Selecciona tu modelo ideal y fechas de rodada. Si no estás seguro de tu talla, te asesoramos según tu estatura.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon-wrap">
+            <Icon name="mdi:map-marker-radius" width="28" height="28" />
+          </div>
+          <h3>Recibe en Hotel o Tienda</h3>
+          <p>Te la llevamos directo a la puerta de tu hotel o condominio en Playa del Carmen, o recógela en nuestra tienda en Av. Ich Xeel.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon-wrap">
+            <Icon name="mdi:bicycle" width="28" height="28" />
+          </div>
+          <h3>Disfruta del Caribe</h3>
+          <p>Rueda con total tranquilidad. Todas nuestras unidades cuentan con transmisión desengrasada y cera cerámica anti-salitre.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <div class="step-icon-wrap">
+            <Icon name="mdi:cash-refund" width="28" height="28" />
+          </div>
+          <h3>Devolución y Reembolso</h3>
+          <p>Pasamos a recoger la bicicleta en la fecha pactada y liberamos tu depósito en garantía de inmediato sin letras chiquitas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table vs Generic Rentals -->
+  <section class="comparison-section">
+    <div class="container">
+      <div class="comparison-card">
+        <div class="comp-header">
+          <h3>¿Por qué rentar con The Garage Bike Experts?</h3>
+          <p>Diferencias claras contra las bicicletas de autoservicio o puestos callejeros en Playa del Carmen.</p>
+        </div>
+
+        <div class="comp-table-wrap">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Característica</th>
+                <th class="garage-col">The Garage Bike Experts</th>
+                <th class="generic-col">Bicis Públicas / Puestos Calle</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Mantenimiento de Taller</strong></td>
+                <td class="garage-col"><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Ajustadas por mecánicos cada 40h de uso</td>
+                <td class="generic-col"><span class="cross"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span> Cadenas oxidadas por salitre y cambios duros</td>
+              </tr>
+              <tr>
+                <td><strong>Entrega en Hotel / Airbnb</strong></td>
+                <td class="garage-col"><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Directo a tu recepción o villa privada</td>
+                <td class="generic-col"><span class="cross"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span> Tienes que caminar a buscar estaciones</td>
+              </tr>
+              <tr>
+                <td><strong>Gama y Marcas Líderes</strong></td>
+                <td class="garage-col"><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Trek, Specialized, Basso (Gravel, MTB, E-Bike)</td>
+                <td class="generic-col"><span class="cross"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span> Bicis pesadas de fierro de una velocidad</td>
+              </tr>
+              <tr>
+                <td><strong>Pedales Personalizados</strong></td>
+                <td class="garage-col"><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Plataforma, Shimano SPD o Look Keo gratis</td>
+                <td class="generic-col"><span class="cross"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span> Solo pedal plástico desgastado</td>
+              </tr>
+              <tr>
+                <td><strong>Kit de Seguridad Incluido</strong></td>
+                <td class="garage-col"><span class="check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Casco higienizado + Candado U-Lock blindado</td>
+                <td class="generic-col"><span class="cross"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span> Sin casco ni candado seguro</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ BOOKING MODAL / DRAWER ═══════════════════════ -->
+  <div id="rental-modal" class="rental-modal-overlay" style="display:none;">
+    <div class="rental-modal-box">
+      
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:0.65rem;">
+          <span style="display:flex; align-items:center; color:var(--accent-orange);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="m12 17.5 2.5-7.5H6l3.5 7.5"/><path d="M12 17.5 9.5 10H6"/><path d="m15 5-3 5"/></svg>
+          </span>
+          <div>
+            <h2 id="rm-bike-name" style="font-size:1.15rem; margin:0; font-weight:700;">Reservar Bicicleta</h2>
+            <span id="rm-bike-meta" style="font-size:0.75rem; color:var(--text-muted);">Talla & Categoría</span>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btn-close-rental-modal">
+          <Icon name="mdi:close" width="20" height="20" />
+        </button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Bike Snapshot Banner -->
+        <div class="bike-snapshot">
+          <img id="rm-bike-img" src="" alt="" />
+          <div class="snapshot-details">
+            <div class="rate-badge">
+              <span id="rm-daily-rate" class="rate-amount">$0</span>
+              <span class="rate-period">MXN / 24 hrs</span>
+            </div>
+            <p id="rm-bike-summary" class="snapshot-text"></p>
+          </div>
+        </div>
+
+        <form id="rental-booking-form">
+          
+          <!-- Dates -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="rent-start-date">Fecha de Inicio / Entrega</label>
+              <input type="date" id="rent-start-date" required class="form-input" />
+            </div>
+            <div class="form-group">
+              <label for="rent-end-date">Fecha de Devolución</label>
+              <input type="date" id="rent-end-date" required class="form-input" />
+            </div>
+          </div>
+
+          <!-- Rider Info -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="rent-rider-name">Nombre del Ciclista</label>
+              <input type="text" id="rent-rider-name" placeholder="Ej. Carlos Mendoza" required class="form-input" />
+            </div>
+            <div class="form-group">
+              <label for="rent-rider-phone">WhatsApp de Contacto (10 dígitos)</label>
+              <input type="tel" id="rent-rider-phone" placeholder="Ej. 9841234567" required class="form-input" />
+            </div>
+          </div>
+
+          <!-- Estatura & Pedales -->
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="rent-rider-height">Estatura del Ciclista</label>
+              <select id="rent-rider-height" class="form-select">
+                <option value="155-165">1.55 m – 1.65 m (Talla S recomendada)</option>
+                <option value="166-176" selected>1.66 m – 1.76 m (Talla M recomendada)</option>
+                <option value="177-187">1.77 m – 1.87 m (Talla L recomendada)</option>
+                <option value="188+">Más de 1.88 m (Talla XL recomendada)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="rent-pedal-pref">Tipo de Pedales Preferidos</label>
+              <select id="rent-pedal-pref" class="form-select">
+                <option value="Plataforma normal">Plataforma convencional (Tenis de calle)</option>
+                <option value="Shimano SPD MTB">Shimano SPD (Montaña / Gravel)</option>
+                <option value="Look Keo / SPD-SL Ruta">Look Keo / SPD-SL (Carretera)</option>
+                <option value="Trae pedales propios">Traigo mis pedales (Instalación gratis)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Entrega Location -->
+          <div class="form-group">
+            <label>Punto de Entrega / Recogida</label>
+            <div class="delivery-toggle-grid">
+              <label class="del-option active" id="del-opt-tienda">
+                <input type="radio" name="delivery_type" value="tienda" checked style="display:none;" />
+                <span class="del-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </span>
+                <div>
+                  <strong>Recoger en Tienda Física</strong>
+                  <small>Av. Ich Xeel, Cataluña · Gratis</small>
+                </div>
+              </label>
+
+              <label class="del-option" id="del-opt-hotel">
+                <input type="radio" name="delivery_type" value="hotel" style="display:none;" />
+                <span class="del-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </span>
+                <div>
+                  <strong>Entrega en Hotel / Airbnb</strong>
+                  <small id="del-fee-hint">Playa del Carmen · $150 MXN (Gratis en 3+ días)</small>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="hotel-address-group" style="display:none;">
+            <label for="rent-hotel-address">Nombre del Hotel, Airbnb o Dirección en Playa del Carmen</label>
+            <input type="text" id="rent-hotel-address" placeholder="Ej. Hotel The Fives Downtown o Condominio Playacar Fase 2" class="form-input" />
+          </div>
+
+          <!-- Pricing Calculation Card -->
+          <div class="pricing-breakdown-card">
+            <div class="pb-row">
+              <span id="pb-days-label">Renta por 1 Día</span>
+              <strong id="pb-rental-total">$0 MXN</strong>
+            </div>
+            <div class="pb-row">
+              <span>Entrega & Recogida a Domicilio</span>
+              <span id="pb-delivery-fee" style="color:var(--accent-green);">Gratis en Tienda</span>
+            </div>
+            <div class="pb-row" style="border-top:1px dashed rgba(255,255,255,0.1); padding-top:0.4rem; margin-top:0.4rem;">
+              <span style="font-size:0.78rem; color:#86868b;">Depósito de Garantía (100% Reembolsable)</span>
+              <span id="pb-deposit-fee" style="font-size:0.85rem; color:#d4d4d8;">$0 MXN</span>
+            </div>
+            <div class="pb-total-row">
+              <span>Total a Liquidar:</span>
+              <strong id="pb-grand-total" class="grand-total">$0 MXN</strong>
+            </div>
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="modal-actions">
+            <button type="button" class="btn-wa-confirm" id="btn-confirm-wa">
+              <Icon name="mdi:whatsapp" width="20" height="20" />
+              <span>Solicitar Reserva por WhatsApp</span>
+            </button>
+          </div>
+
+          <p class="terms-microtext">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Tu información está protegida. Al reservar, aceptas el contrato de comodato y deslinde civil de The Garage Bike Experts. El depósito de garantía se reintegra íntegro en la misma forma de pago al regresar la bicicleta.
+          </p>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</Base>
+
+<style>
+  :root {
+    --accent-orange: #ff9500;
+    --accent-blue: #0071e3;
+    --accent-green: #34c759;
+    --bg-card: #18181b;
+    --border-card: rgba(255, 255, 255, 0.08);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ─── Hero Section ─── */
+  .rental-hero {
+    position: relative;
+    padding: 5rem 0 3.5rem;
+    background: radial-gradient(circle at 50% 20%, rgba(0, 113, 227, 0.15), transparent 70%),
+                radial-gradient(circle at 80% 50%, rgba(255, 149, 0, 0.08), transparent 60%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #f5f5f7;
+    margin-bottom: 1.25rem;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 10px var(--accent-green);
+  }
+
+  .hero-title {
+    font-size: clamp(2.1rem, 4.5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #2997ff, #30d158);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: #a1a1aa;
+    max-width: 760px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.6;
+  }
+
+  .perks-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .perk-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.6rem 1.1rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e4e4e7;
+  }
+
+  .perk-icon {
+    color: var(--accent-blue);
+  }
+
+  /* ─── Catalog & Filters ─── */
+  .rental-catalog-section {
+    padding: 3.5rem 0;
+  }
+
+  .filter-wrapper {
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .category-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .cat-pill {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #a1a1aa;
+    padding: 0.55rem 1.1rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .cat-pill:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+
+  .cat-pill.active {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 113, 227, 0.35);
+  }
+
+  .duration-hint {
+    font-size: 0.82rem;
+    color: var(--accent-green);
+    background: rgba(52, 199, 89, 0.1);
+    border: 1px solid rgba(52, 199, 89, 0.25);
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+  }
+
+  /* ─── Fleet Grid & Cards ─── */
+  .fleet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .bike-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .bike-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  .card-media-wrap {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    background: #09090b;
+  }
+
+  .card-media-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .bike-card:hover .card-media-wrap img {
+    transform: scale(1.04);
+  }
+
+  .badge-category {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    color: #f5f5f7;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .badge-size {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    background: rgba(0, 113, 227, 0.85);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: #ffffff;
+  }
+
+  .card-height-fit {
+    font-size: 0.78rem;
+    color: #a1a1aa;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .card-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card-features li {
+    font-size: 0.8rem;
+    color: #d4d4d8;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .card-features li::before {
+    content: "•";
+    color: var(--accent-green);
+    font-size: 1.1rem;
+    line-height: 0;
+  }
+
+  .pricing-matrix {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .pm-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .pm-label {
+    font-size: 0.68rem;
+    color: #86868b;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .pm-price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .btn-rent-action {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    border: none;
+    margin-top: auto;
+  }
+
+  .btn-rent-available {
+    background: linear-gradient(135deg, #0071e3, #005bb5);
+    color: #ffffff;
+  }
+
+  .btn-rent-available:hover {
+    background: linear-gradient(135deg, #007bf0, #0066cc);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 113, 227, 0.4);
+  }
+
+  .btn-rent-service {
+    background: rgba(255, 69, 58, 0.12);
+    color: #ff6b64;
+    border: 1px solid rgba(255, 69, 58, 0.25);
+    cursor: not-allowed;
+  }
+
+  /* ─── How it Works ─── */
+  .how-it-works-section {
+    padding: 5rem 0;
+    background: #0d0d0f;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .section-heading {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3.5rem;
+  }
+
+  .subheading-tag {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent-orange);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .section-heading h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .section-heading p {
+    color: #86868b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .step-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    position: relative;
+  }
+
+  .step-num {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+  }
+
+  .step-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(0, 113, 227, 0.12);
+    color: var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .step-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .step-card p {
+    font-size: 0.85rem;
+    color: #86868b;
+    line-height: 1.5;
+  }
+
+  /* ─── Comparison Table ─── */
+  .comparison-section {
+    padding: 4rem 0;
+  }
+
+  .comparison-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: 18px;
+    padding: 2.5rem;
+  }
+
+  .comp-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .comp-header h3 {
+    font-size: 1.6rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .comp-header p {
+    color: #86868b;
+    font-size: 0.9rem;
+  }
+
+  .comp-table-wrap {
+    overflow-x: auto;
+  }
+
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  .comp-table th, .comp-table td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .comp-table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #86868b;
+    letter-spacing: 0.05em;
+  }
+
+  .garage-col {
+    background: rgba(0, 113, 227, 0.05);
+    color: #f5f5f7;
+    font-weight: 500;
+  }
+
+  .generic-col {
+    color: #86868b;
+  }
+
+  .check {
+    color: var(--accent-green);
+    font-weight: 700;
+    margin-right: 0.4rem;
+  }
+
+  .cross {
+    color: #ff453a;
+    font-weight: 700;
+    margin-right: 0.4rem;
+  }
+
+  /* ─── Modal / Drawer ─── */
+  .rental-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(12px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .rental-modal-box {
+    background: #141416;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .modal-header {
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-close-modal {
+    background: rgba(255, 255, 255, 0.06);
+    border: none;
+    color: #86868b;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-close-modal:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+
+  .modal-body {
+    padding: 1.75rem;
+  }
+
+  .bike-snapshot {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .bike-snapshot img {
+    width: 90px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .snapshot-details {
+    flex: 1;
+  }
+
+  .rate-badge {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  .rate-amount {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+  }
+
+  .rate-period {
+    font-size: 0.75rem;
+    color: #86868b;
+  }
+
+  .snapshot-text {
+    font-size: 0.75rem;
+    color: #a1a1aa;
+    margin: 0.2rem 0 0;
+  }
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #d4d4d8;
+  }
+
+  .form-input, .form-select {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus, .form-select:focus {
+    border-color: var(--accent-blue);
+  }
+
+  .delivery-toggle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .del-option {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .del-option.active {
+    border-color: var(--accent-blue);
+    background: rgba(0, 113, 227, 0.08);
+  }
+
+  .del-icon {
+    font-size: 1.3rem;
+  }
+
+  .del-option strong {
+    display: block;
+    font-size: 0.82rem;
+    color: #f5f5f7;
+  }
+
+  .del-option small {
+    font-size: 0.7rem;
+    color: #86868b;
+  }
+
+  .pricing-breakdown-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+
+  .pb-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #a1a1aa;
+    margin-bottom: 0.35rem;
+  }
+
+  .pb-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    color: #f5f5f7;
+    font-weight: 700;
+  }
+
+  .grand-total {
+    font-size: 1.45rem;
+    color: var(--accent-green);
+  }
+
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn-wa-confirm {
+    background: #25D366;
+    color: #000000;
+    border: none;
+    padding: 0.85rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .btn-wa-confirm:hover {
+    background: #22bf5b;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+  }
+
+  .terms-microtext {
+    font-size: 0.7rem;
+    color: #71717a;
+    text-align: center;
+    margin-top: 1rem;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 640px) {
+    .form-row-2, .delivery-toggle-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script is:inline define:vars={{ rentalFleetJson }}>
+  (function() {
+    function getPublicFleet() {
+      try {
+        const stored = localStorage.getItem('thegarage_rental_fleet');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return JSON.parse(rentalFleetJson);
+    }
+
+    const FLEET = getPublicFleet();
+
+    // Format currency
+    function formatMXN(num) {
+      return '$' + Math.round(num).toLocaleString('es-MX');
+    }
+
+    let activeCategory = 'all';
+    let selectedBike = null;
+
+    // Render Fleet Grid
+    function renderFleet() {
+      const grid = document.getElementById('fleet-grid');
+      if (!grid) return;
+
+      const visibleBikes = FLEET.filter(b => b.publishedOnWeb !== false);
+      const filtered = activeCategory === 'all' 
+        ? visibleBikes 
+        : visibleBikes.filter(b => b.category === activeCategory);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: #8e8e93;">
+            <div style="margin-bottom: 0.75rem; color: #555;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="m12 17.5 2.5-7.5H6l3.5 7.5"/><path d="M12 17.5 9.5 10H6"/><path d="m15 5-3 5"/></svg></div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem;">No hay unidades disponibles en esta categoría</h3>
+            <p style="font-size: 0.9rem; max-width: 450px; margin: 0 auto;">Todas nuestras bicicletas para esta modalidad están en rodada o puedes consultar disponibilidad directa por WhatsApp.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(bike => {
+        const isAvailable = bike.status === 'disponible';
+        const isRented = bike.status === 'en_renta';
+        const isService = bike.status === 'en_taller';
+
+        let actionBtn = '';
+        if (isAvailable) {
+          actionBtn = '<button class="btn-rent-action btn-rent-available" onclick="openRentalModal(\'' + bike.id + '\')"><span>Reservar Unidad</span></button>';
+        } else if (isRented) {
+          actionBtn = '<button class="btn-rent-action btn-rent-available" style="background:#ff9500; color:#000;" onclick="openRentalModal(\'' + bike.id + '\')"><span>Reservar Próxima Fecha</span></button>';
+        } else {
+          actionBtn = '<button class="btn-rent-action btn-rent-service" disabled><span>En Servicio de Taller</span></button>';
+        }
+
+        return `
+          <div class="bike-card">
+            <div class="card-media-wrap">
+              <img src="${bike.image}" alt="${bike.model}" loading="lazy" />
+              <span class="badge-category">${bike.category}</span>
+              <span class="badge-size">Talla ${bike.size}</span>
+            </div>
+            
+            <div class="card-content">
+              <h3 class="card-title">${bike.model}</h3>
+              <div class="card-height-fit">
+                <span>Ajuste recomendado: ${bike.riderHeightRange}</span>
+              </div>
+
+              <ul class="card-features">
+                ${bike.features.slice(0, 3).map(f => `<li>${f}</li>`).join('')}
+              </ul>
+
+              <div class="pricing-matrix">
+                <div class="pm-item">
+                  <span class="pm-label">1 Día</span>
+                  <span class="pm-price">${formatMXN(bike.dailyRate)}</span>
+                </div>
+                <div class="pm-item">
+                  <span class="pm-label">Fin de Sem</span>
+                  <span class="pm-price">${formatMXN(bike.weekendRate)}</span>
+                </div>
+                <div class="pm-item">
+                  <span class="pm-label">Semana</span>
+                  <span class="pm-price">${formatMXN(bike.weeklyRate)}</span>
+                </div>
+              </div>
+
+              ${actionBtn}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Category Filter Listeners
+    document.querySelectorAll('.cat-pill').forEach(pill => {
+      pill.addEventListener('click', function() {
+        document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        activeCategory = this.dataset.cat;
+        renderFleet();
+      });
+    });
+
+    // ─── Modal Booking Engine ───
+    const modal = document.getElementById('rental-modal');
+    const closeBtn = document.getElementById('btn-close-rental-modal');
+    const startDateInput = document.getElementById('rent-start-date');
+    const endDateInput = document.getElementById('rent-end-date');
+
+    // Set default dates (Today and Tomorrow)
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const todayStr = today.toISOString().slice(0, 10);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+    if (startDateInput) {
+      startDateInput.min = todayStr;
+      startDateInput.value = todayStr;
+    }
+    if (endDateInput) {
+      endDateInput.min = tomorrowStr;
+      endDateInput.value = tomorrowStr;
+    }
+
+    window.openRentalModal = function(bikeId) {
+      selectedBike = FLEET.find(b => b.id === bikeId);
+      if (!selectedBike) return;
+
+      document.getElementById('rm-bike-name').textContent = selectedBike.model;
+      document.getElementById('rm-bike-meta').textContent = `Categoría ${selectedBike.category} · Talla ${selectedBike.size} (${selectedBike.riderHeightRange})`;
+      document.getElementById('rm-bike-img').src = selectedBike.image;
+      document.getElementById('rm-daily-rate').textContent = formatMXN(selectedBike.dailyRate);
+      document.getElementById('rm-bike-summary').textContent = selectedBike.componentsSummary;
+      document.getElementById('pb-deposit-fee').textContent = formatMXN(selectedBike.depositAmount) + ' MXN';
+
+      recalculatePrice();
+      modal.style.display = 'flex';
+    };
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+        selectedBike = null;
+      });
+    }
+
+    // Delivery Radio Toggles
+    const optTienda = document.getElementById('del-opt-tienda');
+    const optHotel = document.getElementById('del-opt-hotel');
+    const hotelGroup = document.getElementById('hotel-address-group');
+
+    if (optTienda && optHotel) {
+      optTienda.addEventListener('click', () => {
+        optTienda.classList.add('active');
+        optHotel.classList.remove('active');
+        optTienda.querySelector('input').checked = true;
+        if (hotelGroup) hotelGroup.style.display = 'none';
+        recalculatePrice();
+      });
+
+      optHotel.addEventListener('click', () => {
+        optHotel.classList.add('active');
+        optTienda.classList.remove('active');
+        optHotel.querySelector('input').checked = true;
+        if (hotelGroup) hotelGroup.style.display = 'block';
+        recalculatePrice();
+      });
+    }
+
+    function calculateDays() {
+      const s = new Date(startDateInput.value);
+      const e = new Date(endDateInput.value);
+      const diffMs = e - s;
+      if (isNaN(diffMs) || diffMs <= 0) return 1;
+      return Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    }
+
+    function recalculatePrice() {
+      if (!selectedBike) return;
+
+      const days = calculateDays();
+      let rentTotal = 0;
+
+      // Tiered discount calculation:
+      if (days >= 7) {
+        const weeks = Math.floor(days / 7);
+        const remDays = days % 7;
+        rentTotal = (weeks * selectedBike.weeklyRate) + (remDays * (selectedBike.weeklyRate / 7));
+      } else if (days >= 3) {
+        rentTotal = selectedBike.weekendRate + ((days - 3) * (selectedBike.dailyRate * 0.8));
+      } else {
+        rentTotal = days * selectedBike.dailyRate;
+      }
+      rentTotal = Math.round(rentTotal);
+
+      // Delivery Fee
+      const isHotel = optHotel && optHotel.classList.contains('active');
+      let deliveryFee = 0;
+      if (isHotel) {
+        deliveryFee = days >= 3 ? 0 : 150;
+      }
+
+      const deposit = selectedBike.depositAmount || 1000;
+      const grandTotal = rentTotal + deliveryFee;
+
+      // Update UI
+      document.getElementById('pb-days-label').textContent = `Renta por ${days} ${days === 1 ? 'Día (24 hrs)' : 'Días'}`;
+      document.getElementById('pb-rental-total').textContent = formatMXN(rentTotal) + ' MXN';
+      
+      const delEl = document.getElementById('pb-delivery-fee');
+      if (delEl) {
+        if (!isHotel) {
+          delEl.textContent = 'Gratis en Tienda';
+          delEl.style.color = '#34c759';
+        } else if (deliveryFee === 0) {
+          delEl.textContent = '¡Gratis! (Promoción 3+ días)';
+          delEl.style.color = '#34c759';
+        } else {
+          delEl.textContent = '+$150 MXN';
+          delEl.style.color = '#d4d4d8';
+        }
+      }
+
+      document.getElementById('pb-grand-total').textContent = formatMXN(grandTotal) + ' MXN';
+    }
+
+    if (startDateInput) startDateInput.addEventListener('change', recalculatePrice);
+    if (endDateInput) endDateInput.addEventListener('change', recalculatePrice);
+
+    // ─── WhatsApp Booking Dispatcher ───
+    const waBtn = document.getElementById('btn-confirm-wa');
+    if (waBtn) {
+      waBtn.addEventListener('click', () => {
+        if (!selectedBike) return;
+
+        const name = document.getElementById('rent-rider-name').value.trim();
+        const phone = document.getElementById('rent-rider-phone').value.trim();
+        const start = startDateInput.value;
+        const end = endDateInput.value;
+        const days = calculateDays();
+        const height = document.getElementById('rent-rider-height').value;
+        const pedal = document.getElementById('rent-pedal-pref').value;
+        const isHotel = optHotel && optHotel.classList.contains('active');
+        const hotelAddr = document.getElementById('rent-hotel-address').value.trim();
+
+        if (!name || !phone) {
+          alert('Por favor ingresa tu nombre y número de WhatsApp para confirmar tu reserva.');
+          return;
+        }
+
+        if (isHotel && !hotelAddr) {
+          alert('Por favor especifica el nombre de tu hotel, Airbnb o dirección de entrega en Playa del Carmen.');
+          return;
+        }
+
+        const total = document.getElementById('pb-grand-total').textContent;
+        const deliveryText = isHotel ? `Entrega a domicilio: ${hotelAddr}` : 'Recojo en tienda (Av. Ich Xeel)';
+
+        const msg = encodeURIComponent(
+          `*SOLICITUD DE RENTA DE BICICLETA — THE GARAGE*\n` +
+          `--------------------------------------
+` +
+          `• *Bicicleta:* ${selectedBike.model} (Talla ${selectedBike.size})
+` +
+          `• *Ciclista:* ${name}
+` +
+          `• *WhatsApp:* ${phone}
+` +
+          `• *Fechas:* del ${start} al ${end} (${days} días)
+` +
+          `• *Estatura:* ${height} cm
+` +
+          `• *Pedales solicitados:* ${pedal}
+` +
+          `• *Modalidad:* ${deliveryText}
+` +
+          `• *Importe estimado:* ${total}
+` +
+          `• *Depósito en garantía:* ${formatMXN(selectedBike.depositAmount)} MXN (Reembolsable)
+` +
+          `--------------------------------------
+` +
+          `Hola The Garage! Me gustaría confirmar la disponibilidad de esta bicicleta para esas fechas. ¿Me pueden apoyar con la confirmación?`
+        );
+
+        window.open(`https://api.whatsapp.com/send?phone=529841381493&text=${msg}`, '_blank');
+      });
+    }
+
+    // Initial render
+    renderFleet();
+  })();
+</script>

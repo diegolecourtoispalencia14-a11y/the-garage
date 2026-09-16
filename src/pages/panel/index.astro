@@ -1,0 +1,1668 @@
+---
+import PanelLayout from "../../layouts/PanelLayout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<PanelLayout title="Centro de Comando Inteligente | BiciSaaS">
+
+  <!-- ═════════════════════════ TOP HEADER & ROLE-LENS BAR ═════════════════════════ -->
+  <div class="dash-top-bar">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.35rem; flex-wrap:wrap;">
+        <span id="role-status-badge" class="dash-status-pill">
+          <span class="status-dot"></span>
+          <span id="role-status-text">Dirección General · Acceso Completo</span>
+        </span>
+        <span class="location-tag">The Garage · Playa del Carmen, Quintana Roo</span>
+        <!-- Local Riviera Maya Weather Context Widget -->
+        <span class="weather-pill" title="Clima actual en Playa del Carmen · Condiciones ideales para salidas y rentas">
+          <Icon name="mdi:weather-sunny" width="15" height="15" style="color:#ff9f0a;" />
+          <span>31°C · Soleado PDC · Viento 14 km/h E · Temporada Alta</span>
+        </span>
+      </div>
+      <h1 id="dashboard-greeting" class="dash-greeting">Buenos días, Diego Lecourtois.</h1>
+      <p id="dashboard-subgreeting" class="dash-subgreeting">
+        Centro de Comando Operativo, Taller &amp; Caja · <strong>Lunes, 7 de Septiembre de 2026</strong>
+      </p>
+    </div>
+
+    <!-- Right Controls: Role-Lens Switcher & Quick Action Shortcuts -->
+    <div class="dash-top-actions">
+      <!-- Role-Lens Switcher (Exclusive to Admin account to preview specific staff cockpits) -->
+      <div class="role-lens-box" id="admin-role-lens-box" style="display:none;">
+        <span class="lens-label">
+          <Icon name="mdi:eye-outline" width="14" height="14" /> Perspectiva:
+        </span>
+        <div class="lens-pills">
+          <button class="lens-btn active" id="lens-admin" type="button" onclick="switchDashboardLens('admin')" title="Ver panorama ejecutivo 360°">
+            Dirección
+          </button>
+          <button class="lens-btn" id="lens-mecanico" type="button" onclick="switchDashboardLens('mecanico')" title="Ver cockpit de cirugía mecánica">
+            Taller
+          </button>
+          <button class="lens-btn" id="lens-ventas" type="button" onclick="switchDashboardLens('ventas')" title="Ver mostrador, cobros y rentas">
+            Mostrador
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Action Shortcuts -->
+      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <a href="/panel/taller" class="btn-quick-action" title="Abrir nueva orden de servicio en taller">
+          <Icon name="mdi:wrench-outline" width="16" height="16" /> + Orden Taller
+        </a>
+        <a href="/panel/rentas" class="btn-quick-action" title="Registrar salida de bicicleta de alquiler">
+          <Icon name="mdi:bike-fast" width="16" height="16" /> + Salida Renta
+        </a>
+        <a href="/panel/sitio-web" class="btn-quick-action primary" title="Abrir punto de venta rápido">
+          <Icon name="mdi:cash-register" width="16" height="16" /> POS Mostrador
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════ ZONA 1: PULSO OPERATIVO DEL DÍA (4 KPI CARDS) ═════════════════════════ -->
+  <div class="kpi-row-grid">
+    
+    <!-- KPI 1: Caja Hoy & Ventas Mostrador -->
+    <div class="bento-kpi-card highlight-green" onclick="window.location.href='/panel/contabilidad'" title="Ver libro diario y corte de caja">
+      <div class="bento-kpi-header">
+        <span class="bento-kpi-title">Pulso de Caja (Hoy)</span>
+        <span class="bento-kpi-badge badge-green">Día Activo</span>
+      </div>
+      <div class="bento-kpi-val" id="val-kpi-cash">$18,450.00 <span class="val-currency">MXN</span></div>
+      <div class="bento-kpi-breakdown">
+        <span class="breakdown-item">Efectivo en Gaveta: <strong id="val-cash-drawer">$3,850</strong></span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item">Tarjeta/MP: <strong id="val-cash-cards">$14,600</strong></span>
+      </div>
+      <div class="bento-kpi-sub">
+        <span style="color:var(--accent-green); font-weight:600;">Arqueo verificado</span> · Total mes Sep: <strong>$166,650 MXN</strong>
+      </div>
+    </div>
+
+    <!-- KPI 2: Taller Activo & Cirugías -->
+    <div class="bento-kpi-card highlight-blue" onclick="window.location.href='/panel/taller'" title="Ver banco de trabajo y cirugías activas">
+      <div class="bento-kpi-header">
+        <span class="bento-kpi-title">Cirugía en Taller</span>
+        <span class="bento-kpi-badge badge-blue">6 Órdenes</span>
+      </div>
+      <div class="bento-kpi-val" id="val-kpi-workshop">2 <span class="val-sublabel">Listas Entrega</span></div>
+      <div class="bento-kpi-breakdown">
+        <span class="breakdown-item" style="color:var(--accent-green);">2 listos</span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item" style="color:var(--accent-blue);">3 en proceso</span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item" style="color:var(--accent-orange);">1 espera pieza</span>
+      </div>
+      <div class="bento-kpi-sub">
+        Marco Ramírez: <strong>5 asignadas</strong> · SLA: <strong style="color:var(--accent-green);">96.4%</strong>
+      </div>
+    </div>
+
+    <!-- KPI 3: Flota en Renta & Horómetros -->
+    <div class="bento-kpi-card highlight-orange" onclick="window.location.href='/panel/rentas'" title="Ver estado de unidades en alquiler">
+      <div class="bento-kpi-header">
+        <span class="bento-kpi-title">Flota de Rentas</span>
+        <span class="bento-kpi-badge badge-orange">8 Unidades</span>
+      </div>
+      <div class="bento-kpi-val" id="val-kpi-rentals">1 <span class="val-sublabel">En Calle (Turista)</span></div>
+      <div class="bento-kpi-breakdown">
+        <span class="breakdown-item" style="color:var(--accent-blue);">1 rodando</span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item" style="color:var(--accent-green);">6 disponibles</span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item" style="color:var(--accent-red);">1 servicio</span>
+      </div>
+      <div class="bento-kpi-sub">
+        <span style="color:var(--accent-red); font-weight:600;">1 unidad horómetro 47h</span> · Depósitos: <strong>$4,500 MXN</strong>
+      </div>
+    </div>
+
+    <!-- KPI 4: Equipo & Asistencia en Tienda -->
+    <div class="bento-kpi-card highlight-purple" onclick="window.location.href='/panel/empleados'" title="Ver checador y colaboradores en turno">
+      <div class="bento-kpi-header">
+        <span class="bento-kpi-title">Colaboradores Hoy</span>
+        <span class="bento-kpi-badge badge-purple">100% Presentes</span>
+      </div>
+      <div class="bento-kpi-val" id="val-kpi-team">3 <span class="val-sublabel">En Turno Activo</span></div>
+      <div class="bento-kpi-breakdown">
+        <span class="breakdown-item">Diego L. (Admin)</span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item">Marco R. (Mecánico)</span>
+        <span class="breakdown-divider">·</span>
+        <span class="breakdown-item">Sofía M.</span>
+      </div>
+      <div class="bento-kpi-sub">
+        Puntualidad de tienda: <strong style="color:var(--accent-green);">100%</strong> · Sin ausencias
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═════════════════════════ ZONA 2: RADAR CENTRAL ADAPTATIVO ═════════════════════════ -->
+  <div class="dash-split-grid">
+    
+    <!-- COLUMNA IZQUIERDA (60%): Radar de Urgencias & Monitor de Bahías de Taller -->
+    <div class="dash-col-main">
+      
+      <!-- Card 1: Radar de Urgencias & Entregas de Hoy -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div class="icon-bubble red"><Icon name="mdi:alert-circle-outline" width="18" height="18" /></div>
+            <div>
+              <h2 class="dash-card-title">Radar de Urgencias &amp; Entregas Programadas (Hoy)</h2>
+              <p class="dash-card-desc">Bicicletas listas por entregar, saldos por cobrar y unidades que retornan hoy 7 de Septiembre.</p>
+            </div>
+          </div>
+          <span class="urgent-badge" id="radar-count-badge">4 Prioritarias</span>
+        </div>
+
+        <div class="urgent-list">
+          
+          <!-- Item 1: Basso Palta 2 (Listo para entrega con saldo pendiente) -->
+          <div class="urgent-item border-red">
+            <div class="urgent-left">
+              <div class="urgent-folio">SRV-2026-089 · Taller</div>
+              <div class="urgent-name">Basso Palta 2 Carbon Gravel</div>
+              <div class="urgent-client">Cliente: <strong>Rodrigo Palacios</strong> (984-120-3344) · Mecánico: Marco Ramírez</div>
+              <div class="urgent-detail">
+                <span>Servicio: <strong>Cirugía Mayor / Purga Hidráulica</strong></span>
+                <span class="tag-status ready">Listo para Entrega</span>
+              </div>
+            </div>
+            <div class="urgent-right">
+              <div class="urgent-amount-box">
+                <span class="amount-label">Saldo por Cobrar:</span>
+                <span class="amount-val red">$1,300.00 MXN</span>
+              </div>
+              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+                <button class="btn-action-urgent primary" type="button" onclick="openQuickCollectModal('SRV-2026-089', 'Rodrigo Palacios', 'Basso Palta 2 Carbon', 1300, 2800)">
+                  Cobrar en POS
+                </button>
+                <a href="https://wa.me/529841203344?text=Hola%20Rodrigo,%20tu%20Basso%20Palta%202%20ya%20est%C3%A1%20lista%20en%20The%20Garage.%20Saldo%20pendiente:%20$1,300%20MXN." target="_blank" class="btn-action-urgent icon-only" title="Avisar por WhatsApp">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 2: Specialized Allez Sport (Garantía 30 días, saldo $0) -->
+          <div class="urgent-item border-green">
+            <div class="urgent-left">
+              <div class="urgent-folio">SRV-2026-090 · Taller</div>
+              <div class="urgent-name">Specialized Allez Sport Carretera</div>
+              <div class="urgent-client">Cliente: <strong>Mariana Gómez</strong> (984-765-4321) · Mecánico: Marco Ramírez</div>
+              <div class="urgent-detail">
+                <span>Servicio: <strong>Primer chequeo gratuito 30 días</strong></span>
+                <span class="tag-status ready">QA Aprobado</span>
+              </div>
+            </div>
+            <div class="urgent-right">
+              <div class="urgent-amount-box">
+                <span class="amount-label">Saldo por Cobrar:</span>
+                <span class="amount-val green">$0.00 (Pagado)</span>
+              </div>
+              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+                <button class="btn-action-urgent secondary" type="button" onclick="completeDelivery('SRV-2026-090', 'Mariana Gómez')">
+                  Marcar Entregada
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 3: Trek Marlin 5 Gen 3 (Renta Turista que retorna hoy) -->
+          <div class="urgent-item border-blue">
+            <div class="urgent-left">
+              <div class="urgent-folio">REN-2026-041 · Alquiler Flota</div>
+              <div class="urgent-name">Trek Marlin 5 Gen 3 (Unidad #04)</div>
+              <div class="urgent-client">Turista: <strong>Alexander Klein</strong> (Alemania) · Hotel Playacar</div>
+              <div class="urgent-detail">
+                <span>Vencimiento: <strong>Hoy a las 18:00 hrs</strong></span>
+                <span class="tag-status active">En Renta</span>
+              </div>
+            </div>
+            <div class="urgent-right">
+              <div class="urgent-amount-box">
+                <span class="amount-label">Depósito en Garantía:</span>
+                <span class="amount-val blue">$1,500.00 MXN</span>
+              </div>
+              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+                <a href="/panel/rentas" class="btn-action-urgent primary">
+                  Check-in Recepción
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item 4: Scott Scale 965 (Esperando refacción Magura) -->
+          <div class="urgent-item border-orange">
+            <div class="urgent-left">
+              <div class="urgent-folio">SRV-2026-093 · Taller</div>
+              <div class="urgent-name">Scott Scale 965 XC Hardtail</div>
+              <div class="urgent-client">Cliente: <strong>Gabriel Garza</strong> · Mecánico: Marco Ramírez</div>
+              <div class="urgent-detail">
+                <span>Estado: <strong>Esperando Kit Sellos &amp; Oliva Magura</strong></span>
+                <span class="tag-status warning">Pieza por Recibir</span>
+              </div>
+            </div>
+            <div class="urgent-right">
+              <div class="urgent-amount-box">
+                <span class="amount-label">Costo Total:</span>
+                <span class="amount-val orange">$1,130.00 MXN</span>
+              </div>
+              <div style="display:flex; gap:0.4rem; margin-top:0.4rem;">
+                <a href="/panel/taller" class="btn-action-urgent secondary">
+                  Ver en Taller
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Card 2: Monitor de Bahías de Trabajo & Cirugía Mecánica -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div class="icon-bubble green"><Icon name="mdi:wrench-outline" width="18" height="18" /></div>
+            <div>
+              <h2 class="dash-card-title">Monitor de Bahías de Trabajo en Tiempo Real</h2>
+              <p class="dash-card-desc">Ocupación de mesas de cirugía mecánica, avance técnico y SLA de servicio.</p>
+            </div>
+          </div>
+          <a href="/panel/taller" class="dash-link-more">Gestionar Taller ↗</a>
+        </div>
+
+        <div class="bays-grid">
+          
+          <!-- Bahía 1: Ocupada por Marco -->
+          <div class="bay-box active">
+            <div class="bay-header">
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span class="bay-badge occupied">Bahía 1 · En Operación</span>
+                <span class="bay-tech">Marco Ramírez</span>
+              </div>
+              <span class="bay-timer">42 min transcurridos</span>
+            </div>
+            <div class="bay-body">
+              <div class="bay-bike-title">Basso Palta 2 Carbon Gravel</div>
+              <div class="bay-task">Purga de frenos hidráulicos GRX + centrado de disco 160mm</div>
+              <!-- Mini Progress Bar -->
+              <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" style="width: 85%;"></div>
+              </div>
+              <div class="bay-checklist">
+                <span class="chk-item done">Torque manubrio (6 Nm)</span>
+                <span class="chk-item done">Purga aceite Shimano</span>
+                <span class="chk-item done">Calibración cambios</span>
+                <span class="chk-item pending">Rodada de prueba final</span>
+              </div>
+            </div>
+            <div class="bay-footer">
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Tiempo restante est: <strong>15 minutos</strong></span>
+              <button class="btn-bay-finish" type="button" onclick="alert('Servicio finalizado. Orden movida a Lista para Entrega y notificada a caja.');">
+                Concluir Servicio
+              </button>
+            </div>
+          </div>
+
+          <!-- Bahía 2: Disponible para ensamble express -->
+          <div class="bay-box free">
+            <div class="bay-header">
+              <span class="bay-badge available">Bahía 2 · Disponible</span>
+              <span class="bay-tech" style="color:var(--text-muted);">Sin mecánico asignado</span>
+            </div>
+            <div class="bay-body free-body">
+              <div style="display:flex; justify-content:center; margin-bottom:0.4rem;"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-secondary);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+              <div style="font-size:0.95rem; font-weight:700; color:var(--text-primary);">Banco de Trabajo Despejado</div>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin:0.2rem 0 0.8rem;">
+                Listo para recibir revisión express de 15 min, ensamble de bici nueva o mantenimiento de flota.
+              </p>
+              <a href="/panel/taller" class="btn-secondary" style="font-size:0.8rem; padding:0.4rem 0.85rem; border-radius:8px; text-decoration:none;">
+                + Asignar Trabajo a Bahía
+              </a>
+            </div>
+            <div class="bay-footer">
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Herramientas Park Tool y torquímetros calibrados hoy.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA (40%): Salud Financiera, Arqueo de Cajón & Atajos Rápidos -->
+    <div class="dash-col-side">
+      
+      <!-- Card 3: Arqueo de Cajón en Vivo & Salud Financiera -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div class="icon-bubble orange"><Icon name="mdi:finance" width="18" height="18" /></div>
+            <div>
+              <h2 class="dash-card-title">Arqueo de Cajón &amp; Finanzas</h2>
+              <p class="dash-card-desc">Desglose de liquidez disponible en tienda física.</p>
+            </div>
+          </div>
+          <a href="/panel/contabilidad" class="dash-link-more">Contabilidad ↗</a>
+        </div>
+
+        <div class="finance-drawer-box">
+          <div class="finance-drawer-row">
+            <div class="fd-label">
+              <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg></span>
+              <div>
+                <strong>Efectivo Físico en Cajón</strong>
+                <span class="fd-sub">Fondo $2,000 + $1,850 ventas en efectivo</span>
+              </div>
+            </div>
+            <div class="fd-val green">$3,850.00 MXN</div>
+          </div>
+
+          <div class="finance-drawer-row">
+            <div class="fd-label">
+              <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>
+              <div>
+                <strong>Terminales Bancarias &amp; MP</strong>
+                <span class="fd-sub">Clip / Mercado Pago (Lote activo hoy)</span>
+              </div>
+            </div>
+            <div class="fd-val blue">$14,600.00 MXN</div>
+          </div>
+
+          <div class="finance-drawer-row">
+            <div class="fd-label">
+              <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+              <div>
+                <strong>Cuentas por Cobrar (Taller)</strong>
+                <span class="fd-sub">Saldos pendientes al entregar bicicletas</span>
+              </div>
+            </div>
+            <div class="fd-val red">$3,930.00 MXN</div>
+          </div>
+
+          <div class="finance-drawer-row">
+            <div class="fd-label">
+              <span class="fd-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+              <div>
+                <strong>Depósitos en Custodia (Rentas)</strong>
+                <span class="fd-sub">Garantías activas devueltas al retornar</span>
+              </div>
+            </div>
+            <div class="fd-val purple">$4,500.00 MXN</div>
+          </div>
+
+          <!-- Bottom Summary -->
+          <div class="finance-drawer-total">
+            <div>
+              <span style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700; display:block;">Resultado Mes (Sep 2026)</span>
+              <strong style="font-size:1.15rem; color:var(--text-primary);">+$134,400.00 MXN Netos</strong>
+            </div>
+            <span class="margin-pill">Margen: 80.6%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Accesos Directos Operativos -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div class="icon-bubble purple"><Icon name="mdi:lightning-bolt" width="18" height="18" /></div>
+            <div>
+              <h2 class="dash-card-title">Acciones Rápidas Operativas</h2>
+              <p class="dash-card-desc">Atajos directos para agilizar el mostrador.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="shortcuts-grid">
+          
+          <a href="/panel/taller" class="shortcut-btn">
+            <span class="sc-icon" style="background:rgba(52,199,89,0.15); color:var(--accent-green);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+            <div>
+              <strong>+ Orden Taller</strong>
+              <span>Recibir bicicleta a servicio</span>
+            </div>
+          </a>
+
+          <a href="/panel/rentas" class="shortcut-btn">
+            <span class="sc-icon" style="background:rgba(0,113,227,0.15); color:var(--accent-blue);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h4"/><path d="M12 17.5V14"/></svg></span>
+            <div>
+              <strong>+ Nueva Renta</strong>
+              <span>Contrato de alquiler turista</span>
+            </div>
+          </a>
+
+          <a href="/panel/sitio-web" class="shortcut-btn">
+            <span class="sc-icon" style="background:rgba(255,149,0,0.15); color:var(--accent-orange);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+            <div>
+              <strong>Cobro en POS</strong>
+              <span>Venta mostrador inmediata</span>
+            </div>
+          </a>
+
+          <a href="/panel/crm" class="shortcut-btn">
+            <span class="sc-icon" style="background:rgba(175,82,222,0.15); color:#af52de;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <div>
+              <strong>+ Cliente CRM</strong>
+              <span>Registrar ciclista o prospecto</span>
+            </div>
+          </a>
+
+          <a href="/panel/contabilidad" class="shortcut-btn" style="grid-column: span 2;">
+            <span class="sc-icon" style="background:rgba(255,59,48,0.15); color:var(--accent-red);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg></span>
+            <div>
+              <strong>Registrar Salida de Caja Chica / Insumo</strong>
+              <span>Pago a proveedores, refacciones express o viáticos de taller</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ═════════════════════════ ZONA 3: ACTIVIDAD EN TIEMPO REAL & INSUMOS CRÍTICOS ═════════════════════════ -->
+  <div class="dash-split-grid" style="margin-top:1.5rem;">
+    
+    <!-- Left: Feed de Actividad en Vivo (Timeline) -->
+    <div class="dash-card" style="flex:1;">
+      <div class="dash-card-header">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <div class="icon-bubble blue"><Icon name="mdi:history" width="18" height="18" /></div>
+          <div>
+            <h2 class="dash-card-title">Timeline de Operaciones en Vivo (Hoy)</h2>
+            <p class="dash-card-desc">Historial cronológico de eventos registrados en mostrador, taller y web.</p>
+          </div>
+        </div>
+        <span class="live-dot-tag"><span class="dot-ping"></span> En Vivo</span>
+      </div>
+
+      <div class="activity-timeline">
+        
+        <div class="tl-item">
+          <div class="tl-time">15:20</div>
+          <div class="tl-dot green"></div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <strong>Venta en POS Mostrador · $380 MXN</strong>
+              <span class="tl-badge">Ticket #084</span>
+            </div>
+            <p class="tl-desc">2x Lubricante Cera Squirt Lube 120ml anti-salitre · Pago Efectivo en caja.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-time">14:45</div>
+          <div class="tl-dot blue"></div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <strong>Control de Calidad QA Aprobado</strong>
+              <span class="tl-badge">Taller</span>
+            </div>
+            <p class="tl-desc">Marco Ramírez concluyó calibración y rodada de prueba en <em>Merida Scultura 300</em> (SRV-2026-094).</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-time">13:10</div>
+          <div class="tl-dot purple"></div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <strong>Entrada de Personal (Checador)</strong>
+              <span class="tl-badge">Asistencia</span>
+            </div>
+            <p class="tl-desc">Diego Lecourtois registró inicio de turno vespertino · 100% puntualidad de tienda.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-time">11:30</div>
+          <div class="tl-dot orange"></div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <strong>Recepción de Bicicleta en Taller</strong>
+              <span class="tl-badge">Orden Nueva</span>
+            </div>
+            <p class="tl-desc">Ingresó <em>Specialized Allez Sport</em> para chequeo de 30 días de cliente Mariana Gómez.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-time">09:15</div>
+          <div class="tl-dot teal"></div>
+          <div class="tl-content">
+            <div class="tl-header">
+              <strong>Salida de Flota en Renta</strong>
+              <span class="tl-badge">Rentas</span>
+            </div>
+            <p class="tl-desc">Turista Alexander Klein retiró <em>Trek Marlin 5 Gen 3</em> · Depósito de garantía $1,500 retenido.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right: Alertas de Stock Crítico & Consumibles de Taller -->
+    <div class="dash-card" style="flex:1;">
+      <div class="dash-card-header">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <div class="icon-bubble orange"><Icon name="mdi:package-variant-closed" width="18" height="18" /></div>
+          <div>
+            <h2 class="dash-card-title">Alertas de Consumibles de Taller &amp; Stock Crítico</h2>
+            <p class="dash-card-desc">Piezas de alta rotación que requieren resurtido para evitar parar servicios.</p>
+          </div>
+        </div>
+        <a href="/panel/sitio-web" class="dash-link-more">Ver Catálogo ↗</a>
+      </div>
+
+      <div class="stock-alerts-list">
+        
+        <div class="sa-item alert">
+          <div class="sa-icon"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-red); display:inline-block;"></span></div>
+          <div class="sa-info">
+            <div class="sa-title">Balatas Orgánicas Shimano B05S / L05A</div>
+            <div class="sa-meta">SKU: SHI-B01S · Consumible de freno indispensable</div>
+          </div>
+          <div class="sa-stock">
+            <span class="sa-qty danger">2 pares</span>
+            <span class="sa-min">Mínimo: 4 pares</span>
+          </div>
+          <button class="btn-reorder" type="button" onclick="alert('Solicitud de pedido a Shimano México enviada al proveedor.');">
+            Reordenar
+          </button>
+        </div>
+
+        <div class="sa-item alert">
+          <div class="sa-icon"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-red); display:inline-block;"></span></div>
+          <div class="sa-info">
+            <div class="sa-title">Cadena KMC X12 Silver 12 Velocidades</div>
+            <div class="sa-meta">SKU: KMC-X12 · Compatibilidad Eagle / Shimano</div>
+          </div>
+          <div class="sa-stock">
+            <span class="sa-qty danger">1 unidad</span>
+            <span class="sa-min">Mínimo: 3 unidades</span>
+          </div>
+          <button class="btn-reorder" type="button" onclick="alert('Solicitud de pedido enviada a distribuidor KMC.');">
+            Reordenar
+          </button>
+        </div>
+
+        <div class="sa-item warning">
+          <div class="sa-icon"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-orange); display:inline-block;"></span></div>
+          <div class="sa-info">
+            <div class="sa-title">Aceite Mineral Hidráulico Shimano 100ml</div>
+            <div class="sa-meta">Insumo indispensable para purgas de frenos</div>
+          </div>
+          <div class="sa-stock">
+            <span class="sa-qty warn">1 botella</span>
+            <span class="sa-min">Mínimo: 2 botellas</span>
+          </div>
+          <button class="btn-reorder" type="button" onclick="alert('Insumo añadido a la lista de reposición semanal.');">
+            Reordenar
+          </button>
+        </div>
+
+        <div class="sa-item ok">
+          <div class="sa-icon"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-green); display:inline-block;"></span></div>
+          <div class="sa-info">
+            <div class="sa-title">Cámaras Continental 29x2.20 Válvula Presta</div>
+            <div class="sa-meta">SKU: CON-TUBE-29 · Refacción básica de mostrador</div>
+          </div>
+          <div class="sa-stock">
+            <span class="sa-qty ok">8 unidades</span>
+            <span class="sa-min">Mínimo: 5 unidades</span>
+          </div>
+          <span class="sa-status-ok">Nivel Óptimo</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═════════════════════════ MODAL EXPRESS: COBRO EN POS DESDE RADAR DE URGENCIAS ═════════════════════════ -->
+  <div id="dash-collect-modal" class="modal-overlay" style="display:none;" onclick="if(event.target===this) closeQuickCollectModal();">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <div>
+            <h3 style="margin:0; font-size:1.15rem; color:var(--text-primary);">Cobrar y Liquidar en Mostrador</h3>
+            <span id="qc-folio-sub" style="font-size:0.78rem; color:var(--text-secondary);">Folio: SRV-2026-089</span>
+          </div>
+        </div>
+        <button class="btn-icon" type="button" onclick="closeQuickCollectModal()" style="font-size:1.2rem;">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.1rem;">
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px; border:1px solid var(--border-subtle);">
+          <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">Cliente &amp; Bicicleta</div>
+          <div id="qc-client-name" style="font-size:1.05rem; font-weight:700; color:var(--text-primary); margin:0.2rem 0;">Rodrigo Palacios</div>
+          <div id="qc-bike-name" style="font-size:0.85rem; color:var(--text-secondary);">Basso Palta 2 Carbon Gravel</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+          <div style="background:var(--bg-base); padding:0.75rem; border-radius:8px; border:1px solid var(--border-subtle);">
+            <span style="font-size:0.75rem; color:var(--text-secondary); display:block;">Total del Servicio</span>
+            <strong id="qc-total-cost" style="font-size:1.1rem; color:var(--text-primary);">$2,800.00 MXN</strong>
+          </div>
+          <div style="background:rgba(255,59,48,0.1); padding:0.75rem; border-radius:8px; border:1px solid rgba(255,59,48,0.25);">
+            <span style="font-size:0.75rem; color:var(--accent-red); display:block; font-weight:600;">Saldo a Cobrar Hoy</span>
+            <strong id="qc-balance-due" style="font-size:1.1rem; color:var(--accent-red);">$1,300.00 MXN</strong>
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block; font-size:0.82rem; font-weight:600; color:var(--text-primary); margin-bottom:0.4rem;">
+            Forma de Pago del Saldo:
+          </label>
+          <div class="payment-method-selector">
+            <label class="pm-radio active">
+              <input type="radio" name="qc-method" value="Efectivo" checked />
+              <span>Efectivo</span>
+            </label>
+            <label class="pm-radio">
+              <input type="radio" name="qc-method" value="Tarjeta" />
+              <span>Tarjeta</span>
+            </label>
+            <label class="pm-radio">
+              <input type="radio" name="qc-method" value="MercadoPago" />
+              <span>QR / MP</span>
+            </label>
+            <label class="pm-radio">
+              <input type="radio" name="qc-method" value="SPEI" />
+              <span>SPEI</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding:1rem 1.5rem; background:var(--bg-base); border-top:1px solid var(--border-subtle); display:flex; justify-content:flex-end; gap:0.65rem;">
+        <button class="btn-secondary" type="button" onclick="closeQuickCollectModal()">Cancelar</button>
+        <button class="btn-primary" type="button" id="btn-confirm-collect" onclick="confirmQuickCollect()" style="background:var(--accent-green); border-color:var(--accent-green);">
+          Confirmar Cobro &amp; Entregar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style is:global>
+    /* ─── Layout & Structure ─── */
+    .dash-top-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+    .dash-status-pill {
+      background: rgba(0, 113, 227, 0.12);
+      color: var(--accent-blue);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+    }
+    .location-tag {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .weather-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .dash-greeting {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0.2rem 0 0.15rem;
+      color: var(--text-primary);
+    }
+    .dash-subgreeting {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      margin: 0;
+    }
+
+    /* ─── Top Actions & Lens Switcher ─── */
+    .dash-top-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.65rem;
+    }
+    .role-lens-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .lens-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .lens-pills {
+      display: flex;
+      gap: 0.2rem;
+    }
+    .lens-btn {
+      background: none;
+      border: none;
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .lens-btn:hover {
+      background: var(--bg-base);
+      color: var(--text-primary);
+    }
+    .lens-btn.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 113, 227, 0.35);
+    }
+
+    .btn-quick-action {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.15s ease;
+    }
+    .btn-quick-action:hover {
+      background: var(--bg-base);
+      border-color: var(--border-color);
+      transform: translateY(-1px);
+    }
+    .btn-quick-action.primary {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
+    }
+    .btn-quick-action.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* ─── Zona 1: KPI Bento Cards ─── */
+    .kpi-row-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .bento-kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.15rem 1.25rem;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-color);
+    }
+    .bento-kpi-card.highlight-green { border-left: 4px solid var(--accent-green); }
+    .bento-kpi-card.highlight-blue  { border-left: 4px solid var(--accent-blue); }
+    .bento-kpi-card.highlight-orange{ border-left: 4px solid var(--accent-orange); }
+    .bento-kpi-card.highlight-purple{ border-left: 4px solid #af52de; }
+
+    .bento-kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .bento-kpi-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .bento-kpi-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 100px;
+    }
+    .badge-green { background: rgba(52, 199, 89, 0.12); color: var(--accent-green); }
+    .badge-blue  { background: rgba(0, 113, 227, 0.12); color: var(--accent-blue); }
+    .badge-orange{ background: rgba(255, 149, 0, 0.12); color: var(--accent-orange); }
+    .badge-purple{ background: rgba(175, 82, 222, 0.12); color: #af52de; }
+
+    .bento-kpi-val {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 0.4rem;
+    }
+    .val-currency {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .val-sublabel {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .bento-kpi-breakdown {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .breakdown-divider { opacity: 0.4; }
+    .bento-kpi-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.45rem;
+    }
+
+    /* ─── Zona 2: Split Grid (60% Main / 40% Side) ─── */
+    .dash-split-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 1080px) {
+      .dash-split-grid { grid-template-columns: 1fr; }
+      .dash-top-actions { align-items: flex-start; }
+    }
+
+    .dash-col-main, .dash-col-side {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .dash-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .dash-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.15rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 0.75rem;
+    }
+    .dash-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 0.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .dash-card-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .dash-link-more {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .dash-link-more:hover { text-decoration: underline; }
+
+    .icon-bubble {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-bubble.red    { background: rgba(255, 59, 48, 0.12); color: var(--accent-red); }
+    .icon-bubble.green  { background: rgba(52, 199, 89, 0.12); color: var(--accent-green); }
+    .icon-bubble.blue   { background: rgba(0, 113, 227, 0.12); color: var(--accent-blue); }
+    .icon-bubble.orange { background: rgba(255, 149, 0, 0.12); color: var(--accent-orange); }
+    .icon-bubble.purple { background: rgba(175, 82, 222, 0.12); color: #af52de; }
+
+    .urgent-badge {
+      background: rgba(255, 59, 48, 0.15);
+      color: var(--accent-red);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+
+    /* ─── Urgent Items List ─── */
+    .urgent-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .urgent-item {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.15s ease;
+    }
+    .urgent-item:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-color);
+    }
+    .urgent-item.border-red   { border-left: 4px solid var(--accent-red); }
+    .urgent-item.border-green { border-left: 4px solid var(--accent-green); }
+    .urgent-item.border-blue  { border-left: 4px solid var(--accent-blue); }
+    .urgent-item.border-orange{ border-left: 4px solid var(--accent-orange); }
+
+    .urgent-left {
+      flex: 1;
+      min-width: 0;
+    }
+    .urgent-folio {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .urgent-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0.1rem 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .urgent-client {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+    .urgent-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+    .tag-status {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+    }
+    .tag-status.ready   { background: rgba(52, 199, 89, 0.15); color: var(--accent-green); }
+    .tag-status.active  { background: rgba(0, 113, 227, 0.15); color: var(--accent-blue); }
+    .tag-status.warning { background: rgba(255, 149, 0, 0.15); color: var(--accent-orange); }
+
+    .urgent-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+    .urgent-amount-box {
+      text-align: right;
+    }
+    .amount-label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      display: block;
+    }
+    .amount-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+    .amount-val.red   { color: var(--accent-red); }
+    .amount-val.green { color: var(--accent-green); }
+    .amount-val.blue  { color: var(--accent-blue); }
+    .amount-val.orange{ color: var(--accent-orange); }
+
+    .btn-action-urgent {
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.15s ease;
+    }
+    .btn-action-urgent.primary {
+      background: var(--accent-green);
+      color: #ffffff;
+    }
+    .btn-action-urgent.primary:hover {
+      background: #2ebd4e;
+    }
+    .btn-action-urgent.secondary {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border-color: var(--border-subtle);
+    }
+    .btn-action-urgent.secondary:hover {
+      background: var(--bg-base);
+    }
+    .btn-action-urgent.icon-only {
+      background: var(--bg-surface);
+      border-color: var(--border-subtle);
+      padding: 0.35rem 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    /* ─── Bays Grid ─── */
+    .bays-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 680px) {
+      .bays-grid { grid-template-columns: 1fr; }
+    }
+    .bay-box {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .bay-box.active {
+      border-top: 3px solid var(--accent-green);
+    }
+    .bay-box.free {
+      border-top: 3px solid var(--border-color);
+      background: rgba(0,0,0,0.01);
+    }
+    .bay-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .bay-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
+    .bay-badge.occupied { background: rgba(52, 199, 89, 0.15); color: var(--accent-green); }
+    .bay-badge.available{ background: var(--bg-surface); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+    .bay-tech {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .bay-timer {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+    .bay-bike-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+    .bay-task {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.6rem;
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: var(--border-subtle);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 0.65rem;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-green);
+      border-radius: 100px;
+    }
+    .bay-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-bottom: 0.85rem;
+    }
+    .chk-item {
+      font-size: 0.74rem;
+    }
+    .chk-item.done { color: var(--accent-green); font-weight: 600; }
+    .chk-item.pending { color: var(--text-secondary); }
+    .bay-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.65rem;
+      margin-top: 0.5rem;
+    }
+    .btn-bay-finish {
+      background: var(--accent-green);
+      color: #ffffff;
+      border: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-bay-finish:hover { background: #2ebd4e; }
+    .free-body {
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    /* ─── Finance Drawer Box ─── */
+    .finance-drawer-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .finance-drawer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0.75rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+    }
+    .fd-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .fd-icon { font-size: 1.2rem; }
+    .fd-label strong { font-size: 0.85rem; display: block; color: var(--text-primary); }
+    .fd-sub { font-size: 0.72rem; color: var(--text-secondary); display: block; }
+    .fd-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .fd-val.green { color: var(--accent-green); }
+    .fd-val.blue  { color: var(--accent-blue); }
+    .fd-val.red   { color: var(--accent-red); }
+    .fd-val.purple{ color: #af52de; }
+
+    .finance-drawer-total {
+      margin-top: 0.5rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .margin-pill {
+      background: rgba(52, 199, 89, 0.15);
+      color: var(--accent-green);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.65rem;
+      border-radius: 100px;
+    }
+
+    /* ─── Shortcuts Grid ─── */
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+    }
+    .shortcut-btn {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .shortcut-btn:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--border-color);
+      transform: translateY(-1px);
+    }
+    .sc-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .shortcut-btn strong { font-size: 0.85rem; display: block; color: var(--text-primary); }
+    .shortcut-btn span { font-size: 0.72rem; color: var(--text-secondary); display: block; }
+
+    /* ─── Zona 3: Timeline & Stock Alerts ─── */
+    .live-dot-tag {
+      background: rgba(52, 199, 89, 0.12);
+      color: var(--accent-green);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .dot-ping {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 6px var(--accent-green);
+    }
+    .activity-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+    }
+    .tl-item {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      position: relative;
+    }
+    .tl-time {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      min-width: 42px;
+      padding-top: 0.1rem;
+    }
+    .tl-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 0.3rem;
+      flex-shrink: 0;
+    }
+    .tl-dot.green { background: var(--accent-green); box-shadow: 0 0 4px var(--accent-green); }
+    .tl-dot.blue  { background: var(--accent-blue); box-shadow: 0 0 4px var(--accent-blue); }
+    .tl-dot.purple{ background: #af52de; box-shadow: 0 0 4px #af52de; }
+    .tl-dot.orange{ background: var(--accent-orange); box-shadow: 0 0 4px var(--accent-orange); }
+    .tl-dot.teal  { background: #30b0c7; box-shadow: 0 0 4px #30b0c7; }
+
+    .tl-content {
+      flex: 1;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+    }
+    .tl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.2rem;
+    }
+    .tl-header strong { font-size: 0.85rem; color: var(--text-primary); }
+    .tl-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+    .tl-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* ─── Stock Alerts List ─── */
+    .stock-alerts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .sa-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      gap: 0.75rem;
+    }
+    .sa-item.alert  { border-left: 3px solid var(--accent-red); }
+    .sa-item.warning{ border-left: 3px solid var(--accent-orange); }
+    .sa-item.ok     { border-left: 3px solid var(--accent-green); }
+
+    .sa-icon { font-size: 1.1rem; }
+    .sa-info { flex: 1; min-width: 0; }
+    .sa-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sa-meta { font-size: 0.72rem; color: var(--text-secondary); }
+    .sa-stock { text-align: right; flex-shrink: 0; }
+    .sa-qty {
+      font-size: 0.85rem;
+      font-weight: 800;
+      display: block;
+    }
+    .sa-qty.danger { color: var(--accent-red); }
+    .sa-qty.warn   { color: var(--accent-orange); }
+    .sa-qty.ok     { color: var(--accent-green); }
+    .sa-min { font-size: 0.68rem; color: var(--text-muted); display: block; }
+
+    .btn-reorder {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+    .btn-reorder:hover {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+    .sa-status-ok {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--accent-green);
+      flex-shrink: 0;
+    }
+
+    /* ─── Modal Styles ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-float);
+      width: 100%;
+      overflow: hidden;
+      animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      padding: 1.15rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .payment-method-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .pm-radio {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.6rem 0.85rem;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      transition: all 0.15s ease;
+    }
+    .pm-radio:hover {
+      background: var(--bg-surface-hover);
+    }
+    .pm-radio input:checked + span {
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+  </style>
+
+  <!-- ═════════════════════════ CLIENT SCRIPT: REACTIVITY & ROLE LENS ═════════════════════════ -->
+  <script is:inline>
+    // Global active collection item
+    let activeCollectItem = null;
+
+    // ─── 1. Role-Lens Switcher Logic (Exclusivo para Administrador / Dueño) ───
+    window.switchDashboardLens = function(lens) {
+      // Security guard: only admin can switch perspective
+      try {
+        const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+        if (session.role && session.role !== 'admin') {
+          return;
+        }
+      } catch(e) {}
+
+      document.querySelectorAll('.lens-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('lens-' + lens);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const greeting = document.getElementById('dashboard-greeting');
+      const subgreeting = document.getElementById('dashboard-subgreeting');
+      const roleText = document.getElementById('role-status-text');
+
+      if (lens === 'admin') {
+        if (roleText) roleText.textContent = 'Dirección General · Acceso Completo';
+        if (greeting) greeting.textContent = 'Buenos días, Diego Lecourtois.';
+        if (subgreeting) subgreeting.innerHTML = 'Centro de Comando Operativo, Taller & Caja · <strong>Lunes, 7 de Septiembre de 2026</strong>';
+      } else if (lens === 'mecanico') {
+        if (roleText) roleText.textContent = 'Vista Previa Taller · (Marco Ramírez)';
+        if (greeting) greeting.textContent = 'Mesa de Cirugía: Marco Ramírez.';
+        if (subgreeting) subgreeting.innerHTML = '5 órdenes activas asignadas · <strong>Prioridad de entrega HOY: Basso Palta 2 & Specialized Allez</strong>';
+      } else if (lens === 'ventas') {
+        if (roleText) roleText.textContent = 'Vista Previa Mostrador · (Ventas & POS)';
+        if (greeting) greeting.textContent = 'Atención a Clientes & Recepción.';
+        if (subgreeting) subgreeting.innerHTML = '4 clientes citados hoy para recoger bicicleta · <strong>Saldo por cobrar en caja: $3,930 MXN</strong>';
+      }
+    };
+
+    // ─── 2. Quick Collect Modal (Cobro POS Express) ───
+    window.openQuickCollectModal = function(folio, client, bike, balance, total) {
+      activeCollectItem = { folio, client, bike, balance, total };
+      document.getElementById('qc-folio-sub').textContent = 'Folio: ' + folio;
+      document.getElementById('qc-client-name').textContent = client;
+      document.getElementById('qc-bike-name').textContent = bike;
+      document.getElementById('qc-total-cost').textContent = '$' + Number(total).toLocaleString('es-MX') + '.00 MXN';
+      document.getElementById('qc-balance-due').textContent = '$' + Number(balance).toLocaleString('es-MX') + '.00 MXN';
+
+      const overlay = document.getElementById('dash-collect-modal');
+      if (overlay) overlay.style.display = 'flex';
+    };
+
+    window.closeQuickCollectModal = function() {
+      const overlay = document.getElementById('dash-collect-modal');
+      if (overlay) overlay.style.display = 'none';
+      activeCollectItem = null;
+    };
+
+    window.confirmQuickCollect = function() {
+      if (!activeCollectItem) return;
+      const method = document.querySelector('input[name="qc-method"]:checked')?.value || 'Efectivo';
+      
+      // Register in local ledger if exists
+      try {
+        const LEDGER_KEY = 'bicisaas_ledger_2026';
+        const ledger = JSON.parse(localStorage.getItem(LEDGER_KEY) || '[]');
+        ledger.push({
+          id: 'mov-' + Date.now(),
+          date: '2026-09-07',
+          type: 'income',
+          concept: 'Liquidación Taller: ' + activeCollectItem.folio + ' (' + activeCollectItem.client + ')',
+          category: 'Servicios de Taller',
+          method: method,
+          amount: activeCollectItem.balance,
+          fiscalMonth: '2026-09'
+        });
+        localStorage.setItem(LEDGER_KEY, JSON.stringify(ledger));
+      } catch(e) {}
+
+      alert(`Saldo de Taller Cobrado Exitosamente.\n\n• Folio: ${activeCollectItem.folio}\n• Cliente: ${activeCollectItem.client}\n• Importe liquidado: ${activeCollectItem.balance.toLocaleString('es-MX')} MXN\n• Forma de pago: ${method}\n\nLa orden quedó liquidada y el ingreso fue asentado en Contabilidad 2026.`);
+      closeQuickCollectModal();
+
+      // Update UI badge
+      const badge = document.getElementById('radar-count-badge');
+      if (badge) badge.textContent = '3 Prioritarias';
+    };
+
+    window.completeDelivery = function(folio, client) {
+      if (confirm(`¿Confirmar entrega de bicicleta para ${client} (${folio})?\n\nEl servicio tiene saldo $0 (Garantía 30 días o liquidado previamente).`)) {
+        alert(`Bicicleta entregada a satisfacción de ${client}.\nOrden archivada exitosamente.`);
+      }
+    };
+
+    // Close modal on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeQuickCollectModal();
+    });
+
+    // ─── 3. Personalización por Rol: Exclusividad del Switcher para Admin ───
+    try {
+      const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+      const lensBox = document.getElementById('admin-role-lens-box');
+      const roleBadge = document.getElementById('role-status-badge');
+      const roleText = document.getElementById('role-status-text');
+      const greeting = document.getElementById('dashboard-greeting');
+      const subgreeting = document.getElementById('dashboard-subgreeting');
+
+      if (session && session.role === 'admin') {
+        // SOLO el administrador puede ver y usar la barra de perspectivas
+        if (lensBox) lensBox.style.display = 'flex';
+        switchDashboardLens('admin');
+      } else if (session && session.role === 'mecanico') {
+        // Ocultar barra completamente para el mecánico
+        if (lensBox) lensBox.style.display = 'none';
+        if (roleText) roleText.textContent = 'Cirugía Mecánica · Modo Taller';
+        if (roleBadge) {
+          roleBadge.style.background = 'rgba(52, 199, 89, 0.12)';
+          roleBadge.style.color = 'var(--accent-green)';
+        }
+        if (greeting) greeting.textContent = `Mesa de Cirugía: ${session.name || 'Marco Ramírez'}.`;
+        if (subgreeting) subgreeting.innerHTML = '5 órdenes activas asignadas · <strong>Prioridad de entrega HOY: Basso Palta 2 & Specialized Allez</strong>';
+      } else if (session && session.role === 'ventas') {
+        // Ocultar barra completamente para asesor comercial
+        if (lensBox) lensBox.style.display = 'none';
+        if (roleText) roleText.textContent = 'Mostrador, Cobros & Rentas · Modo POS';
+        if (roleBadge) {
+          roleBadge.style.background = 'rgba(255, 149, 0, 0.12)';
+          roleBadge.style.color = 'var(--accent-orange)';
+        }
+        if (greeting) greeting.textContent = `Atención a Clientes: ${session.name || 'Laura Vásquez'}.`;
+        if (subgreeting) subgreeting.innerHTML = '4 clientes citados hoy para recoger bicicleta · <strong>Saldo por cobrar en caja: $3,930 MXN</strong>';
+      } else {
+        // Fallback por defecto
+        if (lensBox) lensBox.style.display = 'none';
+      }
+    } catch(e) {}
+  </script>
+
+</PanelLayout>

@@ -1,0 +1,49 @@
+================================================================================
+THE GARAGE BIKE EXPERTS · CAMPAÑA LANZAMIENTO WEB + 2º ANIVERSARIO
+DÍA 7 · DOMINGO 20 DE SEPTIEMBRE
+FASE: PRUEBA SOCIAL, CATÁLOGO EN VIVO & CIERRE DE LANZAMIENTO
+================================================================================
+
+PUBLICACIÓN 1: CARRUSEL DE 4 SLIDES (FEED) - LAS MÁS BUSCADAS
+--------------------------------------------------------------------------------
+• Hora sugerida de publicación: 11:30 AM (Momento post-rodada dominical)
+• Objetivo: Demostrar dinamismo del catálogo digital en vivo, generar cotizaciones por WhatsApp.
+• Archivos a subir en orden a Meta Business Suite (Feed Post > Carrusel):
+  1. assets/dia7_domingo/carrusel_slide1_portada.png (Portada: Las 3 Bicis Más Buscadas del Lanzamiento)
+  2. assets/dia7_domingo/carrusel_slide2_basso.png (Basso Palta 2 Gravel Carbon)
+  3. assets/dia7_domingo/carrusel_slide3_trek.png (Trek Marlin 5 Gen 3 MTB)
+  4. assets/dia7_domingo/carrusel_slide4_specialized.png (Specialized Allez E5 Sport Ruta)
+
+• TÍTULO INTERNO (Meta Suite): Domingo 20 - Carrusel Bicis Más Buscadas
+
+• COPY / CAPTION COMPLETO (Copiar y pegar):
+Primeras 24 horas de la nueva plataforma oficial en nuestro 2º Aniversario y estas son las bicicletas más cotizadas del fin de semana: ⚡️🔥 Desliza para verlas 👉
+
+1️⃣ Basso Palta 2 Carbon — El bólido de gravel italiano que se robó todas las miradas.
+2️⃣ Trek Marlin 5 Gen 3 — Confiabilidad insuperable para senderos de montaña y cenotes en la selva.
+3️⃣ Specialized Allez E5 Sport — Agilidad, ligereza y velocidad comprobada en carretera.
+
+En The Garage nuestro inventario se sincroniza en tiempo real en la web: the-garage-dw4.pages.dev/inventario
+Cuando un cuadro o modelo se aparta, se actualiza al instante para que tengas total certidumbre antes de tu visita o compra.
+
+¿Buscas una configuración especial, cambio de grupo electrónico o tu talla recomendada?
+📲 Conéctate con nuestro WhatsApp Concierge desde el sitio web y te brindamos asesoría técnica personalizada.
+
+Gracias a toda la comunidad ciclista por celebrar con nosotros estos dos años y hacer de este lanzamiento un éxito total. ¡Nos vemos en la carretera! 🌴🚴‍♂️
+
+---
+• HASHTAGS:
+#TheGaragePDC #BassoPalta #TrekMarlin #SpecializedAllez #CiclismoDeRuta #MTBMexico #PlayaDelCarmen #RivieraMaya #BicicletasEnVenta #CatalogoCiclista #CiclismoCaribe #LanzamientoWeb #ComunidadCiclista #SegundoAniversario
+
+--------------------------------------------------------------------------------
+PUBLICACIÓN 2: STORIES SECUENCIALES (Publicar a las 05:00 PM)
+--------------------------------------------------------------------------------
+• Story 1 (Imagen): assets/dia7_domingo/story_social_proof.png
+  - Sticker de Enlace:
+    URL: https://the-garage-dw4.pages.dev/inventario
+    Texto del Sticker: 🔍 VER BICICLETAS DISPONIBLES
+
+• Story 2:
+  - Captura limpia de la agenda del taller recibiendo citas para la semana.
+  - Texto: "Agenda abierta para servicios preventivos de esta semana. Aparta tu espacio antes del miércoles para tener tu bici a punto para The Garage Ride del viernes."
+  - Sticker de Enlace: https://wa.me/529841381493

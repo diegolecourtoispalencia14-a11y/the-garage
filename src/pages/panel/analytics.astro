@@ -1,0 +1,1149 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+---
+<PanelLayout title="Analytics & Proyecciones Pro | BiciSaaS">
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+        <span class="badge-pro">Retail BI & Predictive Machine</span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">Benchmarked vs Ascend RPM & Baremetrics</span>
+      </div>
+      <h1 class="page-title">Analytics, GMROI y Proyecciones.</h1>
+      <p class="text-muted">Unit economics, retorno sobre inventario, eficiencia de taller y simulador estacional Riviera Maya.</p>
+    </div>
+    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+      <span class="season-badge" id="current-season-indicator">
+        <Icon name="mdi:weather-sunny" width="16" height="16" /> Temporada Alta Activa (Caribe)
+      </span>
+      <button class="btn-primary" id="btn-jump-simulator">
+        <Icon name="mdi:chart-timeline-variant-shimmer" width="18" height="18" /> Abrir Simulador What-If
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive KPI Row (Clickable Deep-Dive Drill-Downs) -->
+  <div class="kpi-strip">
+    <!-- Box 1: GMROI -->
+    <div class="kpi-box clickable" id="box-gmroi" role="button" tabindex="0" onclick="window.openDeepModal('modal-deep-gmroi')" title="Ver fórmula y desglose del Retorno de Margen Bruto">
+      <div class="kpi-top">
+        <span class="kpi-l">GMROI Global (Stock)</span>
+        <span class="drill-hint" onclick="window.openDeepModal('modal-deep-gmroi'); event.stopPropagation();">Explicación ↗</span>
+      </div>
+      <span class="kpi-v green" id="a-gmroi">3.8x</span>
+      <span class="kpi-trend">+$3.80 por cada $1 en stock</span>
+    </div>
+
+    <!-- Box 2: LTV -->
+    <div class="kpi-box clickable" id="box-ltv" role="button" tabindex="0" onclick="window.openDeepModal('modal-deep-ltv')" title="Ver composición del valor de vida del ciclista a 24 meses">
+      <div class="kpi-top">
+        <span class="kpi-l">LTV Promedio Ciclista</span>
+        <span class="drill-hint" onclick="window.openDeepModal('modal-deep-ltv'); event.stopPropagation();">Detalle ↗</span>
+      </div>
+      <span class="kpi-v blue" id="a-ltv">$64,800</span>
+      <span class="kpi-trend">Compra + 24m Servicios</span>
+    </div>
+
+    <!-- Box 3: Eficiencia Taller -->
+    <div class="kpi-box clickable" id="box-efficiency" role="button" tabindex="0" onclick="window.openDeepModal('modal-deep-efficiency')" title="Ver utilización de bahías por mecánico y tiempo improductivo">
+      <div class="kpi-top">
+        <span class="kpi-l">Eficiencia Taller (Bahías)</span>
+        <span class="drill-hint" onclick="window.openDeepModal('modal-deep-efficiency'); event.stopPropagation();">Bahías ↗</span>
+      </div>
+      <span class="kpi-v green" id="a-efficiency">84.2%</span>
+      <span class="kpi-trend">65.5 hrs facturadas / 78h</span>
+    </div>
+
+    <!-- Box 4: Ticket Taller -->
+    <div class="kpi-box clickable" id="box-ticket" role="button" tabindex="0" onclick="window.openDeepModal('modal-deep-ticket')" title="Ver composición Mano de Obra vs Refacciones vendidas">
+      <div class="kpi-top">
+        <span class="kpi-l">Ticket Promedio Taller</span>
+        <span class="drill-hint" onclick="window.openDeepModal('modal-deep-ticket'); event.stopPropagation();">Ticket ↗</span>
+      </div>
+      <span class="kpi-v" id="a-taller-ticket">$1,480</span>
+      <span class="kpi-trend">Mano de obra + refacciones</span>
+    </div>
+
+    <!-- Box 5: DOH -->
+    <div class="kpi-box clickable" id="box-doh" role="button" tabindex="0" onclick="window.openDeepModal('modal-deep-doh')" title="Ver velocidad de inventario por familias y benchmarks">
+      <div class="kpi-top">
+        <span class="kpi-l">Días de Inventario (DOH)</span>
+        <span class="drill-hint" onclick="window.openDeepModal('modal-deep-doh'); event.stopPropagation();">Rotación ↗</span>
+      </div>
+      <span class="kpi-v orange" id="a-doh">42 días</span>
+      <span class="kpi-trend">Rotación saludable &lt; 60d</span>
+    </div>
+
+    <!-- Box 6: Dead Stock -->
+    <div class="kpi-box clickable" id="box-deadstock" role="button" tabindex="0" onclick="window.openDeepModal('modal-deep-deadstock')" title="Ver artículos causantes y costo financiero de piso">
+      <div class="kpi-top">
+        <span class="kpi-l">Dead Stock Inmovilizado</span>
+        <span class="drill-hint" onclick="window.openDeepModal('modal-deep-deadstock'); event.stopPropagation();">Auditar ↗</span>
+      </div>
+      <span class="kpi-v red" id="a-dead-stock">$28,500</span>
+      <span class="kpi-trend">3 artículos &gt; 90 días</span>
+    </div>
+  </div>
+
+  <div class="analytics-grid">
+
+    <!-- Revenue & Profit Trend Chart (Canvas) -->
+    <div class="bento-card" style="grid-column:span 2;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+        <h3 style="display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
+          <Icon name="mdi:chart-line" width="20" height="20" color="var(--accent-blue)" /> Tendencia Histórica: Ingresos vs Costo de Venta (COGS)
+        </h3>
+        <div style="display:flex; gap:0.75rem; font-size:0.78rem;">
+          <span style="display:flex; align-items:center; gap:0.35rem;"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-blue);"></span> Ingreso Bruto</span>
+          <span style="display:flex; align-items:center; gap:0.35rem;"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-green);"></span> Margen Operativo</span>
+        </div>
+      </div>
+      <canvas id="revenue-chart" height="210"></canvas>
+    </div>
+
+    <!-- GMROI by Category -->
+    <div class="bento-card">
+      <h3 style="margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
+        <Icon name="mdi:scale-balance" width="20" height="20" color="var(--accent-green)" /> GMROI por Categoría
+      </h3>
+      <p style="font-size:0.78rem; color:var(--text-secondary); margin-bottom:1rem;">
+        Retorno de margen bruto por peso invertido en stock:
+      </p>
+      <div class="gmroi-list">
+        <div class="gmroi-row">
+          <div class="gmroi-info">
+            <strong>Mano de Obra Taller</strong>
+            <span>Casi nula inversión en stock</span>
+          </div>
+          <div class="gmroi-metric green">14.2x</div>
+        </div>
+        <div class="gmroi-row">
+          <div class="gmroi-info">
+            <strong>Flota de Rentas</strong>
+            <span>Recuperación de inversión en 4 meses</span>
+          </div>
+          <div class="gmroi-metric purple">4.8x</div>
+        </div>
+        <div class="gmroi-row">
+          <div class="gmroi-info">
+            <strong>Refacciones &amp; Consumibles</strong>
+            <span>Alta rotación de pastillas y cadenas</span>
+          </div>
+          <div class="gmroi-metric blue">3.4x</div>
+        </div>
+        <div class="gmroi-row">
+          <div class="gmroi-info">
+            <strong>Venta Bicicletas Nuevas</strong>
+            <span>Capital intensivo (alto ticket)</span>
+          </div>
+          <div class="gmroi-metric orange">1.9x</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dead Stock & Aging Alert -->
+    <div class="bento-card" style="grid-column:span 2;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
+          <Icon name="mdi:alert-octagon-outline" width="20" height="20" color="var(--accent-red)" /> Envejecimiento de Stock &amp; Acciones Sugeridas
+        </h3>
+        <span class="badge red">Auditoría DOH</span>
+      </div>
+      <div id="aging-stock-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+    </div>
+
+    <!-- Workshop Technician Productivity -->
+    <div class="bento-card">
+      <h3 style="margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
+        <Icon name="mdi:account-hard-hat-outline" width="20" height="20" color="var(--accent-blue)" /> Productividad de Mecánicos
+      </h3>
+      <div class="tech-productivity-list">
+        <div class="tech-item">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+            <strong style="font-size:0.88rem;">Marco Ramírez (Suspensiones)</strong>
+            <span style="font-weight:700; color:var(--accent-green); font-size:0.85rem;">88.5% (35.4 hrs)</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar green" style="width:88.5%;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">
+            <span>12 servicios concluidos</span>
+            <span>$11,200 MXN MO facturada</span>
+          </div>
+        </div>
+        <div class="tech-item">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+            <strong style="font-size:0.88rem;">Carlos Mendoza (Gravel / Ruta)</strong>
+            <span style="font-weight:700; color:var(--accent-blue); font-size:0.85rem;">79.0% (31.6 hrs)</span>
+          </div>
+          <div class="progress-bar-wrap"><div class="progress-bar blue" style="width:79%;"></div></div>
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-secondary); margin-top:0.25rem;">
+            <span>9 servicios concluidos</span>
+            <span>$8,450 MXN MO facturada</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1.25rem; padding:0.75rem; background:var(--bg-base); border-radius:8px; font-size:0.78rem; color:var(--text-secondary);">
+        <strong>Tasa de Recuperación:</strong> El taller factura $375 MXN de mano de obra efectiva por cada hora de nómina pagada.
+      </div>
+    </div>
+
+    <!-- Cohort Retention Funnel -->
+    <div class="bento-card">
+      <h3 style="margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; font-size:1.05rem;">
+        <Icon name="mdi:account-sync" width="20" height="20" color="#af52de" /> Ciclo de Retención del Ciclista
+      </h3>
+      <div class="cohort-funnel">
+        <div class="funnel-step">
+          <div class="step-label">1. Compra de Bicicleta Nueva</div>
+          <div class="step-bar" style="width:100%;">100% (Base Adquirida)</div>
+        </div>
+        <div class="funnel-step">
+          <div class="step-label">2. Ajuste 30 Días (Post-Venta)</div>
+          <div class="step-bar green" style="width:68%;">68% de Retención</div>
+        </div>
+        <div class="funnel-step">
+          <div class="step-label">3. Servicio General (6 Meses)</div>
+          <div class="step-bar blue" style="width:44%;">44% Ciclistas Frecuentes</div>
+        </div>
+        <div class="funnel-step">
+          <div class="step-label">4. Upgrade Accesorios / Rodadas</div>
+          <div class="step-bar purple" style="width:31%;">31% Embajadores VIP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULADOR WHAT-IF (PREDICTIVE ENGINE) -->
+    <div class="bento-card simulator-card" id="simulator-section" style="grid-column:span 3;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem; margin-bottom:1.5rem;">
+        <div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="badge purple">Algoritmo Predictivo</span>
+            <span style="font-size:0.8rem; color:var(--text-secondary);">The Garage · Playa del Carmen &amp; Riviera Maya</span>
+          </div>
+          <h2 style="font-size:1.35rem; font-weight:700; margin-top:0.35rem; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:chart-timeline-variant-shimmer" width="24" height="24" color="var(--accent-blue)" /> Simulador de Escenarios "What-If"
+          </h2>
+          <p class="text-muted" style="font-size:0.9rem; margin-top:0.25rem;">
+            Modela el impacto financiero al ajustar flota de renta, capacidad de mecánicos en taller y precios estacionales para Ironman Cozumel / Invierno.
+          </p>
+        </div>
+
+        <!-- Season Toggle Selector -->
+        <div class="season-toggle-box">
+          <button class="season-btn active" data-season="alta">
+            <Icon name="mdi:weather-sunny" width="16" height="16" /> Temporada Alta (Nov–Abril)
+          </button>
+          <button class="season-btn" data-season="baja">
+            <Icon name="mdi:weather-rainy" width="16" height="16" /> Temporada Baja (Mayo–Oct)
+          </button>
+        </div>
+      </div>
+
+      <div class="simulator-grid">
+        <!-- Sliders Controls -->
+        <div class="sim-controls">
+          <div class="sim-group">
+            <div class="sim-header">
+              <label>Bicicletas Adicionales en Renta</label>
+              <span class="sim-val" id="val-fleet">+5 Bicis</span>
+            </div>
+            <input type="range" min="0" max="15" value="5" step="1" id="slider-fleet" class="sim-range" />
+            <span class="sim-hint">Inversión est. ~$12,000 MXN por bici (MTB/Gravel)</span>
+          </div>
+
+          <div class="sim-group">
+            <div class="sim-header">
+              <label>Capacidad de Taller (Mecánicos)</label>
+              <span class="sim-val" id="val-mechanics">2 Mecánicos</span>
+            </div>
+            <input type="range" min="1" max="4" value="2" step="1" id="slider-mechanics" class="sim-range" />
+            <span class="sim-hint">Capacidad actual: 8 servicios diarios combinados</span>
+          </div>
+
+          <div class="sim-group">
+            <div class="sim-header">
+              <label>Tarifa Promedio Servicio de Taller</label>
+              <span class="sim-val" id="val-labor">$650 MXN</span>
+            </div>
+            <input type="range" min="350" max="1200" value="650" step="50" id="slider-labor" class="sim-range" />
+            <span class="sim-hint">Precio base mano de obra general</span>
+          </div>
+        </div>
+
+        <!-- Projection Results Dashboard -->
+        <div class="sim-results">
+          <div class="sim-res-box">
+            <span class="sim-res-label">Ingreso Mensual Proyectado</span>
+            <span class="sim-res-val green" id="res-monthly-rev">$178,500 MXN</span>
+            <span class="sim-res-sub" id="res-rev-diff">+28.5% vs histórico actual</span>
+          </div>
+
+          <div class="sim-res-box">
+            <span class="sim-res-label">Margen Bruto Proyectado</span>
+            <span class="sim-res-val blue" id="res-gross-margin">$94,200 MXN</span>
+            <span class="sim-res-sub">52.8% Margen consolidado</span>
+          </div>
+
+          <div class="sim-res-box">
+            <span class="sim-res-label">Punto de Equilibrio (Break-even)</span>
+            <span class="sim-res-val" id="res-break-even">$48,000 MXN</span>
+            <span class="sim-res-sub">Se alcanza el día 9 del mes</span>
+          </div>
+
+          <div class="sim-res-box">
+            <span class="sim-res-label">Retorno Inversión Flota (ROI)</span>
+            <span class="sim-res-val purple" id="res-roi">3.2 Meses</span>
+            <span class="sim-res-sub">Recuperación acelerada por alta demanda</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 6 EXPLANATORY DEEP-DIVE DRILL-DOWN MODALS                               -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- MODAL 1: DEEP-DIVE GMROI -->
+  <div id="modal-deep-gmroi" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:scale-balance" width="22" height="22" color="var(--accent-green)" /> GMROI: Retorno de Margen sobre Stock
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Gross Margin Return on Investment · Ascend Retail Machine Standard</p>
+        </div>
+        <button class="btn-icon close-deep-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="deep-hero-box">
+          <div class="deep-hero-metric green">3.8x GMROI</div>
+          <p style="font-size:0.88rem; color:var(--text-primary); margin:0.35rem 0 0; line-height:1.4;">
+            Por cada <strong>$1.00 MXN</strong> que The Garage mantiene invertido en stock en tienda, el negocio genera <strong>$3.80 MXN de margen de utilidad bruta anualizada</strong>.
+          </p>
+        </div>
+
+        <div class="formula-card">
+          <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; font-weight:700;">Fórmula Matemática Aplicada:</div>
+          <div class="formula-text">GMROI = Margen Bruto Anualizado ($) / Costo Promedio del Inventario ($)</div>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">Desglose por Categoría Comercial:</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <div>
+                <strong>Mano de Obra Taller (14.2x)</strong>
+                <p>Excelente: Pura habilidad técnica sin inversión congelada en estantes.</p>
+              </div>
+              <span class="badge green">Extraordinario</span>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Flota de Rentas Turísticas (4.8x)</strong>
+                <p>Muy alto: Las bicicletas de renta se pagan solas en 3 a 4 meses en el Caribe.</p>
+              </div>
+              <span class="badge purple">Excelente</span>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Refacciones &amp; Consumibles (3.4x)</strong>
+                <p>Saludable: Cadenas KMC, balatas Shimano y sellador giran cada 28 días.</p>
+              </div>
+              <span class="badge blue">Saludable</span>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Venta de Bicicletas Nuevas (1.9x)</strong>
+                <p>Capital intensivo: Bicis de alto ticket (> $50k) tardan más en rotar.</p>
+              </div>
+              <span class="badge orange">A Optimizar</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-base); padding:0.85rem; border-radius:8px; font-size:0.8rem; color:var(--text-secondary);">
+          <strong>Recomendación del Asesor:</strong> Para subir de 3.8x a 4.5x, mantén el inventario de bicis caras bajo pedido o preventa y redirige liquidez a refacciones y flota de renta.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-deep-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: DEEP-DIVE LTV -->
+  <div id="modal-deep-ltv" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:account-sync" width="22" height="22" color="var(--accent-blue)" /> LTV: Ciclo de Vida del Ciclista (24 Meses)
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Customer Lifetime Value &amp; Retención en Playa del Carmen</p>
+        </div>
+        <button class="btn-icon close-deep-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="deep-hero-box">
+          <div class="deep-hero-metric blue">$64,800 MXN</div>
+          <p style="font-size:0.88rem; color:var(--text-primary); margin:0.35rem 0 0; line-height:1.4;">
+            Es el gasto monetario acumulado promedio que un cliente ciclista aporta a The Garage en una ventana de <strong>24 meses</strong> desde su primera compra.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">¿De qué se compone este valor?</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <div>
+                <strong>Compra Inicial de Bicicleta</strong>
+                <p>Ticket promedio de adquisición (Basso, Specialized, Giant o Trek).</p>
+              </div>
+              <strong style="font-size:1.05rem;">$38,500 MXN (59.4%)</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Servicios Preventivos de Taller</strong>
+                <p>4 mantenimientos regulares durante los dos primeros años ($1,480 c/u).</p>
+              </div>
+              <strong style="font-size:1.05rem; color:var(--accent-green);">$5,920 MXN (9.1%)</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Refacciones de Reemplazo por Desgaste</strong>
+                <p>Cambio de 2 cadenas, 3 juegos de balatas, 4 cubiertas y líquido tubeless.</p>
+              </div>
+              <strong style="font-size:1.05rem; color:var(--accent-blue);">$6,800 MXN (10.5%)</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Equipamiento, Ropa &amp; Accesorios</strong>
+                <p>Casco POC, zapatillas Shimano, ciclocomputador Garmin, luces y jerseys.</p>
+              </div>
+              <strong style="font-size:1.05rem; color:#af52de;">$13,580 MXN (21.0%)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(52,199,89,0.08); border:1px solid rgba(52,199,89,0.25); padding:0.85rem; border-radius:8px; font-size:0.8rem; color:var(--text-primary);">
+          <strong>Eficiencia de Adquisición (CAC vs LTV):</strong> Con un costo de adquisición por publicidad de $1,200 MXN, el ratio <strong>LTV:CAC es de 54:1</strong>, lo que demuestra la enorme lealtad del cliente ciclista cuando el taller brinda servicio de excelencia.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-deep-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: DEEP-DIVE EFICIENCIA TALLER -->
+  <div id="modal-deep-efficiency" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:account-hard-hat-outline" width="22" height="22" color="var(--accent-green)" /> Eficiencia y Utilización de Bahías
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Capacidad productiva del equipo técnico de The Garage</p>
+        </div>
+        <button class="btn-icon close-deep-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="deep-hero-box">
+          <div class="deep-hero-metric green">84.2% Utilización</div>
+          <p style="font-size:0.88rem; color:var(--text-primary); margin:0.35rem 0 0; line-height:1.4;">
+            De las 78 horas hombre disponibles esta semana en taller, <strong>65.5 horas</strong> fueron facturadas directamente en órdenes de servicio al cliente.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">Productividad Individual:</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <div>
+                <strong>Marco Ramírez (Jefe de Taller)</strong>
+                <p>35.4 hrs facturadas en la semana · 12 servicios completados.</p>
+              </div>
+              <strong style="color:var(--accent-green); font-size:1.1rem;">88.5%</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Carlos Mendoza (Mecánico Gravel / Ruta)</strong>
+                <p>31.6 hrs facturadas en la semana · 9 servicios completados.</p>
+              </div>
+              <strong style="color:var(--accent-blue); font-size:1.1rem;">79.0%</strong>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">Distribución del 15.8% de Tiempo Muerto:</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <span>Esperando refacciones pedidas a distribuidor</span>
+              <strong>8.5%</strong>
+            </div>
+            <div class="deep-item">
+              <span>Limpieza y calibración de dinamométricas</span>
+              <strong>4.2%</strong>
+            </div>
+            <div class="deep-item">
+              <span>Esperando autorización de presupuesto por WhatsApp</span>
+              <strong>3.1%</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-base); padding:0.85rem; border-radius:8px; font-size:0.8rem; color:var(--text-secondary);">
+          <strong>Tasa de Recuperación:</strong> El taller genera <strong>$375 MXN de mano de obra</strong> por cada hora de nómina pagada a mecánicos.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-deep-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: DEEP-DIVE TICKET PROMEDIO -->
+  <div id="modal-deep-ticket" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:receipt-text-outline" width="22" height="22" color="var(--accent-blue)" /> Ticket Promedio de Taller ($1,480 MXN)
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Mano de Obra + Refacciones Añadidas por Orden</p>
+        </div>
+        <button class="btn-icon close-deep-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="deep-hero-box">
+          <div class="deep-hero-metric blue">$1,480 MXN / Orden</div>
+          <p style="font-size:0.88rem; color:var(--text-primary); margin:0.35rem 0 0; line-height:1.4;">
+            Es la facturación promedio por cada bicicleta que ingresa a servicio en The Garage, combinando mano de obra calificada y piezas instaladas.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">Desglose Dual de Cada Ticket:</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <div>
+                <strong>Mano de Obra del Mecánico</strong>
+                <p>Margen bruto del 91.2% (Servicio General, Purgas, Afinación).</p>
+              </div>
+              <strong style="font-size:1.1rem; color:var(--accent-green);">$780.00 MXN (52.7%)</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Refacciones &amp; Consumibles Instalados</strong>
+                <p>Margen bruto del 48.0% (Balatas, cadenas KMC, cables, aceite Shimano).</p>
+              </div>
+              <strong style="font-size:1.1rem; color:var(--accent-blue);">$700.00 MXN (47.3%)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-base); padding:1rem; border-radius:10px;">
+          <div style="font-weight:700; font-size:0.85rem; margin-bottom:0.35rem;">Tasa de Venta Cruzada (Attach Rate): 72%</div>
+          <p style="font-size:0.8rem; color:var(--text-secondary); margin:0; line-height:1.4;">
+            En 7 de cada 10 bicicletas atendidas, el cliente aprueba la sustitución de al menos una pieza desgastada tras la inspección inicial con dinamométrica.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-deep-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: DEEP-DIVE DOH (DÍAS DE INVENTARIO) -->
+  <div id="modal-deep-doh" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:rotate-3d-variant" width="22" height="22" color="var(--accent-orange)" /> Días de Inventario en Almacén (DOH)
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Days on Hand &amp; Rotación de Stock</p>
+        </div>
+        <button class="btn-icon close-deep-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="deep-hero-box">
+          <div class="deep-hero-metric orange">42 Días DOH</div>
+          <p style="font-size:0.88rem; color:var(--text-primary); margin:0.35rem 0 0; line-height:1.4;">
+            En promedio, los productos de The Garage permanecen <strong>42 días</strong> en almacén o piso antes de venderse. El estándar de oro en ciclismo es &lt; 45 días.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">Velocidad por Familias de Producto:</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <div>
+                <strong>Cámaras, Geles &amp; Lubricantes</strong>
+                <p>Rotación inmediata: Se venden casi de inmediato en rodadas de fin de semana.</p>
+              </div>
+              <strong style="color:var(--accent-green);">14 Días (Fast-Mover)</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Balatas, Chicotes &amp; Cadenas</strong>
+                <p>Consumo constante ligado a las órdenes del taller.</p>
+              </div>
+              <strong style="color:var(--accent-blue);">28 Días (Sano)</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Bicicletas MTB (Trek Marlin, Giant Talon)</strong>
+                <p>Bicicletas de entrada/recreativas con buen volumen en Playa del Carmen.</p>
+              </div>
+              <strong style="color:var(--accent-blue);">38 Días</strong>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong>Bicicletas de Carbono (Basso Palta 2)</strong>
+                <p>Bicicletas de alta gama requieren más tiempo de decisión del cliente.</p>
+              </div>
+              <strong style="color:var(--accent-orange);">58 Días</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-deep-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: DEEP-DIVE DEAD STOCK -->
+  <div id="modal-deep-deadstock" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:alert-octagon-outline" width="22" height="22" color="var(--accent-red)" /> Dead Stock: Capital Inmovilizado (&gt;90 días)
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Auditoría de inventario parado y plan de liquidación</p>
+        </div>
+        <button class="btn-icon close-deep-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="deep-hero-box">
+          <div class="deep-hero-metric red">$28,500 MXN</div>
+          <p style="font-size:0.88rem; color:var(--text-primary); margin:0.35rem 0 0; line-height:1.4;">
+            Es el costo de adquisición congelado en <strong>3 artículos</strong> que llevan más de 60–90 días en exhibición sin registrar ventas.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:700; margin-bottom:0.6rem;">Artículos Estancados Auditados:</h4>
+          <div class="deep-list">
+            <div class="deep-item">
+              <div>
+                <strong style="color:var(--accent-red);">Merida Scultura 300 Tiagra (Talla S)</strong>
+                <p>104 días en piso · Stock: 1 unidad · Costo: $18,500 MXN</p>
+              </div>
+              <button class="btn-action-plan" onclick="alert('Acción ejecutada: Unidad transferida a la Flota de Renta Turística para generar flujo inmediato de $450 MXN/día.')">
+                Transferir a Renta
+              </button>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong style="color:var(--accent-orange);">4x Llantas Continental GP5000 700x25c</strong>
+                <p>78 días en piso · Costo: $5,200 MXN</p>
+              </div>
+              <button class="btn-action-plan" onclick="alert('Acción ejecutada: Creado combo de afinación de taller + llantas con 15% de descuento para clientes de ruta.')">
+                Crear Combo Taller
+              </button>
+            </div>
+            <div class="deep-item">
+              <div>
+                <strong style="color:var(--accent-orange);">2x Cascos Kask Mojito 3 (Talla L)</strong>
+                <p>65 días en piso · Costo: $4,800 MXN</p>
+              </div>
+              <button class="btn-action-plan" onclick="alert('Acción ejecutada: Promoción anunciada para la próxima rodada comunitaria.')">
+                Promoción Club
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-base); padding:0.85rem; border-radius:8px; font-size:0.8rem; color:var(--text-secondary);">
+          <strong>Costo Financiero de Piso:</strong> Mantener este stock inmovilizado cuesta aproximadamente <strong>$570 MXN mensuales</strong> en seguro, espacio comercial y costo de oportunidad de capital.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-deep-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+</PanelLayout>
+
+<style is:global>
+  .badge-pro {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(0, 113, 227, 0.12);
+    color: var(--accent-blue);
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+  }
+  .season-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: rgba(255, 149, 0, 0.12);
+    color: var(--accent-orange);
+    padding: 0.4rem 0.85rem;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 149, 0, 0.25);
+  }
+
+  .kpi-strip {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .kpi-box {
+    flex: 1; min-width: 150px;
+    background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg); padding: 1.15rem 1.25rem;
+    display: flex; flex-direction: column; gap: 0.25rem;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .kpi-box.clickable {
+    cursor: pointer;
+  }
+  .kpi-box.clickable:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-float);
+    border-color: rgba(0, 113, 227, 0.4);
+  }
+  .kpi-top {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .drill-hint {
+    font-size: 0.72rem; font-weight: 700; color: var(--accent-blue);
+    background: rgba(0, 113, 227, 0.08); border: 1px solid rgba(0, 113, 227, 0.22);
+    border-radius: 6px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 2px;
+    cursor: pointer; transition: all 0.2s ease;
+  }
+  .kpi-box.clickable:hover .drill-hint,
+  .drill-hint:hover {
+    background: var(--accent-blue); color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+  }
+
+  .kpi-l { font-size: 0.76rem; color: var(--text-secondary); font-weight: 500; }
+  .kpi-v { font-size: 1.35rem; font-weight: 800; }
+  .kpi-v.green  { color: var(--accent-green); }
+  .kpi-v.blue   { color: var(--accent-blue); }
+  .kpi-v.orange { color: var(--accent-orange); }
+  .kpi-v.red    { color: var(--accent-red); }
+  .kpi-v.purple { color: #af52de; }
+  .kpi-trend { font-size: 0.7rem; color: var(--text-secondary); }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 1050px) { .analytics-grid { grid-template-columns: 1fr; } }
+
+  /* GMROI List */
+  .gmroi-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .gmroi-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--bg-base); padding: 0.85rem 1rem; border-radius: 10px;
+  }
+  .gmroi-info strong { display: block; font-size: 0.88rem; }
+  .gmroi-info span { font-size: 0.74rem; color: var(--text-secondary); }
+  .gmroi-metric { font-size: 1.25rem; font-weight: 800; }
+  .gmroi-metric.green { color: var(--accent-green); }
+  .gmroi-metric.purple { color: #af52de; }
+  .gmroi-metric.blue { color: var(--accent-blue); }
+  .gmroi-metric.orange { color: var(--accent-orange); }
+
+  /* Aging Stock List */
+  .stock-aging-row {
+    background: var(--bg-base);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-left: 3px solid transparent;
+  }
+  .stock-aging-row.urgent { border-left-color: var(--accent-red); }
+  .stock-aging-row.warning { border-left-color: var(--accent-orange); }
+  .stock-aging-row.normal { border-left-color: var(--accent-green); }
+  .sar-name { font-size: 0.9rem; font-weight: 700; }
+  .sar-meta { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem; }
+  .sar-action {
+    font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.85rem;
+    border-radius: 100px; border: none; cursor: pointer; white-space: nowrap;
+  }
+  .sar-action.rent { background: rgba(175, 82, 222, 0.12); color: #af52de; }
+  .sar-action.bundle { background: rgba(0, 113, 227, 0.12); color: var(--accent-blue); }
+
+  /* Technician Productivity */
+  .tech-productivity-list { display: flex; flex-direction: column; gap: 1rem; }
+  .tech-item { background: var(--bg-base); border-radius: 10px; padding: 0.85rem 1rem; }
+  .progress-bar-wrap {
+    height: 6px; background: rgba(128,128,128,0.2); border-radius: 3px; overflow: hidden;
+  }
+  .progress-bar { height: 100%; border-radius: 3px; }
+  .progress-bar.green { background: var(--accent-green); }
+  .progress-bar.blue { background: var(--accent-blue); }
+
+  /* Cohort Funnel */
+  .cohort-funnel { display: flex; flex-direction: column; gap: 0.65rem; }
+  .funnel-step { display: flex; flex-direction: column; gap: 0.25rem; }
+  .step-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+  .step-bar {
+    background: var(--bg-surface); padding: 0.4rem 0.75rem; border-radius: 6px;
+    font-size: 0.78rem; font-weight: 700; color: var(--text-primary);
+  }
+  .step-bar.green { background: rgba(52, 199, 89, 0.2); color: var(--accent-green); }
+  .step-bar.blue { background: rgba(0, 113, 227, 0.2); color: var(--accent-blue); }
+  .step-bar.purple { background: rgba(175, 82, 222, 0.2); color: #af52de; }
+
+  /* Simulator Styles */
+  .simulator-card {
+    background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%);
+    border: 1px solid rgba(0, 113, 227, 0.25);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.1);
+  }
+  .season-toggle-box {
+    display: flex; background: var(--bg-base); padding: 0.25rem; border-radius: 100px;
+    border: 1px solid var(--border-subtle);
+  }
+  .season-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.95rem;
+    border-radius: 100px; border: none; background: transparent; color: var(--text-secondary);
+    font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .season-btn.active {
+    background: var(--accent-blue); color: #fff;
+  }
+
+  .simulator-grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 2rem;
+  }
+  @media (max-width: 900px) { .simulator-grid { grid-template-columns: 1fr; } }
+
+  .sim-controls { display: flex; flex-direction: column; gap: 1.25rem; }
+  .sim-group {
+    background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+  }
+  .sim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .sim-header label { font-size: 0.9rem; font-weight: 700; }
+  .sim-val { font-size: 1rem; font-weight: 800; color: var(--accent-blue); }
+  .sim-range {
+    width: 100%; accent-color: var(--accent-blue); cursor: pointer;
+  }
+  .sim-hint { font-size: 0.74rem; color: var(--text-secondary); margin-top: 0.35rem; display: block; }
+
+  .sim-results {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+  }
+  .sim-res-box {
+    background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md); padding: 1.25rem;
+    display: flex; flex-direction: column; justify-content: center; gap: 0.25rem;
+  }
+  .sim-res-label { font-size: 0.76rem; color: var(--text-secondary); font-weight: 600; }
+  .sim-res-val { font-size: 1.45rem; font-weight: 800; }
+  .sim-res-val.green { color: var(--accent-green); }
+  .sim-res-val.blue  { color: var(--accent-blue); }
+  .sim-res-val.purple{ color: #af52de; }
+  .sim-res-sub { font-size: 0.72rem; color: var(--text-secondary); }
+
+  /* Deep-Dive Modals Specific Styles */
+  .deep-hero-box {
+    background: var(--bg-base); border-radius: 12px; padding: 1.25rem;
+    border: 1px solid var(--border-subtle);
+  }
+  .deep-hero-metric { font-size: 1.9rem; font-weight: 900; }
+  .deep-hero-metric.green { color: var(--accent-green); }
+  .deep-hero-metric.blue  { color: var(--accent-blue); }
+  .deep-hero-metric.orange{ color: var(--accent-orange); }
+  .deep-hero-metric.red   { color: var(--accent-red); }
+  .formula-card {
+    background: rgba(0, 113, 227, 0.08); border: 1px solid rgba(0, 113, 227, 0.25);
+    border-radius: 10px; padding: 0.85rem 1.15rem;
+  }
+  .formula-text { font-family: monospace; font-size: 0.92rem; font-weight: 700; color: var(--accent-blue); margin-top: 0.25rem; }
+  .deep-list { display: flex; flex-direction: column; gap: 0.65rem; }
+  .deep-item {
+    background: var(--bg-base); padding: 0.85rem 1rem; border-radius: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .deep-item strong { display: block; font-size: 0.9rem; }
+  .deep-item p { margin: 0.2rem 0 0; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.35; }
+  .btn-action-plan {
+    background: rgba(0, 113, 227, 0.12); color: var(--accent-blue); border: 1px solid rgba(0, 113, 227, 0.25);
+    padding: 0.35rem 0.85rem; border-radius: 100px; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+  }
+  .btn-action-plan:hover { background: var(--accent-blue); color: #fff; }
+
+  /* Standard Modal Overlays */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-box {
+    background: var(--bg-surface); border-radius: var(--radius-xl); width: 100%; box-shadow: 0 24px 70px rgba(0,0,0,0.4);
+    overflow: hidden; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-subtle);
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border-subtle);
+  }
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 1rem; padding: 1.25rem 1.75rem; border-top: 1px solid var(--border-subtle);
+  }
+  .btn-icon { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-secondary); }
+  .btn-icon:hover { color: var(--text-primary); }
+</style>
+
+<script is:inline>
+(function() {
+  // Chart Rendering
+  const MONTHS = ['Abr 2026', 'May 2026', 'Jun 2026', 'Jul 2026', 'Ago 2026', 'Sep 2026 (Actual)'];
+  const REVENUE = [48500, 54200, 68900, 62100, 74300, 167750];
+  const COGS    = [24000, 26500, 31000, 29000, 34000, 72000];
+
+  function drawRevenueChart() {
+    const canvas = document.getElementById('revenue-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.parentElement.clientWidth - 48;
+    const H = 210;
+    canvas.width = W;
+    canvas.height = H;
+
+    ctx.clearRect(0, 0, W, H);
+    const maxVal = 190000;
+    const padX = 40;
+    const padY = 25;
+    const plotW = W - padX * 2;
+    const plotH = H - padY * 2;
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(128,128,128,0.15)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = padY + (plotH / 4) * i;
+      ctx.beginPath();
+      ctx.moveTo(padX, y);
+      ctx.lineTo(W - padX, y);
+      ctx.stroke();
+    }
+
+    // Revenue line
+    ctx.strokeStyle = '#0071e3';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    REVENUE.forEach((val, i) => {
+      const x = padX + (plotW / (MONTHS.length - 1)) * i;
+      const y = padY + plotH - (val / maxVal) * plotH;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // COGS / Margin line
+    ctx.strokeStyle = '#34c759';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    REVENUE.forEach((rev, i) => {
+      const margin = rev - COGS[i];
+      const x = padX + (plotW / (MONTHS.length - 1)) * i;
+      const y = padY + plotH - (margin / maxVal) * plotH;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // X Labels & Points
+    ctx.fillStyle = '#86868b';
+    ctx.font = '11px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    MONTHS.forEach((m, i) => {
+      const x = padX + (plotW / (MONTHS.length - 1)) * i;
+      ctx.fillText(m, x, H - 6);
+
+      const revY = padY + plotH - (REVENUE[i] / maxVal) * plotH;
+      ctx.fillStyle = '#0071e3';
+      ctx.beginPath();
+      ctx.arc(x, revY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#86868b';
+    });
+  }
+
+  // Aging Stock Renderer
+  function renderAgingStock() {
+    const list = document.getElementById('aging-stock-list');
+    if (!list) return;
+
+    const items = [
+      { name: 'Merida Scultura 300 (Talla S)', days: 104, stock: 1, cost: '$18,500 MXN', type: 'urgent', action: 'Transferir a Flota Renta', actionClass: 'rent' },
+      { name: 'Llantas Continental GP5000 700x25c', days: 78, stock: 4, cost: '$5,200 MXN', type: 'warning', action: 'Armar Bundle Servicio Taller', actionClass: 'bundle' },
+      { name: 'Casco Kask Mojito 3 (Talla L)', days: 65, stock: 2, cost: '$4,800 MXN', type: 'warning', action: 'Descuento 15% Tienda', actionClass: 'bundle' },
+      { name: 'Basso Palta 2 Carbon Gravel', days: 22, stock: 1, cost: '$85,000 MXN', type: 'normal', action: 'Fast-Mover (OK)', actionClass: 'bundle' }
+    ];
+
+    list.innerHTML = '';
+    items.forEach(item => {
+      list.innerHTML += `
+        <div class="stock-aging-row ${item.type}">
+          <div>
+            <div class="sar-name">${item.name}</div>
+            <div class="sar-meta">${item.days} días en tienda · Stock: ${item.stock} pza · Capital congelado: ${item.cost}</div>
+          </div>
+          <button class="sar-action ${item.actionClass}">${item.action}</button>
+        </div>
+      `;
+    });
+  }
+
+  // Global deep-dive modal opener helper
+  window.openDeepModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = 'flex';
+  };
+
+  // Bind 6 KPI Deep-Dive Modals
+  const deepMap = [
+    { boxId: 'box-gmroi', modalId: 'modal-deep-gmroi' },
+    { boxId: 'box-ltv', modalId: 'modal-deep-ltv' },
+    { boxId: 'box-efficiency', modalId: 'modal-deep-efficiency' },
+    { boxId: 'box-ticket', modalId: 'modal-deep-ticket' },
+    { boxId: 'box-doh', modalId: 'modal-deep-doh' },
+    { boxId: 'box-deadstock', modalId: 'modal-deep-deadstock' },
+  ];
+
+  deepMap.forEach(item => {
+    const box = document.getElementById(item.boxId);
+    const modal = document.getElementById(item.modalId);
+    if (box && modal) {
+      box.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          modal.style.display = 'flex';
+        }
+      });
+    }
+  });
+
+  document.querySelectorAll('.close-deep-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.modal-overlay').forEach(m => {
+        if (m.id.startsWith('modal-deep-')) m.style.display = 'none';
+      });
+    });
+  });
+
+  // Close modals on overlay backdrop click or Escape key
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.style.display = 'none';
+    });
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(m => {
+        if (m.id.startsWith('modal-deep-')) m.style.display = 'none';
+      });
+    }
+  });
+
+  // Predictive Simulator What-If Logic
+  let currentSeason = 'alta';
+
+  function calculateSimulation() {
+    const fleetAdd = parseInt(document.getElementById('slider-fleet').value, 10);
+    const mechanics = parseInt(document.getElementById('slider-mechanics').value, 10);
+    const laborRate = parseInt(document.getElementById('slider-labor').value, 10);
+
+    document.getElementById('val-fleet').textContent = '+' + fleetAdd + ' Bicis';
+    document.getElementById('val-mechanics').textContent = mechanics + ' Mecánicos';
+    document.getElementById('val-labor').textContent = '$' + laborRate + ' MXN';
+
+    const isHigh = currentSeason === 'alta';
+    const seasonMultiplier = isHigh ? 1.45 : 0.85;
+
+    const retailRev = 110000 * seasonMultiplier;
+    const totalFleet = 5 + fleetAdd;
+    const dailyRate = isHigh ? 650 : 450;
+    const occupancy = isHigh ? 0.72 : 0.40;
+    const rentalRev = totalFleet * 30 * dailyRate * occupancy;
+
+    const servicesPerDay = 3.5;
+    const workshopDays = 26;
+    const workshopLaborRev = mechanics * servicesPerDay * workshopDays * laborRate;
+    const workshopPartsRev = workshopLaborRev * 0.45;
+    const workshopRev = workshopLaborRev + workshopPartsRev;
+
+    const totalMonthlyRev = Math.round(retailRev + rentalRev + workshopRev);
+    const cogsEstimated = Math.round((retailRev * 0.72) + (rentalRev * 0.15) + (workshopRev * 0.28));
+    const grossMargin = totalMonthlyRev - cogsEstimated;
+
+    const fixedCosts = 28000 + (mechanics * 10000);
+    const breakEven = Math.round(fixedCosts / (grossMargin / totalMonthlyRev));
+
+    const fleetCapEx = fleetAdd * 12000;
+    const monthlyNetRentalGain = (rentalRev * 0.85);
+    const roiMonths = fleetAdd > 0 ? (fleetCapEx / (monthlyNetRentalGain / (5 + fleetAdd) * fleetAdd)).toFixed(1) : '0';
+
+    document.getElementById('res-monthly-rev').textContent = '$' + totalMonthlyRev.toLocaleString('es-MX') + ' MXN';
+    document.getElementById('res-gross-margin').textContent = '$' + grossMargin.toLocaleString('es-MX') + ' MXN';
+    document.getElementById('res-break-even').textContent = '$' + breakEven.toLocaleString('es-MX') + ' MXN';
+    document.getElementById('res-roi').textContent = fleetAdd > 0 ? roiMonths + ' Meses' : 'Inmediato';
+  }
+
+  ['slider-fleet', 'slider-mechanics', 'slider-labor'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', calculateSimulation);
+  });
+
+  document.querySelectorAll('.season-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentSeason = this.getAttribute('data-season');
+      const ind = document.getElementById('current-season-indicator');
+      if (currentSeason === 'alta') {
+        ind.innerHTML = 'Temporada Alta Activa (Caribe & Ironman)';
+        ind.style.borderColor = 'rgba(255, 149, 0, 0.3)';
+        ind.style.color = 'var(--accent-orange)';
+      } else {
+        ind.innerHTML = 'Temporada Regular (Comunidad Local & Mantenimiento)';
+        ind.style.borderColor = 'rgba(0, 113, 227, 0.3)';
+        ind.style.color = 'var(--accent-blue)';
+      }
+      calculateSimulation();
+    });
+  });
+
+  document.getElementById('btn-jump-simulator')?.addEventListener('click', () => {
+    document.getElementById('simulator-section')?.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  window.addEventListener('resize', drawRevenueChart);
+  setTimeout(() => {
+    drawRevenueChart();
+    renderAgingStock();
+    calculateSimulation();
+  }, 100);
+})();
+</script>

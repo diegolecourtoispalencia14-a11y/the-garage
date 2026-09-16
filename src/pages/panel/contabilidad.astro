@@ -1,0 +1,1880 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+---
+<PanelLayout title="Contabilidad & Caja Pro | BiciSaaS">
+  <!-- Page Header & Calendar Navigation Bar -->
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.25rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+        <span class="badge-pro">Enterprise Ledger & POS Cash</span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);" id="live-fiscal-badge">Ejercicio Fiscal 2026 · PDC</span>
+      </div>
+      <h1 class="page-title">Contabilidad y Caja Z.</h1>
+      <p class="text-muted">Arqueo diario de caja, separación de márgenes, libro diario y depósitos en garantía.</p>
+    </div>
+
+    <!-- Calendarized Navigation Bar (Full Year 2026 + Month Opener) -->
+    <div class="calendar-bar">
+      <div class="month-nav-controls">
+        <button class="btn-cal-nav" id="btn-prev-month" title="Mes Anterior">
+          <Icon name="mdi:chevron-left" width="20" height="20" />
+        </button>
+        <select id="month-select" class="select-month-control">
+          <option value="2026-01">Enero 2026</option>
+          <option value="2026-02">Febrero 2026</option>
+          <option value="2026-03">Marzo 2026</option>
+          <option value="2026-04">Abril 2026</option>
+          <option value="2026-05">Mayo 2026</option>
+          <option value="2026-06">Junio 2026</option>
+          <option value="2026-07">Julio 2026</option>
+          <option value="2026-08">Agosto 2026</option>
+          <option value="2026-09" selected>Septiembre 2026 (Actual)</option>
+          <option value="2026-10">Octubre 2026</option>
+          <option value="2026-11">Noviembre 2026</option>
+          <option value="2026-12">Diciembre 2026 (Ironman)</option>
+        </select>
+        <button class="btn-cal-nav" id="btn-next-month" title="Mes Siguiente">
+          <Icon name="mdi:chevron-right" width="20" height="20" />
+        </button>
+      </div>
+
+      <button class="btn-secondary" id="btn-open-new-month" onclick="window.openNewMonthModal()" style="font-size:0.82rem; padding:0.5rem 0.9rem;">
+        <Icon name="mdi:calendar-plus" width="16" height="16" /> + Aperturar Mes
+      </button>
+
+      <button class="btn-secondary" id="btn-open-cierre-z" style="background:rgba(0,113,227,0.1); border-color:rgba(0,113,227,0.25); color:var(--accent-blue);">
+        <Icon name="mdi:cash-register" width="18" height="18" /> Arqueo de Caja Z
+      </button>
+      <button class="btn-primary" id="btn-export-ledger">
+        <Icon name="mdi:download-outline" width="18" height="18" /> Exportar CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive KPI Row (Clickable Drill-Down Buttons) -->
+  <div class="kpi-row">
+    <!-- KPI 1: Ingresos Totales -->
+    <div class="kpi-card green clickable" id="kpi-card-income" role="button" tabindex="0" onclick="window.openDrilldown('modal-dd-income')" title="Ver desglose detallado de ingresos por canal y métodos">
+      <div class="kpi-top">
+        <Icon name="mdi:trending-up" width="26" height="26" />
+        <span class="drill-hint">Auditar ↗</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Ingresos Totales</span>
+        <span class="kpi-value" id="kpi-income">$0</span>
+        <span class="kpi-sub" id="kpi-income-sub">Bicis, Taller & Rentas</span>
+      </div>
+    </div>
+
+    <!-- KPI 2: Egresos / Costos -->
+    <div class="kpi-card red clickable" id="kpi-card-expenses" role="button" tabindex="0" onclick="window.openDrilldown('modal-dd-expenses')" title="Ver desglose de costos fijos, insumos y deducibilidad">
+      <div class="kpi-top">
+        <Icon name="mdi:trending-down" width="26" height="26" />
+        <span class="drill-hint">Auditar ↗</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Egresos / Costos</span>
+        <span class="kpi-value" id="kpi-expenses">$0</span>
+        <span class="kpi-sub" id="kpi-expenses-sub">Operación & Stock</span>
+      </div>
+    </div>
+
+    <!-- KPI 3: Margen Neto Operativo -->
+    <div class="kpi-card blue clickable" id="kpi-card-margin" role="button" tabindex="0" onclick="window.openDrilldown('modal-dd-margin')" title="Ver Estado de Resultados P&L simplificado">
+      <div class="kpi-top">
+        <Icon name="mdi:scale-balance" width="26" height="26" />
+        <span class="drill-hint">P&L ↗</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Margen Neto Operativo</span>
+        <span class="kpi-value" id="kpi-balance">$0</span>
+        <span class="kpi-sub" id="kpi-margin-pct">0% Rentabilidad</span>
+      </div>
+    </div>
+
+    <!-- KPI 4: Efectivo en Cajón (Hoy) -->
+    <div class="kpi-card teal clickable" id="kpi-card-drawer" role="button" tabindex="0" onclick="window.openDrilldown('modal-dd-drawer')" title="Ver arqueo en vivo, caja chica y retiros a caja fuerte">
+      <div class="kpi-top">
+        <Icon name="mdi:cash-check" width="26" height="26" />
+        <span class="drill-hint">Cajón ↗</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Efectivo en Cajón (Hoy)</span>
+        <span class="kpi-value" id="kpi-cash-drawer">$0</span>
+        <span class="kpi-sub" id="kpi-drawer-status">Fondo $2,000 + Cobros</span>
+      </div>
+    </div>
+
+    <!-- KPI 5: Cuentas por Cobrar -->
+    <div class="kpi-card orange clickable" id="kpi-card-receivable" role="button" tabindex="0" onclick="window.openDrilldown('modal-dd-receivable')" title="Ver cartera vencida, deudores y recordatorios WhatsApp">
+      <div class="kpi-top">
+        <Icon name="mdi:account-clock-outline" width="26" height="26" />
+        <span class="drill-hint">Cartera ↗</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Cuentas por Cobrar</span>
+        <span class="kpi-value" id="kpi-receivable">$0</span>
+        <span class="kpi-sub" id="kpi-receivable-sub">Taller & Apartados</span>
+      </div>
+    </div>
+
+    <!-- KPI 6: Depósitos en Garantía -->
+    <div class="kpi-card purple clickable" id="kpi-card-escrow" role="button" tabindex="0" onclick="window.openDrilldown('modal-dd-escrow')" title="Ver depósitos de rentas en custodia temporal">
+      <div class="kpi-top">
+        <Icon name="mdi:shield-lock-outline" width="26" height="26" />
+        <span class="drill-hint">Escrow ↗</span>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">Depósitos en Garantía</span>
+        <span class="kpi-value" id="kpi-escrow">$0</span>
+        <span class="kpi-sub">Escrow Rentas Activas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accounting View Tabs -->
+  <div class="accounting-view-tabs">
+    <button class="view-tab active" data-view="diario">
+      <Icon name="mdi:book-open-outline" width="18" height="18" /> Libro Diario & Flujos
+    </button>
+    <button class="view-tab" data-view="cierre-z">
+      <Icon name="mdi:calculator-variant-outline" width="18" height="18" /> Arqueo y Cierre Z (Denominaciones)
+    </button>
+    <button class="view-tab" data-view="margenes">
+      <Icon name="mdi:chart-pie" width="18" height="18" /> Rentabilidad por Unidad de Negocio
+    </button>
+    <button class="view-tab" data-view="cuentas">
+      <Icon name="mdi:hand-coin-outline" width="18" height="18" /> Cobros de Taller & Depósitos en Garantía
+    </button>
+  </div>
+
+  <!-- VIEW 1: LIBRO DIARIO (3 COLUMNS) -->
+  <div id="view-diario" class="accounting-grid">
+    <!-- Columna 1: Ingresos / Ventas -->
+    <div class="bento-card ledger-col">
+      <div class="col-header">
+        <h3><span class="dot green"></span> Ingresos Registrados</h3>
+        <button class="btn-add-row" id="btn-add-income">+ Agregar</button>
+      </div>
+      <div class="ledger-list" id="income-list"></div>
+    </div>
+
+    <!-- Columna 2: Caja Chica / Gastos Fijos -->
+    <div class="bento-card ledger-col">
+      <div class="col-header">
+        <h3><span class="dot red"></span> Caja Chica & Egresos</h3>
+        <button class="btn-add-row" id="btn-add-expense">+ Agregar</button>
+      </div>
+      <div class="ledger-list" id="expense-list"></div>
+    </div>
+
+    <!-- Columna 3: Cuentas Pendientes -->
+    <div class="bento-card ledger-col">
+      <div class="col-header">
+        <h3><span class="dot orange"></span> Obligaciones Pendientes</h3>
+        <button class="btn-add-row" id="btn-add-debt">+ Agregar</button>
+      </div>
+      <!-- Sub tabs -->
+      <div class="debt-tabs">
+        <button class="debt-tab active" data-tab="cobrar">Por Cobrar (Clientes)</button>
+        <button class="debt-tab" data-tab="pagar">Por Pagar (Proveedores)</button>
+      </div>
+      <div class="ledger-list" id="debt-list"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: ARQUEO Y CIERRE Z (DENOMINATION COUNTER) -->
+  <div id="view-cierre-z" class="bento-card" style="display:none; padding:2rem;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem; margin-bottom:2rem; border-bottom:1px solid var(--border-subtle); padding-bottom:1.5rem;">
+      <div>
+        <h2 style="font-size:1.35rem; font-weight:700; display:flex; align-items:center; gap:0.6rem;">
+          <Icon name="mdi:cash-register" width="24" height="24" color="var(--accent-blue)" /> Corte Z y Cuadratura de Caja Diaria
+        </h2>
+        <p class="text-muted" style="margin-top:0.35rem; font-size:0.9rem;">
+          Procedimiento de auditoría ciega: ingresa el conteo de billetes y monedas en físico para conciliar contra las transacciones registradas en mostrador.
+        </p>
+      </div>
+      <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
+        <div style="background:var(--bg-base); padding:0.6rem 1rem; border-radius:12px; border:1px solid var(--border-subtle); text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase;">Fondo Inicial Fijo</div>
+          <div style="font-size:1.1rem; font-weight:700; color:var(--accent-blue);">$2,000 MXN</div>
+        </div>
+        <button class="btn-primary" id="btn-save-cierre-z" style="background:var(--accent-green); border-color:var(--accent-green);">
+          <Icon name="mdi:check-decagram" width="18" height="18" /> Realizar Corte Z & Guardar Auditoría
+        </button>
+      </div>
+    </div>
+
+    <div class="cierre-z-grid">
+      <!-- Calculadora de Billetes -->
+      <div class="denom-box">
+        <h3 class="denom-title"><Icon name="mdi:cash-multiple" width="20" height="20" color="var(--accent-green)" /> Billetes Físicos</h3>
+        <div class="denom-table">
+          <div class="denom-row">
+            <span class="denom-tag">$1,000</span>
+            <input type="number" min="0" value="0" class="denom-input" data-val="1000" id="bill-1000" />
+            <span class="denom-subtotal" id="sub-1000">$0</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$500</span>
+            <input type="number" min="0" value="2" class="denom-input" data-val="500" id="bill-500" />
+            <span class="denom-subtotal" id="sub-500">$1,000</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$200</span>
+            <input type="number" min="0" value="4" class="denom-input" data-val="200" id="bill-200" />
+            <span class="denom-subtotal" id="sub-200">$800</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$100</span>
+            <input type="number" min="0" value="7" class="denom-input" data-val="100" id="bill-100" />
+            <span class="denom-subtotal" id="sub-100">$700</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$50</span>
+            <input type="number" min="0" value="8" class="denom-input" data-val="50" id="bill-50" />
+            <span class="denom-subtotal" id="sub-50">$400</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$20</span>
+            <input type="number" min="0" value="5" class="denom-input" data-val="20" id="bill-20" />
+            <span class="denom-subtotal" id="sub-20">$100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculadora de Monedas -->
+      <div class="denom-box">
+        <h3 class="denom-title"><Icon name="mdi:circle-multiple-outline" width="20" height="20" color="var(--accent-orange)" /> Monedas Fraccionarias</h3>
+        <div class="denom-table">
+          <div class="denom-row">
+            <span class="denom-tag">$20 M.</span>
+            <input type="number" min="0" value="1" class="denom-input" data-val="20" id="coin-20" />
+            <span class="denom-subtotal" id="sub-c20">$20</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$10 M.</span>
+            <input type="number" min="0" value="12" class="denom-input" data-val="10" id="coin-10" />
+            <span class="denom-subtotal" id="sub-10">$120</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$5 M.</span>
+            <input type="number" min="0" value="16" class="denom-input" data-val="5" id="coin-5" />
+            <span class="denom-subtotal" id="sub-5">$80</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$2 M.</span>
+            <input type="number" min="0" value="15" class="denom-input" data-val="2" id="coin-2" />
+            <span class="denom-subtotal" id="sub-2">$30</span>
+          </div>
+          <div class="denom-row">
+            <span class="denom-tag">$1 M.</span>
+            <input type="number" min="0" value="20" class="denom-input" data-val="1" id="coin-1" />
+            <span class="denom-subtotal" id="sub-1">$20</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Cuadratura & Descuadre -->
+      <div class="audit-summary-card">
+        <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+          <Icon name="mdi:scale-balance" width="20" height="20" color="var(--accent-blue)" /> Balance de Cuadratura
+        </h3>
+        
+        <div class="audit-row">
+          <span class="audit-label">Fondo de Apertura (Cambio)</span>
+          <span class="audit-value">$2,000.00</span>
+        </div>
+        <div class="audit-row">
+          <span class="audit-label">+ Ventas en Efectivo Registradas</span>
+          <span class="audit-value green" id="audit-cash-sales">+$1,270.00</span>
+        </div>
+        <div class="audit-row">
+          <span class="audit-label">- Pagos Caja Chica del Día</span>
+          <span class="audit-value red" id="audit-cash-payouts">-$0.00</span>
+        </div>
+        <div class="audit-divider"></div>
+        <div class="audit-row highlight">
+          <span class="audit-label">Efectivo Teórico en Sistema</span>
+          <span class="audit-value" id="audit-expected">$3,270.00</span>
+        </div>
+        <div class="audit-row highlight">
+          <span class="audit-label">Efectivo Físico Contado</span>
+          <span class="audit-value bold" id="audit-counted">$3,270.00</span>
+        </div>
+        
+        <!-- Descuadre Banner -->
+        <div class="variance-banner balanced" id="variance-box">
+          <div class="var-title" id="variance-title">Caja Cuadrada Sin Diferencias</div>
+          <div class="var-amount" id="variance-diff">$0.00 MXN</div>
+        </div>
+
+        <div style="margin-top:1.25rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.4;">
+          <strong>Política de Cierre The Garage:</strong> Al hacer el corte, se dejan exactamente $2,000 en el cajón para el siguiente turno y el excedente se deposita en caja fuerte blindada.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: MARGENES Y UNIDADES DE NEGOCIO -->
+  <div id="view-margenes" class="bento-card" style="display:none; padding:2rem;">
+    <div style="margin-bottom:1.5rem;">
+      <h2 style="font-size:1.35rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+        <Icon name="mdi:finance" width="24" height="24" color="var(--accent-green)" /> Desglose de Rentabilidad por Flujo de Negocio
+      </h2>
+      <p class="text-muted" style="margin-top:0.25rem; font-size:0.9rem;">
+        Comparativa de margen bruto y contribución real de cada área operativa (Bicicletas Nuevas, Taller de Mano de Obra, Refacciones y Rentas).
+      </p>
+    </div>
+
+    <div class="margins-grid">
+      <!-- Tarjeta 1: Venta Bicis -->
+      <div class="margin-card">
+        <div class="m-head">
+          <span class="m-icon"><Icon name="mdi:bicycle" width="22" height="22" /></span>
+          <div>
+            <div class="m-title">Venta de Bicicletas</div>
+            <div class="m-sub">Alto ticket · Capital intensivo</div>
+          </div>
+        </div>
+        <div class="m-metric">
+          <span class="m-val" id="margin-val-bikes">$127,850</span>
+          <span class="m-badge orange">28.5% Margen</span>
+        </div>
+        <p class="m-desc">Genera volumen de facturación y atrae nuevos ciclistas que posteriormente contratan servicios y compran accesorios.</p>
+      </div>
+
+      <!-- Tarjeta 2: Taller Mano de Obra -->
+      <div class="margin-card highlight-green">
+        <div class="m-head">
+          <span class="m-icon" style="color:var(--accent-green);"><Icon name="mdi:wrench" width="22" height="22" /></span>
+          <div>
+            <div class="m-title">Mano de Obra Taller</div>
+            <div class="m-sub">Alta rentabilidad · Talento técnico</div>
+          </div>
+        </div>
+        <div class="m-metric">
+          <span class="m-val" id="margin-val-labor">$14,950</span>
+          <span class="m-badge green">91.2% Margen</span>
+        </div>
+        <p class="m-desc">La unidad de mayor margen neto. Pura eficiencia operativa de los mecánicos con costo de consumibles casi nulo.</p>
+      </div>
+
+      <!-- Tarjeta 3: Refacciones y Componentes -->
+      <div class="margin-card">
+        <div class="m-head">
+          <span class="m-icon" style="color:var(--accent-blue);"><Icon name="mdi:cog-outline" width="22" height="22" /></span>
+          <div>
+            <div class="m-title">Refacciones & Consumibles</div>
+            <div class="m-sub">Cadenas, pastillas, cubiertas</div>
+          </div>
+        </div>
+        <div class="m-metric">
+          <span class="m-val" id="margin-val-parts">$18,100</span>
+          <span class="m-badge blue">48.0% Margen</span>
+        </div>
+        <p class="m-desc">Venta anexa a los servicios del taller y reemplazo por desgaste. Rotación continua con proveedores Shimano y Maxxis.</p>
+      </div>
+
+      <!-- Tarjeta 4: Flota de Rentas -->
+      <div class="margin-card highlight-purple">
+        <div class="m-head">
+          <span class="m-icon" style="color:#af52de;"><Icon name="mdi:bike-fast" width="22" height="22" /></span>
+          <div>
+            <div class="m-title">Flota de Rentas Turísticas</div>
+            <div class="m-sub">Flujo recurrente · Riviera Maya</div>
+          </div>
+        </div>
+        <div class="m-metric">
+          <span class="m-val" id="margin-val-rentals">$6,850</span>
+          <span class="m-badge purple">84.5% Margen</span>
+        </div>
+        <p class="m-desc">Excelente flujo de efectivo en temporada alta (Nov-Abril). Los depósitos en garantía se conservan en escrow hasta la devolución.</p>
+      </div>
+    </div>
+
+    <!-- Fiscal / SAT Estimation Bar -->
+    <div style="margin-top:2rem; background:var(--bg-base); border-radius:var(--radius-lg); padding:1.5rem; border:1px solid var(--border-subtle);">
+      <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+        <Icon name="mdi:file-document-outline" width="18" height="18" color="var(--accent-blue)" /> Estimación Fiscal Preliminar (IVA 16% SAT México)
+      </h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
+        <div style="background:var(--bg-surface); padding:1rem; border-radius:10px;">
+          <div style="font-size:0.75rem; color:var(--text-secondary);">IVA Trasladado (Cobrado a clientes)</div>
+          <div style="font-size:1.2rem; font-weight:700; color:var(--accent-green); margin-top:0.25rem;" id="sat-iva-trasladado">$22,041 MXN</div>
+        </div>
+        <div style="background:var(--bg-surface); padding:1rem; border-radius:10px;">
+          <div style="font-size:0.75rem; color:var(--text-secondary);">IVA Acreditable (Deducible compras/renta)</div>
+          <div style="font-size:1.2rem; font-weight:700; color:var(--accent-red); margin-top:0.25rem;" id="sat-iva-acreditable">-$9,310 MXN</div>
+        </div>
+        <div style="background:var(--bg-surface); padding:1rem; border-radius:10px;">
+          <div style="font-size:0.75rem; color:var(--text-secondary);">Balance Estimado de IVA por Declarar</div>
+          <div style="font-size:1.2rem; font-weight:700; color:var(--accent-orange); margin-top:0.25rem;" id="sat-iva-balance">$12,731 MXN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 4: CUENTAS POR COBRAR Y ESCROW -->
+  <div id="view-cuentas" class="bento-card" style="display:none; padding:2rem;">
+    <div style="margin-bottom:1.5rem;">
+      <h2 style="font-size:1.35rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+        <Icon name="mdi:hand-coin-outline" width="24" height="24" color="var(--accent-orange)" /> Cobros Pendientes de Taller & Depósitos en Garantía
+      </h2>
+      <p class="text-muted" style="margin-top:0.25rem; font-size:0.9rem;">
+        Control de bicicletas listas para entrega con remanente por cobrar en mostrador, y resguardo de depósitos de renta en garantía.
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+      <!-- Saldos por Cobrar Taller -->
+      <div style="background:var(--bg-base); border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border-subtle);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h3 style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:0.4rem;">
+            <Icon name="mdi:wrench-clock" width="18" height="18" color="var(--accent-orange)" /> Saldos por Cobrar en Taller
+          </h3>
+          <span class="badge orange" id="workshop-debt-count">3 clientes</span>
+        </div>
+        <div id="workshop-debt-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+      </div>
+
+      <!-- Depósitos en Garantía Activos (Escrow) -->
+      <div style="background:var(--bg-base); border-radius:var(--radius-lg); padding:1.25rem; border:1px solid var(--border-subtle);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <h3 style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:0.4rem;">
+            <Icon name="mdi:shield-check" width="18" height="18" color="#af52de" /> Depósitos en Custodia (Rentas)
+          </h3>
+          <span class="badge purple" id="escrow-count">2 activas</span>
+        </div>
+        <div id="escrow-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- DRILL-DOWN MODALS (ONE FOR EACH OF THE 6 KPIS)                          -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+
+  <!-- MODAL 1: DRILL-DOWN INGRESOS TOTALES -->
+  <div id="modal-dd-income" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:trending-up" width="22" height="22" color="var(--accent-green)" /> Auditoría de Ingresos Totales
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;" id="dd-income-period">Periodo: Septiembre 2026</p>
+        </div>
+        <button class="btn-icon close-dd-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="dd-summary-box">
+          <span class="dd-sum-label">Monto Total Facturado</span>
+          <span class="dd-sum-val green" id="dd-income-total">$167,750 MXN</span>
+          <span class="dd-sum-sub">+24% respecto al mes anterior</span>
+        </div>
+
+        <div>
+          <h4 class="dd-subheading">Mix de Ingresos por Unidad de Negocio</h4>
+          <div class="dd-bar-breakdown">
+            <div class="dd-bar-row">
+              <span>Venta Bicicletas Nuevas</span>
+              <strong>$127,850 MXN (76.2%)</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Servicios de Taller (Mano de Obra)</span>
+              <strong>$14,950 MXN (8.9%)</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Refacciones &amp; Consumibles</span>
+              <strong>$18,100 MXN (10.8%)</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Flota de Rentas Turísticas</span>
+              <strong>$6,850 MXN (4.1%)</strong>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="dd-subheading">Desglose por Método de Pago</h4>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <div class="dd-pill-stat">
+              <span>Terminal Tarjeta</span>
+              <strong>$98,200 MXN</strong>
+            </div>
+            <div class="dd-pill-stat">
+              <span>Transferencia SPEI</span>
+              <strong>$42,300 MXN</strong>
+            </div>
+            <div class="dd-pill-stat">
+              <span>Efectivo en Mostrador</span>
+              <strong>$17,550 MXN</strong>
+            </div>
+            <div class="dd-pill-stat">
+              <span>MercadoPago QR</span>
+              <strong>$9,700 MXN</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-dd-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: DRILL-DOWN EGRESOS / COSTOS -->
+  <div id="modal-dd-expenses" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:trending-down" width="22" height="22" color="var(--accent-red)" /> Auditoría de Egresos y Costos
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;" id="dd-expenses-period">Periodo: Septiembre 2026</p>
+        </div>
+        <button class="btn-icon close-dd-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="dd-summary-box">
+          <span class="dd-sum-label">Total Egresos Operativos y Compras</span>
+          <span class="dd-sum-val red" id="dd-expenses-total">$32,250 MXN</span>
+          <span class="dd-sum-sub">Gastos fijos, nómina y compras a distribuidores</span>
+        </div>
+
+        <div>
+          <h4 class="dd-subheading">Clasificación: Costos Fijos vs Variables</h4>
+          <div class="dd-bar-breakdown">
+            <div class="dd-bar-row">
+              <span>Renta Local Comercial (Av. 10 PDC)</span>
+              <strong>$22,000 MXN</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>CFE Luz &amp; Aire Acondicionado</span>
+              <strong>$3,850 MXN</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Internet Fibra Óptica 500Mbps</span>
+              <strong>$850 MXN</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Insumos Taller (Muc-Off, Grasa ParkTool)</span>
+              <strong>$1,850 MXN</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Campaña Meta Ads Ciclismo Riviera Maya</span>
+              <strong>$2,500 MXN</strong>
+            </div>
+            <div class="dd-bar-row">
+              <span>Suscripción BiciSaaS Enterprise</span>
+              <strong>$1,200 MXN</strong>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-base); padding:0.85rem; border-radius:8px; font-size:0.8rem; color:var(--text-secondary);">
+          <strong>Deducibilidad Fiscal:</strong> El 88.5% de estos egresos cuentan con CFDI 4.0 validado ante el SAT.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-dd-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: DRILL-DOWN MARGEN NETO OPERATIVO -->
+  <div id="modal-dd-margin" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:scale-balance" width="22" height="22" color="var(--accent-blue)" /> Estado de Resultados P&amp;L (EBITDA)
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;" id="dd-margin-period">Periodo: Septiembre 2026</p>
+        </div>
+        <button class="btn-icon close-dd-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="dd-summary-box">
+          <span class="dd-sum-label">Utilidad Operativa Neta del Mes</span>
+          <span class="dd-sum-val blue" id="dd-margin-total">$135,500 MXN</span>
+          <span class="dd-sum-sub" id="dd-margin-pct">Rentabilidad Neta: 80.7%</span>
+        </div>
+
+        <div class="pnl-table">
+          <div class="pnl-row">
+            <span>(+) Ingresos Brutos Totales</span>
+            <strong class="green" id="pnl-gross-income">$167,750 MXN</strong>
+          </div>
+          <div class="pnl-row">
+            <span>(-) Costo de Ventas Estimado (COGS)</span>
+            <strong class="red" id="pnl-cogs">-$72,000 MXN</strong>
+          </div>
+          <div class="pnl-divider"></div>
+          <div class="pnl-row bold">
+            <span>(=) Utilidad Bruta Consolidada</span>
+            <strong id="pnl-gross-profit">$95,750 MXN (57.1%)</strong>
+          </div>
+          <div class="pnl-row">
+            <span>(-) Gastos de Operación (OPEX)</span>
+            <strong class="red" id="pnl-opex">-$32,250 MXN</strong>
+          </div>
+          <div class="pnl-divider"></div>
+          <div class="pnl-row bold highlight">
+            <span>(=) Utilidad Neta Operativa (EBITDA)</span>
+            <strong class="blue" id="pnl-ebitda">$63,500 MXN (37.8%)</strong>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-dd-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: DRILL-DOWN EFECTIVO EN CAJÓN -->
+  <div id="modal-dd-drawer" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:cash-check" width="22" height="22" color="#30b0c7" /> Auditoría de Efectivo Físico en Cajón
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Movimientos del turno activo en mostrador</p>
+        </div>
+        <button class="btn-icon close-dd-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="dd-summary-box">
+          <span class="dd-sum-label">Efectivo Físico Actual en Cajón</span>
+          <span class="dd-sum-val green" id="dd-drawer-total">$3,270 MXN</span>
+          <span class="dd-sum-sub">Fondo $2,000 + $1,270 cobros en efectivo hoy</span>
+        </div>
+
+        <div class="dd-bar-breakdown">
+          <div class="dd-bar-row">
+            <span>Fondo Fijo de Apertura (Cambio)</span>
+            <strong>$2,000.00 MXN</strong>
+          </div>
+          <div class="dd-bar-row">
+            <span>(+) Cobros en Efectivo Mostrador</span>
+            <strong class="green">+$1,270.00 MXN</strong>
+          </div>
+          <div class="dd-bar-row">
+            <span>(-) Pagos Caja Chica Autorizados</span>
+            <strong class="red">-$0.00 MXN</strong>
+          </div>
+          <div class="dd-bar-row">
+            <span>(-) Retiro a Caja Fuerte Blindada ("Cash Drop")</span>
+            <strong class="blue">$0.00 MXN</strong>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-base); padding:1rem; border-radius:10px;">
+          <div>
+            <div style="font-weight:700; font-size:0.9rem;">¿Deseas realizar el arqueo formal?</div>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">Abre la calculadora con conteo de billetes y monedas.</div>
+          </div>
+          <button class="btn-primary" id="btn-goto-cierre-z" style="font-size:0.82rem; padding:0.45rem 1rem;">
+            Abrir Cierre Z
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-dd-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: DRILL-DOWN CUENTAS POR COBRAR -->
+  <div id="modal-dd-receivable" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:680px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:account-clock-outline" width="22" height="22" color="var(--accent-orange)" /> Cartera de Clientes &amp; Cuentas por Cobrar
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Saldos de taller listos para liquidación y apartados activos</p>
+        </div>
+        <button class="btn-icon close-dd-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="dd-summary-box">
+          <span class="dd-sum-label">Total Cartera Pendiente de Cobro</span>
+          <span class="dd-sum-val orange" id="dd-receivable-total">$11,150 MXN</span>
+          <span class="dd-sum-sub">3 clientes con saldo por liquidar al recoger</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div class="debt-card-item">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Rodrigo Palacios</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">Basso Palta 2 Carbon · Saldo de entrega este sábado</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.15rem; font-weight:800; color:var(--accent-orange);">$3,500 MXN</div>
+              <a href="https://wa.me/529841203344?text=Hola%20Rodrigo,%20te%20escribimos%20de%20The%20Garage%20para%20recordarte%20que%20tu%20Basso%20Palta%202%20está%20lista%20con%20saldo%20restante%20de%20$3,500%20MXN" target="_blank" class="btn-tiny-wa">Recordar por WhatsApp ↗</a>
+            </div>
+          </div>
+
+          <div class="debt-card-item">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Sofía Mendizábal</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">Layaway Merida Scultura 300 · Anticipo $6,000 pagado</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.15rem; font-weight:800; color:var(--accent-orange);">$6,500 MXN</div>
+              <a href="https://wa.me/529848899001?text=Hola%20Sofía,%20te%20recordamos%20que%20tu%20sistema%20de%20apartado%20de%20Merida%20Scultura%20tiene%20un%20saldo%20restante%20de%20$6,500%20MXN%20con%20vencimiento%20el%2015%20de%20Noviembre" target="_blank" class="btn-tiny-wa">Recordar por WhatsApp ↗</a>
+            </div>
+          </div>
+
+          <div class="debt-card-item">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Carlos Ruiz</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">Trek Marlin 5 · Servicio Taller terminado</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.15rem; font-weight:800; color:var(--accent-orange);">$1,150 MXN</div>
+              <a href="https://wa.me/529841112233?text=Hola%20Carlos,%20tu%20Trek%20Marlin%205%20ya%20quedó%20lista%20en%20The%20Garage.%20Saldo%20a%20liquidar%20al%20recoger:%20$1,150%20MXN" target="_blank" class="btn-tiny-wa">Recordar por WhatsApp ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-dd-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: DRILL-DOWN DEPÓSITOS EN GARANTÍA (ESCROW) -->
+  <div id="modal-dd-escrow" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:640px;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+            <Icon name="mdi:shield-lock-outline" width="22" height="22" color="#af52de" /> Depósitos en Custodia (Escrow de Rentas)
+          </h2>
+          <p class="text-muted" style="font-size:0.8rem; margin:0;">Garantías financieras retenidas temporalmente</p>
+        </div>
+        <button class="btn-icon close-dd-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="dd-summary-box">
+          <span class="dd-sum-label">Fondos Retenidos en Custodia Temporal</span>
+          <span class="dd-sum-val purple" id="dd-escrow-total">$4,000 MXN</span>
+          <span class="dd-sum-sub">No reconocibles como ingreso hasta la entrega conforme</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div class="debt-card-item" style="border-left-color:#af52de;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Sarah Jenkins (Folio REN-8102)</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">Basso Palta Gravel · Hotel Fairmont Mayakoba · Retorno previsto: Mañana</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.15rem; font-weight:800; color:#af52de;">$3,000 MXN</div>
+              <span style="font-size:0.72rem; color:var(--text-secondary);">En Retención (Tarjeta)</span>
+            </div>
+          </div>
+
+          <div class="debt-card-item" style="border-left-color:#af52de;">
+            <div>
+              <div style="font-weight:700; font-size:0.95rem;">Alexander Klein (Folio REN-8104)</div>
+              <div style="font-size:0.78rem; color:var(--text-secondary);">Trek Marlin 5 MTB · Hotel HM Playa del Carmen · Retorno previsto: 2 días</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.15rem; font-weight:800; color:#af52de;">$1,000 MXN</div>
+              <span style="font-size:0.72rem; color:var(--text-secondary);">En Retención (Efectivo)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary close-dd-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: APERTURAR NUEVO MES FISCAL -->
+  <div id="modal-new-month" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h2 style="font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:0.5rem;">
+          <Icon name="mdi:calendar-plus" width="20" height="20" color="var(--accent-blue)" /> Aperturar Nuevo Mes Fiscal
+        </h2>
+        <button class="btn-icon" id="close-new-month-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">
+          Apertura formal de periodo contable para The Garage. Los saldos de caja ($2,000 MXN) y las cuentas por cobrar pendientes se arrastrarán automáticamente.
+        </p>
+
+        <div class="form-group">
+          <label>Selecciona el Mes y Año</label>
+          <input type="month" id="new-month-input" value="2026-10" style="padding:0.65rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-primary); font-size:0.95rem;" />
+        </div>
+
+        <div style="background:var(--bg-base); padding:0.85rem; border-radius:8px; font-size:0.8rem; color:var(--text-secondary);">
+          • Fondo de apertura fijado en <strong>$2,000 MXN</strong> para mostrador.<br/>
+          • Cartera de clientes no liquidada traspasada a saldos iniciales.<br/>
+          • Folios contables reinicializados para el nuevo periodo.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancel-new-month-btn">Cancelar</button>
+        <button class="btn-primary" id="confirm-new-month-btn">Confirmar Apertura de Mes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL TRANSACCIÓN MANUAL -->
+  <div id="tx-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h2 id="tx-modal-title">Nueva Transacción</h2>
+        <button class="btn-icon" id="tx-modal-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Descripción</label>
+          <input type="text" id="tx-desc" placeholder="Ej: Venta Trek Marlin 5 o Servicio Suspensión" />
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Monto (MXN)</label>
+          <input type="number" id="tx-amount" placeholder="0.00" min="0" />
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Método de Pago</label>
+          <select id="tx-method">
+            <option value="Efectivo">Efectivo en Caja (Cajón)</option>
+            <option value="Tarjeta">Tarjeta Bancaria / Terminal</option>
+            <option value="MercadoPago">MercadoPago QR</option>
+            <option value="SPEI">Transferencia SPEI / Banco</option>
+          </select>
+        </div>
+        <div class="form-group" id="tx-cat-group" style="margin-bottom:1rem;">
+          <label>Categoría</label>
+          <select id="tx-cat">
+            <option>Venta de Bicicleta</option>
+            <option>Venta de Accesorio</option>
+            <option>Servicio de Taller (Mano de Obra)</option>
+            <option>Refacciones Taller</option>
+            <option>Renta de Bicicletas</option>
+            <option>Apartado / Anticipo</option>
+            <option>Renta Local</option>
+            <option>Luz / CFE</option>
+            <option>Agua</option>
+            <option>Internet / WiFi</option>
+            <option>Salarios</option>
+            <option>Compra a Proveedor</option>
+            <option>Otros Gastos</option>
+          </select>
+        </div>
+        <div class="form-group" id="tx-party-group" style="display:none; margin-bottom:1rem;">
+          <label id="tx-party-label">Cliente / Proveedor</label>
+          <input type="text" id="tx-party" placeholder="Nombre de la persona o empresa" />
+        </div>
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" id="tx-date" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="tx-modal-cancel">Cancelar</button>
+        <button class="btn-primary" id="tx-modal-save">Guardar Transacción</button>
+      </div>
+    </div>
+  </div>
+
+</PanelLayout>
+
+<style is:global>
+  .badge-pro {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(0, 113, 227, 0.12);
+    color: var(--accent-blue);
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+  }
+
+  /* Calendar Bar */
+  .calendar-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+  .month-nav-controls {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 100px;
+    padding: 2px;
+  }
+  .btn-cal-nav {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  .btn-cal-nav:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface-hover);
+  }
+  .select-month-control {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.35rem 0.75rem;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* KPI Cards Clickable */
+  .kpi-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .kpi-card {
+    flex: 1;
+    min-width: 170px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .kpi-card.clickable {
+    cursor: pointer;
+  }
+  .kpi-card.clickable:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-float);
+    border-color: rgba(0,113,227,0.4);
+  }
+  .kpi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .drill-hint {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .kpi-card.clickable:hover .drill-hint {
+    opacity: 1;
+    color: var(--accent-blue);
+  }
+
+  .kpi-card.green { border-top: 3px solid var(--accent-green); }
+  .kpi-card.red   { border-top: 3px solid var(--accent-red); }
+  .kpi-card.blue  { border-top: 3px solid var(--accent-blue); }
+  .kpi-card.teal  { border-top: 3px solid #30b0c7; }
+  .kpi-card.orange{ border-top: 3px solid var(--accent-orange); }
+  .kpi-card.purple{ border-top: 3px solid #af52de; }
+  .kpi-card.green svg { color: var(--accent-green); }
+  .kpi-card.red   svg { color: var(--accent-red); }
+  .kpi-card.blue  svg { color: var(--accent-blue); }
+  .kpi-card.teal  svg { color: #30b0c7; }
+  .kpi-card.orange svg { color: var(--accent-orange); }
+  .kpi-card.purple svg { color: #af52de; }
+  .kpi-body { display: flex; flex-direction: column; gap: 0.15rem; }
+  .kpi-label { font-size: 0.76rem; color: var(--text-secondary); font-weight: 500; }
+  .kpi-value { font-size: 1.3rem; font-weight: 700; }
+  .kpi-sub { font-size: 0.72rem; color: var(--text-secondary); }
+
+  /* Navigation Tabs inside Contabilidad */
+  .accounting-view-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .view-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.15rem;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .view-tab:hover {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+  }
+  .view-tab.active {
+    background: var(--accent-blue);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 113, 227, 0.3);
+  }
+
+  /* Accounting Grid */
+  .accounting-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    min-height: 520px;
+  }
+  @media (max-width: 1000px) {
+    .accounting-grid { grid-template-columns: 1fr; min-height: auto; }
+  }
+
+  .ledger-col { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+  .col-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .col-header h3 { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .dot.green { background: var(--accent-green); }
+  .dot.red   { background: var(--accent-red); }
+  .dot.orange{ background: var(--accent-orange); }
+
+  .btn-add-row {
+    font-size: 0.8rem; font-weight: 600; color: var(--accent-blue);
+    background: rgba(0,113,227,0.08); border: none; padding: 0.35rem 0.85rem;
+    border-radius: 100px; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-add-row:hover { background: rgba(0,113,227,0.16); }
+
+  .ledger-list {
+    flex: 1; overflow-y: auto; padding: 0.75rem 1rem;
+    display: flex; flex-direction: column; gap: 0.5rem;
+    max-height: 600px;
+  }
+
+  .ledger-item {
+    background: var(--bg-base);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 0.5rem;
+    border-left: 3px solid transparent;
+  }
+  .ledger-item.income { border-left-color: var(--accent-green); }
+  .ledger-item.expense { border-left-color: var(--accent-red); }
+  .ledger-item.cobrar { border-left-color: var(--accent-orange); }
+  .ledger-item.pagar  { border-left-color: #af52de; }
+
+  .item-meta { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
+  .item-desc { font-weight: 600; font-size: 0.88rem; }
+  .item-cat  { font-size: 0.74rem; color: var(--text-secondary); }
+  .item-party{ font-size: 0.78rem; color: var(--accent-blue); }
+  .item-date { font-size: 0.72rem; color: var(--text-secondary); }
+
+  .item-amount { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
+  .item-amount.income  { color: var(--accent-green); }
+  .item-amount.expense { color: var(--accent-red); }
+  .item-amount.cobrar  { color: var(--accent-orange); }
+  .item-amount.pagar   { color: #af52de; }
+
+  .item-actions { display: flex; gap: 0.25rem; }
+  .btn-tiny { background: none; border: none; cursor: pointer; padding: 2px; opacity: 0.5; font-size:0.85rem; }
+  .btn-tiny:hover { opacity: 1; }
+
+  /* Debt Tabs */
+  .debt-tabs {
+    display: flex; gap: 0.5rem; padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .debt-tab {
+    padding: 0.35rem 1rem; border-radius: 100px; border: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; background: var(--bg-base);
+    color: var(--text-secondary); transition: all 0.2s;
+  }
+  .debt-tab.active { background: var(--accent-blue); color: white; }
+
+  /* Cierre Z Styles */
+  .cierre-z-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 1000px) {
+    .cierre-z-grid { grid-template-columns: 1fr; }
+  }
+
+  .denom-box {
+    background: var(--bg-base);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    border: 1px solid var(--border-subtle);
+  }
+  .denom-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .denom-table { display: flex; flex-direction: column; gap: 0.65rem; }
+  .denom-row { display: flex; align-items: center; gap: 0.75rem; }
+  .denom-tag { width: 60px; font-size: 0.85rem; font-weight: 700; }
+  .denom-input {
+    width: 70px; padding: 0.4rem 0.5rem; border-radius: 6px;
+    border: 1px solid var(--border-subtle); background: var(--bg-surface);
+    color: var(--text-primary); text-align: center; font-weight: 600;
+  }
+  .denom-subtotal { flex: 1; text-align: right; font-weight: 700; font-size: 0.9rem; color: var(--text-secondary); }
+
+  .audit-summary-card {
+    background: var(--bg-base);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column;
+  }
+  .audit-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.6rem; }
+  .audit-row.highlight { font-size: 0.95rem; font-weight: 600; }
+  .audit-row .bold { font-size: 1.15rem; color: var(--accent-blue); }
+  .audit-row .green { color: var(--accent-green); }
+  .audit-row .red { color: var(--accent-red); }
+  .audit-divider { height: 1px; background: var(--border-subtle); margin: 0.75rem 0; }
+
+  .variance-banner {
+    margin-top: 1rem; padding: 1rem; border-radius: 12px; text-align: center;
+  }
+  .variance-banner.balanced {
+    background: rgba(52, 199, 89, 0.12); border: 1px solid rgba(52, 199, 89, 0.3); color: var(--accent-green);
+  }
+  .variance-banner.surplus {
+    background: rgba(0, 113, 227, 0.12); border: 1px solid rgba(0, 113, 227, 0.3); color: var(--accent-blue);
+  }
+  .variance-banner.deficit {
+    background: rgba(255, 59, 48, 0.12); border: 1px solid rgba(255, 59, 48, 0.3); color: var(--accent-red);
+  }
+  .var-title { font-weight: 700; font-size: 0.95rem; }
+  .var-amount { font-size: 1.35rem; font-weight: 800; margin-top: 0.25rem; }
+
+  /* Margins Grid */
+  .margins-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;
+  }
+  .margin-card {
+    background: var(--bg-base); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg); padding: 1.25rem;
+    display: flex; flex-direction: column; gap: 0.75rem;
+  }
+  .margin-card.highlight-green {
+    border-color: rgba(52, 199, 89, 0.3);
+    background: linear-gradient(180deg, rgba(52,199,89,0.04) 0%, var(--bg-base) 100%);
+  }
+  .margin-card.highlight-purple {
+    border-color: rgba(175, 82, 222, 0.3);
+    background: linear-gradient(180deg, rgba(175,82,222,0.04) 0%, var(--bg-base) 100%);
+  }
+  .m-head { display: flex; align-items: center; gap: 0.75rem; }
+  .m-icon {
+    width: 36px; height: 36px; border-radius: 10px; background: var(--bg-surface);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .m-title { font-size: 0.95rem; font-weight: 700; }
+  .m-sub { font-size: 0.75rem; color: var(--text-secondary); }
+  .m-metric { display: flex; justify-content: space-between; align-items: baseline; }
+  .m-val { font-size: 1.4rem; font-weight: 800; }
+  .m-badge { font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 100px; }
+  .m-badge.green  { background: rgba(52,199,89,0.15); color: var(--accent-green); }
+  .m-badge.orange { background: rgba(255,149,0,0.15); color: var(--accent-orange); }
+  .m-badge.blue   { background: rgba(0,113,227,0.15); color: var(--accent-blue); }
+  .m-badge.purple { background: rgba(175,82,222,0.15); color: #af52de; }
+  .m-desc { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; }
+
+  /* Escrow & Workshop Debts */
+  .escrow-row {
+    background: var(--bg-surface); border-radius: 10px; padding: 0.85rem 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .escrow-title { font-weight: 700; font-size: 0.88rem; }
+  .escrow-meta { font-size: 0.75rem; color: var(--text-secondary); }
+  .escrow-amount { font-weight: 800; font-size: 0.95rem; }
+
+  /* Drill-Down Modals Specific Styles */
+  .dd-summary-box {
+    background: var(--bg-base); padding: 1.25rem; border-radius: 12px;
+    border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 0.25rem;
+  }
+  .dd-sum-label { font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; }
+  .dd-sum-val { font-size: 1.8rem; font-weight: 800; }
+  .dd-sum-val.green  { color: var(--accent-green); }
+  .dd-sum-val.red    { color: var(--accent-red); }
+  .dd-sum-val.blue   { color: var(--accent-blue); }
+  .dd-sum-val.orange { color: var(--accent-orange); }
+  .dd-sum-val.purple { color: #af52de; }
+  .dd-sum-sub { font-size: 0.75rem; color: var(--text-secondary); }
+  .dd-subheading { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.65rem; }
+  .dd-bar-breakdown { display: flex; flex-direction: column; gap: 0.5rem; background: var(--bg-base); padding: 1rem; border-radius: 10px; }
+  .dd-bar-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.35rem 0; border-bottom: 1px solid var(--border-subtle); }
+  .dd-bar-row:last-child { border-bottom: none; }
+  .dd-pill-stat {
+    background: var(--bg-base); padding: 0.85rem 1rem; border-radius: 8px;
+    display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.82rem;
+  }
+  .dd-pill-stat strong { font-size: 1.05rem; }
+  .debt-card-item {
+    background: var(--bg-base); border-radius: 10px; padding: 1rem 1.15rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-left: 3px solid var(--accent-orange);
+  }
+  .btn-tiny-wa {
+    font-size: 0.75rem; font-weight: 700; color: var(--accent-green); text-decoration: none; display: inline-block; margin-top: 0.25rem;
+  }
+  .btn-tiny-wa:hover { text-decoration: underline; }
+
+  .pnl-table {
+    display: flex; flex-direction: column; gap: 0.5rem; background: var(--bg-base); padding: 1rem; border-radius: 10px;
+  }
+  .pnl-row { display: flex; justify-content: space-between; font-size: 0.88rem; }
+  .pnl-row.bold { font-weight: 700; font-size: 0.95rem; }
+  .pnl-row.highlight { background: rgba(0,113,227,0.1); padding: 0.5rem; border-radius: 6px; }
+  .pnl-divider { height: 1px; background: var(--border-subtle); margin: 0.35rem 0; }
+
+  /* Standard Modal Overlays */
+  .select-control {
+    padding: 0.6rem 1rem; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-surface);
+    color: var(--text-primary); font-size: 0.9rem; cursor: pointer; outline: none;
+  }
+  .btn-secondary {
+    background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle);
+    padding: 0.5rem 1.25rem; border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-box {
+    background: var(--bg-surface); border-radius: var(--radius-xl); width: 100%; box-shadow: 0 24px 70px rgba(0,0,0,0.4);
+    overflow: hidden; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-subtle);
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center; padding: 1.25rem 1.75rem; border-bottom: 1px solid var(--border-subtle);
+  }
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 1rem; padding: 1.25rem 1.75rem; border-top: 1px solid var(--border-subtle);
+  }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+  .form-group input, .form-group select {
+    padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
+    background: var(--bg-base); color: var(--text-primary); font-size: 0.95rem; outline: none;
+  }
+</style>
+
+<script is:inline>
+(function() {
+  const STORE_PREFIX = 'bicisaas_ledger_';
+  const Z_KEY = 'bicisaas_cierre_z';
+  let currentMonth = '2026-09';
+
+  // Seed data generator for any fiscal month
+  function getMonthlySeed(monthKey) {
+    const isHighSeason = monthKey.endsWith('-11') || monthKey.endsWith('-12') || monthKey.endsWith('-01') || monthKey.endsWith('-02') || monthKey.endsWith('-03') || monthKey.endsWith('-04');
+    const factor = isHighSeason ? 1.4 : 0.85;
+
+    return {
+      income: [
+        { id: 101, desc: 'Venta Basso Palta 2 Carbon (Anticipo VIP)', cat: 'Venta de Bicicleta', amount: Math.round(81500 * factor), date: monthKey + '-05', method: 'SPEI' },
+        { id: 102, desc: 'Venta Specialized Allez Sport (Mostrador)', cat: 'Venta de Bicicleta', amount: 32000, date: monthKey + '-08', method: 'Tarjeta' },
+        { id: 103, desc: 'Venta Giant Talon 2 + Accesorios', cat: 'Venta de Bicicleta', amount: 14350, date: monthKey + '-12', method: 'Tarjeta' },
+        { id: 104, desc: 'Mantenimiento Full Taller: Fox Float + Purga Shimano', cat: 'Servicio de Taller (Mano de Obra)', amount: 3450, date: monthKey + '-15', method: 'Tarjeta' },
+        { id: 105, desc: 'Venta Casco POC Axion Race MIPS + Guantes Fox', cat: 'Venta de Accesorio', amount: 5650, date: monthKey + '-18', method: 'Tarjeta' },
+        { id: 106, desc: 'Computadora Garmin Edge 530 Bundle', cat: 'Venta de Accesorio', amount: 9700, date: monthKey + '-20', method: 'Tarjeta' },
+        { id: 107, desc: 'Anticipo Layaway Merida Scultura 300 (Sofía M.)', cat: 'Apartado / Anticipo', amount: 6000, date: monthKey + '-22', method: 'Efectivo' },
+        { id: 108, desc: 'Servicio Express Cadena KMC X12 y Ajuste', cat: 'Servicio de Taller (Mano de Obra)', amount: 1250, date: monthKey + '-25', method: 'Efectivo' },
+        { id: 109, desc: '2x Cubiertas Maxxis Ardent 29" + Sellador Tubeless', cat: 'Refacciones Taller', amount: 2750, date: monthKey + '-26', method: 'Tarjeta' },
+        { id: 110, desc: 'Renta 3 días Trek Marlin 5 MTB (Alexander Klein)', cat: 'Renta de Bicicletas', amount: Math.round(1100 * factor), date: monthKey + '-28', method: 'Tarjeta' }
+      ],
+      expenses: [
+        { id: 201, desc: 'Renta Local Comercial Av. 10 Playa del Carmen', cat: 'Renta Local', amount: 22000, date: monthKey + '-01' },
+        { id: 202, desc: 'CFE Bimestre (A/A Taller y Exhibición)', cat: 'Luz / CFE', amount: 3850, date: monthKey + '-04' },
+        { id: 203, desc: 'Internet Fibra Óptica 500Mbps Simétrico', cat: 'Internet / WiFi', amount: 850, date: monthKey + '-03' },
+        { id: 204, desc: 'Insumos Taller (Desengrasante Muc-Off, Grasa)', cat: 'Otros Gastos', amount: 1850, date: monthKey + '-08' },
+        { id: 205, desc: 'Suscripción BiciSaaS Enterprise Cloud', cat: 'Otros Gastos', amount: 1200, date: monthKey + '-01' },
+        { id: 206, desc: 'Campaña Meta Ads Ciclismo Riviera Maya', cat: 'Otros Gastos', amount: 2500, date: monthKey + '-10' }
+      ],
+      cobrar: [
+        { id: 301, desc: 'Saldo entrega Basso Palta 2 Carbon', party: 'Rodrigo Palacios', amount: 3500, date: monthKey + '-30' },
+        { id: 302, desc: 'Liquidación Layaway Merida Scultura 300', party: 'Sofía Mendizábal', amount: 6500, date: monthKey + '-30' },
+        { id: 303, desc: 'Saldo Taller Mantenimiento doble suspensión', party: 'Carlos Ruiz', amount: 1150, date: monthKey + '-30' }
+      ],
+      pagar: [
+        { id: 401, desc: 'Factura Distribuidor Shimano México', party: 'Shimano Distribución MX', amount: 18400, date: monthKey + '-20' },
+        { id: 402, desc: 'Factura Llantas Maxxis & Selladores', party: 'Ruedas del Mayab S.A.', amount: 7800, date: monthKey + '-22' },
+        { id: 403, desc: 'Guía DHL Express Refacciones de Italia', party: 'DHL Express México', amount: 1350, date: monthKey + '-15' }
+      ]
+    };
+  }
+
+  function getStorageKey(month) {
+    return STORE_PREFIX + month.replace('-', '_');
+  }
+
+  function loadMonthData(month) {
+    const key = getStorageKey(month);
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      try { return JSON.parse(raw); } catch(e) {}
+    }
+    // Backward compatibility with generic bicisaas_ledger
+    if (month === '2026-09') {
+      const generic = localStorage.getItem('bicisaas_ledger');
+      if (generic) {
+        try {
+          const parsed = JSON.parse(generic);
+          localStorage.setItem(key, JSON.stringify(parsed));
+          return parsed;
+        } catch(e) {}
+      }
+    }
+    const generated = getMonthlySeed(month);
+    localStorage.setItem(key, JSON.stringify(generated));
+    return generated;
+  }
+
+  function saveMonthData(month, data) {
+    localStorage.setItem(getStorageKey(month), JSON.stringify(data));
+    if (month === '2026-09') localStorage.setItem('bicisaas_ledger', JSON.stringify(data));
+  }
+
+  function fmt(n) {
+    return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 });
+  }
+
+  // Month navigation
+  const monthSelect = document.getElementById('month-select');
+  monthSelect?.addEventListener('change', (e) => {
+    currentMonth = e.target.value;
+    updateAllViews();
+  });
+
+  document.getElementById('btn-prev-month')?.addEventListener('click', () => {
+    const idx = monthSelect.selectedIndex;
+    if (idx > 0) {
+      monthSelect.selectedIndex = idx - 1;
+      currentMonth = monthSelect.value;
+      updateAllViews();
+    }
+  });
+
+  document.getElementById('btn-next-month')?.addEventListener('click', () => {
+    const idx = monthSelect.selectedIndex;
+    if (idx < monthSelect.options.length - 1) {
+      monthSelect.selectedIndex = idx + 1;
+      currentMonth = monthSelect.value;
+      updateAllViews();
+    }
+  });
+
+  // Modal Aperturar Nuevo Mes
+  const modalNewMonth = document.getElementById('modal-new-month');
+  document.getElementById('btn-open-new-month')?.addEventListener('click', () => {
+    modalNewMonth.style.display = 'flex';
+  });
+  document.getElementById('close-new-month-modal')?.addEventListener('click', () => {
+    modalNewMonth.style.display = 'none';
+  });
+  document.getElementById('cancel-new-month-btn')?.addEventListener('click', () => {
+    modalNewMonth.style.display = 'none';
+  });
+
+  document.getElementById('confirm-new-month-btn')?.addEventListener('click', () => {
+    const selectedNewMonth = document.getElementById('new-month-input').value;
+    if (!selectedNewMonth) return;
+
+    // Check if option exists in select
+    let opt = Array.from(monthSelect.options).find(o => o.value === selectedNewMonth);
+    if (!opt) {
+      const [year, monthNum] = selectedNewMonth.split('-');
+      const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      const monthName = monthNames[parseInt(monthNum, 10) - 1] || 'Mes ' + monthNum;
+      opt = document.createElement('option');
+      opt.value = selectedNewMonth;
+      opt.textContent = monthName + ' ' + year + ' (Aperturado)';
+      monthSelect.appendChild(opt);
+    }
+
+    monthSelect.value = selectedNewMonth;
+    currentMonth = selectedNewMonth;
+
+    // Initialize clean month data with opening float
+    const freshData = getMonthlySeed(selectedNewMonth);
+    saveMonthData(selectedNewMonth, freshData);
+
+    modalNewMonth.style.display = 'none';
+    alert('Mes Fiscal ' + selectedNewMonth + ' aperturado con éxito.\n\n• Fondo de Caja inicial: $2,000 MXN\n• Cuentas por cobrar traspasadas\n• Periodo contable activado para registro de transacciones.');
+    updateAllViews();
+  });
+
+  // Tab switching
+  const viewTabs = document.querySelectorAll('.view-tab');
+  viewTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      viewTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const view = tab.getAttribute('data-view');
+      ['diario', 'cierre-z', 'margenes', 'cuentas'].forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.style.display = (v === view) ? (v === 'diario' ? 'grid' : 'block') : 'none';
+      });
+      if (view === 'cierre-z') calculateDenominations();
+    });
+  });
+
+  document.getElementById('btn-open-cierre-z')?.addEventListener('click', () => {
+    document.querySelector('.view-tab[data-view="cierre-z"]')?.click();
+  });
+  document.getElementById('btn-goto-cierre-z')?.addEventListener('click', () => {
+    document.getElementById('modal-dd-drawer').style.display = 'none';
+    document.querySelector('.view-tab[data-view="cierre-z"]')?.click();
+  });
+
+  // KPI Calculations & DOM Updates
+  function updateKPIs(data) {
+    const income = data.income.reduce((s, x) => s + x.amount, 0);
+    const expenses = data.expenses.reduce((s, x) => s + x.amount, 0);
+    const receivable = data.cobrar.reduce((s, x) => s + x.amount, 0);
+    const net = income - expenses;
+    const marginPct = income > 0 ? Math.round((net / income) * 100) : 0;
+
+    document.getElementById('kpi-income').textContent = fmt(income);
+    document.getElementById('kpi-expenses').textContent = fmt(expenses);
+    document.getElementById('kpi-balance').textContent = fmt(net);
+    document.getElementById('kpi-margin-pct').textContent = marginPct + '% Rentabilidad Neta';
+    document.getElementById('kpi-receivable').textContent = fmt(receivable);
+
+    const cashIncome = data.income
+      .filter(x => x.method === 'Efectivo')
+      .reduce((s, x) => s + x.amount, 0);
+    const totalCashInDrawer = 2000 + cashIncome;
+    document.getElementById('kpi-cash-drawer').textContent = fmt(totalCashInDrawer);
+    document.getElementById('audit-cash-sales').textContent = '+' + fmt(cashIncome);
+    document.getElementById('audit-expected').textContent = fmt(totalCashInDrawer);
+
+    document.getElementById('kpi-escrow').textContent = '$4,000';
+
+    const balEl = document.getElementById('kpi-balance');
+    balEl.style.color = net >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+
+    // Update Drill-Down Modals DOM
+    document.getElementById('dd-income-total').textContent = fmt(income) + ' MXN';
+    document.getElementById('dd-expenses-total').textContent = fmt(expenses) + ' MXN';
+    document.getElementById('dd-margin-total').textContent = fmt(net) + ' MXN';
+    document.getElementById('dd-margin-pct').textContent = 'Rentabilidad Neta: ' + marginPct + '%';
+    document.getElementById('dd-drawer-total').textContent = fmt(totalCashInDrawer) + ' MXN';
+    document.getElementById('dd-receivable-total').textContent = fmt(receivable) + ' MXN';
+
+    const monthLabel = monthSelect.options[monthSelect.selectedIndex]?.text || currentMonth;
+    document.getElementById('dd-income-period').textContent = 'Periodo: ' + monthLabel;
+    document.getElementById('dd-expenses-period').textContent = 'Periodo: ' + monthLabel;
+    document.getElementById('dd-margin-period').textContent = 'Periodo: ' + monthLabel;
+    document.getElementById('live-fiscal-badge').textContent = 'Periodo: ' + monthLabel + ' · PDC';
+
+    // P&L Table in Margin Drill-down
+    const cogs = Math.round(income * 0.43);
+    const grossProfit = income - cogs;
+    const ebitda = grossProfit - expenses;
+    document.getElementById('pnl-gross-income').textContent = fmt(income) + ' MXN';
+    document.getElementById('pnl-cogs').textContent = '-' + fmt(cogs) + ' MXN';
+    document.getElementById('pnl-gross-profit').textContent = fmt(grossProfit) + ' MXN (' + Math.round((grossProfit/income)*100) + '%)';
+    document.getElementById('pnl-opex').textContent = '-' + fmt(expenses) + ' MXN';
+    document.getElementById('pnl-ebitda').textContent = fmt(ebitda) + ' MXN (' + Math.round((ebitda/income)*100) + '%)';
+
+    // SAT Taxes update
+    const ivaTrasladado = Math.round(income * 0.16);
+    const ivaAcreditable = Math.round(expenses * 0.16);
+    const ivaBalance = ivaTrasladado - ivaAcreditable;
+    document.getElementById('sat-iva-trasladado').textContent = fmt(ivaTrasladado) + ' MXN';
+    document.getElementById('sat-iva-acreditable').textContent = '-' + fmt(ivaAcreditable) + ' MXN';
+    document.getElementById('sat-iva-balance').textContent = fmt(ivaBalance) + ' MXN';
+  }
+
+  
+  // Global modal opener helpers
+  window.openDrilldown = function(modalId) {
+    const m = document.getElementById(modalId);
+    if (m) m.style.display = 'flex';
+  };
+  window.openNewMonthModal = function() {
+    const m = document.getElementById('modal-new-month');
+    if (m) m.style.display = 'flex';
+  };
+
+  // Close modals on overlay backdrop click or Escape key
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.style.display = 'none';
+    });
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+  });
+
+  // Bind 6 KPI Drill-Down Modals
+  const drillMap = [
+    { cardId: 'kpi-card-income', modalId: 'modal-dd-income' },
+    { cardId: 'kpi-card-expenses', modalId: 'modal-dd-expenses' },
+    { cardId: 'kpi-card-margin', modalId: 'modal-dd-margin' },
+    { cardId: 'kpi-card-drawer', modalId: 'modal-dd-drawer' },
+    { cardId: 'kpi-card-receivable', modalId: 'modal-dd-receivable' },
+    { cardId: 'kpi-card-escrow', modalId: 'modal-dd-escrow' },
+  ];
+
+  drillMap.forEach(item => {
+    const card = document.getElementById(item.cardId);
+    const modal = document.getElementById(item.modalId);
+    if (card && modal) {
+      card.addEventListener('click', () => {
+        modal.style.display = 'flex';
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          modal.style.display = 'flex';
+        }
+      });
+    }
+  });
+
+  document.querySelectorAll('.close-dd-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.modal-overlay').forEach(m => {
+        if (m.id.startsWith('modal-dd-')) m.style.display = 'none';
+      });
+    });
+  });
+
+  // Denominations Counter & Cierre Z logic
+  function calculateDenominations() {
+    let sumBills = 0;
+    let sumCoins = 0;
+
+    const bills = [
+      { id: 'bill-1000', val: 1000, subId: 'sub-1000' },
+      { id: 'bill-500',  val: 500,  subId: 'sub-500' },
+      { id: 'bill-200',  val: 200,  subId: 'sub-200' },
+      { id: 'bill-100',  val: 100,  subId: 'sub-100' },
+      { id: 'bill-50',   val: 50,   subId: 'sub-50' },
+      { id: 'bill-20',   val: 20,   subId: 'sub-20' },
+    ];
+
+    bills.forEach(b => {
+      const el = document.getElementById(b.id);
+      const qty = parseInt(el?.value || '0', 10) || 0;
+      const sub = qty * b.val;
+      sumBills += sub;
+      const subEl = document.getElementById(b.subId);
+      if (subEl) subEl.textContent = fmt(sub);
+    });
+
+    const coins = [
+      { id: 'coin-20', val: 20, subId: 'sub-c20' },
+      { id: 'coin-10', val: 10, subId: 'sub-10' },
+      { id: 'coin-5',  val: 5,  subId: 'sub-5' },
+      { id: 'coin-2',  val: 2,  subId: 'sub-2' },
+      { id: 'coin-1',  val: 1,  subId: 'sub-1' },
+    ];
+
+    coins.forEach(c => {
+      const el = document.getElementById(c.id);
+      const qty = parseInt(el?.value || '0', 10) || 0;
+      const sub = qty * c.val;
+      sumCoins += sub;
+      const subEl = document.getElementById(c.subId);
+      if (subEl) subEl.textContent = fmt(sub);
+    });
+
+    const totalCounted = sumBills + sumCoins;
+    document.getElementById('audit-counted').textContent = fmt(totalCounted);
+
+    const data = loadMonthData(currentMonth);
+    const cashIncome = data.income
+      .filter(x => x.method === 'Efectivo')
+      .reduce((s, x) => s + x.amount, 0);
+    const expected = 2000 + cashIncome;
+    const diff = totalCounted - expected;
+
+    const varBox = document.getElementById('variance-box');
+    const varTitle = document.getElementById('variance-title');
+    const varDiff = document.getElementById('variance-diff');
+
+    varBox.className = 'variance-banner';
+    if (diff === 0) {
+      varBox.classList.add('balanced');
+      varTitle.textContent = 'Caja Cuadrada Sin Diferencias';
+      varDiff.textContent = '$0.00 MXN (Exacto)';
+    } else if (diff > 0) {
+      varBox.classList.add('surplus');
+      varTitle.textContent = '▲ Sobrante en Caja Registrado';
+      varDiff.textContent = '+' + fmt(diff) + ' MXN';
+    } else {
+      varBox.classList.add('deficit');
+      varTitle.textContent = '▼ Faltante en Caja Detectado';
+      varDiff.textContent = '-' + fmt(Math.abs(diff)) + ' MXN';
+    }
+  }
+
+  document.querySelectorAll('.denom-input').forEach(inp => {
+    inp.addEventListener('input', calculateDenominations);
+  });
+
+  // Save Cierre Z
+  document.getElementById('btn-save-cierre-z')?.addEventListener('click', () => {
+    const counted = document.getElementById('audit-counted').textContent;
+    const diff = document.getElementById('variance-diff').textContent;
+    const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+    const cashierName = session.userName || 'Diego Lecourtois';
+
+    const record = {
+      month: currentMonth,
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toLocaleTimeString(),
+      cashier: cashierName,
+      countedTotal: counted,
+      diff: diff,
+      fixedFloatRetained: '$2,000 MXN'
+    };
+    localStorage.setItem(Z_KEY, JSON.stringify(record));
+    alert('Corte Z Oficial Registrado Exitosamente\n\n• Periodo: ' + currentMonth + '\n• Cajero Responsable: ' + cashierName + '\n• Efectivo Contado: ' + counted + '\n• Descuadre: ' + diff + '\n• Retiro a Caja de Seguridad: Realizado\n• Fondo Permanente en Cajón: $2,000 MXN');
+  });
+
+  // Render Ledger List
+  function renderList(containerId, items, type) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = '';
+    if (items.length === 0) {
+      el.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem; text-align:center; padding:1.5rem;">Sin transacciones en este mes</p>';
+      return;
+    }
+    items.forEach(item => {
+      el.innerHTML += `
+        <div class="ledger-item ${type}">
+          <div class="item-meta">
+            <span class="item-desc">${item.desc}</span>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <span class="item-cat">${item.cat || ''}</span>
+              ${item.method ? `<span style="font-size:0.7rem; background:rgba(0,113,227,0.1); color:var(--accent-blue); padding:0.1rem 0.4rem; border-radius:4px;">${item.method}</span>` : ''}
+            </div>
+            ${item.party ? `<span class="item-party">${item.party}</span>` : ''}
+            <span class="item-date">${item.date}</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
+            <span class="item-amount ${type}">${fmt(item.amount)}</span>
+            <button class="btn-tiny" onclick="deleteEntry('${type}', ${item.id})" title="Eliminar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // Render Cuentas por Cobrar Taller & Escrow Tab
+  function renderCuentasTab() {
+    const debtList = document.getElementById('workshop-debt-list');
+    if (debtList) {
+      debtList.innerHTML = `
+        <div class="escrow-row">
+          <div>
+            <div class="escrow-title">Trek Marlin 5 (SRV-2026-092)</div>
+            <div class="escrow-meta">Cliente: Carlos Ruiz · Listo para entrega</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="escrow-amount" style="color:var(--accent-orange);">$650 MXN</div>
+            <span style="font-size:0.7rem; color:var(--accent-green);">Anticipo: $200 Pagado</span>
+          </div>
+        </div>
+        <div class="escrow-row">
+          <div>
+            <div class="escrow-title">Basso Palta 2 Carbon (Venta + Calas)</div>
+            <div class="escrow-meta">Cliente: Rodrigo Palacios · Entrega este sábado</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="escrow-amount" style="color:var(--accent-orange);">$3,500 MXN</div>
+            <span style="font-size:0.7rem; color:var(--accent-green);">Anticipo: $81,500 Pagado</span>
+          </div>
+        </div>
+        <div class="escrow-row">
+          <div>
+            <div class="escrow-title">Merida Scultura 300 (Layaway Apartado)</div>
+            <div class="escrow-meta">Cliente: Sofía Mendizábal · Vence 15 Nov</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="escrow-amount" style="color:var(--accent-orange);">$6,500 MXN</div>
+            <span style="font-size:0.7rem; color:var(--accent-green);">Anticipo: $6,000 Pagado</span>
+          </div>
+        </div>
+      `;
+    }
+
+    const escrowList = document.getElementById('escrow-list');
+    if (escrowList) {
+      escrowList.innerHTML = `
+        <div class="escrow-row">
+          <div>
+            <div class="escrow-title">Basso Palta Gravel (Folio REN-8102)</div>
+            <div class="escrow-meta">Cliente: Sarah Jenkins · Hotel Fairmont Mayakoba</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="escrow-amount" style="color:#af52de;">$3,000 MXN</div>
+            <span style="font-size:0.7rem; color:var(--text-secondary);">En Retención Temporal</span>
+          </div>
+        </div>
+        <div class="escrow-row">
+          <div>
+            <div class="escrow-title">Trek Marlin 5 MTB (Folio REN-8104)</div>
+            <div class="escrow-meta">Cliente: Alexander Klein · Hotel HM Playa</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="escrow-amount" style="color:#af52de;">$1,000 MXN</div>
+            <span style="font-size:0.7rem; color:var(--text-secondary);">En Retención Temporal</span>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  let activeDebtTab = 'cobrar';
+
+  function updateAllViews() {
+    const data = loadMonthData(currentMonth);
+    renderList('income-list', data.income, 'income');
+    renderList('expense-list', data.expenses, 'expense');
+    renderList('debt-list', data[activeDebtTab], activeDebtTab);
+    updateKPIs(data);
+    calculateDenominations();
+    renderCuentasTab();
+  }
+
+  window.deleteEntry = function(type, id) {
+    if (!confirm('¿Eliminar este registro contable del mes activo?')) return;
+    const data = loadMonthData(currentMonth);
+    const key = type === 'income' ? 'income' : type === 'expense' ? 'expenses' : type;
+    data[key] = data[key].filter(x => x.id !== id);
+    saveMonthData(currentMonth, data);
+    updateAllViews();
+  };
+
+  // Debt tabs
+  document.querySelectorAll('.debt-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.debt-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      activeDebtTab = this.dataset.tab;
+      const data = loadMonthData(currentMonth);
+      renderList('debt-list', data[activeDebtTab], activeDebtTab);
+    });
+  });
+
+  // Modal manual transaction logic
+  let currentModalType = 'income';
+  const txModal = document.getElementById('tx-modal');
+
+  function openModal(type) {
+    currentModalType = type;
+    const titles = { income: 'Nuevo Ingreso', expense: 'Nuevo Gasto (Caja Chica)', cobrar: 'Nueva Deuda por Cobrar', pagar: 'Nueva Deuda por Pagar' };
+    document.getElementById('tx-modal-title').textContent = titles[type];
+    document.getElementById('tx-desc').value = '';
+    document.getElementById('tx-amount').value = '';
+    document.getElementById('tx-date').value = currentMonth + '-15';
+
+    const partyGroup = document.getElementById('tx-party-group');
+    const catGroup = document.getElementById('tx-cat-group');
+    const partyLabel = document.getElementById('tx-party-label');
+    const catSelect = document.getElementById('tx-cat');
+
+    if (type === 'cobrar' || type === 'pagar') {
+      partyGroup.style.display = 'block';
+      partyLabel.textContent = type === 'cobrar' ? 'Nombre del Cliente' : 'Nombre del Proveedor';
+      catSelect.innerHTML = type === 'cobrar'
+        ? '<option>Venta a Crédito</option><option>Apartado / Anticipo</option><option>Servicio de Taller Pendiente</option>'
+        : '<option>Compra a Proveedor</option><option>Servicios Externos</option><option>Flete o Aduana</option>';
+    } else {
+      partyGroup.style.display = 'none';
+      catSelect.innerHTML = type === 'income'
+        ? '<option>Venta de Bicicleta</option><option>Venta de Accesorio</option><option>Servicio de Taller (Mano de Obra)</option><option>Refacciones Taller</option><option>Renta de Bicicletas</option><option>Apartado / Anticipo</option>'
+        : '<option>Renta Local</option><option>Luz / CFE</option><option>Agua</option><option>Internet / WiFi</option><option>Salarios</option><option>Insumos Taller</option><option>Otros Gastos</option>';
+    }
+
+    txModal.style.display = 'flex';
+  }
+
+  document.getElementById('btn-add-income')?.addEventListener('click', () => openModal('income'));
+  document.getElementById('btn-add-expense')?.addEventListener('click', () => openModal('expense'));
+  document.getElementById('btn-add-debt')?.addEventListener('click', () => openModal(activeDebtTab));
+
+  document.getElementById('tx-modal-close')?.addEventListener('click', () => txModal.style.display = 'none');
+  document.getElementById('tx-modal-cancel')?.addEventListener('click', () => txModal.style.display = 'none');
+
+  document.getElementById('tx-modal-save')?.addEventListener('click', () => {
+    const desc = document.getElementById('tx-desc').value.trim();
+    const amount = parseFloat(document.getElementById('tx-amount').value) || 0;
+    const cat = document.getElementById('tx-cat').value;
+    const method = document.getElementById('tx-method').value;
+    const party = document.getElementById('tx-party').value.trim();
+    const date = document.getElementById('tx-date').value || (currentMonth + '-01');
+
+    if (!desc || amount <= 0) { alert('Por favor ingresa descripción y un monto válido.'); return; }
+
+    const data = loadMonthData(currentMonth);
+    const entry = { id: Date.now(), desc, cat, amount, date, method };
+    if (party) entry.party = party;
+
+    const keyMap = { income: 'income', expense: 'expenses', cobrar: 'cobrar', pagar: 'pagar' };
+    data[keyMap[currentModalType]].unshift(entry);
+    saveMonthData(currentMonth, data);
+    txModal.style.display = 'none';
+    updateAllViews();
+  });
+
+  // Export CSV
+  document.getElementById('btn-export-ledger')?.addEventListener('click', () => {
+    const data = loadMonthData(currentMonth);
+    let rows = [['Periodo', 'Tipo', 'Descripción', 'Categoría', 'Método', 'Tercero', 'Monto MXN', 'Fecha']];
+    data.income.forEach(x => rows.push([currentMonth, 'Ingreso', x.desc, x.cat, x.method || '', '', x.amount, x.date]));
+    data.expenses.forEach(x => rows.push([currentMonth, 'Gasto', x.desc, x.cat, x.method || '', '', x.amount, x.date]));
+    data.cobrar.forEach(x => rows.push([currentMonth, 'Por Cobrar', x.desc, x.cat||'', '', x.party||'', x.amount, x.date]));
+    data.pagar.forEach(x => rows.push([currentMonth, 'Por Pagar', x.desc, x.cat||'', '', x.party||'', x.amount, x.date]));
+    const csv = 'data:text/csv;charset=utf-8,' + rows.map(r => r.join(',')).join('\n');
+    const link = document.createElement('a');
+    link.href = encodeURI(csv);
+    link.download = `corte_contable_${currentMonth}.csv`;
+    link.click();
+  });
+
+  // Init on load
+  updateAllViews();
+})();
+</script>

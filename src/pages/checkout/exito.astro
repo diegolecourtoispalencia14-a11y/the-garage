@@ -1,0 +1,240 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Pedido Confirmado | The Garage">
+  <div style="max-width:600px; margin:0 auto; padding:4rem 1rem; text-align:center; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;">
+    <div id="success-view">
+      <div style="margin-bottom:1.25rem; display:flex; justify-content:center;" id="status-icon">
+        <div style="width:72px; height:72px; border-radius:50%; background:rgba(52,199,89,0.15); color:#34c759; display:flex; align-items:center; justify-content:center; border:2px solid rgba(52,199,89,0.3);">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+      <h1 style="font-size:2rem; font-weight:700; margin:0 0 0.5rem;" id="status-title">Pedido Confirmado</h1>
+      <p style="color:#86868b; margin:0 0 2rem;" id="status-msg">Tu pago fue procesado exitosamente.</p>
+      <div id="order-card" style="background:#1c1c1e; border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:1.5rem; text-align:left; margin-bottom:2rem;"></div>
+      <div style="display:flex; flex-direction:column; gap:1rem;">
+        <button id="btn-wa-store" style="display:flex; align-items:center; justify-content:center; gap:0.5rem; background:#25d366; color:white; border:none; padding:1rem 2rem; border-radius:100px; font-weight:700; font-size:1rem; cursor:pointer;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.152.57 4.17 1.564 5.91l-1.564 5.708 5.867-1.538c1.701.928 3.652 1.458 5.727 1.458 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg> Confirmar pedido por WhatsApp
+        </button>
+        <a href="/inventario" style="display:block; background:#1c1c1e; border:1px solid rgba(255,255,255,0.12); color:#f5f5f7; padding:0.85rem 2rem; border-radius:100px; font-weight:600; font-size:0.95rem; text-decoration:none;">
+          Seguir Comprando
+        </a>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script is:inline>
+(function() {
+  const WA_STORE = '529841381493';
+
+  function fmt(n) { return '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }); }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  const statusIcon = document.getElementById('status-icon');
+  const statusTitle = document.getElementById('status-title');
+  const statusMsg = document.getElementById('status-msg');
+  const orderCard = document.getElementById('order-card');
+  const btnWa = document.getElementById('btn-wa-store');
+
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status');
+  const isSandbox = params.get('sandbox') === 'true';
+
+  let order = null;
+  try {
+    order = JSON.parse(localStorage.getItem('bicisaas_pending_order') || 'null');
+  } catch(_) {
+    order = null;
+  }
+
+  // 1. Fail-Closed: Sin orden activa en memoria
+  if (!order || !Array.isArray(order.items) || order.items.length === 0) {
+    if (statusIcon) {
+      statusIcon.innerHTML = '<div style="width:72px; height:72px; border-radius:50%; background:rgba(255,59,48,0.15); color:#ff3b30; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,59,48,0.3);"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>';
+    }
+    if (statusTitle) statusTitle.textContent = 'No se encontró el pedido';
+    if (statusMsg) statusMsg.textContent = 'No existe una orden pendiente activa en tu navegador. Si ya realizaste un pago, por favor contáctanos con tu comprobante por WhatsApp.';
+    if (orderCard) orderCard.style.display = 'none';
+    if (btnWa) {
+      btnWa.innerHTML = '<span>Contactar a Soporte por WhatsApp</span>';
+      btnWa.addEventListener('click', () => {
+        window.open('https://wa.me/' + WA_STORE + '?text=' + encodeURIComponent('Hola The Garage, realicé una compra pero necesito consultar el estatus de mi orden.'), '_blank');
+      });
+    }
+    return;
+  }
+
+  // 2. Fail-Closed: Estado del pago no aprobado
+  if (status !== 'approved') {
+    if (statusIcon) {
+      statusIcon.innerHTML = '<div style="width:72px; height:72px; border-radius:50%; background:rgba(255,149,0,0.15); color:#ff9500; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,149,0,0.3);"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>';
+    }
+    if (statusTitle) statusTitle.textContent = 'Pago no completado';
+    if (statusMsg) statusMsg.textContent = 'La transacción no fue aprobada por la pasarela de pagos. Por favor intenta de nuevo o contáctanos por WhatsApp.';
+    if (orderCard) orderCard.style.display = 'none';
+    if (btnWa) {
+      btnWa.innerHTML = '<span>Solicitar Asistencia por WhatsApp</span>';
+      btnWa.addEventListener('click', () => {
+        window.open('https://wa.me/' + WA_STORE + '?text=' + encodeURIComponent(`Hola The Garage, tuve un inconveniente al procesar el pago de mi pedido ID: ${order.id}. ¿Me pueden apoyar?`), '_blank');
+      });
+    }
+    return;
+  }
+
+  // 3. Verificación de Integridad de Pago (Anti-Bypass de URL)
+  // En producción, MercadoPago siempre adjunta payment_id o collection_id al redirigir al sitio
+  const paymentId = params.get('payment_id') || params.get('collection_id');
+  const isUnverifiedLiveOrder = (order.isLiveOrder && !paymentId);
+
+  // ── Render Order Card (Sanitized) ──
+  const safeOrderId = escapeHtml(order.id);
+  const safeAddress = escapeHtml(order.address || '');
+  const safeColonia = escapeHtml(order.colonia || '');
+  const deliveryDesc = order.delivery === 'tienda'
+    ? 'Recoger en taller (Cataluña, PDC · Con Cita Previa)'
+    : `Didi Moto → ${safeAddress}${safeColonia ? ', ' + safeColonia : ''}`;
+
+  const statusBadge = isUnverifiedLiveOrder
+    ? '<span style="background:rgba(255,149,0,0.15); color:#ff9500; font-size:0.78rem; font-weight:700; padding:0.2rem 0.75rem; border-radius:100px;">Verificación Manual Requerida</span>'
+    : '<span style="background:rgba(52,199,89,0.12); color:#34c759; font-size:0.78rem; font-weight:700; padding:0.2rem 0.75rem; border-radius:100px;">Pagado</span>';
+
+  if (isUnverifiedLiveOrder) {
+    if (statusTitle) statusTitle.textContent = 'Pedido Registrado';
+    if (statusMsg) statusMsg.textContent = 'Tu pedido fue recibido en el sistema. Para procesar el envío, por favor envía tu comprobante bancario por WhatsApp.';
+    try {
+      const logs = JSON.parse(localStorage.getItem('bicisaas_audit_log') || '[]');
+      logs.unshift({
+        timestamp: new Date().toISOString(),
+        type: 'ORDER_UNVERIFIED_BYPASS_ATTEMPT',
+        level: 'WARN',
+        user: order.name || 'Invitado',
+        role: 'customer',
+        path: window.location.pathname,
+        details: { orderId: order.id, total: order.total }
+      });
+      if (logs.length > 50) logs.length = 50;
+      localStorage.setItem('bicisaas_audit_log', JSON.stringify(logs));
+    } catch(_) {}
+  }
+
+  if (orderCard) {
+    orderCard.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+        <strong style="color:#f5f5f7;">Orden ${safeOrderId}</strong>
+        ${statusBadge}
+      </div>
+      ${order.items.map(i => `
+        <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.9rem;">
+          <span style="color:#f5f5f7;">${Number(i.qty) || 1}x ${escapeHtml(i.name)}</span>
+          <span style="color:#f5f5f7; font-weight:600;">${fmt(Number(i.price) * (Number(i.qty) || 1))}</span>
+        </div>
+      `).join('')}
+      <div style="margin-top:0.75rem; display:flex; flex-direction:column; gap:0.3rem;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#86868b;"><span>Comisión online</span><span>+${fmt(order.fee)}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#86868b;"><span>Envío</span><span>${order.shipping === 0 ? 'Gratis' : fmt(order.shipping)}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:1.05rem; font-weight:700; color:#f5f5f7; margin-top:0.25rem; padding-top:0.5rem; border-top:1px solid rgba(255,255,255,0.08);"><span>Total de la orden</span><span>${fmt(order.total)}</span></div>
+      </div>
+      <div style="margin-top:1rem; padding:0.75rem; background:rgba(255,255,255,0.04); border-radius:10px; font-size:0.82rem; color:#86868b;">
+        <strong style="color:#f5f5f7;">Entrega:</strong> ${deliveryDesc}
+      </div>
+      ${isSandbox ? `
+        <div style="margin-top:0.85rem; padding:0.75rem; background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.25); border-radius:10px; font-size:0.78rem; color:#ff9500; text-align:center;">
+          <strong>Modo de Prueba (Sandbox) — Transacción Simulada</strong>
+          <p style="margin:0.3rem 0 0; font-size:0.75rem; opacity:0.85;">Para procesar cobros reales con tarjeta o SPEI, activa el <strong>Modo Producción</strong> en el Panel de Administración.</p>
+        </div>
+      ` : isUnverifiedLiveOrder ? `
+        <div style="margin-top:0.85rem; padding:0.75rem; background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.25); border-radius:10px; font-size:0.78rem; color:#ff9500; text-align:center;">
+          <strong>Confirmación en Espera</strong>
+          <p style="margin:0.25rem 0 0; font-size:0.75rem; opacity:0.85;">No se detectó el identificador de pasarela digital. El equipo confirmará tu transferencia o pago directamente por WhatsApp.</p>
+        </div>
+      ` : `
+        <div style="margin-top:0.85rem; padding:0.75rem; background:rgba(52,199,89,0.12); border:1px solid rgba(52,199,89,0.25); border-radius:10px; font-size:0.78rem; color:#34c759; text-align:center;">
+          <strong>Transacción Verificada con MercadoPago</strong>
+          <p style="margin:0.25rem 0 0; font-size:0.75rem; opacity:0.85;">Pago confirmado exitosamente. Tu pedido ha sido asignado al equipo del taller para despacho inmediato.</p>
+        </div>
+      `}
+    `;
+  }
+
+  // ── Auto-Register in CRM ──
+  try {
+    const leads = JSON.parse(localStorage.getItem('the_garage_leads') || '[]');
+    const existing = leads.find(l => (l.contact || '').replace(/\D/g,'').includes(order.phone));
+    if (!existing) {
+      leads.unshift({
+        id: order.id, contact: order.phone, channel: 'whatsapp',
+        model: order.items[0]?.name || 'Compra Online',
+        status: isUnverifiedLiveOrder ? 'Por Confirmar' : 'Comprador',
+        captured_at: new Date().toISOString(),
+        terrain_interest: 'E-commerce', user_size: '',
+        _orderTotal: order.total
+      });
+      localStorage.setItem('the_garage_leads', JSON.stringify(leads));
+    }
+  } catch(e) {}
+
+  // ── Auto-Register Sale in Accounting only when verified (Fail-Closed) ──
+  if (!isUnverifiedLiveOrder) {
+    try {
+      const ledger = JSON.parse(localStorage.getItem('bicisaas_ledger') || '{"income":[],"expenses":[],"cobrar":[],"pagar":[]}');
+      ledger.income.unshift({
+        id: Date.now(), cat: 'Venta Online (E-commerce)',
+        desc: `${order.id} — ${order.name}`,
+        amount: order.total, date: new Date().toISOString().slice(0,10)
+      });
+      localStorage.setItem('bicisaas_ledger', JSON.stringify(ledger));
+    } catch(e) {}
+
+    // Mark items as sold in web inventory
+    try {
+      const overrides = JSON.parse(localStorage.getItem('bicisaas_web_bikes') || '{}');
+      order.items.filter(i => i.category === 'Bicicletas').forEach(i => {
+        overrides[i.id] = { ...(overrides[i.id] || {}), disponibilidad: 'Vendida' };
+      });
+      localStorage.setItem('bicisaas_web_bikes', JSON.stringify(overrides));
+    } catch(e) {}
+  }
+
+  // ── Build WhatsApp message for the store ──
+  const itemsList = (order.items || []).map(i => `• ${Number(i.qty) || 1}x ${i.name} (${fmt(Number(i.price) * (Number(i.qty) || 1))})`).join('\n');
+  const delivery = order.delivery === 'tienda'
+    ? '*Recolección en Taller Cataluña (Cita Previa)*'
+    : `*Envío Local Didi Moto*\nDirección: ${order.address}, ${order.colonia}\nRef: ${order.reference || 'Sin referencia'}`;
+
+  const waMsg = `*NUEVO PEDIDO WEB — THE GARAGE*\n\n` +
+    `*ID:* ${order.id}\n` +
+    `*Cliente:* ${order.name}\n` +
+    `*Teléfono:* ${order.phone}\n\n` +
+    `*Productos:*\n${itemsList}\n\n` +
+    `*Total:* ${fmt(order.total)}${isSandbox ? ' (SANDBOX)' : isUnverifiedLiveOrder ? ' (PENDIENTE VALIDACIÓN)' : ' (PAGO VERIFICADO)'}\n\n` +
+    `*Entrega:*\n${delivery}\n\n` +
+    `${order.notes ? '*Notas:* ' + order.notes + '\n\n' : ''}` +
+    `_Por favor confirma disponibilidad y coordina la entrega._`;
+
+  if (btnWa) {
+    btnWa.addEventListener('click', () => {
+      window.open('https://wa.me/' + WA_STORE + '?text=' + encodeURIComponent(waMsg), '_blank');
+    });
+  }
+
+  // Auto-open WhatsApp after 2 seconds
+  setTimeout(() => {
+    window.open('https://wa.me/' + WA_STORE + '?text=' + encodeURIComponent(waMsg), '_blank');
+  }, 2000);
+
+  // Clear cart and pending order
+  localStorage.removeItem('bicisaas_cart');
+  localStorage.removeItem('bicisaas_pending_order');
+  if (window.cartUpdateBadge) window.cartUpdateBadge();
+})();
+</script>

@@ -1,0 +1,3309 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { initialOperationsData } from '../../data/operationsDatabase';
+import { DEFAULT_STAFF, SAAS_MODULES } from '../../data/authConfig';
+const initialOperationsDataJson = JSON.stringify(initialOperationsData);
+const defaultStaffJson = JSON.stringify(DEFAULT_STAFF);
+const saasModulesJson = JSON.stringify(SAAS_MODULES);
+---
+<PanelLayout title="Gestión de Empleados | BiciSaaS">
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+      <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+        <span style="background:rgba(0,113,227,0.12); color:var(--accent-blue); font-size:0.75rem; font-weight:700; padding:0.2rem 0.65rem; border-radius:100px; display:inline-flex; align-items:center; gap:0.35rem;">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span> Taller & Tienda Activos
+        </span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">Playa del Carmen, Q. Roo</span>
+      </div>
+      <h1 class="page-title" style="font-size:1.85rem; font-weight:800; letter-spacing:-0.03em; margin:0 0 0.35rem; color:var(--text-primary);">Equipo, Tareas & Rendimiento</h1>
+      <p class="text-muted" style="margin:0; font-size:0.92rem; color:var(--text-secondary);">Checador de asistencia, tablero kanban operativo y analíticas de productividad técnica.</p>
+    </div>
+    <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+      <button class="btn-secondary" id="btn-reload-demo" title="Recargar base de datos demo completa">
+        <Icon name="mdi:refresh" width="18" height="18" /> Restaurar Datos Demo
+      </button>
+      <button class="btn-secondary" id="btn-new-employee">
+        <Icon name="mdi:account-plus-outline" width="18" height="18" /> Nuevo Empleado
+      </button>
+      <button class="btn-primary" id="btn-new-task">
+        <Icon name="mdi:plus-circle-outline" width="18" height="18" /> Nueva Tarea
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- BARRA DE CONTROL DE OPERACIONES: MULTI-MES & HISTORIAL SAT / ERP   -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <div class="operations-control-bar" style="background:var(--surface-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); padding:0.9rem 1.25rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+    <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="font-size:0.75rem; text-transform:uppercase; font-weight:800; letter-spacing:0.05em; color:var(--text-secondary);">Ciclo Mensual Operativo:</span>
+        <select id="op-month-selector" style="background:var(--bg-base); color:var(--text-primary); border:1px solid var(--border-subtle); padding:0.45rem 0.85rem; border-radius:var(--radius-sm); font-weight:700; font-size:0.88rem; outline:none; cursor:pointer;">
+          <!-- Dynamically populated from operationsDatabase -->
+        </select>
+      </div>
+      <span id="op-month-badge" style="background:rgba(52,199,89,0.12); color:var(--accent-green); font-size:0.75rem; font-weight:700; padding:0.25rem 0.75rem; border-radius:100px; display:inline-flex; align-items:center; gap:0.35rem;">
+        <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green);"></span> Mes Activo
+      </span>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:0.65rem;">
+      <button class="btn-primary" id="btn-open-new-month" style="font-size:0.85rem; font-weight:700; display:inline-flex; align-items:center; gap:0.45rem; background:linear-gradient(135deg, #0071e3, #5e5ce6); border:none; box-shadow:0 4px 12px rgba(0,113,227,0.3);">
+        <Icon name="mdi:calendar-plus" width="18" height="18" /> Iniciar Nuevo Mes
+      </button>
+    </div>
+  </div>
+
+  <!-- Historical Read-Only Alert Banner -->
+  <div id="historical-banner" style="display:none; background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.3); border-radius:var(--radius-md); padding:0.85rem 1.25rem; margin-bottom:1.5rem; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+      <Icon name="mdi:archive-clock-outline" width="22" height="22" color="#ff9500" />
+      <div>
+        <strong style="color:#f5f5f7; font-size:0.9rem;" id="historical-title">Modo Histórico de Consulta (Solo Lectura)</strong>
+        <p style="margin:0; font-size:0.8rem; color:#d4d4d8;" id="historical-desc">Estás consultando registros de un mes cerrado. Los datos de tareas, reloj checador y KPIs se muestran en modo auditoría.</p>
+      </div>
+    </div>
+    <button class="btn-secondary" id="btn-return-current-month" style="font-size:0.78rem; padding:0.35rem 0.75rem;">
+      Volver al Mes Actual ↗
+    </button>
+  </div>
+
+  <!-- Section Tabs -->
+  <div class="section-tabs" style="margin-bottom:1.75rem;">
+    <button class="stab active" data-section="asistencia" id="tab-btn-asistencia">
+      <Icon name="mdi:calendar-week" width="18" height="18" />
+      <span>Asistencia & Horarios</span>
+    </button>
+    <button class="stab" data-section="tareas" id="tab-btn-tareas">
+      <Icon name="mdi:checkbox-marked-circle-outline" width="18" height="18" />
+      <span>Tablero de Tareas</span>
+      <span class="tab-badge" id="tab-badge-tasks">0</span>
+    </button>
+    <button class="stab" data-section="rendimiento" id="tab-btn-rendimiento">
+      <Icon name="mdi:chart-line" width="18" height="18" />
+      <span>Rendimiento & KPIs</span>
+      <span class="tab-badge green">96.4%</span>
+    </button>
+    <button class="stab" data-section="seguridad" id="tab-btn-seguridad">
+      <Icon name="mdi:shield-key-outline" width="18" height="18" />
+      <span>PINs & Seguridad SaaS</span>
+      <span class="tab-badge" style="background:rgba(0,113,227,0.15); color:var(--accent-blue);">RBAC</span>
+    </button>
+  </div>
+
+  <!-- ════ SECTION: Asistencia ════ -->
+  <div id="section-asistencia">
+    <!-- Status Cards -->
+    <div class="emp-status-row" id="emp-status-row">
+      <!-- JS rendered -->
+    </div>
+
+    <!-- Schedule Grid -->
+    <div class="bento-card" style="padding:0; overflow:hidden; margin-top:1.5rem;">
+      <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1rem; margin:0; display:flex; align-items:center; gap:0.5rem;">
+          <Icon name="mdi:calendar-week" width="18" height="18" color="var(--accent-blue)" /> Horario Semanal
+        </h3>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <button class="btn-secondary" id="btn-prev-week" style="padding:0.3rem 0.75rem; font-size:0.82rem;">‹ Anterior</button>
+          <span id="week-label" style="font-size:0.88rem; font-weight:600; min-width:180px; text-align:center;"></span>
+          <button class="btn-secondary" id="btn-next-week" style="padding:0.3rem 0.75rem; font-size:0.82rem;">Siguiente ›</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="schedule-table" id="schedule-table">
+          <thead id="schedule-head"></thead>
+          <tbody id="schedule-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Clock Log -->
+    <div class="bento-card" style="margin-top:1.5rem;">
+      <h3 style="font-size:1rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+        <Icon name="mdi:clock-time-four-outline" width="18" height="18" color="var(--accent-orange)" /> Registro de Entradas (Esta Semana)
+      </h3>
+      <div id="clock-log"></div>
+    </div>
+  </div>
+
+  <!-- ════ SECTION: Tareas ════ -->
+  <div id="section-tareas" style="display:none;">
+    <!-- Task KPIs -->
+    <div class="task-kpis">
+      <div class="task-kpi-card">
+        <span class="tkpi-l">Total Activas</span>
+        <span class="tkpi-v" id="tk-total">0</span>
+        <span class="tkpi-sub">En flujo operativo</span>
+      </div>
+      <div class="task-kpi-card">
+        <span class="tkpi-l">Pendientes</span>
+        <span class="tkpi-v orange" id="tk-pending">0</span>
+        <span class="tkpi-sub">Por iniciar</span>
+      </div>
+      <div class="task-kpi-card">
+        <span class="tkpi-l">En Progreso</span>
+        <span class="tkpi-v blue" id="tk-progress">0</span>
+        <span class="tkpi-sub">Trabajándose ahora</span>
+      </div>
+      <div class="task-kpi-card">
+        <span class="tkpi-l">Completadas Hoy</span>
+        <span class="tkpi-v green" id="tk-done">0</span>
+        <span class="tkpi-sub">Entregadas con éxito</span>
+      </div>
+      <div class="task-kpi-card">
+        <span class="tkpi-l">Sin Asignar</span>
+        <span class="tkpi-v red" id="tk-unassigned">0</span>
+        <span class="tkpi-sub">Requieren atención</span>
+      </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="task-toolbar" style="display:flex; gap:0.75rem; margin-bottom:1.25rem; flex-wrap:wrap; align-items:center;">
+      <div class="task-search-wrap" style="flex:1; min-width:260px; display:flex; align-items:center; gap:0.5rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:100px; padding:0.45rem 1rem;">
+        <Icon name="mdi:magnify" width="18" height="18" style="color:var(--text-secondary);" />
+        <input type="text" id="task-search-input" placeholder="Buscar por título, cliente, modelo de bici o notas..." style="border:none; background:transparent; outline:none; font-size:0.88rem; color:var(--text-primary); width:100%;" />
+      </div>
+      <div class="task-filters-wrap" style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <select id="filter-cat" class="toolbar-select" style="padding:0.45rem 0.85rem; border-radius:100px; border:1px solid var(--border-subtle); background:var(--bg-surface); color:var(--text-primary); font-size:0.82rem; font-weight:600; outline:none; cursor:pointer;">
+          <option value="">Todas las categorías</option>
+          <option value="Taller / Servicio">Taller / Servicio</option>
+          <option value="CRM / Seguimiento">CRM / Seguimiento</option>
+          <option value="Inventario">Inventario & Stock</option>
+          <option value="Cobro / Cuentas">Cobro / Cuentas</option>
+          <option value="Limpieza / Operación">Operación & Tienda</option>
+          <option value="Otro">General / Otro</option>
+        </select>
+        <select id="filter-priority" class="toolbar-select" style="padding:0.45rem 0.85rem; border-radius:100px; border:1px solid var(--border-subtle); background:var(--bg-surface); color:var(--text-primary); font-size:0.82rem; font-weight:600; outline:none; cursor:pointer;">
+          <option value="">Todas las prioridades</option>
+          <option value="alta">Alta Prioridad</option>
+          <option value="media">Media Prioridad</option>
+          <option value="baja">Baja Prioridad</option>
+        </select>
+        <select id="filter-assignee" class="toolbar-select" style="padding:0.45rem 0.85rem; border-radius:100px; border:1px solid var(--border-subtle); background:var(--bg-surface); color:var(--text-primary); font-size:0.82rem; font-weight:600; outline:none; cursor:pointer;">
+          <option value="">Todos los colaboradores</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Auto-Delegate Banner -->
+    <div class="delegate-banner" id="delegate-banner">
+      <div style="display:flex; align-items:flex-start; gap:0.9rem;">
+        <div style="width:38px; height:38px; border-radius:10px; background:rgba(0,113,227,0.15); display:flex; align-items:center; justify-content:center; color:var(--accent-blue); flex-shrink:0;">
+          <Icon name="mdi:speedometer" width="22" height="22" />
+        </div>
+        <div>
+          <strong style="font-size:0.95rem;">Delegación Automática por Carga de Trabajo</strong>
+          <p style="margin:0.2rem 0 0; font-size:0.84rem; color:var(--text-secondary);">
+            Hay <span id="unassigned-count" style="font-weight:700; color:var(--accent-red);">0</span> tareas sin asignar. El algoritmo analiza la disponibilidad técnica y asigna equitativamente para balancear la carga del taller.
+          </p>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-preview-delegate" style="white-space:nowrap;">
+        <Icon name="mdi:eye-check-outline" width="18" height="18" /> Ver Propuesta & Delegar
+      </button>
+    </div>
+
+    <!-- Kanban Board -->
+    <div class="kanban-board">
+      <div class="kanban-col">
+        <div class="kanban-header orange">
+          <span style="display:inline-flex; align-items:center; gap:0.45rem;"><Icon name="mdi:clock-outline" width="16" height="16" /> Pendiente</span><span class="kanban-count" id="kc-pending">0</span>
+        </div>
+        <div class="kanban-cards" id="kanban-pending"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-header blue">
+          <span style="display:inline-flex; align-items:center; gap:0.45rem;"><Icon name="mdi:progress-wrench" width="16" height="16" /> En Progreso</span><span class="kanban-count" id="kc-progress">0</span>
+        </div>
+        <div class="kanban-cards" id="kanban-progress"></div>
+      </div>
+      <div class="kanban-col">
+        <div class="kanban-header green">
+          <span style="display:inline-flex; align-items:center; gap:0.45rem;"><Icon name="mdi:check-circle-outline" width="16" height="16" /> Completada</span><span class="kanban-count" id="kc-done">0</span>
+        </div>
+        <div class="kanban-cards" id="kanban-done"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SECTION: Rendimiento ════ -->
+  <div id="section-rendimiento" style="display:none;">
+    <!-- Top Executive KPIs -->
+    <div class="perf-kpi-banner">
+      <div class="perf-kpi-item">
+        <div class="pkpi-icon" style="background:rgba(52,199,89,0.12); color:var(--accent-green);">
+          <Icon name="mdi:trophy-outline" width="24" height="24" />
+        </div>
+        <div>
+          <div class="pkpi-value" id="pkpi-sla-val">96.4%</div>
+          <div class="pkpi-label">Eficiencia Operativa SLA</div>
+          <div class="pkpi-trend" id="pkpi-sla-trend" style="color:var(--accent-green);">↑ +2.8% vs mes anterior</div>
+        </div>
+      </div>
+
+      <div class="perf-kpi-item">
+        <div class="pkpi-icon" style="background:rgba(0,113,227,0.12); color:var(--accent-blue);">
+          <Icon name="mdi:speedometer" width="24" height="24" />
+        </div>
+        <div>
+          <div class="pkpi-value" id="pkpi-time-val">1h 14m</div>
+          <div class="pkpi-label">Tiempo Promedio Taller</div>
+          <div class="pkpi-trend" id="pkpi-time-trend" style="color:var(--accent-blue);">-16 min vs meta estándar</div>
+        </div>
+      </div>
+
+      <div class="perf-kpi-item">
+        <div class="pkpi-icon" style="background:rgba(255,149,0,0.12); color:var(--accent-orange);">
+          <Icon name="mdi:wrench-outline" width="24" height="24" />
+        </div>
+        <div>
+          <div class="pkpi-value" id="pkpi-serv-val">42 Servicios</div>
+          <div class="pkpi-label">Bicis Entregadas este Mes</div>
+          <div class="pkpi-trend" id="pkpi-serv-trend" style="color:var(--text-secondary);">$68,400 MXN mano de obra</div>
+        </div>
+      </div>
+
+      <div class="perf-kpi-item">
+        <div class="pkpi-icon" style="background:rgba(175,82,222,0.12); color:#af52de;">
+          <Icon name="mdi:star" width="24" height="24" />
+        </div>
+        <div>
+          <div class="pkpi-value" id="pkpi-csat-val">4.95 / 5.0</div>
+          <div class="pkpi-label">Satisfacción Cliente (CSAT)</div>
+          <div class="pkpi-trend" id="pkpi-csat-trend" style="color:var(--accent-green);">Basado en 38 reseñas verificadas</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard / Podio de Honor -->
+    <div class="bento-card" style="margin-bottom:1.5rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; flex-wrap:wrap; gap:0.5rem;">
+        <div>
+          <h3 style="font-size:1.05rem; margin:0; display:flex; align-items:center; gap:0.5rem; font-weight:700;">
+            <Icon name="mdi:trophy-outline" width="20" height="20" color="#ff9500" /> Cuadro de Honor & Productividad del Mes
+          </h3>
+          <p style="margin:0.2rem 0 0; font-size:0.82rem; color:var(--text-secondary);">Reconocimiento a técnicos y asesores destacados por volumen de entrega y calidad de atención</p>
+        </div>
+        <span id="perf-cycle-badge" style="background:rgba(255,149,0,0.12); color:var(--accent-orange); font-size:0.75rem; font-weight:700; padding:0.25rem 0.75rem; border-radius:100px;">
+          Ciclo Septiembre 2026
+        </span>
+      </div>
+
+      <div class="leaderboard-grid" id="perf-leaderboard-grid">
+        <!-- 1er Lugar: Marco -->
+        <div class="podium-card gold">
+          <div class="podium-badge"><span class="corp-rank-pill rank-gold">01</span> 1er Lugar</div>
+          <div class="podium-avatar" style="background:#34c759;">MR</div>
+          <div class="podium-name">Marco Ramírez</div>
+          <div class="podium-role">Técnico Master Taller</div>
+          <div class="podium-score">98.5% Eficiencia</div>
+          <div class="podium-stats">
+            <div><strong>26</strong> servicios</div>
+            <div><strong>0</strong> garantías</div>
+            <div><strong>4.98</strong> CSAT</div>
+          </div>
+          <div class="podium-highlight">Especialista en transmisiones Shimano Di2 y purga hidráulica</div>
+        </div>
+
+        <!-- 2do Lugar: Laura -->
+        <div class="podium-card silver">
+          <div class="podium-badge"><span class="corp-rank-pill rank-silver">02</span> 2do Lugar</div>
+          <div class="podium-avatar" style="background:#ff9500;">LV</div>
+          <div class="podium-name">Laura Vásquez</div>
+          <div class="podium-role">Asesora de Ventas & CRM</div>
+          <div class="podium-score">95.2% Conversión</div>
+          <div class="podium-stats">
+            <div><strong>$158k</strong> cerrados</div>
+            <div><strong>19</strong> prospectos</div>
+            <div><strong>&lt; 15m</strong> resp.</div>
+          </div>
+          <div class="podium-highlight">Líder en colocación de bicicletas Basso y Specialized</div>
+        </div>
+
+        <!-- 3er Lugar: Diego -->
+        <div class="podium-card bronze">
+          <div class="podium-badge"><span class="corp-rank-pill rank-bronze">03</span> 3er Lugar</div>
+          <div class="podium-avatar" style="background:#0071e3;">DL</div>
+          <div class="podium-name">Diego López</div>
+          <div class="podium-role">Operaciones & Administración</div>
+          <div class="podium-score">96.0% SLA</div>
+          <div class="podium-stats">
+            <div><strong>100%</strong> arqueos</div>
+            <div><strong>0</strong> faltantes</div>
+            <div><strong>42h</strong> activas</div>
+          </div>
+          <div class="podium-highlight">Auditoría de inventario impecable y control fiscal SAT al 100%</div>
+        </div>
+
+        <!-- 4to: Sofía -->
+        <div class="podium-card neutral">
+          <div class="podium-badge"><span class="corp-rank-pill">LOG</span> Logística Express</div>
+          <div class="podium-avatar" style="background:#af52de;">ST</div>
+          <div class="podium-name">Sofía Torres</div>
+          <div class="podium-role">Mensajería & Entregas</div>
+          <div class="podium-score">100% A Tiempo</div>
+          <div class="podium-stats">
+            <div><strong>32</strong> envíos</div>
+            <div><strong>38m</strong> promedio</div>
+            <div><strong>0</strong> demoras</div>
+          </div>
+          <div class="podium-highlight">Cobertura total Playa del Carmen & Playacar en tiempo récord</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Individual Technician Scorecards (Dynamic Grid) -->
+    <div style="margin-bottom:1.5rem;">
+      <h3 style="font-size:1.05rem; margin:0 0 1rem; display:flex; align-items:center; gap:0.5rem; font-weight:700;">
+        <Icon name="mdi:account-badge-outline" width="20" height="20" color="var(--accent-blue)" /> Fichas de Rendimiento Individual y Certificaciones
+      </h3>
+      <div class="perf-grid" id="perf-grid">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Workshop Service Benchmarks & Efficiency Matrix -->
+    <div class="bento-card" style="margin-bottom:1.5rem; padding:0; overflow:hidden;">
+      <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+        <div>
+          <h3 style="font-size:1rem; margin:0; display:flex; align-items:center; gap:0.5rem; font-weight:700;">
+            <Icon name="mdi:wrench-outline" width="20" height="20" color="var(--accent-blue)" /> Matriz de Tiempos Estándar vs. Tiempo Real en Taller
+          </h3>
+          <p style="margin:0.2rem 0 0; font-size:0.8rem; color:var(--text-secondary);">Comparativa de eficiencia según tabulador Park Tool / Shimano Service Center</p>
+        </div>
+        <span id="perf-benchmark-gain" style="font-size:0.8rem; font-weight:700; color:var(--accent-green); background:rgba(52,199,89,0.1); padding:0.25rem 0.75rem; border-radius:100px;">
+          +18.2% Ganancia de Eficiencia Global
+        </span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="benchmark-table">
+          <thead>
+            <tr>
+              <th>Tipo de Servicio Técnico</th>
+              <th>Tiempo Estándar</th>
+              <th>Tiempo Real Promedio</th>
+              <th>Delta / Ahorro</th>
+              <th>Volumen Mensual</th>
+              <th>Tasa de Éxito</th>
+            </tr>
+          </thead>
+          <tbody id="perf-benchmark-tbody">
+            <tr>
+              <td>
+                <strong>Mantenimiento General Integral</strong>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Limpieza ultrasonido, lubricación, ajuste de conos y cambios</div>
+              </td>
+              <td>90 min</td>
+              <td><span style="color:var(--accent-green); font-weight:700;">74 min</span></td>
+              <td><span class="diff-tag pos">-16 min (17.7%)</span></td>
+              <td>18 bicicletas</td>
+              <td><span class="diff-tag pos">100% Sin garantías</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Purga de Frenos Hidráulicos (Par)</strong>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Shimano Mineral / SRAM DOT 5.1 con cambio de balatas</div>
+              </td>
+              <td>35 min</td>
+              <td><span style="color:var(--accent-green); font-weight:700;">26 min</span></td>
+              <td><span class="diff-tag pos">-9 min (25.7%)</span></td>
+              <td>14 bicicletas</td>
+              <td><span class="diff-tag pos">100% Tacto firme</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Ajuste y Sincronización de Transmisión</strong>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Alineación de patilla con herramienta Park Tool DAG-2.2</div>
+              </td>
+              <td>20 min</td>
+              <td><span style="color:var(--accent-green); font-weight:700;">16 min</span></td>
+              <td><span class="diff-tag pos">-4 min (20.0%)</span></td>
+              <td>24 bicicletas</td>
+              <td><span class="diff-tag pos">99.5%</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Ensamble de Bicicleta Nueva (Box to Trail)</strong>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Armado, torqueado según fabricante, tubelizado y puesta a punto</div>
+              </td>
+              <td>120 min</td>
+              <td><span style="color:var(--accent-green); font-weight:700;">102 min</span></td>
+              <td><span class="diff-tag pos">-18 min (15.0%)</span></td>
+              <td>8 bicicletas</td>
+              <td><span class="diff-tag pos">100% Lista para pista</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Conversión a Tubeless + Sellador Stan's NoTubes</strong>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Encintado sellado, válvulas de aluminio y talonado con compresor</div>
+              </td>
+              <td>30 min</td>
+              <td><span style="color:var(--accent-green); font-weight:700;">23 min</span></td>
+              <td><span class="diff-tag pos">-7 min (23.3%)</span></td>
+              <td>16 ruedas</td>
+              <td><span class="diff-tag pos">100% Hermético</span></td>
+            </tr>
+            <tr>
+              <td>
+                <strong>Centrado y Tensión de Rayos en Rueda</strong>
+                <div style="font-size:0.75rem; color:var(--text-secondary);">Tensiómetro digital y corrección lateral/radial &lt; 0.2mm</div>
+              </td>
+              <td>40 min</td>
+              <td><span style="color:var(--accent-green); font-weight:700;">32 min</span></td>
+              <td><span class="diff-tag pos">-8 min (20.0%)</span></td>
+              <td>11 ruedas</td>
+              <td><span class="diff-tag pos">100% Balance</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Customer Feedback -->
+    <div class="bento-card">
+      <h3 style="font-size:1.05rem; margin:0 0 1rem; display:flex; align-items:center; gap:0.5rem; font-weight:700;">
+        <Icon name="mdi:star" width="20" height="20" color="#ff9500" /> Reseñas Verificadas de Clientes (Últimos 7 Días)
+      </h3>
+      <div class="feedback-grid" id="perf-feedback-grid">
+        <div class="feedback-card">
+          <div class="fc-stars">⭐⭐⭐⭐⭐</div>
+          <p class="fc-comment">"Marco dejó mi Trek Marlin 5 como recién salida de tienda. El cambio de cadena y la purga de frenos quedaron perfectos. Cero ruidos."</p>
+          <div class="fc-author">
+            <strong>Juan Pérez M.</strong>
+            <span>Trek Marlin 5 · Servicio Taller</span>
+          </div>
+        </div>
+
+        <div class="feedback-card">
+          <div class="fc-stars">⭐⭐⭐⭐⭐</div>
+          <p class="fc-comment">"Excelente asesoría de Laura para configurar mi Basso Palta II. Me explicó el tema de desarrollos de cassette y tubeless. Muy profesional."</p>
+          <div class="fc-author">
+            <strong>Carlos Méndez R.</strong>
+            <span>Basso Palta II · Venta & Asesoría</span>
+          </div>
+        </div>
+
+        <div class="feedback-card">
+          <div class="fc-stars">⭐⭐⭐⭐⭐</div>
+          <p class="fc-comment">"La entrega en Playacar fue exactamente en 35 minutos. Sofía muy amable y cuidó al máximo la bici durante el traslado."</p>
+          <div class="fc-author">
+            <strong>Mariana Cordero</strong>
+            <span>Specialized Allez · Envío Local</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SECTION: Seguridad & PINs SaaS (RBAC) ════ -->
+  <div id="section-seguridad" style="display:none;">
+    <!-- Security Banner -->
+    <div style="background:linear-gradient(135deg, rgba(0,113,227,0.1), rgba(48,209,88,0.08)); border:1px solid rgba(0,113,227,0.25); border-radius:var(--radius-lg); padding:1.25rem 1.5rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div style="display:flex; align-items:center; gap:0.85rem;">
+        <div style="width:44px; height:44px; border-radius:12px; background:rgba(0,113,227,0.15); border:1px solid rgba(0,113,227,0.3); display:flex; align-items:center; justify-content:center;">
+          <Icon name="mdi:shield-lock-outline" width="26" height="26" color="var(--accent-blue)" />
+        </div>
+        <div>
+          <h3 style="margin:0 0 0.2rem; font-size:1.05rem; font-weight:700; color:var(--text-primary);">Terminal Protegida contra Escalamiento de Privilegios</h3>
+          <p style="margin:0; font-size:0.82rem; color:var(--text-secondary);">
+            Los roles ya no pueden alternarse sin autenticación. Cada colaborador debe ingresar su PIN oficial en <code>/panel/login</code> para desbloquear sus módulos autorizados.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+        <button class="btn-primary" id="btn-add-staff-user" style="font-size:0.82rem; padding:0.45rem 0.95rem; display:inline-flex; align-items:center; gap:0.4rem; background:var(--accent-blue); color:#fff; border:none; border-radius:var(--radius-sm); font-weight:700; cursor:pointer;">
+          <Icon name="mdi:account-plus-outline" width="18" height="18" /> Agregar Colaborador / Usuario
+        </button>
+        <button class="btn-secondary" id="btn-reset-staff-pins" style="font-size:0.82rem; padding:0.45rem 0.85rem;">
+          <Icon name="mdi:backup-restore" width="16" height="16" /> Restablecer PINs de Fábrica
+        </button>
+      </div>
+    </div>
+
+    <!-- Staff Security Cards Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem; margin-bottom:1.5rem;" id="staff-security-cards">
+      <!-- Populated via JS -->
+    </div>
+
+    <!-- Audit Log of Session Access -->
+    <div class="bento-card">
+      <h3 style="font-size:1.05rem; margin:0 0 1rem; display:flex; align-items:center; gap:0.5rem; font-weight:700;">
+        <Icon name="mdi:history" width="20" height="20" color="var(--accent-blue)" /> Políticas de Acceso por Rol (Matriz RBAC)
+      </h3>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:left;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border-subtle); color:var(--text-secondary); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em;">
+              <th style="padding:0.65rem 0.75rem;">Módulo del Sistema</th>
+              <th style="padding:0.65rem 0.75rem;">Administrador / Gerencia</th>
+              <th style="padding:0.65rem 0.75rem;">Mecánico (Taller)</th>
+              <th style="padding:0.65rem 0.75rem;">Ventas (Mostrador)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-subtle);">
+              <td style="padding:0.75rem; font-weight:600;">Dashboard Operativo (/panel)</td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Acceso Total</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Taller & Bicis</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Ventas & POS</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);">
+              <td style="padding:0.75rem; font-weight:600;">CRM & Órdenes de Trabajo (/panel/crm)</td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Acceso Total</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Órdenes Taller</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-partial">Consulta & Clientes</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-subtle);">
+              <td style="padding:0.75rem; font-weight:600;">Inventario Maestro & POS (/panel/inventario)</td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Costos & Compras</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-partial">Stock Refacciones</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Caja & Cobro</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-subtle); background:rgba(255,69,58,0.03);">
+              <td style="padding:0.75rem; font-weight:600;">Contabilidad & Finanzas (/panel/contabilidad)</td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Exclusivo Gerencial</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-deny">Bloqueado</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-deny">Bloqueado</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-subtle); background:rgba(255,69,58,0.03);">
+              <td style="padding:0.75rem; font-weight:600;">Gestión de Personal & Sueldos (/panel/empleados)</td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Gestión & PINs</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-deny">Bloqueado</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-deny">Bloqueado</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-subtle); background:rgba(255,69,58,0.03);">
+              <td style="padding:0.75rem; font-weight:600;">Gestión Web & MercadoPago (/panel/sitio-web)</td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-allow">Publicación & Pagos</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-deny">Bloqueado</span></td>
+              <td style="padding:0.75rem;"><span class="rbac-chip rbac-deny">Bloqueado</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MODAL: Nueva Tarea ════ -->
+  <div id="task-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:520px;">
+      <div class="modal-header">
+        <h2 id="task-modal-title">Nueva Tarea</h2>
+        <button class="btn-icon" id="task-modal-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+        <div class="form-group">
+          <label>Título de la Tarea</label>
+          <input type="text" id="t-title" placeholder="Ej: Hacer servicio a la bici de Juan Pérez" />
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="t-cat">
+              <option>Taller / Servicio</option>
+              <option>Atención a Cliente</option>
+              <option>CRM / Seguimiento</option>
+              <option>Inventario</option>
+              <option>Limpieza / Operación</option>
+              <option>Cobro / Cuentas</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Prioridad</label>
+            <select id="t-priority">
+              <option value="alta">Alta</option>
+              <option value="media" selected>Media</option>
+              <option value="baja">Baja</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Asignar a</label>
+            <select id="t-assignee">
+              <option value="">Sin asignar (auto-delegar)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha Límite</label>
+            <input type="date" id="t-due" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notas</label>
+          <textarea id="t-notes" rows="2" style="resize:vertical; padding:0.65rem 1rem; border-radius:var(--radius-sm); border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-primary); font-size:0.9rem; outline:none; font-family:inherit;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="task-modal-cancel">Cancelar</button>
+        <button class="btn-primary" id="task-modal-save">Guardar Tarea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MODAL: Preview Delegación ════ -->
+  <div id="delegate-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-header">
+        <h2>Propuesta de Delegación Automática</h2>
+        <button class="btn-icon" id="delegate-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:1.25rem;">El sistema analiza la carga actual de cada empleado y propone la distribución más equitativa. Revisa la propuesta antes de confirmar.</p>
+        <div id="delegate-preview-list" style="display:flex; flex-direction:column; gap:0.75rem;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="delegate-cancel">Cancelar</button>
+        <button class="btn-primary" id="delegate-confirm">
+          <Icon name="mdi:send-check-outline" width="18" height="18" /> Confirmar y Delegar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MODAL: Nuevo Empleado ════ -->
+  <div id="emp-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h2>Nuevo Empleado</h2>
+        <button class="btn-icon" id="emp-modal-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" id="e-name" placeholder="Ej: Marco Ramírez" />
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Puesto / Rol</label>
+            <select id="e-role">
+              <option>Taller</option><option>Ventas</option><option>Admin</option><option>Mensajería</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" id="e-phone" placeholder="9841234567" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label>Turno</label>
+            <select id="e-shift">
+              <option>Completo (10am–7pm)</option>
+              <option>Mañana (10am–2pm)</option>
+              <option>Tarde (3pm–7pm)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Días de trabajo</label>
+            <select id="e-days">
+              <option>Lun–Sáb</option>
+              <option>Lun–Vie</option>
+              <option>Sáb–Dom</option>
+            </select>
+          </div>
+        </div>
+        <div style="background:rgba(0,113,227,0.08); border-radius:10px; padding:0.75rem; font-size:0.82rem; color:var(--text-secondary);">
+          Se creará una cuenta de empleado con acceso al portal de <strong>Mi Perfil</strong>. El PIN de acceso inicial será el teléfono registrado.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="emp-modal-cancel">Cancelar</button>
+        <button class="btn-primary" id="emp-modal-save">Crear Empleado</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MODAL: Iniciar Nuevo Mes Operativo ════ -->
+  <div id="modal-new-month" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-header">
+        <h2 style="display:flex; align-items:center; gap:0.5rem; font-size:1.2rem;">
+          <Icon name="mdi:calendar-plus" width="22" height="22" color="var(--accent-blue)" /> Iniciar Nuevo Mes Operativo
+        </h2>
+        <button class="btn-icon" id="new-month-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <p style="font-size:0.88rem; color:var(--text-secondary); margin:0;">
+          Al abrir un nuevo ciclo mensual, el mes en curso se archivará en la base de datos histórica. Podrás consultar el histórico en cualquier momento desde el selector de ciclos.
+        </p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Código del Mes (YYYY-MM)</label>
+            <input type="text" id="nm-id" placeholder="Ej: 2026-10" />
+          </div>
+          <div class="form-group">
+            <label>Nombre del Ciclo</label>
+            <input type="text" id="nm-label" placeholder="Ej: Octubre 2026" />
+          </div>
+        </div>
+
+        <div style="background:var(--bg-base); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-size:0.85rem;">
+            <input type="checkbox" id="nm-rollover-tasks" checked style="margin-top:0.2rem;" />
+            <div>
+              <strong style="color:var(--text-primary); display:block;">Traspasar tareas pendientes (Rollover)</strong>
+              <span style="color:var(--text-secondary); font-size:0.78rem;">Las tareas en estado "Pendiente" o "En Progreso" del mes actual se migrarán automáticamente al nuevo ciclo.</span>
+            </div>
+          </label>
+
+          <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-size:0.85rem;">
+            <input type="checkbox" id="nm-reset-hours" checked style="margin-top:0.2rem;" />
+            <div>
+              <strong style="color:var(--text-primary); display:block;">Reiniciar contadores de asistencia a 0.0h</strong>
+              <span style="color:var(--text-secondary); font-size:0.78rem;">Comenzar el nuevo mes con registros limpios para el reloj checador del equipo.</span>
+            </div>
+          </label>
+
+          <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer; font-size:0.85rem;">
+            <input type="checkbox" id="nm-init-benchmarks" checked style="margin-top:0.2rem;" />
+            <div>
+              <strong style="color:var(--text-primary); display:block;">Inicializar tabulador de benchmarks de taller</strong>
+              <span style="color:var(--text-secondary); font-size:0.78rem;">Cargar los tiempos estándar Park Tool / Shimano Service Center para medir el rendimiento del nuevo mes.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="new-month-cancel">Cancelar</button>
+        <button class="btn-primary" id="new-month-save">Crear e Iniciar Mes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MODAL: Gestión Avanzada de Colaborador (Crear / Editar / Permisos) ════ -->
+  <div id="modal-staff-user" class="modal-overlay" style="display:none; z-index:10000;">
+    <div class="modal-box" style="max-width:680px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <h2 id="su-modal-title" style="display:flex; align-items:center; gap:0.6rem; font-size:1.15rem; font-weight:700;">
+          <Icon name="mdi:shield-account-outline" width="22" height="22" color="var(--accent-blue)" />
+          <span>Configuración de Colaborador & Permisos RBAC</span>
+        </h2>
+        <button class="btn-icon" id="su-modal-close" type="button"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <input type="hidden" id="su-id" value="" />
+        
+        <!-- Datos Personales -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Nombre y Apellidos *</label>
+            <input type="text" id="su-name" placeholder="Ej: Carlos Méndez" required />
+          </div>
+          <div class="form-group">
+            <label>Cargo Corporativo / Puesto *</label>
+            <input type="text" id="su-title" placeholder="Ej: Especialista Comercial & POS" required />
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="form-group">
+            <label>Correo Electrónico Oficial (Login) *</label>
+            <input type="email" id="su-email" placeholder="carlos@thegarage.mx" required />
+          </div>
+          <div class="form-group">
+            <label>Teléfono / WhatsApp de Contacto</label>
+            <input type="tel" id="su-phone" placeholder="+52 984 123 4567" />
+          </div>
+        </div>
+
+        <!-- Rol, Estado y Monograma -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 100px; gap:1rem;">
+          <div class="form-group">
+            <label>Rol en el Sistema</label>
+            <select id="su-role" style="font-weight:600;">
+              <option value="admin">Administrador / Dueño</option>
+              <option value="mecanico">Mecánico Senior (Taller)</option>
+              <option value="ventas">Ventas & Mostrador</option>
+              <option value="personalizado">Personalizado (RBAC a Medida)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Estado de la Cuenta</label>
+            <select id="su-status">
+              <option value="active">Activo (Acceso Autorizado)</option>
+              <option value="suspended">Suspendido (Bloqueado)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Monograma</label>
+            <input type="text" id="su-monogram" maxlength="3" placeholder="CM" style="text-transform:uppercase; text-align:center; font-weight:800; letter-spacing:1px;" />
+          </div>
+        </div>
+
+        <!-- Color de Avatar & PIN -->
+        <div style="display:grid; grid-template-columns:1fr 1.3fr; gap:1rem; align-items:flex-end;">
+          <div class="form-group">
+            <label>Color Identificador</label>
+            <div style="display:flex; gap:0.5rem; align-items:center; margin-top:0.25rem;" id="su-color-palette">
+              <button type="button" class="color-swatch active" data-color="#0071e3" style="width:28px; height:28px; border-radius:50%; background:#0071e3; border:2px solid #fff; cursor:pointer; outline:2px solid #0071e3;"></button>
+              <button type="button" class="color-swatch" data-color="#30d158" style="width:28px; height:28px; border-radius:50%; background:#30d158; border:2px solid transparent; cursor:pointer;"></button>
+              <button type="button" class="color-swatch" data-color="#ff9f0a" style="width:28px; height:28px; border-radius:50%; background:#ff9f0a; border:2px solid transparent; cursor:pointer;"></button>
+              <button type="button" class="color-swatch" data-color="#af52de" style="width:28px; height:28px; border-radius:50%; background:#af52de; border:2px solid transparent; cursor:pointer;"></button>
+              <button type="button" class="color-swatch" data-color="#ff375f" style="width:28px; height:28px; border-radius:50%; background:#ff375f; border:2px solid transparent; cursor:pointer;"></button>
+              <button type="button" class="color-swatch" data-color="#64d2ff" style="width:28px; height:28px; border-radius:50%; background:#64d2ff; border:2px solid transparent; cursor:pointer;"></button>
+              <input type="hidden" id="su-color" value="#0071e3" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>PIN de Terminal (4 a 8 dígitos) *</label>
+            <div style="display:flex; gap:0.45rem;">
+              <input type="password" id="su-pin" maxlength="8" placeholder="1234" style="font-family:monospace; letter-spacing:2px; font-weight:700;" required />
+              <button type="button" class="btn-secondary" id="su-pin-toggle" title="Ver / Ocultar PIN" style="padding:0.45rem 0.65rem;">
+                <Icon name="mdi:eye-outline" width="18" height="18" />
+              </button>
+              <button type="button" class="btn-secondary" id="su-pin-generate" title="Generar PIN aleatorio" style="padding:0.45rem 0.75rem; font-size:0.8rem; white-space:nowrap;">
+                Generar PIN
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Matriz de Módulos Autorizados -->
+        <div style="background:var(--bg-base); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <strong style="font-size:0.9rem; color:var(--text-primary); display:block;">Módulos del Sistema Habilitados</strong>
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Selecciona qué áreas del panel puede consultar y operar este colaborador.</span>
+            </div>
+            <div style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+              <button type="button" class="btn-preset-chip" id="preset-all" style="font-size:0.72rem; padding:0.2rem 0.55rem; border-radius:4px; border:1px solid var(--border-subtle); background:var(--bg-surface); cursor:pointer; color:var(--text-primary);">Todos</button>
+              <button type="button" class="btn-preset-chip" id="preset-taller" style="font-size:0.72rem; padding:0.2rem 0.55rem; border-radius:4px; border:1px solid var(--border-subtle); background:var(--bg-surface); cursor:pointer; color:var(--text-primary);">Taller</button>
+              <button type="button" class="btn-preset-chip" id="preset-ventas" style="font-size:0.72rem; padding:0.2rem 0.55rem; border-radius:4px; border:1px solid var(--border-subtle); background:var(--bg-surface); cursor:pointer; color:var(--text-primary);">Ventas POS</button>
+              <button type="button" class="btn-preset-chip" id="preset-clear" style="font-size:0.72rem; padding:0.2rem 0.55rem; border-radius:4px; border:1px solid var(--border-subtle); background:var(--bg-surface); cursor:pointer; color:var(--text-secondary);">Limpiar</button>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem;" id="su-modules-grid">
+            {SAAS_MODULES.map(m => (
+              <label class="module-item-checkbox" style="display:flex; align-items:flex-start; gap:0.6rem; padding:0.55rem 0.75rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-surface); cursor:pointer;">
+                <input type="checkbox" class="su-module-checkbox" value={m.id} data-label={m.label} style="margin-top:0.2rem; accent-color:var(--accent-blue);" />
+                <div>
+                  <strong style="font-size:0.82rem; color:var(--text-primary); display:block;">{m.label}</strong>
+                  <span style="font-size:0.72rem; color:var(--text-secondary); display:block; line-height:1.2;">{m.desc}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+        <span id="su-modal-error" style="font-size:0.82rem; color:var(--accent-red); font-weight:600;"></span>
+        <div style="display:flex; gap:0.65rem;">
+          <button type="button" class="btn-secondary" id="su-cancel">Cancelar</button>
+          <button type="button" class="btn-primary" id="su-save">Guardar Colaborador</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MODAL: Confirmar Eliminación de Colaborador ════ -->
+  <div id="modal-delete-staff-user" class="modal-overlay" style="display:none; z-index:10001;">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h2 style="display:flex; align-items:center; gap:0.5rem; font-size:1.15rem; color:var(--accent-red);">
+          <Icon name="mdi:alert-circle-outline" width="22" height="22" /> Confirmar Revocación de Usuario
+        </h2>
+        <button class="btn-icon" id="del-staff-close" type="button"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+        <p style="margin:0; font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">
+          ¿Estás seguro de que deseas eliminar permanentemente a este colaborador? Su PIN de terminal será revocado de inmediato y no podrá volver a iniciar sesión.
+        </p>
+
+        <div style="background:rgba(255,59,48,0.06); border:1px solid rgba(255,59,48,0.2); border-radius:var(--radius-md); padding:0.85rem 1rem; display:flex; align-items:center; gap:0.75rem;" id="del-user-preview">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="del-staff-cancel" type="button">Cancelar</button>
+        <button class="btn-primary" id="del-staff-confirm" type="button" style="background:var(--accent-red); border:none; box-shadow:0 4px 12px rgba(255,59,48,0.3);">
+          Eliminar Definitivamente
+        </button>
+      </div>
+    </div>
+  </div>
+
+</PanelLayout>
+
+<style is:global>
+  /* ══ CORPORATE STYLING & STATUS VECTORS ══ */
+  .user-monogram {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.92rem;
+    letter-spacing: -0.01em;
+    flex-shrink: 0;
+    font-family: inherit;
+  }
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25);
+    display: inline-block;
+  }
+  .pulse-dot.danger {
+    background: var(--accent-red);
+    box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.25);
+  }
+  .pulse-dot.warning {
+    background: var(--accent-orange);
+    box-shadow: 0 0 0 2px rgba(255, 149, 0, 0.25);
+  }
+  .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .status-indicator.active {
+    color: var(--accent-green);
+  }
+  .status-indicator.suspended {
+    color: var(--accent-red);
+  }
+  .corp-rank-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+  .corp-rank-pill.rank-gold {
+    border-color: rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.12);
+    color: #e5b839;
+  }
+  .corp-rank-pill.rank-silver {
+    border-color: rgba(192, 192, 192, 0.5);
+    background: rgba(192, 192, 192, 0.12);
+    color: #d1d5db;
+  }
+  .corp-rank-pill.rank-bronze {
+    border-color: rgba(205, 127, 50, 0.5);
+    background: rgba(205, 127, 50, 0.12);
+    color: #f97316;
+  }
+  .rbac-chip {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .rbac-chip.rbac-allow {
+    background: rgba(52, 199, 89, 0.12);
+    color: var(--accent-green);
+    border: 1px solid rgba(52, 199, 89, 0.25);
+  }
+  .rbac-chip.rbac-deny {
+    background: rgba(255, 59, 48, 0.12);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 59, 48, 0.25);
+  }
+  .rbac-chip.rbac-partial {
+    background: rgba(255, 149, 0, 0.12);
+    color: var(--accent-orange);
+    border: 1px solid rgba(255, 149, 0, 0.25);
+  }
+  .color-swatch.active {
+    transform: scale(1.15);
+    border-color: #fff !important;
+  }
+  .module-item-checkbox:hover {
+    border-color: var(--accent-blue) !important;
+  }
+
+  /* Tabs */
+  .section-tabs {
+    display: flex;
+    gap: 0.35rem;
+    background: var(--bg-surface);
+    padding: 0.35rem;
+    border-radius: var(--radius-md);
+    width: fit-content;
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-soft);
+    flex-wrap: wrap;
+  }
+  .stab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-secondary);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .stab:hover {
+    color: var(--text-primary);
+    background: rgba(0,0,0,0.03);
+  }
+  .stab.active {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    font-weight: 700;
+  }
+  .tab-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    background: rgba(0,113,227,0.12);
+    color: var(--accent-blue);
+  }
+  .tab-badge.green {
+    background: rgba(52,199,89,0.14);
+    color: var(--accent-green);
+  }
+
+  /* Employee Status Cards */
+  .emp-status-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .emp-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .emp-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-float);
+  }
+  .emp-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .emp-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
+  .emp-role {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+  }
+  .emp-status {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.75rem;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .status-in {
+    background: rgba(52, 199, 89, 0.12);
+    color: var(--accent-green);
+  }
+  .status-out {
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--accent-red);
+  }
+  .emp-hours {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  /* Schedule Table */
+  .schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 650px;
+  }
+  .schedule-table th {
+    padding: 0.85rem 1rem;
+    background: var(--bg-base);
+    text-align: left;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .schedule-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+  }
+  .schedule-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .shift-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .shift-full {
+    background: rgba(52, 199, 89, 0.12);
+    color: var(--accent-green);
+  }
+  .shift-half {
+    background: rgba(0, 113, 227, 0.12);
+    color: var(--accent-blue);
+  }
+  .shift-off {
+    background: var(--bg-base);
+    color: var(--text-secondary);
+    opacity: 0.7;
+  }
+
+  /* Clock Log */
+  .clock-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.88rem;
+  }
+  .clock-row:last-child {
+    border-bottom: none;
+  }
+  .clock-ava {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .clock-name {
+    flex: 1;
+    font-weight: 600;
+  }
+  .clock-times {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+  }
+  .clock-entry {
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+  .clock-exit {
+    color: var(--accent-red);
+    font-weight: 600;
+  }
+  .clock-hours {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+  }
+
+  /* Task KPIs */
+  .task-kpis {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .task-kpi-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    box-shadow: var(--shadow-soft);
+  }
+  .tkpi-l {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+  .tkpi-v {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+  .tkpi-v.orange { color: var(--accent-orange); }
+  .tkpi-v.blue   { color: var(--accent-blue); }
+  .tkpi-v.green  { color: var(--accent-green); }
+  .tkpi-v.red    { color: var(--accent-red); }
+  .tkpi-sub {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+  }
+
+  /* Delegate Banner */
+  .delegate-banner {
+    background: linear-gradient(135deg, rgba(0, 113, 227, 0.08), rgba(52, 199, 89, 0.06));
+    border: 1px solid rgba(0, 113, 227, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.15rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* Kanban Board */
+  .kanban-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.25rem;
+  }
+  @media (max-width: 960px) {
+    .kanban-board {
+      grid-template-columns: 1fr;
+    }
+  }
+  .kanban-col {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-soft);
+  }
+  .kanban-header {
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .kanban-header.orange {
+    background: rgba(255, 149, 0, 0.08);
+    color: var(--accent-orange);
+  }
+  .kanban-header.blue {
+    background: rgba(0, 113, 227, 0.08);
+    color: var(--accent-blue);
+  }
+  .kanban-header.green {
+    background: rgba(52, 199, 89, 0.08);
+    color: var(--accent-green);
+  }
+  .kanban-count {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    border-radius: 100px;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .kanban-cards {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 120px;
+    background: var(--bg-app);
+    flex: 1;
+  }
+
+  /* Task Card */
+  .task-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    border-left: 4px solid transparent;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: all 0.2s;
+  }
+  .task-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  .task-card.alta  { border-left-color: var(--accent-red); }
+  .task-card.media { border-left-color: var(--accent-orange); }
+  .task-card.baja  { border-left-color: var(--accent-green); }
+
+  .task-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    gap: 0.5rem;
+  }
+  .task-prio-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+  }
+  .task-prio-tag.alta  { background: rgba(255,59,48,0.12); color: var(--accent-red); }
+  .task-prio-tag.media { background: rgba(255,149,0,0.12); color: var(--accent-orange); }
+  .task-prio-tag.baja  { background: rgba(52,199,89,0.12); color: var(--accent-green); }
+
+  .task-category-pill {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    background: var(--bg-base);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .task-title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    margin-bottom: 0.4rem;
+    color: var(--text-primary);
+  }
+  .task-notes {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 0.65rem;
+    background: var(--bg-base);
+    padding: 0.4rem 0.65rem;
+    border-radius: 6px;
+  }
+  .task-footer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .task-assignee-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+  .tab-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 800;
+  }
+  .task-actions {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .tact-btn {
+    font-size: 0.74rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    font-weight: 700;
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    transition: all 0.15s;
+  }
+  .tact-btn:hover {
+    background: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+  }
+  .tact-btn.danger:hover {
+    background: var(--accent-red);
+    color: white;
+    border-color: var(--accent-red);
+  }
+
+  /* ════ Performance Dashboard Styles ════ */
+  .perf-kpi-banner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .perf-kpi-item {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-soft);
+  }
+  .pkpi-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pkpi-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+  .pkpi-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-top: 0.2rem;
+  }
+  .pkpi-trend {
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin-top: 0.2rem;
+  }
+
+  /* Leaderboard Grid */
+  .leaderboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1rem;
+  }
+  .podium-card {
+    background: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+  }
+  .podium-card.gold   { border-top: 4px solid #ff9500; background: linear-gradient(180deg, rgba(255,149,0,0.06) 0%, var(--bg-surface) 100%); }
+  .podium-card.silver { border-top: 4px solid #8e8e93; background: linear-gradient(180deg, rgba(142,142,147,0.06) 0%, var(--bg-surface) 100%); }
+  .podium-card.bronze { border-top: 4px solid #cd7f32; background: linear-gradient(180deg, rgba(205,127,50,0.06) 0%, var(--bg-surface) 100%); }
+  .podium-card.neutral{ border-top: 4px solid #af52de; background: linear-gradient(180deg, rgba(175,82,222,0.06) 0%, var(--bg-surface) 100%); }
+
+  .podium-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+  .podium-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  .podium-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+  }
+  .podium-role {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+  .podium-score {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--accent-green);
+    margin-bottom: 0.5rem;
+  }
+  .podium-stats {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.65rem;
+  }
+  .podium-highlight {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+  }
+
+  /* Performance Grid Cards */
+  .perf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .perf-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-soft);
+  }
+  .perf-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .perf-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .perf-stat:last-child {
+    border-bottom: none;
+  }
+  .perf-bar {
+    height: 6px;
+    background: var(--accent-blue);
+    border-radius: 3px;
+  }
+  .perf-cert-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+  }
+  .cert-pill {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.55rem;
+    border-radius: 4px;
+    background: var(--bg-base);
+    color: var(--text-secondary);
+  }
+
+  /* Workshop Benchmark Table */
+  .benchmark-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 700px;
+  }
+  .benchmark-table th {
+    padding: 0.85rem 1.25rem;
+    background: var(--bg-base);
+    text-align: left;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .benchmark-table td {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+  }
+  .benchmark-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  .diff-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    display: inline-block;
+  }
+  .diff-tag.pos {
+    background: rgba(52, 199, 89, 0.12);
+    color: var(--accent-green);
+  }
+
+  /* Customer Feedback Grid */
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .feedback-card {
+    background: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .fc-stars {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+  }
+  .fc-comment {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.45;
+    margin: 0;
+    font-style: italic;
+    flex: 1;
+  }
+  .fc-author {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 0.5rem;
+  }
+  .fc-author strong {
+    color: var(--text-primary);
+  }
+
+  /* Delegate Preview */
+  .dp-row {
+    background: var(--bg-base);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    border: 1px solid var(--border-subtle);
+  }
+  .dp-assignee {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .dp-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 0.9rem;
+  }
+  .dp-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-left: 45px;
+  }
+  .dp-task-item {
+    font-size: 0.82rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 0.45rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Shared */
+  .btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    padding: 0.55rem 1.15rem;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.2s;
+  }
+  .btn-secondary:hover {
+    background: var(--bg-base);
+  }
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-box {
+    background: var(--bg-surface);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .modal-body {
+    padding: 2rem;
+  }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .form-group input, .form-group select {
+    padding: 0.65rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--accent-blue);
+  }
+</style>
+
+<script is:inline define:vars={{ initialOperationsDataJson, defaultStaffJson, saasModulesJson }}>
+(function() {
+  const OPS_HIST_KEY = 'bicisaas_operations_history';
+  const ACTIVE_MONTH_KEY = 'bicisaas_active_op_month';
+  const today = new Date().toISOString().slice(0,10);
+
+  // 1. Load or Initialize Multi-Month Operational History
+  const rawSeed = (function() {
+    try {
+      return JSON.parse(initialOperationsDataJson || '[]');
+    } catch(e) {
+      return [];
+    }
+  })();
+
+  function loadHistory() {
+    try {
+      const saved = localStorage.getItem(OPS_HIST_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch(e) {}
+    saveHistory(rawSeed);
+    return JSON.parse(JSON.stringify(rawSeed));
+  }
+
+  function saveHistory(hist) {
+    localStorage.setItem(OPS_HIST_KEY, JSON.stringify(hist));
+  }
+
+  let history = loadHistory();
+
+  // Find or determine active month
+  let activeMonthId = localStorage.getItem(ACTIVE_MONTH_KEY);
+  if (!activeMonthId || !history.some(m => m.id === activeMonthId)) {
+    const activeOne = history.find(m => !m.isClosed) || history[history.length - 1];
+    activeMonthId = activeOne ? activeOne.id : '2026-09';
+    localStorage.setItem(ACTIVE_MONTH_KEY, activeMonthId);
+  }
+
+  let selectedMonthId = activeMonthId;
+
+  function getMonth(id) {
+    return history.find(m => m.id === id) || history[history.length - 1];
+  }
+
+  function getActiveMonth() {
+    return getMonth(activeMonthId);
+  }
+
+  function getSelectedMonth() {
+    return getMonth(selectedMonthId);
+  }
+
+  function isViewingHistorical() {
+    return selectedMonthId !== activeMonthId;
+  }
+
+  function saveSelectedMonth(updatedMonth) {
+    const idx = history.findIndex(m => m.id === selectedMonthId);
+    if (idx !== -1) {
+      history[idx] = updatedMonth;
+      saveHistory(history);
+    }
+  }
+
+  // Time & priority helpers
+  function currentTime() { return new Date().toTimeString().slice(0,5); }
+  function calcHours(inn, out) {
+    if (!inn) return '0.0';
+    const [ih,im] = inn.split(':').map(Number);
+    const [oh,om] = (out || currentTime()).split(':').map(Number);
+    const diff = (oh*60+om - ih*60-im);
+    return Math.max(0, diff/60).toFixed(1);
+  }
+
+  function getMonthLabel(m) {
+    if (!m) return 'Septiembre 2026';
+    if (m.label && m.label !== 'undefined') return m.label;
+    if (m.name && m.name !== 'undefined') return m.name;
+    if (m.monthName) return m.monthName;
+    if (m.id) {
+      const parts = m.id.split('-');
+      if (parts.length === 2) {
+        const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        const mIdx = parseInt(parts[1], 10) - 1;
+        if (mIdx >= 0 && mIdx < 12) {
+          return `${monthNames[mIdx]} ${parts[0]}`;
+        }
+      }
+      return m.id;
+    }
+    return 'Septiembre 2026';
+  }
+
+  function getPriorityBadge(priority) {
+    const p = (priority || 'media').toLowerCase();
+    const labels = { alta: 'Alta', media: 'Media', baja: 'Baja' };
+    const dotClass = p === 'alta' ? 'danger' : (p === 'media' ? 'warning' : '');
+    return `<span class="task-prio-tag ${p}"><span class="pulse-dot ${dotClass}" style="width:6px; height:6px; margin-right:4px;"></span>${labels[p] || 'Media'}</span>`;
+  }
+
+  /* ══ RENDER: Operations Month Control Bar ══ */
+  function renderMonthControls() {
+    const select = document.getElementById('op-month-selector');
+    const badge = document.getElementById('op-month-badge');
+    const banner = document.getElementById('historical-banner');
+    const histTitle = document.getElementById('historical-title');
+    const histDesc = document.getElementById('historical-desc');
+
+    if (!select) return;
+
+    // Populate dropdown with all months in history (newest first)
+    const sorted = [...history].sort((a, b) => b.id.localeCompare(a.id));
+    select.innerHTML = sorted.map(m => {
+      const isActive = m.id === activeMonthId;
+      const statusText = isActive ? 'Activo' : 'Cerrado';
+      const label = getMonthLabel(m);
+      return `<option value="${m.id}" ${m.id === selectedMonthId ? 'selected' : ''}>${label} (${statusText})</option>`;
+    }).join('');
+
+    const currentM = getSelectedMonth();
+    const isHistorical = isViewingHistorical();
+    const curLabel = getMonthLabel(currentM);
+
+    if (badge) {
+      if (isHistorical) {
+        badge.style.background = 'rgba(255,149,0,0.12)';
+        badge.style.color = '#ff9500';
+        badge.innerHTML = '<span class="pulse-dot warning" style="width:6px; height:6px;"></span> Mes Cerrado (Historial)';
+      } else {
+        badge.style.background = 'rgba(52,199,89,0.12)';
+        badge.style.color = 'var(--accent-green)';
+        badge.innerHTML = '<span class="pulse-dot" style="width:6px; height:6px;"></span> Mes Activo';
+      }
+    }
+
+    if (banner) {
+      if (isHistorical) {
+        banner.style.display = 'flex';
+        if (histTitle) histTitle.textContent = `Modo Histórico de Consulta: ${curLabel} (Solo Lectura)`;
+        if (histDesc) histDesc.textContent = `Estás consultando los registros archivados de ${curLabel}. Las tareas, horas de asistencia y métricas se encuentran congeladas para auditoría SAT y SLA.`;
+      } else {
+        banner.style.display = 'none';
+      }
+    }
+
+    // Disable or hint buttons in historical mode
+    const btnNewTask = document.getElementById('btn-new-task');
+    const btnNewEmp = document.getElementById('btn-new-employee');
+    if (btnNewTask) {
+      btnNewTask.style.opacity = isHistorical ? '0.5' : '1';
+      btnNewTask.title = isHistorical ? 'Cambia al mes activo para crear tareas' : 'Nueva Tarea';
+    }
+    if (btnNewEmp) {
+      btnNewEmp.style.opacity = isHistorical ? '0.5' : '1';
+    }
+  }
+
+  // Switch Month
+  function switchMonth(newMonthId) {
+    selectedMonthId = newMonthId;
+    renderMonthControls();
+    populateAssigneeSelects();
+    renderAll();
+  }
+
+  const opSelector = document.getElementById('op-month-selector');
+  if (opSelector) {
+    opSelector.addEventListener('change', (e) => {
+      switchMonth(e.target.value);
+    });
+  }
+
+  const btnReturn = document.getElementById('btn-return-current-month');
+  if (btnReturn) {
+    btnReturn.addEventListener('click', () => {
+      switchMonth(activeMonthId);
+    });
+  }
+
+  /* ══ NEW MONTH MODAL ══ */
+  const btnOpenNewMonth = document.getElementById('btn-open-new-month');
+  const modalNewMonth = document.getElementById('modal-new-month');
+  const nmClose = document.getElementById('new-month-close');
+  const nmCancel = document.getElementById('new-month-cancel');
+  const nmSave = document.getElementById('new-month-save');
+
+  if (btnOpenNewMonth && modalNewMonth) {
+    btnOpenNewMonth.addEventListener('click', () => {
+      // Propose next month ID and label
+      const parts = activeMonthId.split('-');
+      let year = parseInt(parts[0], 10);
+      let month = parseInt(parts[1], 10);
+      month += 1;
+      if (month > 12) { month = 1; year += 1; }
+      const nextId = `${year}-${month < 10 ? '0' + month : month}`;
+      const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      const nextLabel = `${monthNames[month - 1]} ${year}`;
+
+      document.getElementById('nm-id').value = nextId;
+      document.getElementById('nm-label').value = nextLabel;
+      modalNewMonth.style.display = 'flex';
+    });
+  }
+
+  [nmClose, nmCancel].forEach(el => {
+    if (el) el.addEventListener('click', () => { modalNewMonth.style.display = 'none'; });
+  });
+
+  if (nmSave) {
+    nmSave.addEventListener('click', () => {
+      const id = document.getElementById('nm-id').value.trim();
+      const label = document.getElementById('nm-label').value.trim();
+      const rolloverTasks = document.getElementById('nm-rollover-tasks').checked;
+      const resetHours = document.getElementById('nm-reset-hours').checked;
+      const initBenchmarks = document.getElementById('nm-init-benchmarks').checked;
+
+      if (!id || !label) {
+        alert('Por favor ingresa el código y nombre del nuevo mes.');
+        return;
+      }
+
+      if (history.some(m => m.id === id)) {
+        alert(`El ciclo mensual "${id}" ya existe en la base de datos.`);
+        return;
+      }
+
+      // 1. Close current active month
+      const currentActive = getActiveMonth();
+      currentActive.isClosed = true;
+
+      // 2. Prepare Rollover Tasks
+      let newTasks = [];
+      if (rolloverTasks) {
+        const pending = (currentActive.tasks || []).filter(t => t.status !== 'done');
+        newTasks = pending.map((t, idx) => ({
+          ...t,
+          id: 't-roll-' + Date.now() + '-' + idx,
+          notes: `[Rollover de ${currentActive.label}] ${t.notes || ''}`
+        }));
+      }
+
+      // 3. Prepare Employees (reset clock-in and month hours if checked)
+      const baseEmployees = currentActive.employees || [];
+      const newEmployees = baseEmployees.map(e => ({
+        ...e,
+        clockIn: null,
+        clockOut: null,
+        hoursMonth: resetHours ? 0 : e.hoursMonth,
+        tasksMonthDone: 0,
+        tasksMonthAssigned: newTasks.filter(t => t.assignee === e.id).length
+      }));
+
+      // 4. Default Benchmarks
+      const defaultBenchmarks = initBenchmarks ? [
+        { name: "Mantenimiento General Integral", description: "Limpieza ultrasonido, lubricación, ajuste de conos y cambios", standardTime: "90 min", realTime: "75 min", diff: "-15 min (16.7%)", volume: "0 bicicletas", quality: "100% Meta" },
+        { name: "Purga de Frenos Hidráulicos (Par)", description: "Shimano Mineral / SRAM DOT 5.1 con cambio de balatas", standardTime: "35 min", realTime: "28 min", diff: "-7 min (20.0%)", volume: "0 bicicletas", quality: "100% Meta" },
+        { name: "Ajuste y Sincronización de Transmisión", description: "Alineación de patilla con herramienta Park Tool DAG-2.2", standardTime: "20 min", realTime: "17 min", diff: "-3 min (15.0%)", volume: "0 bicicletas", quality: "100% Meta" },
+        { name: "Ensamble de Bicicleta Nueva (Box to Trail)", description: "Armado, torqueado según fabricante, tubelizado y puesta a punto", standardTime: "120 min", realTime: "105 min", diff: "-15 min (12.5%)", volume: "0 bicicletas", quality: "100% Meta" },
+        { name: "Conversión a Tubeless + Sellador Stan's NoTubes", description: "Encintado sellado, válvulas de aluminio y talonado con compresor", standardTime: "30 min", realTime: "24 min", diff: "-6 min (20.0%)", volume: "0 ruedas", quality: "100% Meta" },
+        { name: "Centrado y Tensión de Rayos en Rueda", description: "Tensiómetro digital y corrección lateral/radial < 0.2mm", standardTime: "40 min", realTime: "33 min", diff: "-7 min (17.5%)", volume: "0 ruedas", quality: "100% Meta" }
+      ] : [];
+
+      // 5. Default Leaderboard
+      const defaultLeaderboard = [
+        { place: 1, placeLabel: "1er Lugar", cardClass: "gold", initials: "MR", color: "#34c759", name: "Marco Ramírez", role: "Técnico Master Taller", score: "100% Meta", stats: [{ label: "0", value: "servicios" }, { label: "0", value: "garantías" }, { label: "5.0", value: "CSAT" }], highlight: "Líder técnico de taller certificado" },
+        { place: 2, placeLabel: "2do Lugar", cardClass: "silver", initials: "LV", color: "#ff9500", name: "Laura Vásquez", role: "Asesora de Ventas & CRM", score: "100% Meta", stats: [{ label: "$0k", value: "cerrados" }, { label: "0", value: "prospectos" }, { label: "< 15m", value: "resp." }], highlight: "Atención comercial y asesoría VIP" },
+        { place: 3, placeLabel: "3er Lugar", cardClass: "bronze", initials: "DL", color: "#0071e3", name: "Diego López", role: "Operaciones & Administración", score: "100% SLA", stats: [{ label: "100%", value: "arqueos" }, { label: "0", value: "faltantes" }, { label: "0h", value: "activas" }], highlight: "Gestión de compras e inventario" },
+        { place: 4, placeLabel: "Logística Express", cardClass: "neutral", initials: "ST", color: "#af52de", name: "Sofía Torres", role: "Mensajería & Entregas", score: "100% A Tiempo", stats: [{ label: "0", value: "envíos" }, { label: "35m", value: "promedio" }, { label: "0", value: "demoras" }], highlight: "Cobertura express Riviera Maya" }
+      ];
+
+      // 6. Build new operational month
+      const newMonth = {
+        id,
+        label,
+        isClosed: false,
+        kpis: {
+          slaEfficiency: "100.0%",
+          avgWorkshopTime: "1h 15m",
+          deliveredServices: "0 Servicios",
+          csat: "5.0 / 5.0",
+          activeHeadcount: newEmployees.length,
+          revenueWorkforce: "$0 MXN"
+        },
+        leaderboard: defaultLeaderboard,
+        benchmarks: defaultBenchmarks,
+        reviews: [],
+        tasks: newTasks,
+        employees: newEmployees
+      };
+
+      history.push(newMonth);
+      saveHistory(history);
+
+      activeMonthId = id;
+      selectedMonthId = id;
+      localStorage.setItem(ACTIVE_MONTH_KEY, id);
+
+      modalNewMonth.style.display = 'none';
+      renderMonthControls();
+      populateAssigneeSelects();
+      renderAll();
+
+      alert(`Ciclo mensual "${label}" iniciado con éxito. Se traspasaron ${newTasks.length} tareas pendientes y se reinició el reloj checador.`);
+    });
+  }
+
+  /* ══ POPULATE ASSIGNEE SELECTS ══ */
+  function populateAssigneeSelects() {
+    const cur = getSelectedMonth();
+    const emps = cur.employees || [];
+    const sel = document.getElementById('t-assignee');
+    if (sel) {
+      sel.innerHTML = '<option value="">Sin asignar (auto-delegar)</option>' +
+        emps.map(e => `<option value="${e.id}">${e.name} (${e.role})</option>`).join('');
+    }
+    const filterAss = document.getElementById('filter-assignee');
+    if (filterAss) {
+      filterAss.innerHTML = '<option value="">Todos los colaboradores</option>' +
+        '<option value="__unassigned__">Sin asignar</option>' +
+        emps.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+    }
+  }
+
+  /* ══ RENDER: Status Cards (Asistencia) ══ */
+  function renderStatusCards() {
+    const cur = getSelectedMonth();
+    const emps = cur.employees || [];
+    const tasks = cur.tasks || [];
+    const row = document.getElementById('emp-status-row');
+    if (!row) return;
+
+    row.innerHTML = emps.map(e => {
+      const activeTask = tasks.find(t => t.assignee === e.id && t.status === 'progress');
+      const isWorking = !!e.clockIn && !e.clockOut;
+      const hours = e.clockIn ? calcHours(e.clockIn, e.clockOut) : '0.0';
+      const statusBadge = e.clockOut
+        ? '<span class="emp-badge-out">Salida</span>'
+        : (e.clockIn ? '<span class="emp-badge-active">● Activo</span>' : '<span class="emp-badge-absent">Sin checar</span>');
+
+      return `
+        <div class="emp-status-card" style="border-top:3px solid ${e.color};">
+          <div class="emp-top">
+            <div class="emp-avatar" style="background:${e.color};">${e.initials}</div>
+            <div class="emp-info">
+              <span class="emp-name">${e.name}</span>
+              <span class="emp-role">${e.role}</span>
+            </div>
+            ${statusBadge}
+          </div>
+          <div class="emp-meta-row">
+            <span>Turno: <strong>${e.shift}</strong></span>
+            <span>Entrada: <strong>${e.clockIn || '—'}</strong></span>
+            <span>Horas hoy: <strong>${hours}h</strong></span>
+          </div>
+          <div class="emp-task-now">
+            <span class="emp-task-label">Tarea Actual:</span>
+            ${activeTask ? `<span class="emp-task-title">${activeTask.title}</span>` : '<span class="emp-task-none">Sin tarea en progreso</span>'}
+          </div>
+          ${!isViewingHistorical() ? `
+            <div class="emp-actions">
+              ${!e.clockIn ? `
+                <button class="btn-clock in" onclick="clockAction('${e.id}','in')">Registrar Entrada</button>
+              ` : (!e.clockOut ? `
+                <button class="btn-clock out" onclick="clockAction('${e.id}','out')">Registrar Salida</button>
+              ` : '<span style="font-size:0.75rem; color:var(--text-secondary);">Turno concluido</span>')}
+            </div>
+          ` : `
+            <div class="emp-actions">
+              <span style="font-size:0.75rem; color:var(--text-secondary);">Horas mes: <strong>${e.hoursMonth || 0}h</strong></span>
+            </div>
+          `}
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.clockAction = function(empId, type) {
+    if (isViewingHistorical()) {
+      alert('No es posible modificar el reloj checador en un mes cerrado.');
+      return;
+    }
+    const cur = getSelectedMonth();
+    const emp = (cur.employees || []).find(e => e.id === empId);
+    if (!emp) return;
+    const time = currentTime();
+    if (type === 'in') { emp.clockIn = time; emp.clockOut = null; }
+    else { emp.clockOut = time; }
+    saveSelectedMonth(cur);
+    renderAll();
+  };
+
+  /* ══ RENDER: Schedule Table ══ */
+  function renderSchedule() {
+    const head = document.getElementById('schedule-head');
+    const body = document.getElementById('schedule-body');
+    const label = document.getElementById('week-label');
+    if (!head || !body) return;
+
+    const cur = getSelectedMonth();
+    const emps = cur.employees || [];
+    const WEEK_DAYS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+    if (label) label.textContent = `Semana en curso · ${cur.label}`;
+
+    head.innerHTML = `
+      <tr>
+        <th style="min-width:160px;">Colaborador</th>
+        ${WEEK_DAYS.map(d => `<th>${d}</th>`).join('')}
+        <th>Horas Mes</th>
+      </tr>
+    `;
+
+    body.innerHTML = emps.map(e => `
+      <tr>
+        <td>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <div class="emp-avatar" style="background:${e.color}; width:28px; height:28px; font-size:0.75rem;">${e.initials}</div>
+            <div>
+              <div style="font-weight:600; font-size:0.85rem;">${e.name}</div>
+              <div style="font-size:0.72rem; color:var(--text-secondary);">${e.role}</div>
+            </div>
+          </div>
+        </td>
+        ${WEEK_DAYS.map(d => {
+          const works = (e.days || '').includes(d) || (e.days === 'Lun–Sáb' && d !== 'Dom') || (e.days === 'Lun–Vie' && !['Sáb','Dom'].includes(d));
+          return works
+            ? `<td><span class="sched-shift on">${e.shift.split(' ')[0]}</span></td>`
+            : '<td><span class="sched-shift off">Descanso</span></td>';
+        }).join('')}
+        <td><strong>${e.hoursMonth || 40}h</strong></td>
+      </tr>
+    `).join('');
+  }
+
+  /* ══ RENDER: Clock Log ══ */
+  function renderClockLog() {
+    const el = document.getElementById('clock-log');
+    if (!el) return;
+    const cur = getSelectedMonth();
+    const emps = cur.employees || [];
+
+    el.innerHTML = emps.filter(e => e.clockIn).map(e => `
+      <div class="clock-log-row">
+        <div class="emp-avatar" style="background:${e.color}; width:32px; height:32px; font-size:0.8rem;">${e.initials}</div>
+        <div style="flex:1;">
+          <div style="font-weight:600; font-size:0.88rem;">${e.name}</div>
+          <div style="font-size:0.75rem; color:var(--text-secondary);">${e.role}</div>
+        </div>
+        <div class="clock-time font-mono">Entrada: ${e.clockIn}</div>
+        <div class="clock-time font-mono">${e.clockOut ? 'Salida: ' + e.clockOut : 'En turno'}</div>
+        <span class="task-prio-tag baja">${calcHours(e.clockIn, e.clockOut)} hrs</span>
+      </div>
+    `).join('') || '<p style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem 0;">Sin registros de entrada para este periodo.</p>';
+  }
+
+  /* ══ RENDER: Kanban Board (Tareas) ══ */
+  function renderKanban() {
+    const cur = getSelectedMonth();
+    const tasks = cur.tasks || [];
+    const emps = cur.employees || [];
+
+    // Filter by search / priority / category / assignee
+    const qSearch = (document.getElementById('task-search')?.value || '').toLowerCase();
+    const qPrio   = document.getElementById('filter-priority')?.value || '';
+    const qCat    = document.getElementById('filter-category')?.value || '';
+    const qAss    = document.getElementById('filter-assignee')?.value || '';
+
+    const filtered = tasks.filter(t => {
+      if (qSearch && !t.title.toLowerCase().includes(qSearch) && !(t.notes || '').toLowerCase().includes(qSearch)) return false;
+      if (qPrio && t.priority !== qPrio) return false;
+      if (qCat && t.cat !== qCat) return false;
+      if (qAss === '__unassigned__' && t.assignee) return false;
+      if (qAss && qAss !== '__unassigned__' && t.assignee !== qAss) return false;
+      return true;
+    });
+
+    // Counts
+    const cPend = tasks.filter(t => t.status === 'pending').length;
+    const cProg = tasks.filter(t => t.status === 'progress').length;
+    const cDone = tasks.filter(t => t.status === 'done').length;
+
+    const elTotal = document.getElementById('tk-total');
+    const elPend  = document.getElementById('tk-pending');
+    const elProg  = document.getElementById('tk-progress');
+    const elDone  = document.getElementById('tk-done');
+    const tabBadge = document.getElementById('tab-badge-tasks');
+
+    if (elTotal) elTotal.textContent = tasks.length;
+    if (elPend)  elPend.textContent  = cPend;
+    if (elProg)  elProg.textContent  = cProg;
+    if (elDone)  elDone.textContent  = cDone;
+    if (tabBadge) tabBadge.textContent = cPend + cProg;
+
+    ['pending','progress','done'].forEach(col => {
+      const colEl = document.getElementById('col-' + col);
+      const countEl = document.getElementById('cnt-' + col);
+      if (countEl) countEl.textContent = tasks.filter(t => t.status === col).length;
+      if (!colEl) return;
+
+      const colTasks = filtered.filter(t => t.status === col);
+      if (!colTasks.length) {
+        colEl.innerHTML = '<div class="kanban-empty">No hay tareas en esta columna</div>';
+        return;
+      }
+
+      colEl.innerHTML = colTasks.map(t => {
+        const emp = emps.find(e => e.id === t.assignee);
+        return `
+          <div class="task-card" draggable="${!isViewingHistorical()}" data-task-id="${t.id}">
+            <div class="task-card-top">
+              <span class="task-cat-tag">${t.cat}</span>
+              ${getPriorityBadge(t.priority)}
+            </div>
+            <div class="task-card-title">${t.title}</div>
+            ${t.notes ? `<div class="task-card-notes">${t.notes}</div>` : ''}
+            <div class="task-card-footer">
+              <div class="task-card-assignee">
+                ${emp ? `
+                  <div class="emp-avatar" style="background:${emp.color}; width:24px; height:24px; font-size:0.65rem;">${emp.initials}</div>
+                  <span>${emp.name.split(' ')[0]}</span>
+                ` : '<span class="task-unassigned">Sin asignar</span>'}
+              </div>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                ${t.due ? `<span class="task-due font-mono">${t.due.slice(5)}</span>` : ''}
+                ${!isViewingHistorical() ? `
+                  <button class="btn-icon" onclick="moveTaskNext('${t.id}')" title="Avanzar estado">›</button>
+                  <button class="btn-icon" onclick="deleteTask('${t.id}')" title="Eliminar" style="color:#ff3b30;">×</button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    });
+  }
+
+  window.moveTaskNext = function(taskId) {
+    if (isViewingHistorical()) { alert('El mes actual es solo lectura.'); return; }
+    const cur = getSelectedMonth();
+    const t = (cur.tasks || []).find(item => item.id === taskId);
+    if (!t) return;
+    if (t.status === 'pending') t.status = 'progress';
+    else if (t.status === 'progress') t.status = 'done';
+    else t.status = 'pending';
+    saveSelectedMonth(cur);
+    renderKanban();
+    renderPerformance();
+  };
+
+  window.deleteTask = function(taskId) {
+    if (isViewingHistorical()) { alert('El mes actual es solo lectura.'); return; }
+    if (!confirm('¿Eliminar esta tarea del registro mensual?')) return;
+    const cur = getSelectedMonth();
+    cur.tasks = (cur.tasks || []).filter(t => t.id !== taskId);
+    saveSelectedMonth(cur);
+    renderKanban();
+    renderPerformance();
+  };
+
+  /* ══ RENDER: Rendimiento & KPIs ══ */
+  function renderPerformance() {
+    const cur = getSelectedMonth();
+    const kpis = cur.kpis || {};
+    const leaderboard = cur.leaderboard || [];
+    const benchmarks = cur.benchmarks || [];
+    const reviews = cur.reviews || [];
+    const emps = cur.employees || [];
+    const tasks = cur.tasks || [];
+
+    // 1. Executive KPIs
+    const elSlaVal = document.getElementById('pkpi-sla-val');
+    const elTimeVal = document.getElementById('pkpi-time-val');
+    const elServVal = document.getElementById('pkpi-serv-val');
+    const elCsatVal = document.getElementById('pkpi-csat-val');
+    const cycleBadge = document.getElementById('perf-cycle-badge');
+
+    if (elSlaVal) elSlaVal.textContent = kpis.slaEfficiency || '96.4%';
+    if (elTimeVal) elTimeVal.textContent = kpis.avgWorkshopTime || '1h 14m';
+    if (elServVal) elServVal.textContent = kpis.deliveredServices || '42 Servicios';
+    if (elCsatVal) elCsatVal.textContent = kpis.csat || '4.95 / 5.0';
+    if (cycleBadge) cycleBadge.textContent = `Ciclo ${cur.label}`;
+
+    // 2. Leaderboard Grid (Podio de Honor)
+    const lbGrid = document.getElementById('perf-leaderboard-grid');
+    if (lbGrid) {
+      lbGrid.innerHTML = leaderboard.map(p => `
+        <div class="podium-card ${p.cardClass}">
+          <div class="podium-badge">${p.placeLabel}</div>
+          <div class="podium-avatar" style="background:${p.color};">${p.initials}</div>
+          <div class="podium-name">${p.name}</div>
+          <div class="podium-role">${p.role}</div>
+          <div class="podium-score">${p.score}</div>
+          <div class="podium-stats">
+            ${p.stats.map(s => `<div><strong>${s.label}</strong> ${s.value}</div>`).join('')}
+          </div>
+          <div class="podium-highlight">${p.highlight}</div>
+        </div>
+      `).join('');
+    }
+
+    // 3. Individual Scorecards
+    const perfGrid = document.getElementById('perf-grid');
+    if (perfGrid) {
+      perfGrid.innerHTML = emps.map(e => {
+        const myTasks = tasks.filter(t => t.assignee === e.id);
+        const done = myTasks.filter(t => t.status === 'done').length;
+        const inProg = myTasks.filter(t => t.status === 'progress').length;
+        const pct = myTasks.length ? Math.round((done / myTasks.length) * 100) : 100;
+        const certs = e.certs || ['Atención General', 'Mecánica Rápida'];
+
+        return `
+          <div class="perf-card">
+            <div class="perf-header">
+              <div class="emp-avatar" style="background:${e.color}; width:48px; height:48px; font-size:1.15rem;">${e.initials}</div>
+              <div>
+                <div style="font-weight:800; font-size:1rem; color:var(--text-primary);">${e.name}</div>
+                <div style="font-size:0.78rem; color:var(--text-secondary);">${e.role}</div>
+              </div>
+            </div>
+            <div class="perf-stat"><span>Tareas asignadas</span><strong>${myTasks.length}</strong></div>
+            <div class="perf-stat"><span>Completadas</span><strong style="color:var(--accent-green);">${done}</strong></div>
+            <div class="perf-stat"><span>En proceso</span><strong style="color:var(--accent-blue);">${inProg}</strong></div>
+            <div class="perf-stat"><span>Horas mes</span><strong>${e.hoursMonth || 40}h</strong></div>
+            <div class="perf-stat" style="flex-direction:column; border-bottom:none; margin-top:0.35rem;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem; font-size:0.82rem; font-weight:700;">
+                <span>Tasa de Resolución:</span>
+                <span style="color:var(--accent-green);">${pct}%</span>
+              </div>
+              <div style="height:6px; background:var(--bg-base); border-radius:3px; overflow:hidden;">
+                <div class="perf-bar" style="width:${pct}%; background:${pct >= 80 ? 'var(--accent-green)' : 'var(--accent-orange)'};"></div>
+              </div>
+            </div>
+            <div class="perf-cert-pills">
+              ${certs.map(c => `<span class="cert-pill">${c}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 4. Workshop Benchmark Matrix
+    const benchTbody = document.getElementById('perf-benchmark-tbody');
+    if (benchTbody) {
+      benchTbody.innerHTML = benchmarks.map(b => `
+        <tr>
+          <td>
+            <strong>${b.name}</strong>
+            <div style="font-size:0.75rem; color:var(--text-secondary);">${b.description}</div>
+          </td>
+          <td>${b.standardTime}</td>
+          <td><span style="color:var(--accent-green); font-weight:700;">${b.realTime}</span></td>
+          <td><span class="diff-tag pos">${b.diff}</span></td>
+          <td>${b.volume}</td>
+          <td><span class="diff-tag pos">${b.quality}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // 5. Customer Feedback Reviews
+    const fbGrid = document.getElementById('perf-feedback-grid');
+    if (fbGrid) {
+      fbGrid.innerHTML = reviews.length ? reviews.map(r => `
+        <div class="feedback-card">
+          <div class="fc-stars">${r.stars}</div>
+          <p class="fc-comment">"${r.comment}"</p>
+          <div class="fc-author">
+            <strong>${r.author}</strong>
+            <span>${r.tag}</span>
+          </div>
+        </div>
+      `).join('') : '<p style="color:var(--text-secondary); font-size:0.88rem;">Sin reseñas archivadas para este periodo.</p>';
+    }
+  }
+
+  /* ══ NEW TASK MODAL ══ */
+  const btnNewTask = document.getElementById('btn-new-task');
+  const taskModal = document.getElementById('task-modal');
+  if (btnNewTask && taskModal) {
+    btnNewTask.addEventListener('click', () => {
+      if (isViewingHistorical()) {
+        alert('Estás en un mes cerrado en modo solo lectura. Para agregar una tarea, selecciona el mes activo en el desplegable superior.');
+        return;
+      }
+      document.getElementById('t-title').value = '';
+      document.getElementById('t-due').value = today;
+      document.getElementById('t-notes').value = '';
+      taskModal.style.display = 'flex';
+    });
+  }
+
+  const btnTaskSave = document.getElementById('task-modal-save');
+  if (btnTaskSave) {
+    btnTaskSave.addEventListener('click', () => {
+      const title = document.getElementById('t-title').value.trim();
+      if (!title) { alert('El título de la tarea es obligatorio.'); return; }
+      const cur = getSelectedMonth();
+      cur.tasks = cur.tasks || [];
+      cur.tasks.unshift({
+        id: 't' + Date.now(),
+        title,
+        cat: document.getElementById('t-cat').value,
+        priority: document.getElementById('t-priority').value,
+        status: 'pending',
+        assignee: document.getElementById('t-assignee').value,
+        due: document.getElementById('t-due').value,
+        notes: document.getElementById('t-notes').value.trim()
+      });
+      saveSelectedMonth(cur);
+      taskModal.style.display = 'none';
+      renderKanban();
+      renderPerformance();
+    });
+  }
+
+  ['task-modal-close','task-modal-cancel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => { taskModal.style.display = 'none'; });
+  });
+
+  /* ══ NEW EMPLOYEE MODAL ══ */
+  const btnNewEmp = document.getElementById('btn-new-employee');
+  const empModal = document.getElementById('emp-modal');
+  if (btnNewEmp && empModal) {
+    btnNewEmp.addEventListener('click', () => {
+      if (isViewingHistorical()) {
+        alert('Estás en un mes cerrado en modo solo lectura. Para agregar un colaborador, selecciona el mes activo.');
+        return;
+      }
+      ['e-name','e-phone'].forEach(id => { const f = document.getElementById(id); if (f) f.value = ''; });
+      empModal.style.display = 'flex';
+    });
+  }
+
+  const btnEmpSave = document.getElementById('emp-modal-save');
+  if (btnEmpSave) {
+    btnEmpSave.addEventListener('click', () => {
+      const name = document.getElementById('e-name').value.trim();
+      const phone = document.getElementById('e-phone').value.trim();
+      if (!name || !phone) { alert('Nombre y teléfono son obligatorios.'); return; }
+      const cur = getSelectedMonth();
+      cur.employees = cur.employees || [];
+      const colors = ['#0071e3','#34c759','#ff9500','#af52de','#ff3b30','#5e5ce6'];
+      cur.employees.push({
+        id: 'e' + Date.now(),
+        name, phone,
+        initials: name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
+        role: document.getElementById('e-role').value,
+        shift: document.getElementById('e-shift').value,
+        days: document.getElementById('e-days').value,
+        color: colors[cur.employees.length % colors.length],
+        clockIn: null, clockOut: null,
+        certs: ['Atención General', 'Capacitación The Garage'],
+        hoursMonth: 0,
+        tasksMonthDone: 0,
+        tasksMonthAssigned: 0
+      });
+      saveSelectedMonth(cur);
+      empModal.style.display = 'none';
+      populateAssigneeSelects();
+      renderAll();
+    });
+  }
+
+  ['emp-modal-close','emp-modal-cancel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => { empModal.style.display = 'none'; });
+  });
+
+  /* ══ DEMO RESTORE ══ */
+  const btnReloadDemo = document.getElementById('btn-reload-demo');
+  if (btnReloadDemo) {
+    btnReloadDemo.addEventListener('click', () => {
+      if (confirm('¿Restaurar la base de datos completa de operaciones con todos los meses (Junio, Julio, Agosto, Septiembre)?')) {
+        saveHistory(rawSeed);
+        history = loadHistory();
+        activeMonthId = '2026-09';
+        selectedMonthId = '2026-09';
+        localStorage.setItem(ACTIVE_MONTH_KEY, '2026-09');
+        renderMonthControls();
+        populateAssigneeSelects();
+        renderAll();
+        alert('Base de datos multi-mes de operaciones restaurada con éxito.');
+      }
+    });
+  }
+
+  /* ══ SECTION TABS SWITCHING ══ */
+  function switchTab(sectionName) {
+    document.querySelectorAll('.stab').forEach(t => {
+      t.classList.toggle('active', t.dataset.section === sectionName);
+    });
+    ['asistencia','tareas','rendimiento','seguridad'].forEach(sec => {
+      const el = document.getElementById('section-' + sec);
+      if (el) {
+        el.style.display = (sec === sectionName) ? 'block' : 'none';
+      }
+    });
+    if (sectionName === 'seguridad') {
+      renderSecurityStaffCards();
+    }
+    try {
+      history.replaceState(null, '', '#' + sectionName);
+    } catch(e) {}
+  }
+
+  document.querySelectorAll('.stab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const s = this.dataset.section;
+      if (s) switchTab(s);
+    });
+  });
+
+  function checkHash() {
+    const hash = window.location.hash.replace('#', '');
+    if (['asistencia', 'tareas', 'rendimiento', 'seguridad'].includes(hash)) {
+      switchTab(hash);
+    }
+  }
+
+  // Filter listeners for Kanban
+  ['task-search','filter-priority','filter-category','filter-assignee'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', renderKanban);
+      el.addEventListener('change', renderKanban);
+    }
+  });
+
+  /* ══ SEGURIDAD & PINs SAAS (RBAC) & GESTIÓN DE COLABORADORES ══ */
+  const DEFAULT_STAFF_SECURITY = (function() {
+    try {
+      return JSON.parse(defaultStaffJson || '[]');
+    } catch(e) {
+      return [];
+    }
+  })();
+
+  const SAAS_MODULES_LIST = (function() {
+    try {
+      return JSON.parse(saasModulesJson || '[]');
+    } catch(e) {
+      return [];
+    }
+  })();
+
+  async function hashPinClient(pin, salt) {
+    const enc = new TextEncoder();
+    const data = enc.encode(String(pin).trim() + String(salt));
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function generateSaltClient() {
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  }
+
+  function getSecurityStaff() {
+    try {
+      const raw = localStorage.getItem('bicisaas_staff_accounts');
+      if (!raw) {
+        localStorage.setItem('bicisaas_staff_accounts', JSON.stringify(DEFAULT_STAFF_SECURITY));
+        return DEFAULT_STAFF_SECURITY;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Automatic legacy migration: convert any plain text pin to pinHash
+        let needsSave = false;
+        parsed.forEach(emp => {
+          if (emp.pin && !emp.pinHash) {
+            emp.pinSalt = 'thegarage_salt_' + emp.id + '_' + Date.now().toString(36);
+            // Synchronous fallback salt placeholder until updated
+            emp.pinHash = 'migrating';
+            needsSave = true;
+          }
+        });
+        return parsed;
+      }
+      return DEFAULT_STAFF_SECURITY;
+    } catch(e) {
+      return DEFAULT_STAFF_SECURITY;
+    }
+  }
+
+  function saveSecurityStaff(staffList) {
+    localStorage.setItem('bicisaas_staff_accounts', JSON.stringify(staffList));
+    renderSecurityStaffCards();
+  }
+
+  function selectColorSwatch(color) {
+    const swatches = document.querySelectorAll('.color-swatch');
+    swatches.forEach(s => {
+      if (s.getAttribute('data-color') === color) {
+        s.classList.add('active');
+        s.style.outline = '2px solid ' + color;
+        s.style.borderColor = '#fff';
+      } else {
+        s.classList.remove('active');
+        s.style.outline = 'none';
+        s.style.borderColor = 'transparent';
+      }
+    });
+    const colorInput = document.getElementById('su-color');
+    if (colorInput) colorInput.value = color;
+  }
+
+  function setModulePreset(preset) {
+    const checkboxes = document.querySelectorAll('.su-module-checkbox');
+    if (preset === 'all' || preset === 'admin') {
+      checkboxes.forEach(cb => { cb.checked = true; });
+    } else if (preset === 'taller' || preset === 'mecanico') {
+      const allowed = ['dashboard', 'crm', 'inventario', 'taller', 'mi-perfil'];
+      checkboxes.forEach(cb => { cb.checked = allowed.includes(cb.value); });
+    } else if (preset === 'ventas') {
+      const allowed = ['dashboard', 'crm', 'inventario', 'rentas', 'mi-perfil'];
+      checkboxes.forEach(cb => { cb.checked = allowed.includes(cb.value); });
+    } else if (preset === 'clear') {
+      checkboxes.forEach(cb => { cb.checked = cb.value === 'mi-perfil'; });
+    }
+  }
+
+  // Modal open / close handlers
+  window.openCreateStaffUser = function() {
+    if (isViewingHistorical()) {
+      alert('Estás en un mes cerrado en modo solo lectura. Para gestionar colaboradores, cambia al mes activo.');
+      return;
+    }
+    const titleEl = document.getElementById('su-modal-title');
+    if (titleEl) titleEl.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:var(--accent-blue); margin-right:6px;"><path d="M15 14c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4m-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6m9-2a4 4 0 0 0 4-4a4 4 0 0 0-4-4a4 4 0 0 0-4 4a4 4 0 0 0 4 4"/></svg> Nuevo Colaborador / Usuario';
+    
+    document.getElementById('su-id').value = '';
+    document.getElementById('su-name').value = '';
+    document.getElementById('su-title').value = '';
+    document.getElementById('su-email').value = '';
+    document.getElementById('su-phone').value = '';
+    document.getElementById('su-role').value = 'ventas';
+    document.getElementById('su-status').value = 'active';
+    document.getElementById('su-monogram').value = '';
+    document.getElementById('su-pin').value = Math.floor(1000 + Math.random() * 9000).toString();
+    document.getElementById('su-modal-error').textContent = '';
+    
+    selectColorSwatch('#0071e3');
+    setModulePreset('ventas');
+    
+    const modal = document.getElementById('modal-staff-user');
+    if (modal) modal.style.display = 'flex';
+  };
+
+  window.openEditStaffUser = function(empId) {
+    const staffList = getSecurityStaff();
+    const emp = staffList.find(e => e.id === empId);
+    if (!emp) return;
+
+    const titleEl = document.getElementById('su-modal-title');
+    if (titleEl) titleEl.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:var(--accent-blue); margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg> Configurar: ${emp.name}`;
+    
+    document.getElementById('su-id').value = emp.id;
+    document.getElementById('su-name').value = emp.name || '';
+    document.getElementById('su-title').value = emp.title || emp.roleLabel || '';
+    document.getElementById('su-email').value = emp.email || '';
+    document.getElementById('su-phone').value = emp.phone || '';
+    document.getElementById('su-role').value = emp.role || 'personalizado';
+    document.getElementById('su-status').value = emp.status || 'active';
+    document.getElementById('su-monogram').value = emp.monogram || emp.avatar || '';
+    document.getElementById('su-pin').value = '';
+    document.getElementById('su-pin').placeholder = (emp.pinHash || emp.pin) ? '•••• (PIN activo - ingresa uno nuevo para cambiarlo)' : 'Ingresa 4 a 8 dígitos';
+    document.getElementById('su-modal-error').textContent = '';
+
+    selectColorSwatch(emp.color || '#0071e3');
+
+    const allowed = emp.allowedModules || [];
+    const checkboxes = document.querySelectorAll('.su-module-checkbox');
+    checkboxes.forEach(cb => {
+      cb.checked = emp.role === 'admin' || allowed.includes(cb.value) || allowed.includes(cb.dataset.label);
+    });
+
+    const modal = document.getElementById('modal-staff-user');
+    if (modal) modal.style.display = 'flex';
+  };
+
+  async function saveStaffUser() {
+    const id = document.getElementById('su-id').value.trim();
+    const name = document.getElementById('su-name').value.trim();
+    const title = document.getElementById('su-title').value.trim();
+    const email = document.getElementById('su-email').value.trim().toLowerCase();
+    const phone = document.getElementById('su-phone').value.trim();
+    const role = document.getElementById('su-role').value;
+    const status = document.getElementById('su-status').value;
+    const color = document.getElementById('su-color').value || '#0071e3';
+    const pin = document.getElementById('su-pin').value.trim();
+    let monogram = document.getElementById('su-monogram').value.trim().toUpperCase();
+    const errEl = document.getElementById('su-modal-error');
+
+    if (!name || !title || !email) {
+      if (errEl) errEl.textContent = 'Nombre, puesto y correo oficial son obligatorios.';
+      return;
+    }
+
+    const staffList = getSecurityStaff();
+    const existingEmp = id ? staffList.find(e => e.id === id) : null;
+
+    if (!existingEmp && (!pin || pin.length < 4)) {
+      if (errEl) errEl.textContent = 'El PIN de terminal debe tener al menos 4 dígitos para un nuevo colaborador.';
+      return;
+    }
+
+    if (pin && pin.length > 0 && pin.length < 4) {
+      if (errEl) errEl.textContent = 'El nuevo PIN debe tener al menos 4 dígitos.';
+      return;
+    }
+
+    // Determine secure pinHash and pinSalt
+    let pinSalt = existingEmp ? (existingEmp.pinSalt || generateSaltClient()) : generateSaltClient();
+    let pinHash = existingEmp ? existingEmp.pinHash : undefined;
+
+    if (pin && pin.length >= 4) {
+      pinHash = await hashPinClient(pin, pinSalt);
+    }
+
+    if (!monogram) {
+      monogram = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'US';
+    }
+
+    const existingWithEmail = staffList.find(e => e.email.toLowerCase() === email && e.id !== id);
+    if (existingWithEmail) {
+      if (errEl) errEl.textContent = `El correo ${email} ya pertenece a otro colaborador.`;
+      return;
+    }
+
+    const selectedModules = [];
+    document.querySelectorAll('.su-module-checkbox:checked').forEach(cb => {
+      selectedModules.push(cb.value);
+    });
+    if (role === 'admin') {
+      SAAS_MODULES_LIST.forEach(m => {
+        if (!selectedModules.includes(m.id)) selectedModules.push(m.id);
+      });
+    }
+
+    const roleLabels = {
+      admin: 'Administrador / Dueño',
+      mecanico: 'Mecánico Senior / Taller',
+      ventas: 'Ventas & Mostrador',
+      personalizado: 'Rol Personalizado'
+    };
+
+    let targetEmpId = id;
+    if (id) {
+      const idx = staffList.findIndex(e => e.id === id);
+      if (idx !== -1) {
+        staffList[idx] = {
+          ...staffList[idx],
+          name,
+          title,
+          email,
+          phone,
+          role,
+          roleLabel: roleLabels[role] || 'Personalizado',
+          status,
+          color,
+          pinHash,
+          pinSalt,
+          monogram,
+          avatar: monogram,
+          allowedModules: selectedModules
+        };
+        delete staffList[idx].pin; // Remover cualquier residuo en texto plano
+      }
+    } else {
+      targetEmpId = 'e_' + Date.now().toString(36);
+      staffList.push({
+        id: targetEmpId,
+        name,
+        title,
+        email,
+        phone,
+        role,
+        roleLabel: roleLabels[role] || 'Personalizado',
+        status,
+        color,
+        pinHash,
+        pinSalt,
+        monogram,
+        avatar: monogram,
+        allowedModules: selectedModules,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    saveSecurityStaff(staffList);
+
+    // Synchronize with active month operation employees
+    try {
+      const curM = getSelectedMonth();
+      if (curM && Array.isArray(curM.employees)) {
+        const empIdx = curM.employees.findIndex(e => e.id === targetEmpId);
+        if (empIdx !== -1) {
+          curM.employees[empIdx].name = name;
+          curM.employees[empIdx].initials = monogram;
+          curM.employees[empIdx].role = title;
+          curM.employees[empIdx].phone = phone || curM.employees[empIdx].phone;
+          curM.employees[empIdx].color = color;
+        } else {
+          curM.employees.push({
+            id: targetEmpId,
+            name,
+            initials: monogram,
+            role: title,
+            phone: phone || '9840000000',
+            shift: 'Completo (10am–7pm)',
+            days: 'Lun–Sáb',
+            color,
+            clockIn: null,
+            clockOut: null,
+            certs: ['Acceso SaaS'],
+            hoursMonth: 0,
+            tasksMonthDone: 0,
+            tasksMonthAssigned: 0
+          });
+        }
+        saveSelectedMonth(curM);
+        populateAssigneeSelects();
+        renderStatusCards();
+        renderSchedule();
+      }
+    } catch(e) {
+      console.error('Error syncing staff with operations:', e);
+    }
+
+    const modal = document.getElementById('modal-staff-user');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // Deletion logic with safeguards
+  let userToDeleteId = null;
+
+  window.openDeleteStaffUser = function(empId) {
+    if (empId === 'e1') {
+      alert('El Administrador Raíz (admin@thegarage.mx) no puede ser eliminado por políticas de seguridad del sistema.');
+      return;
+    }
+
+    const staffList = getSecurityStaff();
+    const emp = staffList.find(e => e.id === empId);
+    if (!emp) return;
+
+    if (emp.role === 'admin') {
+      const adminCount = staffList.filter(e => e.role === 'admin').length;
+      if (adminCount <= 1) {
+        alert('No es posible eliminar al único administrador del sistema.');
+        return;
+      }
+    }
+
+    userToDeleteId = empId;
+    const preview = document.getElementById('del-user-preview');
+    if (preview) {
+      preview.innerHTML = `
+        <div class="user-monogram" style="background:${emp.color || '#0071e3'}20; color:${emp.color || '#0071e3'}; border:1px solid ${emp.color || '#0071e3'}44; width:38px; height:38px; font-size:0.88rem;">
+          ${emp.monogram || 'US'}
+        </div>
+        <div>
+          <strong style="display:block; font-size:0.92rem; color:var(--text-primary);">${emp.name}</strong>
+          <span style="font-size:0.8rem; color:var(--text-secondary);">${emp.email} · ${emp.roleLabel}</span>
+        </div>
+      `;
+    }
+
+    const modal = document.getElementById('modal-delete-staff-user');
+    if (modal) modal.style.display = 'flex';
+  };
+
+  function confirmDeleteStaffUser() {
+    if (!userToDeleteId || userToDeleteId === 'e1') return;
+
+    let staffList = getSecurityStaff();
+    staffList = staffList.filter(e => e.id !== userToDeleteId);
+    saveSecurityStaff(staffList);
+
+    try {
+      const curM = getSelectedMonth();
+      if (curM && Array.isArray(curM.employees)) {
+        curM.employees = curM.employees.filter(e => e.id !== userToDeleteId);
+        saveSelectedMonth(curM);
+        populateAssigneeSelects();
+        renderStatusCards();
+        renderSchedule();
+      }
+    } catch(e) {}
+
+    userToDeleteId = null;
+    const modal = document.getElementById('modal-delete-staff-user');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function renderSecurityStaffCards() {
+    const container = document.getElementById('staff-security-cards');
+    if (!container) return;
+
+    const staffList = getSecurityStaff();
+    const moduleMap = {};
+    SAAS_MODULES_LIST.forEach(m => { moduleMap[m.id] = m.label; });
+
+    container.innerHTML = staffList.map(emp => {
+      const monogram = emp.monogram || (emp.name ? emp.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : 'US');
+      const isRootAdmin = emp.id === 'e1';
+      const isSuspended = emp.status === 'suspended';
+
+      const allowedNames = (emp.allowedModules || ['dashboard', 'crm', 'inventario']).map(m => moduleMap[m] || m);
+
+      return `
+        <div class="bento-card" style="position:relative; display:flex; flex-direction:column; justify-content:space-between; gap:1rem; border-top:3px solid ${emp.color || '#0071e3'};">
+          <div>
+            <!-- Header card -->
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+              <div style="display:flex; align-items:center; gap:0.65rem;">
+                <div class="user-monogram" style="background:${emp.color || '#0071e3'}18; color:${emp.color || '#0071e3'}; border:1px solid ${emp.color || '#0071e3'}44;">
+                  ${monogram}
+                </div>
+                <div>
+                  <strong style="font-size:0.95rem; display:block; color:var(--text-primary);">${emp.name}</strong>
+                  <span style="font-size:0.78rem; color:var(--text-secondary);">${emp.title || emp.roleLabel}</span>
+                </div>
+              </div>
+              <span style="font-size:0.72rem; font-weight:700; padding:0.2rem 0.55rem; border-radius:100px; background:${emp.role === 'admin' ? 'rgba(0,113,227,0.15)' : 'rgba(52,199,89,0.15)'}; color:${emp.role === 'admin' ? 'var(--accent-blue)' : 'var(--accent-green)'};">
+                ${emp.roleLabel || emp.role}
+              </span>
+            </div>
+
+            <!-- Email & Phone info -->
+            <div style="background:var(--bg-base); border:1px solid var(--border-subtle); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.82rem; margin-bottom:0.85rem; display:flex; flex-direction:column; gap:0.25rem;">
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Correo Oficial:</span>
+                <strong style="color:var(--text-primary); font-family:monospace;">${emp.email}</strong>
+              </div>
+              ${emp.phone ? `
+                <div style="display:flex; justify-content:space-between; font-size:0.78rem;">
+                  <span style="color:var(--text-secondary);">Contacto:</span>
+                  <span style="color:var(--text-primary);">${emp.phone}</span>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- PIN Control -->
+            <div style="margin-bottom:0.85rem;">
+              <label style="font-size:0.78rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.35rem;">
+                PIN de Terminal (Acceso táctil)
+              </label>
+              <div style="display:flex; gap:0.5rem;">
+                <input 
+                  type="password" 
+                  id="pin-input-${emp.id}" 
+                  placeholder="${(emp.pinHash || emp.pin) ? '•••• (PIN activo)' : 'Ingresa nuevo PIN'}" 
+                  value="" 
+                  maxlength="8" 
+                  style="flex:1; background:var(--bg-base); border:1px solid var(--border-subtle); border-radius:8px; padding:0.45rem 0.75rem; font-size:0.95rem; color:var(--text-primary); letter-spacing:2px; font-weight:700; outline:none;"
+                />
+                <button 
+                  type="button" 
+                  class="btn-secondary" 
+                  onclick="togglePinView('${emp.id}')" 
+                  title="Ver / Ocultar PIN"
+                  style="padding:0.45rem 0.65rem;"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                </button>
+                <button 
+                  type="button" 
+                  class="btn-primary" 
+                  onclick="updateStaffPin('${emp.id}')"
+                  style="padding:0.45rem 0.85rem; font-size:0.8rem;"
+                >
+                  Guardar PIN
+                </button>
+              </div>
+            </div>
+
+            <!-- Allowed modules badges -->
+            <div>
+              <span style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); display:block; margin-bottom:0.4rem;">
+                Módulos Habilitados (${allowedNames.length}):
+              </span>
+              <div style="display:flex; flex-wrap:wrap; gap:0.35rem;">
+                ${allowedNames.map(m => `
+                  <span style="font-size:0.7rem; font-weight:600; background:rgba(255,255,255,0.06); border:1px solid var(--border-subtle); padding:0.15rem 0.45rem; border-radius:4px; color:var(--text-primary); display:inline-flex; align-items:center; gap:0.25rem;">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="color:var(--accent-green);"><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>
+                    ${m}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Footer & Actions -->
+          <div style="border-top:1px solid var(--border-subtle); padding-top:0.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; font-size:0.75rem;">
+            <div>
+              <span class="status-indicator ${isSuspended ? 'suspended' : 'active'}">
+                <span class="pulse-dot ${isSuspended ? 'danger' : ''}"></span>
+                ${isSuspended ? 'Acceso Suspendido' : 'Activo en Tienda'}
+              </span>
+            </div>
+            <div style="display:flex; gap:0.4rem; align-items:center;">
+              <button 
+                type="button" 
+                class="btn-secondary" 
+                onclick="openEditStaffUser('${emp.id}')"
+                style="font-size:0.75rem; padding:0.25rem 0.55rem; display:inline-flex; align-items:center; gap:0.25rem;"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"/></svg>
+                Editar
+              </button>
+              ${!isRootAdmin ? `
+                <button 
+                  type="button" 
+                  class="btn-secondary" 
+                  onclick="openDeleteStaffUser('${emp.id}')"
+                  style="font-size:0.75rem; padding:0.25rem 0.5rem; color:var(--accent-red); display:inline-flex; align-items:center; gap:0.25rem;"
+                  title="Eliminar Colaborador"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z"/></svg>
+                  Eliminar
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.togglePinView = function(empId) {
+    const input = document.getElementById('pin-input-' + empId);
+    if (input) {
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+  };
+
+  window.updateStaffPin = async function(empId) {
+    const input = document.getElementById('pin-input-' + empId);
+    if (!input) return;
+    const newPin = input.value.trim();
+    if (!newPin || newPin.length < 4) {
+      alert('El PIN debe tener al menos 4 caracteres numéricos.');
+      return;
+    }
+
+    const staffList = getSecurityStaff();
+    const target = staffList.find(e => e.id === empId);
+    if (target) {
+      target.pinSalt = target.pinSalt || generateSaltClient();
+      target.pinHash = await hashPinClient(newPin, target.pinSalt);
+      delete target.pin;
+      saveSecurityStaff(staffList);
+      input.value = '';
+      input.placeholder = '•••• (PIN actualizado y cifrado)';
+      alert('PIN actualizado y protegido con hash seguro para ' + target.name + ' (' + target.roleLabel + ').');
+    }
+  };
+
+  // Wire security buttons and listeners
+  const btnAddStaffUser = document.getElementById('btn-add-staff-user');
+  if (btnAddStaffUser) {
+    btnAddStaffUser.addEventListener('click', () => {
+      openCreateStaffUser();
+    });
+  }
+
+  const suModalClose = document.getElementById('su-modal-close');
+  const suCancel = document.getElementById('su-cancel');
+  if (suModalClose) suModalClose.addEventListener('click', () => {
+    document.getElementById('modal-staff-user').style.display = 'none';
+  });
+  if (suCancel) suCancel.addEventListener('click', () => {
+    document.getElementById('modal-staff-user').style.display = 'none';
+  });
+
+  const suSave = document.getElementById('su-save');
+  if (suSave) suSave.addEventListener('click', saveStaffUser);
+
+  const suPinToggle = document.getElementById('su-pin-toggle');
+  if (suPinToggle) {
+    suPinToggle.addEventListener('click', () => {
+      const pinEl = document.getElementById('su-pin');
+      if (pinEl) pinEl.type = pinEl.type === 'password' ? 'text' : 'password';
+    });
+  }
+
+  const suPinGen = document.getElementById('su-pin-generate');
+  if (suPinGen) {
+    suPinGen.addEventListener('click', () => {
+      const pinEl = document.getElementById('su-pin');
+      if (pinEl) pinEl.value = Math.floor(1000 + Math.random() * 9000).toString();
+    });
+  }
+
+  // Swatch click handlers
+  document.querySelectorAll('.color-swatch').forEach(sw => {
+    sw.addEventListener('click', (e) => {
+      const color = sw.getAttribute('data-color');
+      selectColorSwatch(color);
+    });
+  });
+
+  // Preset buttons
+  const pAll = document.getElementById('preset-all');
+  const pTaller = document.getElementById('preset-taller');
+  const pVentas = document.getElementById('preset-ventas');
+  const pClear = document.getElementById('preset-clear');
+  if (pAll) pAll.addEventListener('click', () => setModulePreset('all'));
+  if (pTaller) pTaller.addEventListener('click', () => setModulePreset('taller'));
+  if (pVentas) pVentas.addEventListener('click', () => setModulePreset('ventas'));
+  if (pClear) pClear.addEventListener('click', () => setModulePreset('clear'));
+
+  // Role select auto-preset
+  const suRoleSelect = document.getElementById('su-role');
+  if (suRoleSelect) {
+    suRoleSelect.addEventListener('change', (e) => {
+      setModulePreset(e.target.value);
+    });
+  }
+
+  // Deletion modal listeners
+  const delStaffClose = document.getElementById('del-staff-close');
+  const delStaffCancel = document.getElementById('del-staff-cancel');
+  const delStaffConfirm = document.getElementById('del-staff-confirm');
+  if (delStaffClose) delStaffClose.addEventListener('click', () => {
+    document.getElementById('modal-delete-staff-user').style.display = 'none';
+  });
+  if (delStaffCancel) delStaffCancel.addEventListener('click', () => {
+    document.getElementById('modal-delete-staff-user').style.display = 'none';
+  });
+  if (delStaffConfirm) delStaffConfirm.addEventListener('click', confirmDeleteStaffUser);
+
+  const resetPinsBtn = document.getElementById('btn-reset-staff-pins');
+  if (resetPinsBtn) {
+    resetPinsBtn.addEventListener('click', () => {
+      if (confirm('¿Restablecer las credenciales oficiales de fábrica?\n\n• Admin: admin@thegarage.mx (1984)\n• Taller: taller@thegarage.mx (2024)\n• Ventas: ventas@thegarage.mx (3030)')) {
+        localStorage.setItem('bicisaas_staff_accounts', JSON.stringify(DEFAULT_STAFF_SECURITY));
+        renderSecurityStaffCards();
+        alert('Credenciales de fábrica restauradas.');
+      }
+    });
+  }
+
+  // Wire new employee button to open full staff user modal
+  const btnNewEmployeeMain = document.getElementById('btn-new-employee');
+  if (btnNewEmployeeMain) {
+    btnNewEmployeeMain.addEventListener('click', (e) => {
+      e.stopImmediatePropagation();
+      openCreateStaffUser();
+    });
+  }
+
+  /* ══ INITIALIZATION ══ */
+  function renderAll() {
+    renderStatusCards();
+    renderSchedule();
+    renderClockLog();
+    renderKanban();
+    renderPerformance();
+  }
+
+  renderMonthControls();
+  populateAssigneeSelects();
+  renderAll();
+  checkHash();
+})();
+</script>

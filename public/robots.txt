@@ -1,0 +1,18 @@
+# Robots.txt for The Garage Bike Experts (Playa del Carmen)
+User-agent: *
+Allow: /
+Allow: /inventario
+Allow: /bici/
+Allow: /comunidad
+Allow: /guias
+Allow: /guia-tallas
+Allow: /riviera-maya
+Allow: /aviso-privacidad
+
+# Disallow private admin panels and transaction states
+Disallow: /panel/
+Disallow: /admin/
+Disallow: /checkout/exito
+
+# Official XML Sitemap
+Sitemap: http://localhost:4321/sitemap.xml

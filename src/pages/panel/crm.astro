@@ -1,0 +1,970 @@
+---
+import PanelLayout from '../../layouts/PanelLayout.astro';
+import { Icon } from 'astro-icon/components';
+---
+<PanelLayout title="CRM & Equipo | BiciSaaS">
+  <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+    <div>
+      <h1 class="page-title">CRM 360° — Clientes y Prospectos.</h1>
+      <p class="text-muted">Datos unificados de la tienda física y el sitio web en tiempo real.</p>
+    </div>
+    <div style="display:flex; gap:0.75rem;">
+      <button class="btn-secondary" id="btn-sync">
+        <Icon name="mdi:sync" width="18" height="18" /> Sincronizar Web
+      </button>
+      <button class="btn-primary" id="btn-new-client">
+        <Icon name="mdi:account-plus" width="18" height="18" /> Nuevo Cliente
+      </button>
+    </div>
+  </div>
+
+  <!-- Score Funnel Metrics -->
+  <div class="funnel-row">
+    <div class="funnel-card" data-stage="all">
+      <Icon name="mdi:account-multiple-outline" width="22" height="22" />
+      <div class="funnel-body">
+        <span class="funnel-label">Total Contactos</span>
+        <span class="funnel-val" id="f-total">—</span>
+      </div>
+    </div>
+    <div class="funnel-card stage-interesado" data-stage="interesado">
+      <Icon name="mdi:eye-outline" width="22" height="22" />
+      <div class="funnel-body">
+        <span class="funnel-label">Interesados</span>
+        <span class="funnel-val" id="f-interesado">—</span>
+      </div>
+    </div>
+    <div class="funnel-card stage-calificado" data-stage="calificado">
+      <Icon name="mdi:star-outline" width="22" height="22" />
+      <div class="funnel-body">
+        <span class="funnel-label">Calificados</span>
+        <span class="funnel-val" id="f-calificado">—</span>
+      </div>
+    </div>
+    <div class="funnel-card stage-comprador" data-stage="comprador">
+      <Icon name="mdi:cash-check" width="22" height="22" />
+      <div class="funnel-body">
+        <span class="funnel-label">Compradores</span>
+        <span class="funnel-val" id="f-comprador">—</span>
+      </div>
+    </div>
+    <div class="funnel-card stage-deuda" data-stage="deuda">
+      <Icon name="mdi:alert-circle-outline" width="22" height="22" />
+      <div class="funnel-body">
+        <span class="funnel-label">Con Deuda</span>
+        <span class="funnel-val" id="f-deuda">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main 3-col layout -->
+  <div class="crm-layout">
+
+    <!-- Left: Client Directory -->
+    <div class="bento-card crm-sidebar-col">
+      <div class="col-header" style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-subtle);">
+        <h3>Directorio</h3>
+        <div style="display:flex; gap:0.5rem;">
+          <select id="stage-filter" class="select-mini">
+            <option value="">Todos</option>
+            <option value="interesado">Interesados</option>
+            <option value="calificado">Calificados</option>
+            <option value="comprador">Compradores</option>
+            <option value="deuda">Con Deuda</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="padding:0.75rem 1rem; border-bottom:1px solid var(--border-subtle);">
+        <div style="position:relative;">
+          <Icon name="mdi:magnify" width="16" height="16" style="position:absolute; left:0.6rem; top:50%; transform:translateY(-50%); color:var(--text-secondary);" />
+          <input type="text" id="crm-search" placeholder="Buscar por nombre o teléfono..." style="width:100%; padding:0.5rem 0.5rem 0.5rem 2rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-primary); font-size:0.85rem; outline:none;" />
+        </div>
+      </div>
+
+      <div class="client-list" id="client-list"></div>
+    </div>
+
+    <!-- Center: Full 360° Profile (Zoho CRM Style) -->
+    <div class="bento-card crm-profile-col zoho-profile-card" id="profile-area">
+      <div class="empty-state text-muted" id="profile-empty">
+        <Icon name="mdi:account-search-outline" width="52" height="52" style="opacity:0.35; margin-bottom:1rem;" />
+        <p style="font-size:0.95rem;">Selecciona un contacto del directorio para ver su ficha completa</p>
+      </div>
+      <div id="profile-view" style="display:none; height:100%; overflow-y:auto;">
+        <!-- Zoho Header Bar -->
+        <div class="zoho-client-header">
+          <div class="zoho-avatar-lg" id="pv-avatar">?</div>
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h2 id="pv-name" style="font-size:1.35rem; font-weight:700; margin:0; letter-spacing:-0.02em;">—</h2>
+                <div id="pv-contact" style="color:var(--text-secondary); font-size:0.88rem; margin-top:0.25rem;">—</div>
+              </div>
+              <div class="zoho-score-badge">
+                <span style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary); font-weight:600;">Score Comercial</span>
+                <strong id="pv-score" style="font-size:1.2rem; color:var(--accent-blue);">0 / 100</strong>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.5rem; margin-top:0.65rem; flex-wrap:wrap;">
+              <span class="stage-badge" id="pv-stage-badge">—</span>
+              <span class="source-badge" id="pv-source-badge">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Progress Bar -->
+        <div style="margin-bottom:1.25rem;">
+          <div class="score-bar-bg" style="height:6px; border-radius:3px; background:var(--bg-base); overflow:hidden;">
+            <div class="score-bar-fill" id="pv-score-bar" style="width:0%; height:100%; border-radius:3px; background:linear-gradient(90deg, var(--accent-blue), var(--accent-green));"></div>
+          </div>
+        </div>
+
+        <!-- Zoho Section 1: Información Comercial y Preferencias -->
+        <div class="zoho-box">
+          <div class="zoho-box-header">
+            <span>INFORMACIÓN COMERCIAL & PERFIL DE CICLISTA</span>
+          </div>
+          <div class="zoho-grid-table">
+            <div class="zoho-tr">
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">TERRENO PREFERIDO</span>
+                <strong class="zoho-td-value" id="pv-terrain">—</strong>
+              </div>
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">TALLA DE CUADRO RECOMENDADA</span>
+                <strong class="zoho-td-value" id="pv-size">—</strong>
+              </div>
+            </div>
+            <div class="zoho-tr">
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">MODELO DE INTERÉS VISTO</span>
+                <strong class="zoho-td-value" id="pv-model" style="color:var(--accent-blue);">—</strong>
+              </div>
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">ESTADO EN EL PIPELINE</span>
+                <strong class="zoho-td-value" id="pv-status">—</strong>
+              </div>
+            </div>
+            <div class="zoho-tr">
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">CANAL DE CAPTACIÓN</span>
+                <span class="zoho-td-value" id="pv-channel">—</span>
+              </div>
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">SALDO PENDIENTE (DEUDA)</span>
+                <strong class="zoho-td-value" id="pv-debt">—</strong>
+              </div>
+            </div>
+            <div class="zoho-tr">
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">VISITAS AL SITIO WEB</span>
+                <span class="zoho-td-value" id="pv-visits">—</span>
+              </div>
+              <div class="zoho-td-cell">
+                <span class="zoho-th-label">ÚLTIMA ACTIVIDAD REGISTRADA</span>
+                <span class="zoho-td-value" id="pv-lastact">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zoho Section 2: Historial Web (Timeline) -->
+        <div class="zoho-box" style="margin-top:1.25rem;">
+          <div class="zoho-box-header">
+            <span>HISTORIAL DE ACTIVIDAD EN EL SITIO WEB</span>
+          </div>
+          <div class="zoho-timeline" id="pv-timeline">
+            <p class="text-muted" style="font-size:0.85rem; padding:0.75rem 1rem;">Sin actividad registrada desde el sitio web.</p>
+          </div>
+        </div>
+
+        <!-- Zoho Actions Toolbar -->
+        <div class="zoho-actions-bar">
+          <button class="zoho-btn wa" id="pv-btn-wa">
+            <Icon name="mdi:whatsapp" width="18" height="18" /> WhatsApp
+          </button>
+          <button class="zoho-btn cobrar" id="pv-btn-cobrar" style="display:none;">
+            <Icon name="mdi:cash-refund" width="18" height="18" /> Cobrar Deuda
+          </button>
+          <button class="zoho-btn servicio" id="pv-btn-servicio">
+            <Icon name="mdi:wrench-outline" width="18" height="18" /> Agendar Servicio
+          </button>
+          <button class="zoho-btn vender" id="pv-btn-vender">
+            <Icon name="mdi:bicycle" width="18" height="18" /> Proponer Bici
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Sales Pipeline & Reminders (CRM Only) -->
+    <div style="display:flex; flex-direction:column; gap:1.25rem; min-width:0;">
+
+      <!-- Today's CRM Tasks -->
+      <div class="bento-card" style="flex:0;">
+        <h3 style="margin-bottom:1rem; font-size:1rem; display:flex; align-items:center; gap:0.5rem;">
+          <Icon name="mdi:bell-ring-outline" width="18" height="18" color="var(--accent-red)" /> Seguimiento Hoy
+        </h3>
+        <div id="today-tasks">
+          <p class="text-muted" style="font-size:0.85rem;">Cargando recordatorios...</p>
+        </div>
+      </div>
+
+      <!-- Sales Pipeline Summary (Replaces Employee Box) -->
+      <div class="bento-card" style="flex:1;">
+        <h3 style="margin-bottom:1rem; font-size:1rem; display:flex; align-items:center; gap:0.5rem;">
+          <Icon name="mdi:filter-variant" width="18" height="18" color="var(--accent-blue)" /> Embudo Comercial
+        </h3>
+        
+        <div class="pipeline-summary-box">
+          <div class="pipeline-stage-item">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
+              <span>Interesados (Web/Bot)</span>
+              <strong id="pipe-c-interesados">0</strong>
+            </div>
+            <div class="pipe-bar-bg"><div class="pipe-bar-fill" id="pipe-b-interesados" style="width:40%; background:var(--accent-blue);"></div></div>
+          </div>
+
+          <div class="pipeline-stage-item">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
+              <span>Calificados (Score 45+)</span>
+              <strong id="pipe-c-calificados">0</strong>
+            </div>
+            <div class="pipe-bar-bg"><div class="pipe-bar-fill" id="pipe-b-calificados" style="width:25%; background:var(--accent-orange);"></div></div>
+          </div>
+
+          <div class="pipeline-stage-item">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
+              <span>Compradores Activos</span>
+              <strong id="pipe-c-compradores">0</strong>
+            </div>
+            <div class="pipe-bar-bg"><div class="pipe-bar-fill" id="pipe-b-compradores" style="width:25%; background:var(--accent-green);"></div></div>
+          </div>
+
+          <div class="pipeline-stage-item">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.25rem;">
+              <span>Cuentas con Saldo</span>
+              <strong id="pipe-c-deuda">0</strong>
+            </div>
+            <div class="pipe-bar-bg"><div class="pipe-bar-fill" id="pipe-b-deuda" style="width:10%; background:var(--accent-red);"></div></div>
+          </div>
+        </div>
+
+        <!-- Direct Action to Employee Panel -->
+        <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.78rem; color:var(--text-secondary);">¿Buscas horarios o asistencia?</span>
+          <a href="/panel/empleados" style="font-size:0.82rem; font-weight:700; color:var(--accent-blue); text-decoration:none;">Ir a Empleados →</a>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+
+  <!-- New Client Modal -->
+  <div id="new-client-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-box" style="max-width:480px;">
+      <div class="modal-header">
+        <h2>Nuevo Cliente (Tienda Física)</h2>
+        <button class="btn-icon" id="nc-close"><Icon name="mdi:close" width="22" height="22" /></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" id="nc-name" placeholder="Ej: Carlos Ruiz" />
+          </div>
+          <div class="form-group">
+            <label>Teléfono (10 dígitos)</label>
+            <input type="tel" id="nc-phone" placeholder="9841234567" maxlength="10" />
+          </div>
+          <div class="form-group">
+            <label>Bicicleta / Producto de Interés</label>
+            <input type="text" id="nc-bike" placeholder="Ej: Trek Marlin 5 / Accesorios" />
+          </div>
+          <div class="form-group">
+            <label>Deuda Pendiente (MXN, dejar en 0 si no aplica)</label>
+            <input type="number" id="nc-debt" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Notas internas</label>
+            <input type="text" id="nc-notes" placeholder="Ej: Viene los sábados, interesado en gravel..." />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="nc-cancel">Cancelar</button>
+        <button class="btn-primary" id="nc-save">Guardar Cliente</button>
+      </div>
+    </div>
+  </div>
+
+</PanelLayout>
+
+<style is:global>
+  /* Funnel */
+  .funnel-row {
+    display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .funnel-card {
+    flex: 1; min-width: 140px;
+    background: var(--bg-surface); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    box-shadow: var(--shadow-soft); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .funnel-card:hover, .funnel-card.active { border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(0,113,227,0.12); }
+  .funnel-card.stage-interesado svg { color: var(--accent-blue); }
+  .funnel-card.stage-calificado svg  { color: var(--accent-orange); }
+  .funnel-card.stage-comprador svg   { color: var(--accent-green); }
+  .funnel-card.stage-deuda svg       { color: var(--accent-red); }
+  .funnel-body { display: flex; flex-direction: column; gap: 0.1rem; }
+  .funnel-label { font-size: 0.78rem; color: var(--text-secondary); }
+  .funnel-val   { font-size: 1.2rem; font-weight: 700; }
+
+  /* Layout */
+  .crm-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 290px;
+    gap: 1.5rem;
+    height: calc(100vh - 270px);
+  }
+  @media (max-width: 1100px) { .crm-layout { grid-template-columns: 1fr; height: auto; } }
+
+  /* Client List */
+  .crm-sidebar-col { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .client-list { flex: 1; overflow-y: auto; padding: 0.5rem 0.75rem; }
+
+  .client-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.7rem 0.75rem; border-radius: var(--radius-md);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .client-item:hover { background: var(--bg-base); }
+  .client-item.active { background: rgba(0,113,227,0.08); }
+
+  .client-ava {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--accent-blue); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem; flex-shrink: 0;
+  }
+  .client-meta { flex: 1; overflow: hidden; }
+  .client-meta strong { display: block; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .client-meta span   { font-size: 0.75rem; color: var(--text-secondary); }
+
+  .mini-badge {
+    font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem;
+    border-radius: 100px; white-space: nowrap;
+  }
+  .mb-interesado { background:rgba(0,113,227,0.1);   color:var(--accent-blue); }
+  .mb-calificado { background:rgba(255,149,0,0.12); color:var(--accent-orange); }
+  .mb-comprador  { background:rgba(52,199,89,0.12);  color:var(--accent-green); }
+  .mb-deuda      { background:rgba(255,59,48,0.12);  color:var(--accent-red); }
+  .mb-anonimo    { background:var(--bg-base); color:var(--text-secondary); }
+  .mb-tienda     { background:rgba(94,92,230,0.12); color:#5e5ce6; }
+
+  /* Profile Area — Zoho CRM Style */
+  .crm-profile-col { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; }
+
+  #profile-view { padding: 1.5rem; }
+
+  .zoho-client-header {
+    display: flex; align-items: flex-start; gap: 1.25rem;
+    padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 1rem;
+  }
+  .zoho-avatar-lg {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-blue), #5e5ce6);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.8rem; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,113,227,0.25);
+  }
+  .zoho-score-badge {
+    background: var(--bg-base); border: 1px solid var(--border-subtle);
+    padding: 0.4rem 0.8rem; border-radius: 10px; text-align: right;
+    display: flex; flex-direction: column; align-items: flex-end;
+  }
+
+  .stage-badge {
+    font-size: 0.76rem; font-weight: 700; padding: 0.2rem 0.75rem;
+    border-radius: 6px; border: 1px solid transparent;
+  }
+  .sb-interesado { background:rgba(0,113,227,0.1);   color:var(--accent-blue); border-color:rgba(0,113,227,0.25); }
+  .sb-calificado { background:rgba(255,149,0,0.12); color:var(--accent-orange); border-color:rgba(255,149,0,0.25); }
+  .sb-comprador  { background:rgba(52,199,89,0.12);  color:var(--accent-green); border-color:rgba(52,199,89,0.25); }
+  .sb-deuda      { background:rgba(255,59,48,0.12);  color:var(--accent-red); border-color:rgba(255,59,48,0.25); }
+  .sb-anonimo    { background:var(--bg-base); color:var(--text-secondary); border-color:var(--border-subtle); }
+  .source-badge  { font-size:0.76rem; font-weight:600; padding:0.2rem 0.75rem; border-radius:6px; background:rgba(94,92,230,0.1); color:#5e5ce6; border:1px solid rgba(94,92,230,0.25); }
+
+  /* Zoho Box with Section Header and Dividers */
+  .zoho-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .zoho-box-header {
+    background: var(--bg-base);
+    padding: 0.6rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    text-transform: uppercase;
+  }
+  .zoho-grid-table {
+    display: flex; flex-direction: column;
+  }
+  .zoho-tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .zoho-tr:last-child {
+    border-bottom: none;
+  }
+  .zoho-td-cell {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .zoho-td-cell:first-child {
+    border-right: 1px solid var(--border-subtle);
+  }
+  .zoho-th-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .zoho-td-value {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  /* Timeline — Zoho Style with Dividers */
+  .zoho-timeline {
+    display: flex; flex-direction: column;
+  }
+  .timeline-event {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.85rem;
+  }
+  .timeline-event:last-child { border-bottom: none; }
+  .tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-blue); flex-shrink: 0; }
+  .tl-text { color: var(--text-primary); }
+  .tl-time { color: var(--text-secondary); font-size: 0.75rem; margin-left: auto; }
+
+  /* Zoho Action Buttons Toolbar */
+  .zoho-actions-bar {
+    display: flex; gap: 0.75rem; flex-wrap: wrap;
+    padding: 1.25rem 0 0.5rem;
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .zoho-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.55rem 1.1rem; border-radius: 8px;
+    font-weight: 600; font-size: 0.88rem; cursor: pointer;
+    border: 1px solid var(--border-subtle); background: var(--bg-surface);
+    color: var(--text-primary); transition: all 0.2s;
+  }
+  .zoho-btn:hover { background: var(--bg-base); }
+  .zoho-btn.wa { background: #25d366; color: white; border-color: #20ba5a; }
+  .zoho-btn.wa:hover { background: #1fbe5a; }
+  .zoho-btn.cobrar { background: rgba(255,149,0,0.12); color: var(--accent-orange); border-color: rgba(255,149,0,0.3); }
+  .zoho-btn.servicio { background: rgba(0,113,227,0.08); color: var(--accent-blue); border-color: rgba(0,113,227,0.25); }
+  .zoho-btn.vender { background: rgba(175,82,222,0.1); color: #af52de; border-color: rgba(175,82,222,0.3); }
+
+  /* Pipeline Summary Box */
+  .pipeline-summary-box {
+    display: flex; flex-direction: column; gap: 0.85rem;
+  }
+  .pipeline-stage-item {
+    background: var(--bg-base);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+  }
+  .pipe-bar-bg {
+    height: 5px; background: var(--bg-surface); border-radius: 3px; overflow: hidden;
+  }
+  .pipe-bar-fill {
+    height: 100%; border-radius: 3px; transition: width 0.6s ease;
+  }
+
+  /* Today Tasks */
+  .task-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.75rem; background: var(--bg-base); border-radius: var(--radius-md);
+    margin-bottom: 0.5rem; border-left: 3px solid transparent;
+  }
+  .task-item.urgent { border-left-color: var(--accent-red); }
+  .task-item.normal { border-left-color: var(--accent-blue); }
+  .task-meta strong { display: block; font-size: 0.88rem; }
+  .task-meta span   { font-size: 0.78rem; color: var(--text-secondary); }
+  .task-btn {
+    font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.75rem;
+    border-radius: 100px; border: none; cursor: pointer;
+    background: var(--accent-blue); color: white;
+  }
+
+  /* Shared */
+  .col-header { display: flex; justify-content: space-between; align-items: center; }
+  .select-mini {
+    padding: 0.3rem 0.6rem; border-radius: 8px; border: 1px solid var(--border-subtle);
+    background: var(--bg-base); color: var(--text-primary); font-size: 0.8rem; outline: none;
+  }
+  .btn-secondary {
+    background: var(--bg-surface); color: var(--text-primary);
+    border: 1px solid var(--border-subtle); padding: 0.5rem 1.25rem;
+    border-radius: 100px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    display: flex; align-items: center; gap: 0.4rem; transition: background 0.2s;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-box {
+    background: var(--bg-surface); border-radius: var(--radius-xl);
+    width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden;
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-subtle);
+  }
+  .modal-body { padding: 2rem; }
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 1rem;
+    padding: 1.5rem 2rem; border-top: 1px solid var(--border-subtle);
+  }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); }
+  .form-group input {
+    padding: 0.65rem 1rem; border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle); background: var(--bg-base);
+    color: var(--text-primary); font-size: 0.95rem; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus { border-color: var(--accent-blue); }
+</style>
+
+<script is:inline>
+(function () {
+  /* ─────────────────────────────────────────────────────────────────
+     DATA LAYER: Lee de 3 fuentes y las unifica en un perfil 360°
+     1. tg_sessions       → BehaviorTracker (actividad web)
+     2. the_garage_leads  → CRM legacy (/admin/crm/)
+     3. bicisaas_crm      → Clientes ingresados desde este panel
+  ───────────────────────────────────────────────────────────────── */
+
+  const PANEL_KEY   = 'bicisaas_crm';
+  const LEADS_KEY   = 'the_garage_leads';
+  const SESSION_KEY = 'tg_sessions';
+
+  const WEBSITE_ORIGIN = 'https://the-garage-dw4.pages.dev';
+
+  // Seed data for demo / fresh installs
+  const seedClients = [
+    {
+      id: 'p-001', name: 'Juan Pérez', phone: '9841234567',
+      stage: 'deuda', source: 'tienda',
+      model: 'Trek Marlin 5', terrain: 'Montaña', size: 'L',
+      debt: 5000, notes: 'Viene los sábados. Debe resto de la Marlin.',
+      status: 'Apartado', visits: 3, score: 72,
+      lastActivity: new Date(Date.now() - 86400000 * 3).toISOString(),
+      events: [
+        { type: 'bike_detail_view', label: 'Vio Trek Marlin 5 en el sitio', ts: new Date(Date.now() - 86400000 * 5).toISOString() },
+        { type: 'whatsapp_click', label: 'Clic en botón de WhatsApp', ts: new Date(Date.now() - 86400000 * 4).toISOString() },
+        { type: 'lead_form_submit', label: 'Dejó su teléfono en el bot', ts: new Date(Date.now() - 86400000 * 3).toISOString() },
+      ]
+    },
+    {
+      id: 'p-002', name: 'Mariana Gómez', phone: '9847654321',
+      stage: 'comprador', source: 'web',
+      model: 'Basso Palta 2', terrain: 'Carretera', size: 'XS',
+      debt: 0, notes: 'Le encanta el ciclismo de carretera. Cliente frecuente.',
+      status: 'Comprador', visits: 7, score: 88,
+      lastActivity: new Date(Date.now() - 86400000).toISOString(),
+      events: [
+        { type: 'return_visit', label: 'Visita de regreso al sitio', ts: new Date(Date.now() - 86400000 * 10).toISOString() },
+        { type: 'matchmaker_complete', label: 'Completó el quiz de bicicleta', ts: new Date(Date.now() - 86400000 * 8).toISOString() },
+        { type: 'google_login', label: 'Inició sesión con Google', ts: new Date(Date.now() - 86400000 * 7).toISOString() },
+        { type: 'bike_detail_view', label: 'Vio Basso Palta 2 en detalle', ts: new Date(Date.now() - 86400000 * 3).toISOString() },
+      ]
+    },
+    {
+      id: 'p-003', name: 'Carlos Ruiz', phone: '9841112233',
+      stage: 'calificado', source: 'web',
+      model: 'Specialized Allez', terrain: 'Gravel', size: 'M',
+      debt: 0, notes: 'Interesado en gravel. Pendiente de cerrar.',
+      status: 'Prospecto', visits: 4, score: 58,
+      lastActivity: new Date(Date.now() - 86400000 * 2).toISOString(),
+      events: [
+        { type: 'inventory_view', label: 'Exploró inventario de gravel', ts: new Date(Date.now() - 86400000 * 6).toISOString() },
+        { type: 'scroll_90', label: 'Leyó toda la página de guía de tallas', ts: new Date(Date.now() - 86400000 * 4).toISOString() },
+        { type: 'whatsapp_click', label: 'Clic en WhatsApp (no respondió)', ts: new Date(Date.now() - 86400000 * 2).toISOString() },
+      ]
+    },
+    {
+      id: 'p-004', name: 'Roberto Vázquez', phone: '9843334455',
+      stage: 'interesado', source: 'tienda',
+      model: 'Giant Talon 2', terrain: 'Montaña', size: 'L',
+      debt: 3200, notes: 'Aparto Giant Talon. Debe \$3,200.',
+      status: 'Apartado', visits: 2, score: 38,
+      lastActivity: new Date(Date.now() - 86400000 * 7).toISOString(),
+      events: []
+    },
+  ];
+
+  /* ── Storage ── */
+  function loadPanel() {
+    const saved = localStorage.getItem(PANEL_KEY);
+    return saved ? JSON.parse(saved) : null;
+  }
+  function savePanel(data) { localStorage.setItem(PANEL_KEY, JSON.stringify(data)); }
+
+  /* ── Merge Logic: pulls from all 3 sources ── */
+  function buildUnifiedDirectory() {
+    // 1. Panel clients (source of truth for in-store records)
+    let clients = loadPanel() || JSON.parse(JSON.stringify(seedClients));
+
+    // 2. Read legacy leads from old CRM (the_garage_leads)
+    try {
+      const legacyLeads = JSON.parse(localStorage.getItem(LEADS_KEY) || '[]');
+      legacyLeads.forEach(lead => {
+        const phone = (lead.contact || '').replace(/\D/g, '').slice(-10);
+        if (!phone || phone.length < 10) return;
+        const exists = clients.find(c => c.phone === phone);
+        if (!exists) {
+          clients.push({
+            id: 'web-' + phone,
+            name: lead.contact || 'Prospecto Web',
+            phone,
+            stage: 'interesado',
+            source: 'web-bot',
+            model: lead.model || lead.model_matched || '',
+            terrain: lead.terrain || lead.terrain_interest || '',
+            size: lead.size || lead.user_size || '',
+            debt: 0, notes: '', status: lead.status || 'Nuevo',
+            visits: 1, score: 30,
+            lastActivity: lead.captured_at || new Date().toISOString(),
+            events: [{ type: 'lead_form_submit', label: 'Dejó contacto en el chatbot del sitio', ts: lead.captured_at || new Date().toISOString() }]
+          });
+        } else {
+          // Enrich existing client with web data
+          if (!exists.model && lead.model_matched) exists.model = lead.model_matched;
+          if (!exists.terrain && lead.terrain_interest) exists.terrain = lead.terrain_interest;
+        }
+      });
+    } catch (e) {}
+
+    // 3. Read behavior sessions (tg_sessions) — enrich by phone
+    try {
+      const sessions = JSON.parse(localStorage.getItem(SESSION_KEY) || '[]');
+      sessions.forEach(session => {
+        if (!session.contact) return;
+        const phone = (session.contact || '').replace(/\D/g, '').slice(-10);
+        if (!phone || phone.length < 10) return;
+        const client = clients.find(c => c.phone === phone);
+        if (client) {
+          // Enrich score and events
+          if (session.score > client.score) client.score = Math.min(session.score, 100);
+          if (session.events && session.events.length) {
+            const existingTypes = client.events.map(e => e.type + e.ts);
+            session.events.forEach(ev => {
+              const key = ev.type + (ev.ts || '');
+              if (!existingTypes.includes(key)) {
+                client.events.push({ type: ev.type, label: humanizeEvent(ev.type), ts: ev.ts });
+              }
+            });
+          }
+          if (session.terrain) client.terrain = client.terrain || session.terrain;
+          if (session.size) client.size = client.size || session.size;
+        }
+      });
+    } catch (e) {}
+
+    // Compute stage from score for web-sourced contacts
+    clients.forEach(c => {
+      if (c.source !== 'tienda' && c.debt === 0) {
+        c.stage = scoreToStage(c.score);
+      }
+      if (c.debt > 0) c.stage = 'deuda';
+    });
+
+    savePanel(clients);
+    return clients;
+  }
+
+  function scoreToStage(score) {
+    if (score >= 70) return 'comprador';
+    if (score >= 45) return 'calificado';
+    if (score >= 20) return 'interesado';
+    return 'anonimo';
+  }
+
+  const EVENT_LABELS = {
+    page_view: 'Visitó el sitio web', scroll_50: 'Leyó más del 50% de la página',
+    scroll_75: 'Leyó el 75% de la página', scroll_90: 'Leyó casi toda la página',
+    time_3min: 'Pasó +3 minutos en el sitio', time_5min: 'Pasó +5 minutos en el sitio',
+    return_visit: 'Regresó al sitio (visita repetida)', matchmaker_step1: 'Inició quiz de bicicleta',
+    matchmaker_step2: 'Avanzó en el quiz (paso 2)', matchmaker_complete: 'Completó el quiz de bicicleta',
+    bike_detail_view: 'Vio detalle de una bicicleta', inventory_view: 'Exploró el catálogo',
+    guide_complete: 'Leyó una guía completa', paddock_open: 'Revisó la comunidad / Paddock',
+    whatsapp_click: 'Clic en WhatsApp (alta intención)', lead_form_submit: 'Dejó su contacto',
+    google_login: 'Inició sesión con Google', utm_social: 'Llegó desde redes sociales',
+  };
+  function humanizeEvent(type) { return EVENT_LABELS[type] || type; }
+
+  /* ── Rendering ── */
+  let allClients = [];
+  let activeClient = null;
+  let stageFilter = '';
+
+  function fmt(n) { return '$' + Number(n).toLocaleString('es-MX'); }
+
+  function renderFunnel(clients) {
+    const total = clients.length || 1;
+    const nInteresados = clients.filter(c => c.stage === 'interesado').length;
+    const nCalificados = clients.filter(c => c.stage === 'calificado').length;
+    const nCompradores = clients.filter(c => c.stage === 'comprador').length;
+    const nDeuda = clients.filter(c => c.stage === 'deuda').length;
+
+    // Top funnel row
+    document.getElementById('f-total').textContent = clients.length;
+    document.getElementById('f-interesado').textContent = nInteresados;
+    document.getElementById('f-calificado').textContent = nCalificados;
+    document.getElementById('f-comprador').textContent  = nCompradores;
+    document.getElementById('f-deuda').textContent      = nDeuda;
+
+    // Pipeline summary widget
+    const elInter = document.getElementById('pipe-c-interesados');
+    if (elInter) {
+      elInter.textContent = `${nInteresados} (${Math.round(nInteresados/total*100)}%)`;
+      document.getElementById('pipe-c-calificados').textContent = `${nCalificados} (${Math.round(nCalificados/total*100)}%)`;
+      document.getElementById('pipe-c-compradores').textContent = `${nCompradores} (${Math.round(nCompradores/total*100)}%)`;
+      document.getElementById('pipe-c-deuda').textContent = `${nDeuda} (${Math.round(nDeuda/total*100)}%)`;
+
+      document.getElementById('pipe-b-interesados').style.width = Math.max(8, Math.round(nInteresados/total*100)) + '%';
+      document.getElementById('pipe-b-calificados').style.width = Math.max(8, Math.round(nCalificados/total*100)) + '%';
+      document.getElementById('pipe-b-compradores').style.width = Math.max(8, Math.round(nCompradores/total*100)) + '%';
+      document.getElementById('pipe-b-deuda').style.width = Math.max(8, Math.round(nDeuda/total*100)) + '%';
+    }
+  }
+
+  function renderClientList(clients) {
+    const list = document.getElementById('client-list');
+    const query = document.getElementById('crm-search').value.toLowerCase();
+    const filtered = clients.filter(c => {
+      const matchStage = !stageFilter || c.stage === stageFilter;
+      const matchSearch = !query || c.name.toLowerCase().includes(query) || c.phone.includes(query);
+      return matchStage && matchSearch;
+    });
+
+    list.innerHTML = '';
+    if (!filtered.length) {
+      list.innerHTML = '<p style="color:var(--text-secondary); font-size:0.85rem; padding:1rem; text-align:center;">Sin resultados</p>';
+      return;
+    }
+    filtered.sort((a, b) => b.score - a.score);
+    filtered.forEach(c => {
+      const sourceTxt = c.source === 'tienda' ? 'Tienda' : c.source === 'web' ? 'Web' : 'Bot Web';
+      list.innerHTML += `
+        <div class="client-item ${activeClient?.id === c.id ? 'active' : ''}" data-id="${c.id}">
+          <div class="client-ava" style="${c.stage === 'comprador' ? 'background:var(--accent-green)' : c.stage === 'deuda' ? 'background:var(--accent-red)' : ''}">${c.name.charAt(0).toUpperCase()}</div>
+          <div class="client-meta">
+            <strong>${c.name}</strong>
+            <span>${c.phone}</span>
+          </div>
+          <span class="mini-badge mb-${c.stage}">${stageLabelShort(c.stage)}</span>
+        </div>
+      `;
+    });
+
+    list.querySelectorAll('.client-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        activeClient = allClients.find(c => c.id === id);
+        renderProfile(activeClient);
+        list.querySelectorAll('.client-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+      });
+    });
+  }
+
+  function stageLabelShort(stage) {
+    const map = { interesado: 'Interesado', calificado: 'Calificado', comprador: 'Comprador', deuda: 'Con Deuda', anonimo: 'Anónimo' };
+    return map[stage] || stage;
+  }
+  function stageLabel(stage) { return stageLabelShort(stage); }
+
+  function renderProfile(c) {
+    document.getElementById('profile-empty').style.display = 'none';
+    document.getElementById('profile-view').style.display = 'block';
+
+    document.getElementById('pv-avatar').textContent = c.name.charAt(0).toUpperCase();
+    document.getElementById('pv-name').textContent = c.name;
+    document.getElementById('pv-contact').textContent = '+52 ' + c.phone + (c.email ? ' · ' + c.email : '');
+
+    const stageBadge = document.getElementById('pv-stage-badge');
+    stageBadge.textContent = stageLabel(c.stage);
+    stageBadge.className = 'stage-badge sb-' + c.stage;
+
+    const srcBadge = document.getElementById('pv-source-badge');
+    srcBadge.textContent = c.source === 'tienda' ? 'Ingresado en Tienda' : c.source === 'web' ? 'Captado en Sitio Web' : 'Asistente Web';
+
+    // Score
+    document.getElementById('pv-score').textContent = c.score + ' / 100';
+    document.getElementById('pv-score-bar').style.width = c.score + '%';
+
+    // Fields
+    document.getElementById('pv-terrain').textContent = c.terrain || '—';
+    document.getElementById('pv-size').textContent    = c.size    || '—';
+    document.getElementById('pv-model').textContent   = c.model   || '—';
+    document.getElementById('pv-visits').textContent  = c.visits  || '1';
+    document.getElementById('pv-lastact').textContent = c.lastActivity ? new Date(c.lastActivity).toLocaleDateString('es-MX', {day:'numeric', month:'short'}) : '—';
+    document.getElementById('pv-channel').textContent = c.source === 'tienda' ? 'Tienda física' : 'Sitio web';
+    document.getElementById('pv-debt').textContent    = c.debt > 0 ? fmt(c.debt) : 'Sin saldo';
+    document.getElementById('pv-debt').style.color    = c.debt > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+    document.getElementById('pv-status').textContent  = c.status || '—';
+
+    // Timeline
+    const timeline = document.getElementById('pv-timeline');
+    if (c.events && c.events.length) {
+      timeline.innerHTML = [...c.events].reverse().map(ev => `
+        <div class="timeline-event">
+          <div class="tl-dot"></div>
+          <span class="tl-text">${ev.label || humanizeEvent(ev.type)}</span>
+          <span class="tl-time">${ev.ts ? new Date(ev.ts).toLocaleDateString('es-MX', {day:'numeric', month:'short'}) : ''}</span>
+        </div>
+      `).join('');
+    } else {
+      timeline.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">Sin actividad registrada desde el sitio web.</p>';
+    }
+
+    // WhatsApp action
+    const waBtn = document.getElementById('pv-btn-wa');
+    waBtn.onclick = () => {
+      let msg = '';
+      if (c.stage === 'deuda') msg = `Hola ${c.name.split(' ')[0]}, te escribe el equipo de The Garage. Tenemos pendiente un saldo de ${fmt(c.debt)}. ¿Cuándo lo pasamos a liquidar?`;
+      else if (c.model) msg = `Hola ${c.name.split(' ')[0]}, te escribe el equipo de The Garage. Vimos que te interesó la ${c.model}. ¿Tienes preguntas o quieres agendar una prueba?`;
+      else msg = `Hola ${c.name.split(' ')[0]}, te escribe el equipo de The Garage Bike Experts. ¿En qué te podemos ayudar hoy?`;
+      window.open('https://wa.me/52' + c.phone + '?text=' + encodeURIComponent(msg), '_blank');
+    };
+
+    // Cobrar button
+    const cobrarBtn = document.getElementById('pv-btn-cobrar');
+    cobrarBtn.style.display = c.debt > 0 ? 'flex' : 'none';
+    cobrarBtn.onclick = () => {
+      const msg = `Hola ${c.name.split(' ')[0]}, un recordatorio de tu saldo pendiente de ${fmt(c.debt)} en The Garage. Cuándo te es posible pasar a liquidarlo?`;
+      window.open('https://wa.me/52' + c.phone + '?text=' + encodeURIComponent(msg), '_blank');
+    };
+
+    // Proponer Bici
+    document.getElementById('pv-btn-vender').onclick = () => {
+      const terrain = c.terrain || 'tu disciplina favorita';
+      const msg = `Hola ${c.name.split(' ')[0]}, basado en tu interés en ${terrain}, tenemos un modelo perfecto para ti. ¿Cuándo te paso para platicar?`;
+      window.open('https://wa.me/52' + c.phone + '?text=' + encodeURIComponent(msg), '_blank');
+    };
+  }
+
+  function renderTodayTasks(clients) {
+    const container = document.getElementById('today-tasks');
+    const tasks = [];
+    clients.forEach(c => {
+      if (c.debt > 0) tasks.push({ urgent: true, label: `Cobrar a ${c.name}`, sub: fmt(c.debt) + ' pendiente', phone: c.phone, msg: `Hola ${c.name.split(' ')[0]}, recordatorio de tu saldo de ${fmt(c.debt)} en The Garage.` });
+      if (c.stage === 'calificado') tasks.push({ urgent: false, label: `Seguimiento: ${c.name}`, sub: `Score ${c.score}/100 — listo para cerrar`, phone: c.phone, msg: `Hola ${c.name.split(' ')[0]}, te escribe The Garage. ¿Seguimos platicando sobre ${c.model || 'la bici que viste'}?` });
+    });
+    if (!tasks.length) { container.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">¡Todo al día! Sin pendientes hoy.</p>'; return; }
+    container.innerHTML = tasks.slice(0, 4).map(t => `
+      <div class="task-item ${t.urgent ? 'urgent' : 'normal'}">
+        <div class="task-meta">
+          <strong>${t.label}</strong>
+          <span>${t.sub}</span>
+        </div>
+        <button class="task-btn" onclick="window.open('https://wa.me/52${t.phone}?text=' + encodeURIComponent('${t.msg}'.replace(/'/g, "\\'")), '_blank')">WA</button>
+      </div>
+    `).join('');
+  }
+
+  /* ── Init ── */
+  function init() {
+    allClients = buildUnifiedDirectory();
+    renderFunnel(allClients);
+    renderClientList(allClients);
+    renderTodayTasks(allClients);
+  }
+
+  // Funnel filter click
+  document.querySelectorAll('.funnel-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.funnel-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      stageFilter = card.dataset.stage === 'all' ? '' : card.dataset.stage;
+      renderClientList(allClients);
+    });
+  });
+
+  document.getElementById('stage-filter').addEventListener('change', e => {
+    stageFilter = e.target.value;
+    renderClientList(allClients);
+  });
+  document.getElementById('crm-search').addEventListener('input', () => renderClientList(allClients));
+
+  // Sync button
+  document.getElementById('btn-sync').addEventListener('click', () => {
+    allClients = buildUnifiedDirectory();
+    renderFunnel(allClients);
+    renderClientList(allClients);
+    renderTodayTasks(allClients);
+    alert('Sincronización completada: Datos actualizados desde portal web y tienda física.');
+  });
+
+  // New Client Modal
+  document.getElementById('btn-new-client').addEventListener('click', () => {
+    document.getElementById('new-client-modal').style.display = 'flex';
+  });
+  ['nc-close', 'nc-cancel'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => {
+      document.getElementById('new-client-modal').style.display = 'none';
+    });
+  });
+  document.getElementById('nc-save').addEventListener('click', () => {
+    const name  = document.getElementById('nc-name').value.trim();
+    const phone = document.getElementById('nc-phone').value.replace(/\D/g, '').slice(-10);
+    const model = document.getElementById('nc-bike').value.trim();
+    const debt  = parseFloat(document.getElementById('nc-debt').value) || 0;
+    const notes = document.getElementById('nc-notes').value.trim();
+    if (!name || phone.length < 10) { alert('Nombre y teléfono (10 dígitos) son obligatorios.'); return; }
+    const existing = allClients.find(c => c.phone === phone);
+    if (existing) { alert('Ya existe un contacto con ese teléfono: ' + existing.name); return; }
+    const newClient = {
+      id: 'p-' + Date.now(), name, phone, stage: debt > 0 ? 'deuda' : 'interesado',
+      source: 'tienda', model, terrain: '', size: '', debt, notes,
+      status: 'Nuevo', visits: 0, score: 20,
+      lastActivity: new Date().toISOString(), events: []
+    };
+    allClients.push(newClient);
+    savePanel(allClients);
+    document.getElementById('new-client-modal').style.display = 'none';
+    renderFunnel(allClients);
+    renderClientList(allClients);
+    renderTodayTasks(allClients);
+  });
+
+  init();
+})();
+</script>

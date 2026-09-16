@@ -1,0 +1,874 @@
+---
+import { Icon } from 'astro-icon/components';
+const { title = "Panel Maestro | The Garage" } = Astro.props;
+---
+<html lang="es" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+
+  <!-- Synchronous Client-Side Auth & Route Guard -->
+  <script src="../utils/securityLogger.ts"></script>
+  <script is:inline>
+    (function() {
+      function logSecurityEvent(type, level, details, userContext) {
+        if (typeof window !== 'undefined' && typeof window.recordSecurityLog === 'function') {
+          window.recordSecurityLog(type, level, details, userContext);
+          return;
+        }
+        try {
+          var raw = localStorage.getItem('bicisaas_audit_log');
+          var logs = raw ? JSON.parse(raw) : [];
+          logs.unshift({
+            timestamp: new Date().toISOString(),
+            type: type,
+            level: level,
+            user: (userContext && userContext.user) || 'anon',
+            role: (userContext && userContext.role) || 'guest',
+            path: window.location.pathname,
+            details: details || {}
+          });
+          if (logs.length > 50) logs.length = 50;
+          localStorage.setItem('bicisaas_audit_log', JSON.stringify(logs));
+        } catch(_) {}
+      }
+
+      try {
+        var rawSession = localStorage.getItem('bicisaas_session');
+        var currentPath = window.location.pathname.replace(/\/$/, '') || '/panel';
+
+        // 1. If not logged in, redirect immediately to login
+        if (!rawSession) {
+          document.cookie = 'bicisaas_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+          window.location.replace('/panel/login?redirect=' + encodeURIComponent(window.location.pathname));
+          return;
+        }
+
+        var session = JSON.parse(rawSession);
+        if (!session || !session.userId || !session.role) {
+          localStorage.removeItem('bicisaas_session');
+          document.cookie = 'bicisaas_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+          window.location.replace('/panel/login?redirect=' + encodeURIComponent(window.location.pathname));
+          return;
+        }
+
+        // 1.1 Inactivity session expiration check (8 hours timeout)
+        var now = Date.now();
+        if (session.expiresAt && now > session.expiresAt) {
+          logSecurityEvent('SESSION_EXPIRED', 'WARN', {
+            expiredAt: new Date(session.expiresAt).toISOString(),
+            elapsedMinutes: Math.round((now - session.expiresAt) / 60000)
+          }, { user: session.name, role: session.roleLabel || session.role });
+          localStorage.removeItem('bicisaas_session');
+          document.cookie = 'bicisaas_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+          window.location.replace('/panel/login?reason=expired&redirect=' + encodeURIComponent(window.location.pathname));
+          return;
+        }
+
+        // Sliding renewal of active session activity & edge cookie sync
+        session.lastActivity = now;
+        session.expiresAt = now + (8 * 60 * 60 * 1000);
+        try { localStorage.setItem('bicisaas_session', JSON.stringify(session)); } catch(_) {}
+
+        if (session.sessionId) {
+          document.cookie = 'bicisaas_auth=' + encodeURIComponent(session.sessionId) + '; path=/; SameSite=Lax; max-age=' + (8 * 3600);
+        }
+
+        // 2. Check RBAC permissions for current path (OWASP A01: Deny by default)
+        var moduleMap = {
+          '/panel': 'dashboard',
+          '/panel/crm': 'crm',
+          '/panel/inventario': 'inventario',
+          '/panel/rentas': 'rentas',
+          '/panel/taller': 'taller',
+          '/panel/contabilidad': 'contabilidad',
+          '/panel/analytics': 'analytics',
+          '/panel/sitio-web': 'sitio-web',
+          '/panel/empleados': 'empleados',
+          '/panel/mi-perfil': 'mi-perfil'
+        };
+
+        if (session.role === 'admin') {
+          sessionStorage.removeItem('bicisaas_auth_denied');
+          sessionStorage.removeItem('bicisaas_denied_role');
+        } else {
+          var isAllowed = false; // Deny by default
+          var defaultRoleMods = {
+            'mecanico': ['dashboard', 'crm', 'inventario', 'taller', 'mi-perfil'],
+            'ventas': ['dashboard', 'crm', 'inventario', 'rentas', 'mi-perfil'],
+            'personalizado': ['dashboard', 'mi-perfil']
+          };
+          var rawAllowed = (session.allowedModules && session.allowedModules.length > 0)
+            ? session.allowedModules
+            : (defaultRoleMods[session.role] || ['dashboard', 'mi-perfil']);
+
+          var allowed = rawAllowed.map(function(m) {
+            return String(m).toLowerCase().trim().replace(/\s+/g, '-');
+          });
+
+          // Match current path to module key
+          var matchedKey = Object.keys(moduleMap).find(function(k) {
+            return currentPath === k || (k !== '/panel' && currentPath.indexOf(k + '/') === 0);
+          });
+
+          var currentMod = matchedKey ? moduleMap[matchedKey] : null;
+
+          // Personal profile is always allowed for all authenticated personnel
+          if (currentMod === 'mi-perfil') {
+            isAllowed = true;
+          } else if (currentMod && allowed.indexOf(currentMod) !== -1) {
+            isAllowed = true;
+          } else if (currentPath === '/panel') {
+            isAllowed = (allowed.indexOf('dashboard') !== -1);
+          }
+
+          if (!isAllowed) {
+            logSecurityEvent('RBAC_DENIED', 'SECURITY_ALERT', {
+              attemptedPath: currentPath,
+              requiredModule: currentMod,
+              allowedModules: allowed
+            }, { user: session.name, role: session.roleLabel || session.role });
+            sessionStorage.setItem('bicisaas_auth_denied', 'true');
+            sessionStorage.setItem('bicisaas_denied_role', session.roleLabel || session.role);
+            var modToPath = {
+              'dashboard': '/panel',
+              'crm': '/panel/crm',
+              'empleados': '/panel/empleados',
+              'mi-perfil': '/panel/mi-perfil',
+              'inventario': '/panel/inventario',
+              'rentas': '/panel/rentas',
+              'taller': '/panel/taller',
+              'contabilidad': '/panel/contabilidad',
+              'analytics': '/panel/analytics',
+              'sitio-web': '/panel/sitio-web'
+            };
+            var safeFallback = '/panel/mi-perfil';
+            for (var i = 0; i < allowed.length; i++) {
+              if (modToPath[allowed[i]]) {
+                safeFallback = modToPath[allowed[i]];
+                break;
+              }
+            }
+            if (currentPath === safeFallback) {
+              // Circuit breaker: already on safe fallback and still blocked, purge session to prevent reload loop
+              localStorage.removeItem('bicisaas_session');
+              localStorage.removeItem('bicisaas_user_role');
+              document.cookie = 'bicisaas_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+              window.location.replace('/panel/login?reason=unauthorized');
+            } else {
+              window.location.replace(safeFallback);
+            }
+            return;
+          }
+        }
+      } catch(e) {
+        window.location.replace('/panel/login');
+      }
+    })();
+  </script>
+
+  <style is:global>
+    :root {
+      /* Apple & Zoho Light Theme (Default) */
+      --bg-app: #f5f5f7;
+      --bg-base: #f0f0f3;
+      --bg-surface: #ffffff;
+      --bg-panel: #ffffff;
+      --bg-surface-hover: #e8e8ed;
+      --text-main: #1d1d1f;
+      --text-primary: #1d1d1f;
+      --text-muted: #86868b;
+      --text-secondary: #6e6e73;
+      --border-color: #d2d2d7;
+      --border-subtle: #e1e1e6;
+      --accent-color: #0071e3;
+      --accent-hover: #0077ed;
+      --accent-blue: #0071e3;
+      --accent-green: #34c759;
+      --accent-orange: #ff9500;
+      --accent-red: #ff3b30;
+      --sidebar-width: 260px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04);
+      --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.08);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+    }
+    
+    html.dark {
+      /* Dark Theme */
+      --bg-app: #121214;
+      --bg-base: #18181b;
+      --bg-surface: #202024;
+      --bg-panel: #202024;
+      --bg-surface-hover: #27272a;
+      --text-main: #f5f5f7;
+      --text-primary: #f5f5f7;
+      --text-muted: #86868b;
+      --text-secondary: #a1a1aa;
+      --border-color: #3f3f46;
+      --border-subtle: #2e2e33;
+      --accent-color: #2997ff;
+      --accent-hover: #3b9fff;
+      --accent-blue: #2997ff;
+      --accent-green: #30d158;
+      --accent-orange: #ff9f0a;
+      --accent-red: #ff453a;
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.35);
+      --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.5);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      min-width: var(--sidebar-width);
+      flex-shrink: 0;
+      background-color: var(--bg-panel);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .sidebar-header {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      padding-left: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .nav-item:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background-color: var(--accent-color);
+      color: #ffffff;
+    }
+
+    /* Topbar */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 60px;
+      min-height: 60px;
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 2rem;
+      gap: 1rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+    }
+
+    /* Base Components */
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      border-radius: var(--radius-sm);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-icon:hover {
+      background-color: var(--bg-surface-hover);
+      color: var(--text-main);
+    }
+
+    .btn-primary {
+      background-color: var(--accent-color);
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s, border-color 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-surface-hover);
+    }
+
+    .btn-demo-seed {
+      background: linear-gradient(135deg, #af52de, #5856d6);
+      color: #ffffff;
+      border: none;
+      padding: 0.45rem 0.9rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 2px 8px rgba(175, 82, 222, 0.3);
+      transition: all 0.2s ease;
+      letter-spacing: 0.02em;
+    }
+    .btn-demo-seed:hover {
+      background: linear-gradient(135deg, #bf5af2, #5e5ce6);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(175, 82, 222, 0.45);
+    }
+
+    /* Bento Box Styles */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .bento-card {
+      background-color: var(--bg-panel);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .bento-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    /* Auth Toast Alert (Fixed overlay, out of document flow) */
+    #auth-guard-toast {
+      display: none !important;
+      position: fixed !important;
+      top: 1.25rem !important;
+      right: 1.25rem !important;
+      z-index: 999999 !important;
+      background: rgba(255, 69, 58, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #fff;
+      padding: 0.85rem 1.25rem;
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(255, 69, 58, 0.35);
+      font-size: 0.85rem;
+      font-weight: 600;
+      align-items: center;
+      gap: 0.65rem;
+      pointer-events: none;
+      animation: slideInDown 0.3s ease;
+    }
+    #auth-guard-toast.show-toast {
+      display: flex !important;
+    }
+    @keyframes slideInDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <Icon name="mdi:bicycle" width="28" height="28" />
+      <span>BiciSaaS</span>
+    </div>
+    
+    <nav id="panel-nav" style="flex:1; overflow-y:auto;">
+      <a href="/panel" class="nav-item" data-path="/panel"><Icon name="mdi:view-dashboard-outline" width="20" height="20" /> Dashboard</a>
+      <a href="/panel/crm" class="nav-item" data-path="/panel/crm"><Icon name="mdi:account-group-outline" width="20" height="20" /> CRM Clientes</a>
+      <a href="/panel/empleados" class="nav-item admin-nav" data-path="/panel/empleados"><Icon name="mdi:badge-account-horizontal-outline" width="20" height="20" /> Gestión de Empleados</a>
+      <a href="/panel/mi-perfil" class="nav-item employee-nav" data-path="/panel/mi-perfil"><Icon name="mdi:account-circle-outline" width="20" height="20" /> Mi Perfil & Tareas</a>
+      <a href="/panel/inventario" class="nav-item" data-path="/panel/inventario"><Icon name="mdi:package-variant-closed" width="20" height="20" /> Inventario Maestro & POS</a>
+      <a href="/panel/rentas" class="nav-item" data-path="/panel/rentas"><Icon name="mdi:bike-fast" width="20" height="20" /> Flota & Rentas</a>
+      <a href="/panel/taller" class="nav-item" data-path="/panel/taller"><Icon name="mdi:wrench-outline" width="20" height="20" /> Taller & Servicios</a>
+      <a href="/panel/contabilidad" class="nav-item admin-nav" data-path="/panel/contabilidad"><Icon name="mdi:finance" width="20" height="20" /> Contabilidad & Caja</a>
+      <a href="/panel/analytics" class="nav-item admin-nav" data-path="/panel/analytics"><Icon name="mdi:chart-areaspline" width="20" height="20" /> Analytics & Proyecciones</a>
+      <div class="admin-nav" style="margin: 0.75rem 0 0.25rem; padding: 0 0.5rem; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); font-weight:700;">Sitio Web & Ventas</div>
+      <a href="/panel/sitio-web" class="nav-item admin-nav" data-path="/panel/sitio-web"><Icon name="mdi:web" width="20" height="20" /> Gestionar Sitio Web & POS</a>
+      <a href="/" target="_blank" class="nav-item" style="opacity:0.65; font-size:0.88rem;"><Icon name="mdi:open-in-new" width="18" height="18" /> Ver Sitio Público ↗</a>
+    </nav>
+    
+    <!-- Authenticated User Profile Pill (Replaces vulnerable role selector) -->
+    <div class="sidebar-footer" id="sidebar-user-card" style="padding:0.85rem; border-top:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:0.65rem; background:var(--bg-panel);">
+      <div style="display:flex; align-items:center; gap:0.65rem; min-width:0;">
+        <div id="auth-user-avatar" style="width:36px; height:36px; border-radius:10px; background:rgba(0,113,227,0.15); border:1px solid rgba(0,113,227,0.3); display:flex; align-items:center; justify-content:center; font-size:0.88rem; font-weight:800; color:var(--accent-blue); flex-shrink:0;">
+          DL
+        </div>
+        <div style="min-width:0; flex:1;">
+          <div id="auth-user-name" style="font-size:0.85rem; font-weight:700; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+            Diego Lecourtois
+          </div>
+          <div id="auth-user-role-badge" style="font-size:0.72rem; font-weight:600; color:var(--accent-blue); display:inline-flex; align-items:center; gap:0.3rem;">
+            <span style="width:6px; height:6px; border-radius:50%; background:var(--accent-green); box-shadow:0 0 4px var(--accent-green);"></span>
+            <span id="auth-user-role-text">Administrador</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout Button -->
+      <button id="btn-user-logout" style="width:100%; display:flex; align-items:center; justify-content:center; gap:0.45rem; padding:0.45rem 0.75rem; border-radius:8px; border:1px solid var(--border-subtle); background:var(--bg-base); color:var(--text-secondary); font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='#ff3b30'; this.style.borderColor='rgba(255,59,48,0.35)'; this.style.background='rgba(255,59,48,0.1)';" onmouseout="this.style.color='var(--text-secondary)'; this.style.borderColor='var(--border-subtle)'; this.style.background='var(--bg-base)';">
+        <Icon name="mdi:logout" width="16" height="16" />
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-wrapper">
+    <header class="topbar">
+      <!-- Demo Data Seeder Button for Video/Pitch -->
+      <button class="btn-demo-seed" id="btn-seed-demo-data" title="Cargar datos de prueba hiper-realistas para demo comercial o video">
+        <Icon name="mdi:movie-open-play-outline" style="display:inline; vertical-align:middle; margin-right:4px;" />
+        <span>Datos Demo</span>
+      </button>
+
+      <!-- Checador de Empleados / Asistencia -->
+      <button class="btn-primary" id="btn-global-clock" style="font-size:0.85rem; padding:0.45rem 1rem; border-radius:100px;">
+        <Icon name="mdi:clock-check-outline" style="display:inline; vertical-align:middle; margin-right:4px;" />
+        <span id="global-clock-label">Entrada / Checar</span>
+      </button>
+      
+      <!-- Theme Toggle -->
+      <button class="btn-icon" id="theme-toggle" aria-label="Toggle Theme">
+        <Icon name="mdi:theme-light-dark" width="24" height="24" />
+      </button>
+      
+      <!-- Notification -->
+      <button class="btn-icon" style="position:relative;" onclick="alert('Sin notificaciones pendientes')">
+        <Icon name="mdi:bell-outline" width="24" height="24" />
+        <span style="position:absolute; top:4px; right:4px; width:8px; height:8px; background:var(--accent-green); border-radius:50%;"></span>
+      </button>
+    </header>
+
+    <div class="content-area">
+      <slot />
+    </div>
+  </main>
+
+  <!-- Toast Notification for Denied Route Attempts (Fixed Overlay - Never affects flex flow) -->
+  <div id="auth-guard-toast" style="display:none !important; position:fixed !important; top:1.25rem !important; right:1.25rem !important; z-index:999999 !important; pointer-events:none;">
+    <Icon name="mdi:shield-alert-outline" width="20" height="20" />
+    <span id="auth-guard-toast-msg"></span>
+  </div>
+
+  <script is:inline>
+    // Theme logic
+    const toggleBtn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    if(localStorage.getItem('theme') === 'dark') {
+      html.classList.add('dark');
+    }
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+      });
+    }
+
+    // Check for Flash Denied Message from Auth Guard
+    try {
+      var raw = localStorage.getItem('bicisaas_session');
+      var currSession = raw ? JSON.parse(raw) : null;
+      if (currSession && currSession.role === 'admin') {
+        sessionStorage.removeItem('bicisaas_auth_denied');
+        sessionStorage.removeItem('bicisaas_denied_role');
+      } else if (sessionStorage.getItem('bicisaas_auth_denied') === 'true') {
+        const toast = document.getElementById('auth-guard-toast');
+        const role = sessionStorage.getItem('bicisaas_denied_role') || 'tu usuario';
+        if (toast) {
+          const msg = document.getElementById('auth-guard-toast-msg');
+          if (msg) msg.textContent = 'Acceso restringido: Módulo reservado (' + role + ').';
+          toast.classList.add('show-toast');
+          setTimeout(() => {
+            toast.classList.remove('show-toast');
+          }, 4500);
+        }
+        sessionStorage.removeItem('bicisaas_auth_denied');
+        sessionStorage.removeItem('bicisaas_denied_role');
+      }
+    } catch(e) {}
+
+    // Apply Active Session & RBAC UI
+    function renderAuthenticatedSession() {
+      try {
+        const sessionRaw = localStorage.getItem('bicisaas_session');
+        if (!sessionRaw) return;
+        const session = JSON.parse(sessionRaw);
+
+        // Update User Pill
+        const avatarEl = document.getElementById('auth-user-avatar');
+        const nameEl = document.getElementById('auth-user-name');
+        const roleTextEl = document.getElementById('auth-user-role-text');
+
+        if (avatarEl) {
+          const monogram = session.monogram || (session.name ? session.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase() : 'US');
+          avatarEl.textContent = monogram;
+          if (session.color) {
+            avatarEl.style.background = session.color + '22';
+            avatarEl.style.borderColor = session.color + '66';
+            avatarEl.style.color = session.color;
+          }
+        }
+        if (nameEl) nameEl.textContent = session.name || 'Usuario';
+        if (roleTextEl) roleTextEl.textContent = session.roleLabel || session.role;
+
+        const isAdmin = session.role === 'admin';
+        const allowedModules = session.allowedModules || (isAdmin ? ['dashboard', 'crm', 'inventario', 'rentas', 'taller', 'contabilidad', 'analytics', 'sitio-web', 'empleados', 'mi-perfil'] : []);
+
+        const pathToModule = {
+          '/panel': 'dashboard',
+          '/panel/crm': 'crm',
+          '/panel/empleados': 'empleados',
+          '/panel/mi-perfil': 'mi-perfil',
+          '/panel/inventario': 'inventario',
+          '/panel/rentas': 'rentas',
+          '/panel/taller': 'taller',
+          '/panel/contabilidad': 'contabilidad',
+          '/panel/analytics': 'analytics',
+          '/panel/sitio-web': 'sitio-web'
+        };
+
+        // Filter Sidebar Navigation based on allowedModules
+        document.querySelectorAll('#panel-nav .nav-item[data-path]').forEach(el => {
+          const p = el.getAttribute('data-path');
+          const mod = pathToModule[p];
+          if (isAdmin) {
+            el.style.display = '';
+          } else if (mod) {
+            el.style.display = allowedModules.includes(mod) ? '' : 'none';
+          }
+        });
+
+        document.querySelectorAll('.admin-nav').forEach(el => {
+          if (!el.getAttribute('data-path')) {
+            el.style.display = isAdmin ? '' : 'none';
+          }
+        });
+
+        // Update Topbar Clock state
+        updateGlobalClockButton(session.userId);
+      } catch(e) {}
+    }
+
+    function updateGlobalClockButton(empId) {
+      const btn = document.getElementById('btn-global-clock');
+      const label = document.getElementById('global-clock-label');
+      if (!btn || !label) return;
+
+      try {
+        const emps = JSON.parse(localStorage.getItem('bicisaas_employees') || '[]');
+        const emp = emps.find(e => e.id === empId);
+
+        if (emp && emp.clockIn && !emp.clockOut) {
+          label.textContent = `${emp.name.split(' ')[0]} • Salida (desde ${emp.clockIn})`;
+          btn.style.background = 'rgba(255,59,48,0.15)';
+          btn.style.color = '#ff3b30';
+          btn.style.borderColor = 'rgba(255,59,48,0.3)';
+        } else {
+          label.textContent = emp ? `${emp.name.split(' ')[0]} • Checar Entrada` : 'Entrada / Checar';
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+        }
+      } catch(e) {}
+    }
+
+    // Logout Handler
+    const logoutBtn = document.getElementById('btn-user-logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        if (confirm('¿Deseas cerrar la sesión activa?')) {
+          localStorage.removeItem('bicisaas_session');
+          localStorage.removeItem('bicisaas_user_role');
+          document.cookie = 'bicisaas_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+          window.location.href = '/panel/login';
+        }
+      });
+    }
+
+    // Global clock click
+    const clockBtn = document.getElementById('btn-global-clock');
+    if (clockBtn) {
+      clockBtn.addEventListener('click', () => {
+        try {
+          const session = JSON.parse(localStorage.getItem('bicisaas_session') || '{}');
+          const currentEmpId = session.userId || 'e1';
+          const now = new Date().toTimeString().slice(0,5);
+          const emps = JSON.parse(localStorage.getItem('bicisaas_employees') || '[]');
+          const emp = emps.find(e => e.id === currentEmpId);
+          if (emp) {
+            if (emp.clockIn && !emp.clockOut) {
+              emp.clockOut = now;
+              alert(`Registro de asistencia: Salida guardada para ${emp.name} a las ${now}.`);
+            } else {
+              emp.clockIn = now;
+              emp.clockOut = null;
+              alert(`Registro de asistencia: Entrada guardada para ${emp.name} a las ${now}.`);
+            }
+            localStorage.setItem('bicisaas_employees', JSON.stringify(emps));
+            updateGlobalClockButton(currentEmpId);
+            window.dispatchEvent(new CustomEvent('emp:clock_updated'));
+          }
+        } catch(e) {}
+      });
+    }
+
+    // Demo Data Seeder Button for Commercial Video / Pitch
+    const seedBtn = document.getElementById('btn-seed-demo-data');
+    if (seedBtn) {
+      seedBtn.addEventListener('click', () => {
+        const ok = confirm('¿Deseas inicializar los datos demo comerciales corporativos?\n\nEsta acción cargará:\n• CRM 360° con clientes VIP, scores y deudas\n• Contabilidad con $160k+ MXN en ingresos, compras y gastos\n• Plantilla completa de empleados y checador\n• Tablero Kanban con tareas reales de taller y ventas\n• Catálogo maestro de 40 productos sincronizados');
+        if (!ok) return;
+
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const yesterdayStr = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+        const twoDaysAgoStr = new Date(Date.now() - 86400000 * 2).toISOString().slice(0, 10);
+        const threeDaysAgoStr = new Date(Date.now() - 86400000 * 3).toISOString().slice(0, 10);
+
+        // 1. CRM VIP Demo Clients
+        const demoClients = [
+          {
+            id: 'p-001', name: 'Rodrigo Palacios', phone: '9841203344',
+            stage: 'deuda', source: 'web',
+            model: 'Basso Palta 2 Carbon', terrain: 'Gravel / Ruta', size: 'M (53cm)',
+            debt: 3500, notes: 'Apartó con $81,500. Viene a recogerla este sábado después del ajuste de calas. Triatleta activo.',
+            status: 'Apartado', visits: 9, score: 94,
+            lastActivity: new Date(Date.now() - 3600000 * 4).toISOString(),
+            events: [
+              { type: 'bike_detail_view', label: 'Comparó Basso Palta 2 vs Specialized Allez', ts: new Date(Date.now() - 86400000 * 4).toISOString() },
+              { type: 'matchmaker_complete', label: 'Completó quiz recomendador (Perfil Gravel Endurance)', ts: new Date(Date.now() - 86400000 * 3).toISOString() },
+              { type: 'whatsapp_click', label: 'Negoció precio y anticipo por WhatsApp con Laura', ts: new Date(Date.now() - 86400000 * 2).toISOString() },
+              { type: 'in_store_visit', label: 'Visita en tienda física: prueba de talla y anticipo', ts: new Date(Date.now() - 3600000 * 4).toISOString() }
+            ]
+          },
+          {
+            id: 'p-002', name: 'Mariana Gómez', phone: '9847654321',
+            stage: 'comprador', source: 'tienda',
+            model: 'Specialized Allez Sport', terrain: 'Carretera', size: 'XS (49cm)',
+            debt: 0, notes: 'Cliente frecuente de club rodadas. Se le entregó con casco POC y luces Lezyne.',
+            status: 'Comprador', visits: 8, score: 98,
+            lastActivity: new Date(Date.now() - 86400000).toISOString(),
+            events: [
+              { type: 'return_visit', label: 'Tercera compra en tienda (ropa y zapatillas)', ts: new Date(Date.now() - 86400000 * 12).toISOString() },
+              { type: 'in_store_visit', label: 'Adquisición Specialized Allez Sport en mostrador', ts: new Date(Date.now() - 86400000 * 5).toISOString() },
+              { type: 'service_check', label: 'Primer ajuste de 30 días programado con Marco', ts: new Date(Date.now() - 86400000).toISOString() }
+            ]
+          },
+          {
+            id: 'p-003', name: 'Carlos Ruiz', phone: '9841112233',
+            stage: 'calificado', source: 'web',
+            model: 'Trek Marlin 5 MTB', terrain: 'Montaña', size: 'L (29")',
+            debt: 0, notes: 'Interesado en iniciarse en senderos de PDC. Muy interesado en plan de financiamiento.',
+            status: 'Prospecto', visits: 5, score: 76,
+            lastActivity: new Date(Date.now() - 3600000 * 8).toISOString(),
+            events: [
+              { type: 'inventory_view', label: 'Revisó catálogo MTB con filtro < $20,000 MXN', ts: new Date(Date.now() - 86400000 * 3).toISOString() },
+              { type: 'scroll_90', label: 'Visualizó ficha técnica de suspensión y transmisión Shimano', ts: new Date(Date.now() - 86400000 * 2).toISOString() },
+              { type: 'whatsapp_click', label: 'Preguntó disponibilidad en talla L color Charcoal', ts: new Date(Date.now() - 3600000 * 8).toISOString() }
+            ]
+          },
+          {
+            id: 'p-004', name: 'Sofía Mendizábal', phone: '9848899001',
+            stage: 'deuda', source: 'tienda',
+            model: 'Merida Scultura 300', terrain: 'Ruta', size: 'S',
+            debt: 6500, notes: 'Dejó anticipo de $6,000 en caja. Saldo a liquidar en quincena para entrega.',
+            status: 'Apartado', visits: 4, score: 85,
+            lastActivity: new Date(Date.now() - 86400000 * 2).toISOString(),
+            events: [
+              { type: 'in_store_visit', label: 'Apartó bicicleta en mostrador con Laura Vásquez', ts: new Date(Date.now() - 86400000 * 2).toISOString() }
+            ]
+          },
+          {
+            id: 'p-005', name: 'Gabriel Garza', phone: '9845551234',
+            stage: 'interesado', source: 'web',
+            model: 'Garmin Edge 530 GPS', terrain: 'Accesorios', size: 'Única',
+            debt: 0, notes: 'Navegó accesorios de alta gama. Preguntó por sensores de frecuencia cardiaca.',
+            status: 'Prospecto', visits: 3, score: 48,
+            lastActivity: new Date(Date.now() - 86400000 * 4).toISOString(),
+            events: [
+              { type: 'inventory_view', label: 'Visitó sección Electrónica & GPS en la web', ts: new Date(Date.now() - 86400000 * 4).toISOString() }
+            ]
+          },
+          {
+            id: 'p-006', name: 'Camila Echeverría', phone: '9842228899',
+            stage: 'comprador', source: 'tienda',
+            model: 'Giant Talon 2', terrain: 'Montaña', size: 'S (27.5")',
+            debt: 0, notes: 'Compra de contado. Se llevó kit antiponchaduras Stans y bomba Topeak.',
+            status: 'Comprador', visits: 6, score: 92,
+            lastActivity: new Date(Date.now() - 86400000 * 6).toISOString(),
+            events: [
+              { type: 'in_store_visit', label: 'Compra cerrada en mostrador POS por $14,350', ts: new Date(Date.now() - 86400000 * 6).toISOString() }
+            ]
+          },
+          {
+            id: 'p-007', name: 'Alexander Klein', phone: '9841893321',
+            stage: 'comprador', source: 'web',
+            model: 'Trek Marlin 5 Gen 3 (Renta Folio REN-8104)', terrain: 'Renta / MTB', size: 'L (29")',
+            debt: 0, notes: 'Turista alemán hospedado en Hotel HM Playa del Carmen. Renta de 3 días con depósito en garantía de $1,000 MXN en tarjeta.',
+            status: 'Renta Activa', visits: 4, score: 88,
+            lastActivity: new Date().toISOString(),
+            events: [
+              { type: 'rental_booking', label: 'Reserva web de Trek Marlin 5 Gen 3 MTB (3 días)', ts: new Date(Date.now() - 86400000).toISOString() },
+              { type: 'hotel_delivery', label: 'Entrega en lobby de Hotel HM Playa del Carmen con casco y U-Lock', ts: new Date().toISOString() }
+            ]
+          }
+        ];
+        localStorage.setItem('bicisaas_crm', JSON.stringify(demoClients));
+
+        // 2. Realistic Accounting Ledger
+        const demoLedger = {
+          income: [
+            { id: 101, desc: 'Venta Basso Palta 2 Carbon (Web / Anticipo VIP)', cat: 'Venta de Bicicleta', amount: 81500, date: twoDaysAgoStr },
+            { id: 102, desc: 'Venta Specialized Allez Sport (Tienda física)', cat: 'Venta de Bicicleta', amount: 32000, date: yesterdayStr },
+            { id: 103, desc: 'Venta Giant Talon 2 + Accesorios', cat: 'Venta de Bicicleta', amount: 14350, date: threeDaysAgoStr },
+            { id: 104, desc: 'Mantenimiento Full Taller: Fox Float + Purga Shimano', cat: 'Servicio de Taller', amount: 3450, date: todayStr },
+            { id: 105, desc: 'Venta Casco POC Axion Race MIPS + Guantes Fox', cat: 'Venta de Accesorio', amount: 5650, date: yesterdayStr },
+            { id: 106, desc: 'Computadora Garmin Edge 530 Bundle', cat: 'Venta de Accesorio', amount: 9700, date: twoDaysAgoStr },
+            { id: 107, desc: 'Anticipo Layaway Merida Scultura 300 (Sofía M.)', cat: 'Apartado / Anticipo', amount: 6000, date: twoDaysAgoStr },
+            { id: 108, desc: 'Servicio Express Cadena KMC X12 y Ajuste Cambios', cat: 'Servicio de Taller', amount: 1250, date: todayStr },
+            { id: 109, desc: '2x Cubiertas Maxxis Ardent 29" + Sellador Tubeless', cat: 'Venta de Accesorio', amount: 2750, date: todayStr },
+            { id: 110, desc: 'Renta 3 días Trek Marlin 5 MTB (Alexander Klein - Folio REN-8104)', cat: 'Renta de Bicicletas', amount: 1100, date: todayStr }
+          ],
+          expenses: [
+            { id: 201, desc: 'Renta Local Comercial Av. 10 Playa del Carmen', cat: 'Renta Local', amount: 22000, date: '2026-09-01' },
+            { id: 202, desc: 'CFE Bimestre (A/A Taller y Exhibición)', cat: 'Luz / CFE', amount: 3850, date: '2026-09-04' },
+            { id: 203, desc: 'Internet Fibra Óptica 500Mbps Simétrico', cat: 'Internet / WiFi', amount: 850, date: '2026-09-03' },
+            { id: 204, desc: 'Insumos Taller (Desengrasante Muc-Off, Grasa ParkTool)', cat: 'Otros Gastos', amount: 1850, date: '2026-09-05' },
+            { id: 205, desc: 'Suscripción BiciSaaS Enterprise Cloud', cat: 'Suscripción BiciSaaS', amount: 1200, date: '2026-09-01' },
+            { id: 206, desc: 'Campaña Meta Ads Ciclismo Riviera Maya', cat: 'Otros Gastos', amount: 2500, date: '2026-09-06' }
+          ],
+          cobrar: [
+            { id: 301, desc: 'Saldo entrega Basso Palta 2 Carbon', party: 'Rodrigo Palacios', amount: 3500, date: todayStr },
+            { id: 302, desc: 'Liquidación Layaway Merida Scultura 300', party: 'Sofía Mendizábal', amount: 6500, date: '2026-09-15' },
+            { id: 303, desc: 'Saldo Taller Mantenimiento doble suspensión', party: 'Carlos Ruiz', amount: 1150, date: '2026-09-10' }
+          ],
+          pagar: [
+            { id: 401, desc: 'Factura Distribuidor Shimano México (Transmisiones)', party: 'Shimano Distribución MX', amount: 18400, date: '2026-09-12' },
+            { id: 402, desc: 'Factura Llantas Maxxis & Selladores', party: 'Ruedas del Mayab S.A.', amount: 7800, date: '2026-09-14' },
+            { id: 403, desc: 'Guía DHL Express Refacciones de Italia', party: 'DHL Express México', amount: 1350, date: '2026-09-04' }
+          ]
+        };
+        localStorage.setItem('bicisaas_ledger', JSON.stringify(demoLedger));
+
+        // 3. Employee Roster & Live Attendance
+        const demoEmployees = [
+          { id:'e1', name:'Diego Lecourtois', initials:'D', role:'Admin / Propietario', phone:'9841234567', shift:'Completo (10am–7pm)', days:'Lun–Sáb', color:'#0071e3', clockIn:'08:50', clockOut:null },
+          { id:'e2', name:'Marco Ramírez', initials:'M', role:'Jefe de Taller',      phone:'9842345678', shift:'Completo (10am–7pm)', days:'Lun–Sáb', color:'#34c759', clockIn:'09:15', clockOut:null },
+          { id:'e3', name:'Laura Vásquez', initials:'L', role:'Asesora Comercial',  phone:'9843456789', shift:'Completo (10am–7pm)', days:'Lun–Sáb', color:'#ff9500', clockIn:'09:55', clockOut:null },
+          { id:'e4', name:'Sofía Torres',  initials:'S', role:'Logística & Didi',   phone:'9844567890', shift:'Tarde (3pm–7pm)',    days:'Lun–Sáb', color:'#af52de', clockIn:null,    clockOut:null }
+        ];
+        localStorage.setItem('bicisaas_employees', JSON.stringify(demoEmployees));
+
+        // 4. Kanban Tasks with real shop activities
+        const demoTasks = [
+          { id:'t101', title:'Servicio preventivo + purga frenos Basso Palta 2', cat:'Taller / Servicio', priority:'alta', status:'progress', assignee:'e2', due: todayStr, notes:'Dejar lista para entrega de Rodrigo el sábado' },
+          { id:'t102', title:'Llamar a Rodrigo Palacios para confirmar hora de entrega', cat:'CRM / Seguimiento', priority:'alta', status:'progress', assignee:'e3', due: todayStr, notes:'Coordinar ajuste de calas en rodillo' },
+          { id:'t103', title:'Armado y exhibición Specialized Allez Sport 2026', cat:'Inventario', priority:'alta', status:'pending', assignee:'e2', due: todayStr, notes:'Revisar torque y presión de neumáticos' },
+          { id:'t104', title:'Generar fotos con IA para cascos POC en la web', cat:'Inventario', priority:'media', status:'done', assignee:'e3', due: yesterdayStr, notes:'Listo en fondo blanco studio' },
+          { id:'t105', title:'Verificar entrada de pedido Shimano 12 velocidades', cat:'Inventario', priority:'alta', status:'done', assignee:'e2', due: yesterdayStr, notes:'15 cadenas y 8 cassettes recibidos' },
+          { id:'t106', title:'Envío de alforja Apidura a Playacar vía Didi Moto', cat:'Operación', priority:'media', status:'pending', assignee:'e4', due: todayStr, notes:'Cliente pagó envío con tarjeta' },
+          { id:'t107', title:'Cobro de saldo pendiente $3,500 Rodrigo Palacios', cat:'Cobro / Cuentas', priority:'alta', status:'pending', assignee:'e3', due: todayStr, notes:'Se cobra en mostrador al entregar' },
+          { id:'t108', title:'Limpieza y calibración de torquímetros de taller', cat:'Limpieza / Operación', priority:'baja', status:'pending', assignee:'e2', due: todayStr, notes:'Mantenimiento de herramientas' },
+          { id:'t109', title:'Check-in de renta Trek Marlin 5 (Alexander Klein - Hotel HM)', cat:'Flota & Rentas', priority:'media', status:'pending', assignee:'e3', due: todayStr, notes:'Revisar estado mecánico y liberar depósito en garantía de $1,000 MXN' }
+        ];
+        localStorage.setItem('bicisaas_tasks', JSON.stringify(demoTasks));
+
+        alert('Datos comerciales corporativos cargados exitosamente.\n\nEl sistema cuenta con:\n• $167,750 MXN en ingresos (incluye rentas turísticas)\n• 7 clientes CRM con eventos de tracking web\n• Asistencia de empleados activa\n• 9 tareas en curso en Kanban\n\nRecargando para reflejar los cambios...');
+        window.location.reload();
+      });
+    }
+
+    // Active Navigation Highlight
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    document.querySelectorAll('#panel-nav .nav-item').forEach(item => {
+      const p = item.getAttribute('data-path');
+      if (p) {
+        const cleanP = p.replace(/\/$/, '');
+        if (cleanP === currentPath || (cleanP !== '/panel' && currentPath.startsWith(cleanP))) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      }
+    });
+
+    // Run on load
+    renderAuthenticatedSession();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+================================================================================
+THE GARAGE BIKE EXPERTS · CAMPAÑA LANZAMIENTO WEB + 2º ANIVERSARIO
+DÍA 2 · MARTES 15 DE SEPTIEMBRE
+FASE: HERRAMIENTA SECRETA & AUTORIDAD BIOMECÁNICA
+FECHA DE LANZAMIENTO OFICIAL: SÁBADO 19 DE SEPTIEMBRE
+(IMPORTANTE: NO REVELAR ENLACE WEB HASTA EL SÁBADO 19)
+================================================================================
+
+PUBLICACIÓN 1: CARRUSEL EDUCATIVO DE 4 SLIDES (FEED)
+--------------------------------------------------------------------------------
+• Hora sugerida de publicación: 01:15 PM (Pausa del mediodía)
+• Objetivo: Presentar la calculadora biomecánica interactiva, generar interacción y tráfico previo al lanzamiento.
+• Archivos a subir en orden a Meta Business Suite (Feed Post > Carrusel):
+  1. assets/dia2_martes/carrusel_slide1_portada.png (Portada con frame Veo 3: ¿M o L?)
+  2. assets/dia2_martes/carrusel_slide2_consecuencias.png (Consecuencias de una talla equivocada)
+  3. assets/dia2_martes/carrusel_slide3_calculadora.png (Captura limpia de la herramienta)
+  4. assets/dia2_martes/carrusel_slide4_resultado.png (Tu medida exacta + Fecha 19 Sept)
+
+• TÍTULO INTERNO (Meta Suite): Martes 15 - Carrusel Calculadora Biomecánica
+
+• COPY / CAPTION COMPLETO (Copiar y pegar):
+¿M o L? El 70% de los ciclistas compran la talla equivocada por fiarse únicamente de la etiqueta. 📏📐 Desliza para saber por qué 👉
+
+Un cuadro apenas 2 centímetros más largo de lo que te corresponde no solo arruina tu aerodinámica: provoca hiperextensión lumbar, sobrecarga constante en isquiotibiales y adormecimiento en las manos antes de llegar al kilómetro 40.
+Por el contrario, un cuadro demasiado chico comprime tu caja torácica y limita tu oxigenación bajo el calor y la humedad del Caribe.
+
+Por eso, como parte de nuestro 2º ANIVERSARIO, desarrollamos la Calculadora Biomecánica Digital:
+✅ Ingresas tu estatura exacta en centímetros.
+✅ Seleccionas tu modalidad: Ruta, Gravel o MTB.
+✅ Obtienes en tiempo real tu rango recomendado de cuadro, potencia y ajuste de tija.
+
+🚀 ESTRENO GENERAL DE TODA LA PLATAFORMA: SÁBADO 19 DE SEPTIEMBRE.
+
+Comenta "TALLA" en este post y nuestro equipo técnico te enviará por mensaje privado tu recomendación de geometría personalizada antes del estreno. 👇
+
+---
+• HASHTAGS:
+#TheGaragePDC #CalculadoraBiomecanica #BikeFitting #TallaBicicleta #CiclismoDeRuta #GravelMexico #MTBPlayaDelCarmen #BassoBikes #RivieraMaya #PlayaDelCarmen #TriatlonMexico #CiclistasMexico #IronmanCozumel #19DeSeptiembre #SegundoAniversario
+
+--------------------------------------------------------------------------------
+PUBLICACIÓN 2: STORIES SECUENCIALES (Publicar a las 04:30 PM)
+--------------------------------------------------------------------------------
+• Story 1 (Imagen): assets/dia2_martes/story_calculadora.png
+  - Sticker de Pregunta interactiva:
+    Texto: "¿Cuánto mides? Te decimos tu talla ideal en cuadro de ruta o gravel 👇"
+
+• Story 2:
+  - Texto: "Dile adiós al dolor de espalda y rodilla en las rodadas hacia Tulum o Cancún. Este Sábado 19 estrenamos la Calculadora Biomecánica en nuestra nueva web."
+  - Sticker Deslizante de emoji 🔥
