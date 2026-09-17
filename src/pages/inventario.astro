@@ -1087,12 +1087,16 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
       overrides = JSON.parse(localStorage.getItem(WEB_KEY) || '{}');
     } catch(e) { overrides = {}; }
 
-    // If local inventory is empty, seed it with the master 40 products
-    const OLD_DEMO_KEYS = ['1', '2', '3', '4', 'bas-palt2', 'trk-mar5', 'spz-alz-sp', 'gnt-tal2', 'mer-scu300', 'merida-scultura-300-tiagra'];
+    // Lanzamiento oficial: filtrar estrictamente solo las 15 bicicletas maestras
+    const masterIds = new Set(masterCatalog.map(m => String(m.id || '').toLowerCase()));
+    const masterSkus = new Set(masterCatalog.map(m => String(m.sku || '').toLowerCase()));
+    const masterNames = new Set(masterCatalog.map(m => String(m.name || '').toLowerCase()));
+
     localInv = localInv.filter(item => {
       const rawId = String(item.id || '').toLowerCase();
       const rawSku = String(item.sku || '').toLowerCase();
-      return !OLD_DEMO_KEYS.includes(rawId) && !OLD_DEMO_KEYS.includes(rawSku);
+      const rawName = String(item.name || '').toLowerCase();
+      return masterIds.has(rawId) || masterSkus.has(rawSku) || masterNames.has(rawName);
     });
 
     if (!localInv || !localInv.length) {
@@ -1107,6 +1111,9 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
         const exists = localInv.find(item => getCanonicalKey(item) === mpKey || (item.name && item.name.toLowerCase() === mp.name.toLowerCase()));
         if (!exists) localInv.push(mp);
       });
+      try {
+        localStorage.setItem(INV_KEY, JSON.stringify(localInv));
+      } catch(e) {}
     }
 
     // Exclude rental fleet items (rental fleet is managed exclusively in /panel/rentas and displayed on /renta)
@@ -1135,8 +1142,8 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
     // Map and apply overrides from /panel/sitio-web
     return uniqueInv.map(prod => {
       const canonicalSku = getCanonicalKey(prod);
-      const sku = prod.sku || canonicalSku || prod.id;
-      const ov = findProductOverride(prod, overrides);
+      const sku = prod.sku || canonicalSku;
+      const ov = overrides[sku] || overrides[prod.id] || overrides[canonicalSku] || findFuzzyOverride(prod.name, overrides);
       const masterRef = masterMap[sku] || masterMap[prod.id] || masterMap[canonicalSku] || {};
 
       const basePrice = ov.price !== undefined ? Number(ov.price) : Number(prod.price || masterRef.price || 0);
@@ -1166,7 +1173,7 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
         sku: sku,
         name: ov.name || prod.name || masterRef.name,
         brand: ov.brand || prod.brand || masterRef.brand || 'The Garage',
-        cat: ov.cat || prod.cat || masterRef.cat || 'Accesorios Varios',
+        cat: ov.cat || prod.cat || masterRef.cat || 'Bicicletas',
         price: basePrice,
         webPrice: webPrice,
         stock: stock,
@@ -1191,7 +1198,11 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
   const SVG_CAT_ICONS = {
     'all': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>`,
     'Bicicletas': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/><path d="M8 14h5"/></svg>`,
-    'Transmisión & Drivetrain': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    'MTB': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>`,
+    'Ruta': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5L8.5 7H12l2.5 4.5M12 11.5l3.5 6M5.5 17.5l4-10.5"/></svg>`,
+    'Urbana': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>`,
+    'Infantil': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>`,
+    'Transmisión & Drivetrain': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
     'Frenos & Rotores': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5"/><path d="M12 16v5"/><path d="M3 12h5"/><path d="M16 12h5"/></svg>`,
     'Frenos': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5"/><path d="M12 16v5"/><path d="M3 12h5"/><path d="M16 12h5"/></svg>`,
     'Ruedas & Llantas': `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.5"/><line x1="12" y1="3" x2="12" y2="10.5"/><line x1="12" y1="13.5" x2="12" y2="21"/><line x1="3" y1="12" x2="10.5" y2="12"/><line x1="13.5" y1="12" x2="21" y2="12"/></svg>`,

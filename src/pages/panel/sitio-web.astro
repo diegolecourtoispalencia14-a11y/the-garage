@@ -1556,13 +1556,20 @@ https://g.page/r/thegarage-pdc/review
     let inventory = JSON.parse(localStorage.getItem(INV_KEY) || '[]');
     const overrides = JSON.parse(localStorage.getItem(WEB_KEY) || '{}');
 
+    // Lanzamiento oficial: filtrar estrictamente solo las 15 bicicletas maestras
+    const masterIds = new Set(masterProducts.map(m => String(m.id || '').toLowerCase()));
+    const masterSkus = new Set(masterProducts.map(m => String(m.sku || '').toLowerCase()));
+    const masterNames = new Set(masterProducts.map(m => String(m.name || '').toLowerCase()));
+
+    inventory = inventory.filter(p => masterIds.has(String(p.id || '').toLowerCase()) || masterSkus.has(String(p.sku || '').toLowerCase()) || masterNames.has(String(p.name || '').toLowerCase()));
+
     // Seed master catalogue if inventory is empty
     if (!inventory.length && masterProducts.length) {
       inventory = masterProducts.map(p => ({
         id: p.id,
         name: p.name,
         brand: p.brand,
-        cat: p.cat,
+        cat: p.cat || 'Bicicletas',
         sku: p.sku,
         price: p.price,
         cost: Math.round(p.price * 0.65),

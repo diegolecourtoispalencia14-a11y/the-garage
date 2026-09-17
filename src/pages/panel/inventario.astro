@@ -504,24 +504,47 @@ const masterProductsJson = JSON.stringify(MASTER_PRODUCTS);
     try {
       const saved = localStorage.getItem('bicisaas_inventory');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length >= 35) {
-          return parsed;
+        let parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Filtrar estrictamente solo las 15 bicicletas maestras activas
+          const masterIds = new Set(MASTER_PRODUCTS.map(m => String(m.id || '').toLowerCase()));
+          const masterSkus = new Set(MASTER_PRODUCTS.map(m => String(m.sku || '').toLowerCase()));
+          parsed = parsed.filter(p => masterIds.has(String(p.id || '').toLowerCase()) || masterSkus.has(String(p.sku || '').toLowerCase()));
+          
+          if (parsed.length > 0) {
+            MASTER_PRODUCTS.forEach(mp => {
+              if (!parsed.find(p => p.sku === mp.sku || p.id === mp.id)) {
+                parsed.push({
+                  id: mp.id,
+                  name: mp.name,
+                  brand: mp.brand || 'The Garage',
+                  cat: mp.cat || 'Bicicletas',
+                  sku: mp.sku || 'SKU-' + mp.id,
+                  price: mp.price || 0,
+                  cost: Math.round((mp.price || 0) * 0.62),
+                  stock: mp.stock !== undefined ? mp.stock : 1,
+                  min: 1
+                });
+              }
+            });
+            localStorage.setItem('bicisaas_inventory', JSON.stringify(parsed));
+            return parsed;
+          }
         }
       }
     } catch(e) {}
 
-    // Fallback & seed from MASTER_PRODUCTS
+    // Fallback & seed from MASTER_PRODUCTS (15 bicicletas)
     const seeded = MASTER_PRODUCTS.map(p => ({
       id: p.id,
       name: p.name,
       brand: p.brand || 'The Garage',
-      cat: p.cat || 'Accesorios Varios',
+      cat: p.cat || 'Bicicletas',
       sku: p.sku || 'SKU-' + p.id,
       price: p.price || 0,
       cost: Math.round((p.price || 0) * 0.62),
-      stock: p.stock !== undefined ? p.stock : 5,
-      min: 2
+      stock: p.stock !== undefined ? p.stock : 1,
+      min: 1
     }));
 
     localStorage.setItem('bicisaas_inventory', JSON.stringify(seeded));
