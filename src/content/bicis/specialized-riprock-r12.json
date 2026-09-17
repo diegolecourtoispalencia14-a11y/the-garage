@@ -1,0 +1,29 @@
+{
+  "id": "specialized-riprock-r12",
+  "modelo": "Riprock 12 Infantil con Ruedas de Equilibrio",
+  "marca": "Specialized",
+  "categoria": "Infantil",
+  "precio": 3800,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "Infantil R12 (2 - 5 años / 80 - 100 cm)",
+  "color": "Rosa Fucsia con detalles Turquesa",
+  "specs": {
+    "cuadro": "Aluminio Specialized A1 Premium rodada 12\"",
+    "grupo": "Transmisión monovelocidad (Single Speed)",
+    "frenos": "Freno contrapedal trasero intuitivo",
+    "rodada": "12\" Rhythm Lite con rueditas de equilibrio desmontables"
+  },
+  "fotos": [
+    "/img/catalogo/specialized-riprock-r12-1.jpg",
+    "/img/catalogo/specialized-riprock-r12-2.jpg",
+    "/img/catalogo/specialized-riprock-r12-3.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la bicicleta Specialized Riprock 12 Infantil ($3,800 MXN). ¿Sigue disponible en tienda?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Venta",
+  "sku": "SPZ-RIP-12",
+  "descripcion": "Bicicleta infantil Specialized Riprock rodada 12 con cuadro de aluminio A1 Premium de baja altura para fácil acceso, freno contrapedal, rueditas de equilibrio desmontables, canastilla frontal tejida, timbre y asiento con agarradera parental."
+}

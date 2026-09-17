@@ -1,0 +1,29 @@
+{
+  "id": "mercurio-ranger-r27",
+  "modelo": "Ranger 27.5 Sport",
+  "marca": "Mercurio",
+  "categoria": "MTB",
+  "precio": 2999,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M (Estándar)",
+  "color": "Azul Marino con Verde Lima",
+  "specs": {
+    "cuadro": "Aluminio resistente rodada 27.5\"",
+    "grupo": "microSHIFT 3x7 vel.",
+    "frenos": "Disco delantero mecánico y V-Brake trasero",
+    "rodada": "27.5\" MTB"
+  },
+  "fotos": [
+    "/img/catalogo/mercurio-ranger-r27-1.jpg",
+    "/img/catalogo/mercurio-ranger-r27-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Mercurio Ranger R27.5 (Venta $2,999 MXN / Renta $300/día). ¿Está lista para rodar?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "MER-RNG-27",
+  "descripcion": "Bicicleta de montaña y uso diario económico. Cuadro de aluminio rodada 27.5, suspensión delantera de resorte, transmisión microSHIFT 3x7 vel y freno de disco delantero."
+}

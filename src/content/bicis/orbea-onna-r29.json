@@ -1,0 +1,29 @@
+{
+  "id": "orbea-onna-r29",
+  "modelo": "Onna 29 Hardtail",
+  "marca": "Orbea",
+  "categoria": "MTB",
+  "precio": 13000,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M",
+  "color": "Terracota Metálico",
+  "specs": {
+    "cuadro": "Aluminio Orbea Onna Hydro",
+    "grupo": "Shimano Deore 1x12 vel.",
+    "frenos": "Frenos de disco hidráulicos Shimano",
+    "rodada": "29\" Kenda"
+  },
+  "fotos": [
+    "/img/catalogo/orbea-onna-r29-1.jpg",
+    "/img/catalogo/orbea-onna-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Orbea Onna 29 (Talla M, Venta $13,000 MXN / Renta $300/día). ¿La tienen disponible?",
+  "destacada": true,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "ORB-ONNA-29M",
+  "descripcion": "Bicicleta española de cross-country Orbea Onna rodada 29. Equipada con horquilla de suspensión de aire con bloqueo remoto, transmisión monoplato Shimano Deore 1x12 velocidades y frenos hidráulicos."
+}

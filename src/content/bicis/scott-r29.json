@@ -1,0 +1,29 @@
+{
+  "id": "scott-r29",
+  "modelo": "Aspect R29 Deore 12V",
+  "marca": "Scott",
+  "categoria": "MTB",
+  "precio": 12800,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "S",
+  "color": "Negro con acentos Naranja Amber",
+  "specs": {
+    "cuadro": "Aluminio hidroformado 6061",
+    "grupo": "Shimano Deore 1x12 vel.",
+    "frenos": "Frenos de disco hidráulicos",
+    "rodada": "29\" Maxxis"
+  },
+  "fotos": [
+    "/img/catalogo/scott-r29-1.jpg",
+    "/img/catalogo/scott-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Scott Aspect R29 Deore 12V (Talla S, Venta $12,800 MXN / Renta $300/día). ¿Está disponible?",
+  "destacada": true,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "SCT-ASP-29S",
+  "descripcion": "Bicicleta de montaña rodada 29 con cuadro de aluminio ligero y transmisión monoplato Shimano Deore de 12 velocidades. Frenos hidráulicos potentes y suspensión hidráulica delantera."
+}

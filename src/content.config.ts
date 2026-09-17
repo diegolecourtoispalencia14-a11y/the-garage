@@ -24,6 +24,10 @@ const bicis = defineCollection({
     mensajeWhatsApp: z.string(),
     destacada: z.boolean().default(false),
     esMuestra: z.boolean().default(false),
+    precioRenta: z.number().optional(),
+    modalidad: z.enum(['Venta', 'Renta', 'Las dos']).optional(),
+    sku: z.string().optional(),
+    descripcion: z.string().optional(),
   }),
 });
 

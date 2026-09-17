@@ -62,6 +62,7 @@ const rentalFleetJson = JSON.stringify(INITIAL_RENTAL_FLEET);
           <button class="cat-pill" data-cat="MTB">Montaña &amp; Cenotes (MTB)</button>
           <button class="cat-pill" data-cat="Gravel">Gravel Aventura</button>
           <button class="cat-pill" data-cat="Ruta">Ruta &amp; Fondo Tulum</button>
+          <button class="cat-pill" data-cat="Infantil">Infantil &amp; Juvenil</button>
           <button class="cat-pill" data-cat="E-Bike">E-Bikes Eléctricas</button>
         </div>
 
@@ -1067,13 +1068,15 @@ const rentalFleetJson = JSON.stringify(INITIAL_RENTAL_FLEET);
   (function() {
     function getPublicFleet() {
       try {
-        const stored = localStorage.getItem('thegarage_rental_fleet');
+        const stored = localStorage.getItem('thegarage_rental_fleet_v2');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].model && parsed[0].model.includes('Specialized Crosstrail')) return parsed;
         }
       } catch (e) {}
-      return JSON.parse(rentalFleetJson);
+      const initial = JSON.parse(rentalFleetJson);
+      try { localStorage.setItem('thegarage_rental_fleet_v2', JSON.stringify(initial)); } catch (e) {}
+      return initial;
     }
 
     const FLEET = getPublicFleet();
@@ -1121,6 +1124,13 @@ const rentalFleetJson = JSON.stringify(INITIAL_RENTAL_FLEET);
           actionBtn = '<button class="btn-rent-action btn-rent-service" disabled><span>En Servicio de Taller</span></button>';
         }
 
+        const forSaleBadge = bike.forSale && bike.salePrice ? `
+          <div style="margin-bottom:0.75rem; padding:0.4rem 0.65rem; background:rgba(0,113,227,0.12); border:1px solid rgba(0,113,227,0.3); border-radius:8px; display:flex; align-items:center; justify-content:space-between; font-size:0.75rem;">
+            <span style="color:#2997ff; font-weight:600;">🏷️ Disponible en Venta</span>
+            <a href="/bici/${bike.saleSlug || ''}" style="color:#ffffff; font-weight:700; text-decoration:none;">${formatMXN(bike.salePrice)} &rarr;</a>
+          </div>
+        ` : '';
+
         return `
           <div class="bike-card">
             <div class="card-media-wrap">
@@ -1134,6 +1144,8 @@ const rentalFleetJson = JSON.stringify(INITIAL_RENTAL_FLEET);
               <div class="card-height-fit">
                 <span>Ajuste recomendado: ${bike.riderHeightRange}</span>
               </div>
+
+              ${forSaleBadge}
 
               <ul class="card-features">
                 ${bike.features.slice(0, 3).map(f => `<li>${f}</li>`).join('')}

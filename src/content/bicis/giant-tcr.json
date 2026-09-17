@@ -1,0 +1,28 @@
+{
+  "id": "giant-tcr",
+  "modelo": "TCR Advanced Carbon",
+  "marca": "Giant",
+  "categoria": "Ruta",
+  "precio": 29900,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M (54 cm)",
+  "color": "Azul Cobalto Brillante",
+  "specs": {
+    "cuadro": "Cuadro y poste de asiento de fibra de carbono",
+    "grupo": "Shimano Tiagra 2x10 vel.",
+    "frenos": "Frenos de disco mecánicos Shimano",
+    "rodada": "700c (Aluminio)"
+  },
+  "fotos": [
+    "/img/catalogo/giant-tcr-1.jpg",
+    "/img/catalogo/giant-tcr-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa comprar la Giant TCR Advanced Carbon (Talla M, $29,900 MXN). ¿Sigue disponible para verla en tienda?",
+  "destacada": true,
+  "esMuestra": false,
+  "modalidad": "Venta",
+  "sku": "GNT-TCR-M",
+  "descripcion": "Bicicleta de ruta con cuadro y poste de carbono de alto rendimiento. Equipada con transmisión Shimano Tiagra 2x10 velocidades, manubrio y ruedas de aluminio. Pedales no incluidos."
+}

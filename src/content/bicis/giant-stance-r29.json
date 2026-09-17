@@ -1,0 +1,29 @@
+{
+  "id": "giant-stance-r29",
+  "modelo": "Stance 29 Full Suspension",
+  "marca": "Giant",
+  "categoria": "MTB",
+  "precio": 14500,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "S",
+  "color": "Gris Titanio / Gunmetal",
+  "specs": {
+    "cuadro": "Aluminio ALUXX FlexPoint Full Suspension",
+    "grupo": "Shimano Deore 1x12 vel.",
+    "frenos": "Frenos de disco hidráulicos Shimano",
+    "rodada": "29\" Tubeless Ready"
+  },
+  "fotos": [
+    "/img/catalogo/giant-stance-r29-1.jpg",
+    "/img/catalogo/giant-stance-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Giant Stance 29 Doble Suspensión (Talla S, Venta $14,500 MXN / Renta $300/día). ¿Sigue disponible?",
+  "destacada": true,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "GNT-STN-29S",
+  "descripcion": "Bicicleta de montaña de doble suspensión. Equipada con suspensión delantera y shock RockShox hidráulico con bloqueo, transmisión monoplato Shimano Deore 1x12 vel, frenos hidráulicos y llantas tubeless."
+}

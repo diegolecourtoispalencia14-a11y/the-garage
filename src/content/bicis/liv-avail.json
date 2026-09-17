@@ -1,0 +1,29 @@
+{
+  "id": "liv-avail",
+  "modelo": "Avail Road Endurance",
+  "marca": "Liv",
+  "categoria": "Ruta",
+  "precio": 9900,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "S",
+  "color": "Blanco Perla y Turquesa",
+  "specs": {
+    "cuadro": "Aluminio ALUXX diseñado para geometría femenina",
+    "grupo": "Shimano Claris 2x8 vel.",
+    "frenos": "Frenos de pinza Tektro",
+    "rodada": "700c Giant"
+  },
+  "fotos": [
+    "/img/catalogo/liv-avail-1.jpg",
+    "/img/catalogo/liv-avail-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Liv Avail (Talla S, Venta $9,900 MXN / Renta $300/día). ¿La tienen disponible?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "LIV-AVAIL-S",
+  "descripcion": "Bicicleta de ruta para mujer Liv Avail. Cuadro de aluminio ligero y cómodo para largas distancias, transmisión Shimano Claris 2x8 velocidades y rodada 700c."
+}

@@ -1,0 +1,28 @@
+{
+  "id": "trek-top-fuel-r29",
+  "modelo": "Top Fuel 29 Carbon/Alloy Elite",
+  "marca": "Trek",
+  "categoria": "MTB",
+  "precio": 44500,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "L",
+  "color": "Azul Cobalto y Negro Mate",
+  "specs": {
+    "cuadro": "Aluminio Alpha Platinum con manillar Bontrager de carbono",
+    "grupo": "Shimano SLX/XT 1x12 vel.",
+    "frenos": "SRAM DB8 de 4 pistones de alta potencia",
+    "rodada": "29\" Tubeless"
+  },
+  "fotos": [
+    "/img/catalogo/trek-top-fuel-r29-1.jpg",
+    "/img/catalogo/trek-top-fuel-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Trek Top Fuel 29 de alta gama (Talla L, $44,500 MXN). ¿Sigue disponible para verla?",
+  "destacada": true,
+  "esMuestra": false,
+  "modalidad": "Venta",
+  "sku": "TRK-TF-29L",
+  "descripcion": "Máquina de Trail y Cross-Country de alto nivel. Suspensión RockShox SID de 120mm, shock trasero RockShox Deluxe Ultimate, transmisión Shimano SLX/XT 12 vel, frenos SRAM DB8 y manillar de carbono Bontrager."
+}

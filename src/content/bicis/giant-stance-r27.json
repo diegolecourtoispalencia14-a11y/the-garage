@@ -1,0 +1,28 @@
+{
+  "id": "giant-stance-r27",
+  "modelo": "Stance 27.5 Full Suspension",
+  "marca": "Giant",
+  "categoria": "MTB",
+  "precio": 15000,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M",
+  "color": "Negro con acentos Rojo y Naranja",
+  "specs": {
+    "cuadro": "Aluminio ALUXX FlexPoint 27.5\"",
+    "grupo": "Shimano Deore 1x10 vel.",
+    "frenos": "Frenos de disco hidráulicos",
+    "rodada": "27.5\" Maxxis Tubeless"
+  },
+  "fotos": [
+    "/img/catalogo/giant-stance-r27-1.jpg",
+    "/img/catalogo/giant-stance-r27-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Giant Stance 27.5 de Doble Suspensión ($15,000 MXN). ¿Sigue disponible?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Venta",
+  "sku": "GNT-STN-27M",
+  "descripcion": "Bicicleta de montaña doble suspensión rodada 27.5. Suspensión de aire con bloqueo, frenos de disco hidráulicos, transmisión monoplato Shimano Deore 1x10 velocidades y llantas tubeless Maxxis."
+}

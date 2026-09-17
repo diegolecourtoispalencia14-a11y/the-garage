@@ -1,0 +1,29 @@
+{
+  "id": "trinx-r29",
+  "modelo": "Quest M100 R29",
+  "marca": "Trinx",
+  "categoria": "MTB",
+  "precio": 7800,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "S",
+  "color": "Azul Petróleo con detalles Flúor",
+  "specs": {
+    "cuadro": "Aluminio Trinx 6061 rodada 29",
+    "grupo": "Shimano 2x8 vel.",
+    "frenos": "Shimano MT200 hidráulicos",
+    "rodada": "29\" CST All Terrains"
+  },
+  "fotos": [
+    "/img/catalogo/trinx-r29-1.jpg",
+    "/img/catalogo/trinx-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Trinx R29 (Talla S, Venta $7,800 MXN / Renta $300/día). ¿La tienen disponible?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "TRX-QST-29S",
+  "descripcion": "Bicicleta de montaña rodada 29 con cuadro de aluminio y frenos de disco hidráulicos Shimano MT200. Transmisión Shimano 2x8 velocidades y suspensión delantera con bloqueo hidráulico."
+}

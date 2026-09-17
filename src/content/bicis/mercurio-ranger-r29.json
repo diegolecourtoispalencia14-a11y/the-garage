@@ -1,0 +1,29 @@
+{
+  "id": "mercurio-ranger-r29",
+  "modelo": "Ranger 29 Sport",
+  "marca": "Mercurio",
+  "categoria": "MTB",
+  "precio": 3000,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M",
+  "color": "Rojo con Negro",
+  "specs": {
+    "cuadro": "Aluminio reforzado rodada 29\"",
+    "grupo": "Shimano Tourney 3x7 vel.",
+    "frenos": "Frenos de disco mecánicos",
+    "rodada": "29\" MTB"
+  },
+  "fotos": [
+    "/img/catalogo/mercurio-ranger-r29-1.jpg",
+    "/img/catalogo/mercurio-ranger-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Mercurio Ranger R29 (Venta $3,000 MXN / Renta $300/día). ¿Está lista en tienda?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "MER-RNG-29M",
+  "descripcion": "Bicicleta rodada 29 para iniciación en montaña y rodadas urbanas. Cuadro de aluminio, transmisión Shimano 3x7 vel, frenos mecánicos de disco y suspensión frontal."
+}

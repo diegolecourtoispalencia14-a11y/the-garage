@@ -1,0 +1,29 @@
+{
+  "id": "giant-defy",
+  "modelo": "Defy Endurance Road",
+  "marca": "Giant",
+  "categoria": "Ruta",
+  "precio": 13500,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M",
+  "color": "Negro con blanco",
+  "specs": {
+    "cuadro": "Aluminio ALUXX-Grade con manillar integrado de carbón",
+    "grupo": "Shimano 2x10 vel (Tiagra / Ultegra / 105)",
+    "frenos": "Frenos de herradura de doble pivote",
+    "rodada": "700c"
+  },
+  "fotos": [
+    "/img/catalogo/giant-defy-1.jpg",
+    "/img/catalogo/giant-defy-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Giant Defy de Ruta (Talla M, Venta $13,500 MXN / Renta $300/día). ¿Sigue disponible?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "GNT-DEFY-M",
+  "descripcion": "Bicicleta de ruta estilo endurance con cuadro de aluminio y manillar aerodinámico integrado de fibra de carbono. Transmisión Shimano 2x10 vel. con mandos Tiagra, multiplicación Ultegra y desviador trasero 105."
+}

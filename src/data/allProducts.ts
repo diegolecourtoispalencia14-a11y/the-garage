@@ -14,115 +14,340 @@ export interface ProductItem {
   talla?: string;
   color?: string;
   estado?: string;
-  fotos: string[];
-  disciplina?: 'mtb' | 'gravel' | 'ruta' | 'urbano' | 'taller' | 'universal';
+  disciplina?: 'mtb' | 'gravel' | 'ruta' | 'urbano' | 'taller' | 'universal' | 'infantil';
   suggestedIds?: string[];
+  precioRenta?: number;
+  modalidad?: string;
 }
 
 export const MASTER_PRODUCTS: ProductItem[] = [
-  // ── 1. BICICLETAS ──
+  // ── 1. BICICLETAS (CATÁLOGO OFICIAL THE GARAGE) ──
   {
-    id: '1',
-    sku: 'BAS-PALT2',
-    slug: 'basso-palta-ii-custom',
-    name: 'Basso Palta 2 Carbon',
-    brand: 'Basso',
+    id: 'giant-tcr',
+    sku: 'GNT-TCR-M',
+    slug: 'giant-tcr',
+    name: 'Giant TCR Advanced Carbon',
+    brand: 'Giant',
     cat: 'Bicicletas',
-    price: 85000,
-    stock: 2,
-    talla: 'M (53 cm)',
-    color: 'Verde Siena Terroso',
-    estado: 'Custom Build',
-    disciplina: 'gravel',
-    specs: 'Cuadro 100% carbono Torayca italiano T700/T800 de alto módulo. Grupo inalámbrico SRAM Rival XPLR eTap AXS 1x12 electrónico, ruedas Microtech MX25 Carbon tubeless ready, cableado 100% interno.',
-    fotos: [
-      'https://images.unsplash.com/photo-1511994298241-608e28f14fde?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=1200&q=80'
-    ],
-    suggestedIds: ['POC-AXR-M', 'GAR-EDG530', 'API-BCK', 'MAU-G100']
-  },
-  {
-    id: '2',
-    sku: 'TRK-MAR5',
-    slug: 'trek-marlin-5-2024',
-    name: 'Trek Marlin 5 MTB 29"',
-    brand: 'Trek',
-    cat: 'Bicicletas',
-    price: 18500,
-    stock: 5,
-    talla: 'M (17.5")',
-    color: 'Negro / Rojo Lava',
-    estado: 'Nueva',
-    disciplina: 'mtb',
-    specs: 'Cuadro Alpha Silver Aluminum con ruteo interno, horquilla SR Suntour XCT 30 HLO 100mm con bloqueo hidráulico, transmisión Shimano CUES 1x9 vel, frenos hidráulicos Tektro HD-M275.',
-    fotos: [
-      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=1200&q=80'
-    ],
-    suggestedIds: ['POC-AXR-M', 'FOX-RNG-GL', 'TPK-JB', 'RNR-GOLD-4', 'MAX-ARD-29']
-  },
-  {
-    id: '3',
-    sku: 'SPZ-ALZ-SP',
-    slug: 'specialized-allez-e5',
-    name: 'Specialized Allez Sport',
-    brand: 'Specialized',
-    cat: 'Bicicletas',
-    price: 32000,
+    price: 29900,
     stock: 1,
-    talla: '54 cm (M)',
+    talla: 'M (54 cm)',
     color: 'Azul Cobalto Brillante',
     estado: 'Seminueva',
     disciplina: 'ruta',
-    specs: 'Aluminio E5 premium con soldaduras invisibles SmoothWelds, horquilla FACT Full Carbon, transmisión Shimano Sora 2x9 vel, ruedas Axis Sport con cubiertas RoadSport 700x26c.',
+    specs: 'Cuadro y poste de carbón, transmisión Shimano Tiagra 2x10 vel, manubrio y ruedas de aluminio. Pedales no incluidos.',
     fotos: [
-      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1502744688674-c619d3864003?auto=format&fit=crop&w=1200&q=80'
+      '/img/catalogo/giant-tcr-1.jpg',
+      '/img/catalogo/giant-tcr-2.jpg'
     ],
-    suggestedIds: ['SPZ-PRO4', 'GAR-EDG530', 'CAS-GAB3-M', 'CMB-POD620']
+    modalidad: 'Venta',
+    suggestedIds: ['POC-AXR-M', 'GAR-EDG530', 'CAS-GAB3-M', 'SHI-TIA-90']
   },
   {
-    id: '4',
-    sku: 'GNT-TAL2',
-    slug: 'giant-talon-2-2024',
-    name: 'Giant Talon 2 27.5"',
+    id: 'scott-r29',
+    sku: 'SCT-ASP-29S',
+    slug: 'scott-r29',
+    name: 'Scott Aspect R29 Deore 12V',
+    brand: 'Scott',
+    cat: 'Bicicletas',
+    price: 12800,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'S',
+    color: 'Negro con vivos Naranja Amber',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro aluminio hidroformado, transmisión Shimano Deore 1x12 vel, frenos de disco hidráulicos, suspensión delantera hidráulica sin bloqueo.',
+    fotos: [
+      '/img/catalogo/scott-r29-1.jpg',
+      '/img/catalogo/scott-r29-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['SHI-CS-M6100', 'SHI-MT200', 'MAX-ARD-29', 'TPK-JB']
+  },
+  {
+    id: 'specialized-crosstrail-r29',
+    sku: 'SPZ-CROSS-M',
+    slug: 'specialized-crosstrail-r29',
+    name: 'Specialized Crosstrail R29 Híbrida',
+    brand: 'Specialized',
+    cat: 'Bicicletas',
+    price: 7900,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'M',
+    color: 'Negro Satinado',
+    estado: 'Seminueva',
+    disciplina: 'urbano',
+    specs: 'Bicicleta de aluminio A1 Premium con transmisión Shimano Altus 2x8 vel, frenos de disco mecánicos, rodada 29.',
+    fotos: [
+      '/img/catalogo/specialized-crosstrail-r29-1.jpg',
+      '/img/catalogo/specialized-crosstrail-r29-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['SCH-MP-35', 'TPK-JB', 'RNR-GOLD-4']
+  },
+  {
+    id: 'giant-defy',
+    sku: 'GNT-DEFY-M',
+    slug: 'giant-defy',
+    name: 'Giant Defy Endurance Road',
     brand: 'Giant',
     cat: 'Bicicletas',
-    price: 12500,
-    stock: 3,
-    talla: 'L (19")',
-    color: 'Gris Grafito Mate',
-    estado: 'Nueva',
-    disciplina: 'mtb',
-    specs: 'Cuadro Aluxx-Grade Aluminum, suspensión Suntour XCM 100mm con bloqueo hidráulico, transmisión microSHIFT Advent 1x9 de amplio rango 11-42D, ruedas Giant GX03V.',
-    fotos: [
-      'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80'
-    ],
-    suggestedIds: ['GIR-FXT2', 'FOX-RNG-GL', 'STA-240', 'TPK-JB']
-  },
-  {
-    id: 'merida-scultura-300-tiagra',
-    sku: 'MER-SCU300',
-    slug: 'merida-scultura-tiagra',
-    name: 'Merida Scultura 300 Shimano Tiagra',
-    brand: 'Merida',
-    cat: 'Bicicletas',
-    price: 19800,
+    price: 13500,
+    precioRenta: 300,
     stock: 1,
-    talla: 'S/M (52 cm)',
-    color: 'Azul Eléctrico Metálico',
+    talla: 'M',
+    color: 'Negro con detalles Blancos',
     estado: 'Seminueva',
     disciplina: 'ruta',
-    specs: 'Cuadro Scultura Lite triple conificado, horquilla Scultura CF2 Carbono, grupo completo Shimano Tiagra 2x10, frenos Tiagra doble pivote.',
+    specs: 'Cuadro de aluminio con manillar integrado de carbón, transmisión Shimano 2x10 vel (palancas Tiagra, multi Ultegra, cambio trasero 105).',
     fotos: [
-      'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=1200&q=80'
+      '/img/catalogo/giant-defy-1.jpg',
+      '/img/catalogo/giant-defy-2.jpg'
     ],
-    suggestedIds: ['SPZ-PRO4', 'GAR-EDG530', 'CAS-GAB3-M', 'MAU-G100']
+    modalidad: 'Las dos',
+    suggestedIds: ['SPZ-PRO4', 'GAR-EDG530', 'SHI-TIA-90']
+  },
+  {
+    id: 'liv-avail',
+    sku: 'LIV-AVAIL-S',
+    slug: 'liv-avail',
+    name: 'Liv Avail Road Endurance',
+    brand: 'Liv',
+    cat: 'Bicicletas',
+    price: 9900,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'S',
+    color: 'Blanco Perla y Turquesa',
+    estado: 'Seminueva',
+    disciplina: 'ruta',
+    specs: 'Bicicleta de aluminio para mujer con transmisión Shimano Claris 2x8 velocidades, rodada 700c.',
+    fotos: [
+      '/img/catalogo/liv-avail-1.jpg',
+      '/img/catalogo/liv-avail-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['SPZ-PRO4', 'POC-AXR-M']
+  },
+  {
+    id: 'giant-stance-r29',
+    sku: 'GNT-STN-29S',
+    slug: 'giant-stance-r29',
+    name: 'Giant Stance 29 Doble Suspensión',
+    brand: 'Giant',
+    cat: 'Bicicletas',
+    price: 14500,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'S',
+    color: 'Gris Titanio / Gunmetal',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Transmisión Shimano Deore 1x12 vel, suspensión RockShox hidráulica con bloqueo, frenos hidráulicos, llantas tubeless 29.',
+    fotos: [
+      '/img/catalogo/giant-stance-r29-1.jpg',
+      '/img/catalogo/giant-stance-r29-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['SHI-CS-M6100', 'SHI-MT200', 'MAX-ARD-29']
+  },
+  {
+    id: 'mercurio-ranger-r27',
+    sku: 'MER-RNG-27',
+    slug: 'mercurio-ranger-r27',
+    name: 'Mercurio Ranger 27.5 Sport',
+    brand: 'Mercurio',
+    cat: 'Bicicletas',
+    price: 2999,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'M (Estándar)',
+    color: 'Azul Marino con Verde Lima',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro de aluminio rodada 27.5, transmisión microSHIFT 3x7 vel, suspensión de resorte, freno de disco delantero y V-brake trasero.',
+    fotos: [
+      '/img/catalogo/mercurio-ranger-r27-1.jpg',
+      '/img/catalogo/mercurio-ranger-r27-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['TPK-JB', 'RNR-GOLD-4']
+  },
+  {
+    id: 'trek-top-fuel-r29',
+    sku: 'TRK-TF-29L',
+    slug: 'trek-top-fuel-r29',
+    name: 'Trek Top Fuel 29 Carbon/Alloy Elite',
+    brand: 'Trek',
+    cat: 'Bicicletas',
+    price: 44500,
+    stock: 1,
+    talla: 'L',
+    color: 'Azul Cobalto y Negro Mate',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro aluminio Alpha Platinum, transmisión Shimano SLX/XT 12 vel, suspensión RockShox SID 120mm travel, shock RockShox Deluxe Ultimate, frenos SRAM DB8, manillar Bontrager carbono.',
+    fotos: [
+      '/img/catalogo/trek-top-fuel-r29-1.jpg',
+      '/img/catalogo/trek-top-fuel-r29-2.jpg'
+    ],
+    modalidad: 'Venta',
+    suggestedIds: ['SRM-LVL-T', 'GAR-EDG530', 'POC-AXR-M', 'MAX-ARD-29']
+  },
+  {
+    id: 'orbea-onna-r29',
+    sku: 'ORB-ONNA-29M',
+    slug: 'orbea-onna-r29',
+    name: 'Orbea Onna 29 Hardtail',
+    brand: 'Orbea',
+    cat: 'Bicicletas',
+    price: 13000,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'M',
+    color: 'Terracota Metálico',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro aluminio hidroformado, suspensión de aire con bloqueo remoto, transmisión monoplato 1x12 vel Shimano Deore, frenos hidráulicos.',
+    fotos: [
+      '/img/catalogo/orbea-onna-r29-1.jpg',
+      '/img/catalogo/orbea-onna-r29-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['SHI-CS-M6100', 'SHI-MT200', 'FOX-RNG-GL']
+  },
+  {
+    id: 'mercurio-ranger-r29',
+    sku: 'MER-RNG-29M',
+    slug: 'mercurio-ranger-r29',
+    name: 'Mercurio Ranger 29 Sport',
+    brand: 'Mercurio',
+    cat: 'Bicicletas',
+    price: 3000,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'M',
+    color: 'Rojo con Negro',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro de aluminio rodada 29, transmisión Shimano 3x7 vel, frenos mecánicos de disco, suspensión delantera.',
+    fotos: [
+      '/img/catalogo/mercurio-ranger-r29-1.jpg',
+      '/img/catalogo/mercurio-ranger-r29-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['TPK-JB', 'RNR-GOLD-4']
+  },
+  {
+    id: 'giant-stance-r27',
+    sku: 'GNT-STN-27M',
+    slug: 'giant-stance-r27',
+    name: 'Giant Stance 27.5 Full Suspension',
+    brand: 'Giant',
+    cat: 'Bicicletas',
+    price: 15000,
+    stock: 1,
+    talla: 'M',
+    color: 'Negro con acentos Rojo y Naranja',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro R27.5, transmisión Shimano Deore 1x10 vel, suspensión de aire con bloqueo, frenos de disco hidráulicos, llantas tubeless Maxxis.',
+    fotos: [
+      '/img/catalogo/giant-stance-r27-1.jpg',
+      '/img/catalogo/giant-stance-r27-2.jpg'
+    ],
+    modalidad: 'Venta',
+    suggestedIds: ['SHI-MT200', 'MAX-ARD-29', 'TPK-JB']
+  },
+  {
+    id: 'trinx-r29',
+    sku: 'TRX-QST-29S',
+    slug: 'trinx-r29',
+    name: 'Trinx Quest M100 R29',
+    brand: 'Trinx',
+    cat: 'Bicicletas',
+    price: 7800,
+    precioRenta: 300,
+    stock: 1,
+    talla: 'S',
+    color: 'Azul Petróleo con detalles Flúor',
+    estado: 'Seminueva',
+    disciplina: 'mtb',
+    specs: 'Cuadro aluminio 6061, frenos Shimano MT200 hidráulicos, transmisión Shimano 2x8 vel, suspensión hidráulica con bloqueo.',
+    fotos: [
+      '/img/catalogo/trinx-r29-1.jpg',
+      '/img/catalogo/trinx-r29-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['SHI-MT200', 'TPK-JB']
+  },
+  {
+    id: 'gt-stomper-r24',
+    sku: 'GT-STMP-24',
+    slug: 'gt-stomper-r24',
+    name: 'GT Stomper 24 Infantil/Juvenil',
+    brand: 'GT',
+    cat: 'Bicicletas',
+    price: 3900,
+    precioRenta: 250,
+    stock: 1,
+    talla: 'Juvenil',
+    color: 'Azul Celeste con Naranja Neón',
+    estado: 'Seminueva',
+    disciplina: 'infantil',
+    specs: 'Cuadro aluminio ligero GT LegitFit rodada 24, transmisión Shimano Altus 1x8 vel, frenos mecánicos.',
+    fotos: [
+      '/img/catalogo/gt-stomper-r24-1.jpg',
+      '/img/catalogo/gt-stomper-r24-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['TPK-JB', 'RNR-GOLD-4']
+  },
+  {
+    id: 'giant-talon-jr-r24',
+    sku: 'GNT-TLJR-24',
+    slug: 'giant-talon-jr-r24',
+    name: 'Giant Talon Jr 24 Infantil/Juvenil',
+    brand: 'Giant',
+    cat: 'Bicicletas',
+    price: 6900,
+    precioRenta: 250,
+    stock: 1,
+    talla: 'Juvenil',
+    color: 'Azul Marino con Verde Lima',
+    estado: 'Seminueva',
+    disciplina: 'infantil',
+    specs: 'Cuadro aluminio ALUXX-Grade rodada 24, transmisión Shimano 1x7 vel, frenos de disco mecánicos, suspensión delantera.',
+    fotos: [
+      '/img/catalogo/giant-talon-jr-r24-1.jpg',
+      '/img/catalogo/giant-talon-jr-r24-2.jpg'
+    ],
+    modalidad: 'Las dos',
+    suggestedIds: ['TPK-JB', 'FOX-RNG-GL']
+  },
+  {
+    id: 'specialized-riprock-r12',
+    sku: 'SPZ-RIP-12',
+    slug: 'specialized-riprock-r12',
+    name: 'Specialized Riprock 12 Infantil',
+    brand: 'Specialized',
+    cat: 'Bicicletas',
+    price: 3800,
+    stock: 1,
+    talla: 'Infantil R12',
+    color: 'Rosa Fucsia con detalles Turquesa',
+    estado: 'Seminueva',
+    disciplina: 'infantil',
+    specs: 'Cuadro aluminio Specialized A1 Premium R12, freno contrapedal trasero, ruedas de equilibrio desmontables, canastilla tejida y timbre.',
+    fotos: [
+      '/img/catalogo/specialized-riprock-r12-1.jpg',
+      '/img/catalogo/specialized-riprock-r12-2.jpg',
+      '/img/catalogo/specialized-riprock-r12-3.jpg'
+    ],
+    modalidad: 'Venta',
+    suggestedIds: ['TPK-JB', 'RNR-GOLD-4']
   },
 
   // ── 2. TRANSMISIÓN & DRIVETRAIN ──

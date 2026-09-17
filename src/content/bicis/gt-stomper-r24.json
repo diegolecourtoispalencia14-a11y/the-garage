@@ -1,0 +1,29 @@
+{
+  "id": "gt-stomper-r24",
+  "modelo": "Stomper 24 Infantil/Juvenil",
+  "marca": "GT",
+  "categoria": "Infantil",
+  "precio": 3900,
+  "precioRenta": 250,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "Juvenil (Estatura 125-145 cm)",
+  "color": "Azul Celeste con Naranja Neón",
+  "specs": {
+    "cuadro": "Aluminio GT LegitFit rodada 24\"",
+    "grupo": "Shimano Altus 1x8 vel.",
+    "frenos": "Frenos mecánicos Promax",
+    "rodada": "24\" Kenda"
+  },
+  "fotos": [
+    "/img/catalogo/gt-stomper-r24-1.jpg",
+    "/img/catalogo/gt-stomper-r24-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la GT Stomper 24 para niño/joven (Venta $3,900 MXN / Renta $250/día). ¿La tienen disponible?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "GT-STMP-24",
+  "descripcion": "Bicicleta juvenil rodada 24 con geometría GT LegitFit adaptada a la ergonomía de niños y adolescentes. Cuadro de aluminio ligero, cambios Shimano Altus 1x8 velocidades y frenos mecánicos."
+}

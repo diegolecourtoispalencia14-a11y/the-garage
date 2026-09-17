@@ -1,0 +1,29 @@
+{
+  "id": "specialized-crosstrail-r29",
+  "modelo": "Crosstrail R29 Híbrida",
+  "marca": "Specialized",
+  "categoria": "Urbana",
+  "precio": 7900,
+  "precioRenta": 300,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "M",
+  "color": "Negro Satinado",
+  "specs": {
+    "cuadro": "Aluminio Specialized A1 Premium",
+    "grupo": "Shimano Altus 2x8 vel.",
+    "frenos": "Frenos de disco mecánicos",
+    "rodada": "29\" / 700c Híbrida"
+  },
+  "fotos": [
+    "/img/catalogo/specialized-crosstrail-r29-1.jpg",
+    "/img/catalogo/specialized-crosstrail-r29-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Specialized Crosstrail R29 (Venta $7,900 MXN / Renta $300/día). ¿La tienen en tienda?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "SPZ-CROSS-M",
+  "descripcion": "Bicicleta de aventura híbrida y urbana de aluminio. Transmisión Shimano Altus 2x8 velocidades, rodada 29 para rodar ágil por asfalto, ciclovías y senderos recreativos."
+}

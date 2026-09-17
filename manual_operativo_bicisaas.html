@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual Operativo Día a Día — BiciSaaS | The Garage Bike Experts</title>
+  <style>
+    @page {
+      size: letter portrait;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #1c1c1e;
+      background: #ffffff;
+      line-height: 1.35;
+      font-size: 8.8pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .doc-page {
+      height: 258mm;
+      max-height: 258mm;
+      position: relative;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .doc-page:last-child {
+      page-break-after: auto;
+    }
+
+    .page-content {
+      flex: 1;
+    }
+
+    .page-footer {
+      border-top: 1px solid #d1d1d6;
+      padding-top: 5px;
+      font-size: 7.5pt;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+    
+    /* Header Banner */
+    .header-banner {
+      border-bottom: 2.5px solid #0071e3;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .brand-title {
+      font-size: 18pt;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #111;
+      margin: 0 0 2px 0;
+      text-transform: uppercase;
+    }
+    .brand-subtitle {
+      font-size: 10.5pt;
+      font-weight: 700;
+      color: #0071e3;
+      margin: 0 0 2px 0;
+    }
+    .brand-meta {
+      font-size: 8pt;
+      color: #666;
+    }
+    .badge-admin {
+      background: #0071e3;
+      color: #fff;
+      font-size: 7.5pt;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: inline-block;
+    }
+    
+    /* Section Headers */
+    h2.section-header {
+      font-size: 11pt;
+      font-weight: 800;
+      color: #000;
+      border-left: 3.5px solid #0071e3;
+      padding-left: 6px;
+      margin: 10px 0 6px 0;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+    
+    p {
+      margin: 0 0 6px 0;
+      color: #333;
+    }
+    
+    /* Callouts */
+    .callout {
+      border-radius: 5px;
+      padding: 7px 10px;
+      margin: 7px 0;
+      font-size: 8.2pt;
+      line-height: 1.35;
+    }
+    .callout-blue {
+      background: #f0f7ff;
+      border-left: 3px solid #0071e3;
+      color: #0a3d62;
+    }
+    .callout-green {
+      background: #f2fcf5;
+      border-left: 3px solid #34c759;
+      color: #1b5e20;
+    }
+    .callout-amber {
+      background: #fff9e6;
+      border-left: 3px solid #ff9500;
+      color: #795548;
+    }
+    
+    /* Tables */
+    table.op-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0 8px 0;
+      font-size: 8pt;
+    }
+    table.op-table th {
+      background: #f5f5f7;
+      border: 1px solid #d1d1d6;
+      padding: 4px 6px;
+      text-align: left;
+      font-weight: 700;
+      color: #1c1c1e;
+    }
+    table.op-table td {
+      border: 1px solid #e5e5ea;
+      padding: 4px 6px;
+      color: #333;
+      vertical-align: top;
+    }
+    table.op-table tr:nth-child(even) td {
+      background: #fafafa;
+    }
+    
+    /* Step Cards / Workflow */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 6px 0;
+    }
+    .step-card {
+      border: 1px solid #dcdce0;
+      border-radius: 5px;
+      padding: 7px 9px;
+      background: #fff;
+    }
+    .step-num {
+      font-size: 7.2pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #0071e3;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .step-title {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 4px;
+    }
+    
+    /* Printable Checklists */
+    .checklist {
+      list-style: none;
+      padding-left: 0;
+      margin: 4px 0 6px 0;
+    }
+    .checklist li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 4px;
+      font-size: 8.5pt;
+      color: #2c2c2e;
+      line-height: 1.35;
+    }
+    .checklist li::before {
+      content: "☐";
+      position: absolute;
+      left: 1px;
+      top: -1px;
+      font-size: 10pt;
+      color: #0071e3;
+      font-weight: bold;
+    }
+    
+    /* Summary Strip */
+    .summary-strip {
+      display: flex;
+      gap: 6px;
+      margin: 6px 0;
+    }
+    .summary-item {
+      flex: 1;
+      border: 1px solid #d1d1d6;
+      border-radius: 4px;
+      padding: 4px 6px;
+      background: #fafafa;
+      text-align: center;
+    }
+    .summary-item .label {
+      font-size: 6.5pt;
+      text-transform: uppercase;
+      color: #666;
+      font-weight: 700;
+      display: block;
+    }
+    .summary-item .val {
+      font-size: 10pt;
+      font-weight: 800;
+      color: #000;
+    }
+
+    .shortcut-badge {
+      background: #eef1f5;
+      color: #0071e3;
+      font-family: monospace;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 7.5pt;
+      border: 1px solid #d0d7e2;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================== PÁGINA 1: PORTADA Y FILOSOFÍA OPERATIVA ======================== -->
+  <div class="doc-page">
+    <div class="page-content">
+      <div class="header-banner">
+        <div>
+          <h1 class="brand-title">THE GARAGE BIKE EXPERTS</h1>
+          <div class="brand-subtitle">Manual Operativo del Administrador · BiciSaaS Cloud</div>
+          <div class="brand-meta">Cataluña, Playa del Carmen, Q. Roo · Guía Maestra Impresa 2026.1</div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-admin">Rol: Administrador (Diego)</span>
+          <div style="font-size: 7.5pt; color: #555; margin-top: 3px;">Acceso PIN: <strong>1420</strong></div>
+        </div>
+      </div>
+
+      <div class="callout callout-blue">
+        <strong>Propósito:</strong> Guía de trabajo diaria para operar The Garage con BiciSaaS. Define los flujos en mostrador, banco de trabajo de cirugía mecánica, administración de flota de rentas y arqueo de caja con cero margen de error.
+      </div>
+
+      <div class="summary-strip">
+        <div class="summary-item">
+          <span class="label">Punto de Venta / POS</span>
+          <span class="val">Mostrador & Web</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Cirugía Mecánica</span>
+          <span class="val">Kanban Taller</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Alquiler de Flota</span>
+          <span class="val">8 Bicis en Renta</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Caja & Arqueo</span>
+          <span class="val">Cierre Z Diario</span>
+        </div>
+      </div>
+
+      <h2 class="section-header">1. Los 5 Módulos Operativos y su Función</h2>
+      
+      <table class="op-table">
+        <thead>
+          <tr>
+            <th style="width: 22%;">Módulo en BiciSaaS</th>
+            <th style="width: 46%;">¿Para qué sirve?</th>
+            <th style="width: 32%;">¿Cuándo lo utilizas?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Dashboard Principal</strong><br><span class="shortcut-badge">/panel</span></td>
+            <td>Centro de mando 360°. Visualiza el pulso de caja hoy, cuántas bicicletas están listas para entrega, qué rentas vencen y el Radar de Urgencias.</td>
+            <td>Al abrir la tienda en la mañana, monitoreo continuo y antes de cerrar.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Taller & Cirugía</strong><br><span class="shortcut-badge">/panel/taller</span></td>
+            <td>Tablero Kanban de 5 columnas para recibir bicicletas, asignar mecánicos (Marco Ramírez / Diego), presupuestar refacciones y controlar cobros.</td>
+            <td>Cada vez que un cliente deja o recoge su bicicleta en la tienda física.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Flota de Rentas</strong><br><span class="shortcut-badge">/panel/rentas</span></td>
+            <td>Control de las 8 bicicletas de alquiler, contratos digitales, retención y devolución de depósitos de garantía ($500 a $2,500) y horómetros de uso.</td>
+            <td>Al entregar o recibir una bicicleta de alquiler (turistas y locales).</td>
+          </tr>
+          <tr>
+            <td><strong>4. Contabilidad & Caja Z</strong><br><span class="shortcut-badge">/panel/contabilidad</span></td>
+            <td>Arqueo con conteo de billetes y monedas, libro diario de ingresos y gastos, cobros con tarjeta/Mercado Pago y apertura de meses fiscales.</td>
+            <td>Al registrar cobros, pagos de caja chica y al cierre del día (Corte Z).</td>
+          </tr>
+          <tr>
+            <td><strong>5. CRM 360°</strong><br><span class="shortcut-badge">/panel/crm</span></td>
+            <td>Directorio unificado de clientes, prospectos que dejaron contacto en la web, historial de compras, deudas pendientes y botón de WhatsApp con 1 clic.</td>
+            <td>Para cobranza de apartados y confirmación de citas de servicio.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-header">2. Credenciales y Acceso al Sistema</h2>
+      <ul style="margin: 3px 0 6px 18px; padding: 0; font-size: 8.5pt;">
+        <li><strong>URL de Acceso:</strong> <code>https://the-garage-dw4.pages.dev/panel/login</code></li>
+        <li><strong>Usuario:</strong> <em>Diego Lecourtois</em> (Dirección General · Acceso Completo).</li>
+        <li><strong>PIN de Seguridad:</strong> <code>1420</code></li>
+        <li><strong>Perspectiva Multi-Rol:</strong> En el menú superior derecho del Dashboard puedes previsualizar la interfaz de <em>Taller (Mecánico)</em> o <em>Mostrador (POS)</em> para verificar la carga de trabajo de tu equipo.</li>
+      </ul>
+
+      <div class="callout callout-green">
+        <strong>Modo Ceros Activo:</strong> El sistema arranca completamente en ceros (caja limpia, sin órdenes ni rentas simuladas). En cualquier momento puedes usar el botón superior <strong>"Poner en Ceros"</strong> para volver a reiniciar la operación si hiciste pruebas.
+      </div>
+    </div>
+    
+    <div class="page-footer">
+      <span>The Garage Bike Experts · Manual Operativo BiciSaaS</span>
+      <span>Página 1 de 4</span>
+    </div>
+  </div>
+
+  <!-- ======================== PÁGINA 2: RUTINA DIARIA (MAÑANA Y MOSTRADOR) ======================== -->
+  <div class="doc-page">
+    <div class="page-content">
+      <div class="header-banner">
+        <div>
+          <h1 class="brand-title">RUTINA DIARIA: APERTURA Y MOSTRADOR</h1>
+          <div class="brand-subtitle">Protocolo de 09:00 AM y operaciones continuas durante el día</div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-admin">Día a Día</span>
+        </div>
+      </div>
+
+      <h2 class="section-header">Fase 1: Apertura de la Tienda (09:00 AM)</h2>
+      <ul class="checklist">
+        <li><strong>Iniciar Sesión en el Mostrador:</strong> Abre BiciSaaS en la computadora o tablet principal e ingresa con tu PIN <code>1420</code>.</li>
+        <li><strong>Registrar Entrada en el Checador:</strong> Haz clic en el botón superior <strong>"Entrada / Checar"</strong> para asentar tu asistencia y la de tu equipo.</li>
+        <li><strong>Verificar Fondo Físico de Gaveta:</strong> Cuenta el fondo permanente de <strong>$2,000.00 MXN</strong> en efectivo (para dar cambio en billetes de $20, $50, $100 y monedas).</li>
+        <li><strong>Inspeccionar el Radar de Urgencias (Dashboard):</strong>
+          <div style="font-size: 8pt; color: #555;">
+            • ¿Hay bicicletas terminadas en taller listas para entregar hoy?<br>
+            • ¿Hay unidades de renta que los clientes retornan hoy antes de las 18:00 hrs?
+          </div>
+        </li>
+        <li><strong>Revisión de Bahías de Taller:</strong> Ve a <code>/panel/taller</code> con Marco Ramírez para confirmar prioridades del banco de trabajo.</li>
+      </ul>
+
+      <h2 class="section-header">Fase 2: Flujos Operativos en Mostrador</h2>
+
+      <div class="workflow-grid">
+        <div class="step-card">
+          <span class="step-num">Flujo 1 · Taller de Servicio</span>
+          <div class="step-title">Recepción de Bicicleta a Taller</div>
+          <p style="font-size: 8pt; margin-bottom: 3px;">1. Ve a <code>/panel/taller</code> y da clic en <strong>+ Nueva Orden de Servicio</strong>.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">2. Captura: Nombre de cliente, WhatsApp (10 dígitos), marca y modelo de la bicicleta.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">3. Selecciona categoría (Mantenimiento General, Purga, etc.), costo total y anticipo si el cliente abona.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">4. Asigna mecánico (Marco o Diego) y fecha de entrega pactada.</p>
+          <p style="font-size: 8pt; margin-bottom: 0;">5. Guarda la orden y envía confirmación por WhatsApp en un clic.</p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-num">Flujo 2 · Entrega y Cobro Taller</span>
+          <div class="step-title">Entrega de Bicicleta Terminada</div>
+          <p style="font-size: 8pt; margin-bottom: 3px;">1. Al concluir el servicio, la orden se mueve a <strong>"Listo para Entrega"</strong>.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">2. Al llegar el cliente, abre el Radar del Dashboard o Taller y presiona <strong>"Cobrar en POS"</strong>.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">3. Selecciona la forma de pago del saldo pendiente (Efectivo, Tarjeta, Mercado Pago o SPEI).</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">4. Confirma el cobro: el ingreso se registra en contabilidad y la orden pasa a <em>"Entregado & Liquidado"</em>.</p>
+          <p style="font-size: 8pt; margin-bottom: 0;">5. Entrega la bicicleta con su checklist de calidad aprobado.</p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-num">Flujo 3 · Renta de Bicicletas</span>
+          <div class="step-title">Salida de Unidad de Alquiler</div>
+          <p style="font-size: 8pt; margin-bottom: 3px;">1. Ve a <code>/panel/rentas</code> y presiona <strong>+ Nueva Salida / Renta</strong>.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">2. Selecciona la bicicleta disponible (Trek, Basso, Specialized, Electra, etc.).</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">3. Registra Nombre, WhatsApp, Pasaporte/INE y Hotel o dirección.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">4. El sistema calcula tarifa según días + <strong>Depósito en Garantía</strong> ($500 a $2,500).</p>
+          <p style="font-size: 8pt; margin-bottom: 0;">5. Cobra tarifa + depósito. La unidad cambia a <em>"En Renta"</em> y el depósito queda en custodia.</p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-num">Flujo 4 · Retorno de Renta</span>
+          <div class="step-title">Devolución e Inspección de Flota</div>
+          <p style="font-size: 8pt; margin-bottom: 3px;">1. El cliente entrega la bicicleta en tienda física.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">2. Inspección rápida de 60 seg: frenos, cuadro, llantas, casco y candado.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">3. En <code>/panel/rentas</code> busca el contrato y da clic en <strong>"Finalizar Renta"</strong>.</p>
+          <p style="font-size: 8pt; margin-bottom: 3px;">4. Reembolsa el depósito en garantía retenido (efectivo o tarjeta).</p>
+          <p style="font-size: 8pt; margin-bottom: 0;">5. La bicicleta vuelve a <em>"Disponible"</em> y sus horas de uso se suman al horómetro.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-amber">
+        <strong>Gastos de caja chica:</strong> Si compras agua, café o insumos de taller con dinero de la gaveta, regístralo de inmediato en <code>/panel/contabilidad</code> &rarr; <strong>+ Nuevo Gasto</strong> (Método: Efectivo). Esto evita descuadres al final del día.
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>The Garage Bike Experts · Manual Operativo BiciSaaS</span>
+      <span>Página 2 de 4</span>
+    </div>
+  </div>
+
+  <!-- ======================== PÁGINA 3: CIERRE NOCTURNO Y CORTE Z ======================== -->
+  <div class="doc-page">
+    <div class="page-content">
+      <div class="header-banner">
+        <div>
+          <h1 class="brand-title">FASE 3: CIERRE DE TIENDA Y CORTE Z (19:00 HRS)</h1>
+          <div class="brand-subtitle">Protocolo de arqueo diario para cuadrar dinero físico contra el sistema</div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-admin">Cierre Nocturno</span>
+        </div>
+      </div>
+
+      <p style="font-size: 8.5pt;">El <strong>Corte Z</strong> es la rutina obligatoria de cierre. Garantiza que no haya pérdidas de dinero, que los cobros con tarjeta concuerden con los lotes bancarios y que el fondo quede listo para el día siguiente.</p>
+
+      <div class="workflow-grid" style="margin-bottom: 8px;">
+        <div class="step-card">
+          <span class="step-num">Paso 1</span>
+          <div class="step-title">Abrir Módulo de Arqueo</div>
+          <p style="font-size: 8pt; margin: 0;">Entra a <code>/panel/contabilidad</code> y selecciona la pestaña <strong>"Arqueo y Cierre Z (Denominaciones)"</strong>.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">Paso 2</span>
+          <div class="step-title">Conteo Físico por Denominación</div>
+          <p style="font-size: 8pt; margin: 0;">Cuenta billetes ($1000, $500, $200, $100, $50, $20) y monedas sobre la mesa. Ingresa las cantidades en la tabla interactiva.</p>
+        </div>
+      </div>
+
+      <div class="workflow-grid" style="margin-bottom: 8px;">
+        <div class="step-card">
+          <span class="step-num">Paso 3</span>
+          <div class="step-title">Verificar el Semáforo de Balance</div>
+          <p style="font-size: 8pt; margin: 0;">• <strong style="color: #34c759;">Caja Cuadrada ($0.00 MXN):</strong> Saldo exacto.<br>• <strong style="color: #0071e3;">Sobrante:</strong> Propinas o cobro mayor.<br>• <strong style="color: #ff3b30;">Faltante:</strong> Revisar si hubo salidas de efectivo no capturadas.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">Paso 4</span>
+          <div class="step-title">Guardar Corte y Retirar Ganancias</div>
+          <p style="font-size: 8pt; margin: 0;">Haz clic en <strong>"Guardar Cierre Z Oficial"</strong>. Retira las ganancias del día a la caja de seguridad, <strong>dejando siempre los $2,000 MXN</strong> de fondo en la gaveta.</p>
+        </div>
+      </div>
+
+      <h2 class="section-header">Hoja de Arqueo Diario Impresa (Para llenar a mano en mostrador)</h2>
+      <table class="op-table">
+        <thead>
+          <tr>
+            <th style="width: 28%;">Denominación</th>
+            <th style="width: 22%;">Piezas Físicas</th>
+            <th style="width: 25%;">Subtotal ($ MXN)</th>
+            <th style="width: 25%;">Firma de Auditoría</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Billetes de $1,000</td><td>_______ piezas</td><td>$ _________________</td><td rowspan="6" style="vertical-align: middle; text-align: center; background: #fafafa; font-size: 7.5pt;">
+            <strong>Fecha:</strong> ____ / ____ / 2026<br><br>
+            <strong>Cajero:</strong> Diego Lecourtois<br><br>
+            <strong>Firma Responsable:</strong><br><br>
+            ______________________
+          </td></tr>
+          <tr><td>Billetes de $500</td><td>_______ piezas</td><td>$ _________________</td></tr>
+          <tr><td>Billetes de $200</td><td>_______ piezas</td><td>$ _________________</td></tr>
+          <tr><td>Billetes de $100</td><td>_______ piezas</td><td>$ _________________</td></tr>
+          <tr><td>Billetes de $50</td><td>_______ piezas</td><td>$ _________________</td></tr>
+          <tr><td>Billetes de $20</td><td>_______ piezas</td><td>$ _________________</td></tr>
+          <tr><td>Monedas ($20, $10, $5, $2, $1)</td><td>Varios</td><td>$ _________________</td><td style="background: #eef7ff; font-size: 7.8pt;"><strong>Total Contado:</strong> $ _________</td></tr>
+          <tr><td colspan="3" style="text-align: right; font-weight: bold;">( - ) Menos Fondo Base Permanente para Mañana:</td><td style="font-weight: bold; color: #0071e3;">- $ 2,000.00 MXN</td></tr>
+          <tr><td colspan="3" style="text-align: right; font-weight: bold; font-size: 8.5pt;">(=) EFECTIVO NETO RETIRADO A CAJA FUERTE / BANCO:</td><td style="font-weight: bold; font-size: 8.5pt; color: #1b5e20;">$ _________________</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-blue" style="margin-top: 4px;">
+        <strong>Salida en el Checador:</strong> Antes de retirarte, presiona el botón superior del Checador para registrar la salida oficial de la jornada.
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>The Garage Bike Experts · Manual Operativo BiciSaaS</span>
+      <span>Página 3 de 4</span>
+    </div>
+  </div>
+
+  <!-- ======================== PÁGINA 4: RUTINAS SEMANALES, MENSUALES Y EMERGENCIAS ======================== -->
+  <div class="doc-page">
+    <div class="page-content">
+      <div class="header-banner">
+        <div>
+          <h1 class="brand-title">RUTINAS SEMANALES, MENSUALES Y SOPORTE</h1>
+          <div class="brand-subtitle">Planificación táctica, cierre contable y solución de incidentes</div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-admin">Gestión Estratégica</span>
+        </div>
+      </div>
+
+      <h2 class="section-header">Rutina Semanal: Calendario de Mantenimiento y Cobranza</h2>
+      <table class="op-table">
+        <thead>
+          <tr>
+            <th style="width: 18%;">Día</th>
+            <th style="width: 32%;">Módulo en BiciSaaS</th>
+            <th>Acción Concreta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Lunes</strong></td>
+            <td><code>/panel/taller</code><br><em>Backlog Taller</em></td>
+            <td>Revisa la columna <em>"Esperando Refacción"</em>. Confirma con proveedores (Shimano, SRAM, llantas Maxxis) guías de paquetería de refacciones pendientes.</td>
+          </tr>
+          <tr>
+            <td><strong>Miércoles</strong></td>
+            <td><code>/panel/inventario</code><br><em>Auditoría de Stock</em></td>
+            <td>Filtra por <em>"Stock Bajo"</em> o <em>"Agotado"</em> para consumibles de alta rotación (cámaras de 29", sellador tubeless, parches, cadenas y pastillas).</td>
+          </tr>
+          <tr>
+            <td><strong>Viernes</strong></td>
+            <td><code>/panel/rentas</code><br><em>Puesta a Punto Flota</em></td>
+            <td>Verifica horómetros de la flota. Revisa presión de llantas, lubricación de cadena y batería de las E-Bikes para los alquileres de fin de semana.</td>
+          </tr>
+          <tr>
+            <td><strong>Sábado</strong></td>
+            <td><code>/panel/crm</code><br><em>Cobranza de Saldos</em></td>
+            <td>Filtra por <em>"Con Deuda"</em>. Haz clic en el icono de WhatsApp junto a cada cliente para enviar recordatorio de liquidación de su bicicleta apartada.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-header">Rutina Mensual: Apertura de Periodo y Entrega a Contador</h2>
+      <div class="workflow-grid">
+        <div class="step-card">
+          <span class="step-num">Día 1 de cada mes</span>
+          <div class="step-title">Aperturar Nuevo Periodo Fiscal</div>
+          <p style="font-size: 8pt; margin: 0;">Entra a <code>/panel/contabilidad</code> y haz clic en <strong>+ Aperturar Mes</strong>. Selecciona el nuevo mes (ej. Octubre 2026). El libro contable arranca limpio y con el fondo base de gaveta disponible.</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">Día 2 de cada mes</span>
+          <div class="step-title">Exportar CSV para Contador</div>
+          <p style="font-size: 8pt; margin: 0;">En <code>/panel/contabilidad</code>, selecciona el mes vencido y presiona <strong>Exportar CSV</strong>. Envía el archivo descargado a tu contador para la declaración fiscal mensual.</p>
+        </div>
+      </div>
+
+      <h2 class="section-header">Respuestas Rápidas ante Incidentes Frecuentes</h2>
+
+      <div class="callout callout-blue">
+        <strong>¿Deseas volver a vaciar el sistema a ceros después de hacer pruebas?</strong><br>
+        En la barra superior de cualquier pantalla tienes el botón rojo <strong>"Poner en Ceros"</strong> con icono de escoba. Al dar clic y confirmar, limpia todas las órdenes y movimientos demo sin cerrar tu sesión ni borrar tu contraseña de administrador.
+      </div>
+
+      <div class="callout callout-amber">
+        <strong>¿Qué pasa si un turista devuelve una bici de renta con daño mecánico?</strong><br>
+        Al finalizar la renta en <code>/panel/rentas</code>, no devuelvas la totalidad del depósito en garantía. Registra el costo de la reparación o refacción y devuelve únicamente la diferencia en mostrador.
+      </div>
+
+      <div class="callout callout-green">
+        <strong>¿Cómo contactar al cliente con 1 clic?</strong><br>
+        Tanto en el Radar de Urgencias como en Taller y CRM encontrarás botones directos de WhatsApp que abren el chat con el número del cliente y el folio/saldo prellenado.
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>The Garage Bike Experts · Cataluña, Playa del Carmen, Q. Roo</span>
+      <span>Página 4 de 4</span>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "id": "giant-talon-jr-r24",
+  "modelo": "Talon Jr 24 Infantil/Juvenil",
+  "marca": "Giant",
+  "categoria": "Infantil",
+  "precio": 6900,
+  "precioRenta": 250,
+  "moneda": "MXN",
+  "estado": "Seminueva",
+  "disponibilidad": "Disponible",
+  "talla": "Juvenil (Estatura 130-150 cm)",
+  "color": "Azul Marino con Verde Lima",
+  "specs": {
+    "cuadro": "Aluminio ALUXX-Grade rodada 24\"",
+    "grupo": "Shimano Tourney 1x7 vel.",
+    "frenos": "Frenos de disco mecánicos",
+    "rodada": "24\" Giant Junior Sport"
+  },
+  "fotos": [
+    "/img/catalogo/giant-talon-jr-r24-1.jpg",
+    "/img/catalogo/giant-talon-jr-r24-2.jpg"
+  ],
+  "mensajeWhatsApp": "Hola The Garage! Me interesa la Giant Talon Jr 24 (Venta $6,900 MXN / Renta $250/día). ¿Está lista en tienda?",
+  "destacada": false,
+  "esMuestra": false,
+  "modalidad": "Las dos",
+  "sku": "GNT-TLJR-24",
+  "descripcion": "Bicicleta de montaña juvenil rodada 24 con suspensión delantera y frenos de disco. Cuadro de aluminio grado ALUXX, transmisión monoplato Shimano 1x7 velocidades."
+}
