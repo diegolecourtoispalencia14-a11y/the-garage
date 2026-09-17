@@ -8,6 +8,18 @@ import { Icon } from 'astro-icon/components';
 // Build-time baseline for static collection bikes
 const bicisEntries = await getCollection('bicis');
 const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
+
+const initialProducts = MASTER_PRODUCTS;
+
+const initialCats = [
+  { id: 'all', label: 'Todas las Bicis', count: initialProducts.length },
+  { id: 'MTB', label: 'Montaña (MTB)', count: initialProducts.filter(p => p.cat === 'MTB').length },
+  { id: 'Ruta', label: 'Ruta & Carrera', count: initialProducts.filter(p => p.cat === 'Ruta').length },
+  { id: 'Urbana', label: 'Urbana & Híbrida', count: initialProducts.filter(p => p.cat === 'Urbana').length },
+  { id: 'Infantil', label: 'Infantil & Juvenil', count: initialProducts.filter(p => p.cat === 'Infantil').length }
+];
+
+const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filter(Boolean))];
 ---
 
 <Base
@@ -86,7 +98,23 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
           <div class="filter-group">
             <h4 class="filter-title">Categorías</h4>
             <div class="filter-options-list" id="cat-options-container">
-              <!-- Rendered by JS with live counts -->
+              {initialCats.map(c => (
+                <button class={`filter-cat-btn ${c.id === 'all' ? 'active' : ''}`} onclick={`selectCategory('${c.id}')`}>
+                  <span class="cat-btn-inner">
+                    <span class="cat-icon-badge">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        {c.id === 'all' ? (
+                          <><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></>
+                        ) : (
+                          <><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/><path d="M8 14h5"/></>
+                        )}
+                      </svg>
+                    </span>
+                    <span>{c.label}</span>
+                  </span>
+                  <span class="filter-badge-num">{c.count}</span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -121,7 +149,11 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
           <div class="filter-group">
             <h4 class="filter-title">Marcas</h4>
             <div class="brand-chips-grid" id="brand-chips-container">
-              <!-- Rendered by JS -->
+              {initialBrands.map(b => (
+                <button class={`brand-chip ${b === 'all' ? 'active' : ''}`} onclick={`selectBrand('${b}')`}>
+                  {b === 'all' ? 'Todas' : b}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -146,7 +178,7 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
           <!-- Top Toolbar: Count + Sort + Compare Toggle -->
           <div class="store-top-toolbar">
             <div class="store-count-label">
-              Mostrando <strong id="store-count-num">0</strong> productos
+              Mostrando <strong id="store-count-num">{initialProducts.length}</strong> productos
             </div>
 
             <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
@@ -174,7 +206,106 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
 
           <!-- Product Grid (Nike / Adidas Style Cards) -->
           <div class="nike-product-grid" id="store-product-grid">
-            <!-- Rendered by JS -->
+            {initialProducts.map(p => {
+              const imageSrc = (p.fotos && p.fotos[0]) ? p.fotos[0] : null;
+              const webPrice = Math.round(p.price * 1.035);
+              const isFreeShipping = webPrice >= 500;
+              const prodId = p.slug || p.sku || p.id;
+              const waText = encodeURIComponent(`Hola The Garage, me interesa el producto: ${p.name} ($${webPrice.toLocaleString('es-MX', { minimumFractionDigits: 0 })}). ¿Tienen entrega hoy en Playa del Carmen?`);
+              return (
+                <article class="nike-card">
+                  <!-- Image Box (Clickable to Product Detail) -->
+                  <a href={`/bici/${prodId}`} class="nike-card-img-wrap" style="text-decoration:none; display:block;">
+                    {imageSrc ? (
+                      <img src={imageSrc} alt={p.name} loading="lazy" />
+                    ) : (
+                      <div class="nike-no-img-box">
+                        <div class="tech-blueprint-icon">
+                          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/><path d="M8 14h5"/></svg>
+                        </div>
+                        <span class="nike-no-img-text font-mono">[{p.cat.toUpperCase()}]</span>
+                      </div>
+                    )}
+
+                    <!-- Badges -->
+                    <div class="nike-badge-top-left">
+                      {p.precioRenta && (
+                        <span class="badge-pill-shipping" style="background:rgba(0,113,227,0.9); color:#ffffff;">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="m12 17.5 2.5-7.5H6l3.5 7.5"/><path d="M12 17.5 9.5 10H6"/><path d="m15 5-3 5"/></svg> Renta: ${p.precioRenta}/día
+                        </span>
+                      )}
+                      {isFreeShipping && (
+                        <span class="badge-pill-shipping">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Envío Gratis (PDC)
+                        </span>
+                      )}
+                      <span class="badge-pill-stock">{p.stock > 0 ? `${p.stock} en tienda` : 'Agotado'}</span>
+                    </div>
+
+                    <!-- Compare Button -->
+                    <button
+                      class="btn-card-compare"
+                      onclick={`event.preventDefault(); event.stopPropagation(); toggleCompare('${prodId}')`}
+                      title="Comparar especificaciones técnicas"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+                      <span>Comparar</span>
+                    </button>
+                  </a>
+
+                  <!-- Body -->
+                  <div class="nike-card-body">
+                    <span class="nike-brand-tag">{p.brand || 'The Garage'} · {p.cat}</span>
+                    <h3 class="nike-prod-title">
+                      <a href={`/bici/${prodId}`} style="color:inherit; text-decoration:none;">{p.name}</a>
+                    </h3>
+                    <p class="nike-prod-sub">{p.talla ? <>Talla: <strong>{p.talla}</strong> · </> : ''}{p.specs ? p.specs.slice(0, 75) + '...' : ''}</p>
+                    {p.precioRenta && (
+                      <div style="margin:0.25rem 0 0.5rem; font-size:0.75rem; color:#2997ff; font-weight:600; display:flex; align-items:center; justify-content:space-between; background:rgba(0,113,227,0.08); padding:0.3rem 0.55rem; border-radius:6px; border:1px solid rgba(0,113,227,0.2);">
+                        <span>🚲 Disponible en Renta: <strong>${p.precioRenta} MXN/día</strong></span>
+                        <a href="/renta" style="color:#ffffff; font-weight:700; text-decoration:underline;">Rentar &rarr;</a>
+                      </div>
+                    )}
+
+                    <div class="nike-price-row">
+                      <div>
+                        <div class="nike-price-main">${webPrice.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</div>
+                        <div class="nike-fee-note">Incluye comisión web (3.5%)</div>
+                      </div>
+                      <div style="font-size:0.75rem; color:#34c759; font-weight:600; text-align:right;">
+                        {isFreeShipping ? 'Envío gratis en Playa' : 'Envío $80 MXN'}
+                      </div>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div class="nike-card-actions">
+                      <a href={`/bici/${prodId}`} class="btn-detail-glass" title="Ver detalle y especificaciones">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <span>Detalle</span>
+                      </a>
+
+                      <button class="btn-dualtone-cart" onclick={`addToCartStore('${prodId}')`} title="Agregar al carrito">
+                        <span class="dualtone-cart-label">Agregar</span>
+                        <span class="dualtone-cart-icon">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                        </span>
+                      </button>
+
+                      <a
+                        href={`https://wa.me/529841381493?text=${waText}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn-wa-pill"
+                        title="Consultar disponibilidad inmediata por WhatsApp"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.531 1.931.812 2.79.812 3.179 0 5.767-2.587 5.768-5.766 0-3.181-2.588-5.768-5.767-5.768zm0 10.362c-.792 0-1.637-.24-2.348-.661l-.168-.1-1.748.458.467-1.704-.11-.176c-.461-.736-.704-1.579-.704-2.446 0-2.535 2.062-4.597 4.601-4.597 2.538 0 4.602 2.063 4.602 4.601 0 2.538-2.064 4.602-4.602 4.602z"/></svg>
+                        <span>WhatsApp</span>
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
 
         </main>
@@ -977,83 +1108,39 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
   const INV_KEY = 'bicisaas_inventory';
   const WEB_KEY = 'bicisaas_web_bikes';
 
-  /* ── Universal Product Aliasing & Canonical Identifiers ── */
-  const PRODUCT_ALIASES = {
-    'mer-scu300': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
-    'merida-scultura-tiagra': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
-    'merida-scultura-300-tiagra': ['mer-scu300', 'merida-scultura-tiagra', 'merida-scultura-300-tiagra'],
-    'trk-mar5': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
-    'trk-m5-24': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
-    'trek-marlin-5-2024': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
-    '2': ['trk-mar5', 'trk-m5-24', 'trek-marlin-5-2024', '2'],
-    'bas-palt2': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
-    'bas-plt2-c': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
-    'basso-palta-ii-custom': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
-    '1': ['bas-palt2', 'bas-plt2-c', 'basso-palta-ii-custom', '1'],
-    'spz-alz-sp': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
-    'spz-alz-e5': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
-    'specialized-allez-e5': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
-    '3': ['spz-alz-sp', 'spz-alz-e5', 'specialized-allez-e5', '3'],
-    'gnt-tal2': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
-    'gnt-tl2-29': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
-    'giant-talon-2-2024': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4'],
-    '4': ['gnt-tal2', 'gnt-tl2-29', 'giant-talon-2-2024', '4']
-  };
-
-  function getAliases(id) {
-    if (!id) return [];
-    const str = String(id);
-    const lower = str.toLowerCase();
-    const set = new Set([str, lower, str.toUpperCase()]);
-    const list = PRODUCT_ALIASES[lower] || PRODUCT_ALIASES[str] || [];
-    list.forEach(a => {
-      set.add(a);
-      set.add(a.toLowerCase());
-      set.add(a.toUpperCase());
-    });
-    return Array.from(set);
-  }
-
   function getCanonicalKey(item) {
-    const raw = String(item.sku || item.id || '').toLowerCase();
-    const name = String(item.name || '').toLowerCase();
-    if (raw.includes('mer-scu') || raw.includes('scultura') || name.includes('scultura')) return 'MER-SCU300';
-    if (raw.includes('trk-mar') || raw.includes('marlin') || name.includes('marlin')) return 'TRK-MAR5';
-    if (raw.includes('bas-pal') || raw.includes('palta') || name.includes('palta')) return 'BAS-PALT2';
-    if (raw.includes('spz-alz') || raw.includes('allez') || name.includes('allez')) return 'SPZ-ALZ-SP';
-    if (raw.includes('gnt-tal') || raw.includes('talon') || name.includes('talon')) return 'GNT-TAL2';
-    return item.sku || item.id || name;
+    if (!item) return '';
+    return String(item.sku || item.id || item.slug || item.name || '').trim();
   }
 
   function findProductOverride(prod, overrides) {
     if (!overrides || typeof overrides !== 'object') return {};
 
-    // 1. Direct and aliased keys check
     const candidateKeys = [
-      ...getAliases(prod.sku),
-      ...getAliases(prod.id),
-      getCanonicalKey(prod),
-      String(prod.id || ''),
-      String(prod.sku || '')
-    ];
+      prod.sku,
+      prod.id,
+      prod.slug,
+      prod.sku ? prod.sku.toLowerCase() : '',
+      prod.id ? prod.id.toLowerCase() : '',
+      prod.slug ? prod.slug.toLowerCase() : '',
+      getCanonicalKey(prod)
+    ].filter(Boolean);
 
     for (const key of candidateKeys) {
-      if (key && overrides[key] && typeof overrides[key] === 'object') {
+      if (overrides[key] && typeof overrides[key] === 'object') {
         return overrides[key];
       }
     }
 
-    // 2. Fuzzy name matching in overrides keys and values
     const prodName = String(prod.name || '').toLowerCase().trim();
+    if (!prodName) return {};
+
     for (const [k, v] of Object.entries(overrides)) {
       if (!v || typeof v !== 'object') continue;
-      const kLower = k.toLowerCase();
-      if (v.name && String(v.name).toLowerCase().trim() === prodName) return v;
-      if (prodName.includes('scultura') && (kLower.includes('scultura') || kLower.includes('mer-scu') || kLower.includes('merida'))) return v;
-      if (prodName.includes('marlin') && (kLower.includes('marlin') || kLower.includes('trk-m') || kLower.includes('trek'))) return v;
-      if (prodName.includes('palta') && (kLower.includes('palta') || kLower.includes('bas-p') || kLower.includes('basso'))) return v;
-      if (prodName.includes('allez') && (kLower.includes('allez') || kLower.includes('spz-a') || kLower.includes('specialized'))) return v;
-      if (prodName.includes('talon') && (kLower.includes('talon') || kLower.includes('gnt-t') || kLower.includes('giant'))) return v;
+      const kLower = k.toLowerCase().trim();
+      const vName = String(v.name || '').toLowerCase().trim();
+      if (vName && vName === prodName) return v;
+      if (kLower === prodName) return v;
     }
 
     return {};
@@ -1143,7 +1230,7 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
     return uniqueInv.map(prod => {
       const canonicalSku = getCanonicalKey(prod);
       const sku = prod.sku || canonicalSku;
-      const ov = overrides[sku] || overrides[prod.id] || overrides[canonicalSku] || findFuzzyOverride(prod.name, overrides);
+      const ov = findProductOverride(prod, overrides);
       const masterRef = masterMap[sku] || masterMap[prod.id] || masterMap[canonicalSku] || {};
 
       const basePrice = ov.price !== undefined ? Number(ov.price) : Number(prod.price || masterRef.price || 0);
@@ -1154,6 +1241,8 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
       let isPublished = true;
       if (ov.publishedOnWeb !== undefined) {
         isPublished = ov.publishedOnWeb === true;
+      } else if (ov.isPublished !== undefined) {
+        isPublished = ov.isPublished === true;
       } else if (prod.publishedOnWeb !== undefined) {
         isPublished = prod.publishedOnWeb === true;
       } else if (prod.isPublished !== undefined) {
@@ -1164,6 +1253,8 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
       const fotos = (ov.fotos && ov.fotos.length) ? ov.fotos : (prod.fotos && prod.fotos.length ? prod.fotos : (masterRef.fotos || []));
       const specs = ov.specs || prod.specs || masterRef.specs || `${prod.brand || 'The Garage'} de alta durabilidad y rendimiento en el Caribe.`;
       const talla = ov.talla || prod.talla || masterRef.talla;
+      const precioRenta = ov.precioRenta !== undefined ? ov.precioRenta : (prod.precioRenta !== undefined ? prod.precioRenta : masterRef.precioRenta);
+      const modalidad = ov.modalidad || prod.modalidad || masterRef.modalidad;
 
       return {
         ...masterRef,
@@ -1171,6 +1262,7 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
         ...ov,
         id: sku,
         sku: sku,
+        slug: prod.slug || masterRef.slug || prod.id,
         name: ov.name || prod.name || masterRef.name,
         brand: ov.brand || prod.brand || masterRef.brand || 'The Garage',
         cat: ov.cat || prod.cat || masterRef.cat || 'Bicicletas',
@@ -1180,7 +1272,9 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
         isPublished: isPublished,
         fotos: fotos,
         specs: specs,
-        talla: talla
+        talla: talla,
+        precioRenta: precioRenta,
+        modalidad: modalidad
       };
     }).filter(p => p.isPublished === true); // Strictly require isPublished to be true!
   }
@@ -1344,7 +1438,7 @@ const staticBikes = JSON.stringify(bicisEntries.map(e => e.data));
       const imageSrc = (p.fotos && p.fotos[0]) ? p.fotos[0] : null;
       const isFreeShipping = p.webPrice >= 500;
       const isComparing = compareList.some(c => c.sku === p.sku || c.id === p.id);
-      const prodId = p.sku || p.id;
+      const prodId = p.slug || p.sku || p.id;
       const catSvg = SVG_CAT_ICONS[p.cat] || SVG_CAT_ICONS['all'];
 
       return `

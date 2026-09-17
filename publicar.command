@@ -36,10 +36,10 @@ if [ $? -eq 0 ]; then
   echo "🎉 ¡LISTO! Tu sitio se está publicando en la nube."
   echo ""
   echo "🌐 Tu sitio web en vivo:"
-  echo "   https://thegarageplaya.pages.dev"
+  echo "   https://the-garage-dw4.pages.dev"
   echo ""
   echo "📱 Tu panel de administración en vivo:"
-  echo "   https://thegarageplaya.pages.dev/admin/"
+  echo "   https://the-garage-dw4.pages.dev/admin/"
   echo "======================================================"
 else
   echo ""
