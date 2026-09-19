@@ -188,14 +188,14 @@ import Base from '../layouts/Base.astro';
 <script is:inline>
   const payCfg = JSON.parse(localStorage.getItem('bicisaas_payment_config') || 'null') || {
     mode: 'production',
-    onlineFeePercent: 3.5,
+    onlineFeePercent: 0,
     freeShippingThreshold: 500,
     shippingCost: 80,
     notificationWhatsApp: '529841381493'
   };
 
   const isLive = payCfg.mode === 'production';
-  const COMMISSION = (payCfg.onlineFeePercent !== undefined ? payCfg.onlineFeePercent : 3.5) / 100;
+  const COMMISSION = (payCfg.onlineFeePercent !== undefined ? payCfg.onlineFeePercent : 0) / 100;
   const SHIPPING_THRESHOLD = payCfg.freeShippingThreshold !== undefined ? payCfg.freeShippingThreshold : 500;
   const SHIPPING_COST = payCfg.shippingCost !== undefined ? payCfg.shippingCost : 80;
   const WA_NUMBER = payCfg.notificationWhatsApp || '529841381493';
@@ -286,7 +286,7 @@ import Base from '../layouts/Base.astro';
 
     const html = `
       <div class="total-row"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>
-      <div class="total-row"><span>Comisión en línea (${(COMMISSION * 100).toFixed(1)}%)</span><span>+${fmt(fee)}</span></div>
+      ${COMMISSION > 0 ? `<div class="total-row"><span>Comisión en línea (${(COMMISSION * 100).toFixed(1)}%)</span><span>+${fmt(fee)}</span></div>` : ''}
       <div class="total-row"><span>Envío${isPickup ? ' (Recoger en tienda)' : shipping === 0 ? ' (Gratis)' : ''}</span><span>${shipping === 0 ? 'Gratis' : fmt(shipping)}</span></div>
       <div class="total-row grand"><span>Total</span><span>${fmt(total)}</span></div>
     `;

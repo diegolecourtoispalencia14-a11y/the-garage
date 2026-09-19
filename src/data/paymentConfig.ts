@@ -10,7 +10,7 @@ export interface PaymentGatewayConfig {
   speiClabe: string; // CLABE Interbancaria (18 dígitos)
   speiBank: string; // Banco receptor
   speiBeneficiary: string; // Nombre o razón social
-  onlineFeePercent: number; // Comisión pasarela (por defecto 3.5%)
+  onlineFeePercent: number; // Comisión pasarela (por defecto 0%)
   freeShippingThreshold: number; // Monto para envío gratis (por defecto $500 MXN)
   shippingCost: number; // Costo de envío estándar si no supera el umbral ($80 MXN)
   notificationWhatsApp: string; // Teléfono que recibe las órdenes pagadas
@@ -25,7 +25,7 @@ export const DEFAULT_PAYMENT_CONFIG: PaymentGatewayConfig = {
   speiClabe: '646690146012345678',
   speiBank: 'STP / BBVA México',
   speiBeneficiary: 'The Garage Bike Experts',
-  onlineFeePercent: 3.5,
+  onlineFeePercent: 0,
   freeShippingThreshold: 500,
   shippingCost: 80,
   notificationWhatsApp: '529841381493'

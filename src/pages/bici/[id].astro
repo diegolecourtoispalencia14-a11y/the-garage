@@ -133,18 +133,14 @@ export async function getStaticPaths() {
 
 const { rawBici } = Astro.props;
 
-// Format prices (+3.5% online fee note)
-const webPrice = Math.round(rawBici.price * 1.035);
+// Format prices (Direct official price)
+const webPrice = rawBici.price;
 const precioFormateado = rawBici.price.toLocaleString('es-MX', {
   style: 'currency',
   currency: 'MXN',
   maximumFractionDigits: 0,
 });
-const webPrecioFormateado = webPrice.toLocaleString('es-MX', {
-  style: 'currency',
-  currency: 'MXN',
-  maximumFractionDigits: 0,
-});
+const webPrecioFormateado = precioFormateado;
 
 const isAgotado = rawBici.stock <= 0;
 const isFreeShipping = rawBici.price >= 500;
@@ -273,9 +269,6 @@ const productJson = JSON.stringify({
             <!-- Price Display -->
             <div class="price-container-box">
               <div class="bike-price-headline font-mono">{precioFormateado}</div>
-              <div class="price-online-note font-mono">
-                Precio tienda física • Pago en línea: <strong>{webPrecioFormateado}</strong> (+3.5% pasarela)
-              </div>
             </div>
 
             <!-- Description -->

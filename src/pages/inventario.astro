@@ -208,7 +208,7 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
           <div class="nike-product-grid" id="store-product-grid">
             {initialProducts.map(p => {
               const imageSrc = (p.fotos && p.fotos[0]) ? p.fotos[0] : null;
-              const webPrice = Math.round(p.price * 1.035);
+              const webPrice = p.price;
               const isFreeShipping = webPrice >= 500;
               const prodId = p.slug || p.sku || p.id;
               const waText = encodeURIComponent(`Hola The Garage, me interesa el producto: ${p.name} ($${webPrice.toLocaleString('es-MX', { minimumFractionDigits: 0 })}). ¿Tienen entrega hoy en Playa del Carmen?`);
@@ -270,7 +270,6 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
                     <div class="nike-price-row">
                       <div>
                         <div class="nike-price-main">${webPrice.toLocaleString('es-MX', { minimumFractionDigits: 0 })}</div>
-                        <div class="nike-fee-note">Incluye comisión web (3.5%)</div>
                       </div>
                       <div style="font-size:0.75rem; color:#34c759; font-weight:600; text-align:right;">
                         {isFreeShipping ? 'Envío gratis en Playa' : 'Envío $80 MXN'}
@@ -1234,7 +1233,7 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
       const masterRef = masterMap[sku] || masterMap[prod.id] || masterMap[canonicalSku] || {};
 
       const basePrice = ov.price !== undefined ? Number(ov.price) : Number(prod.price || masterRef.price || 0);
-      const webPrice = Math.round(basePrice * 1.035);
+      const webPrice = basePrice;
       const stock = ov.stock !== undefined ? Number(ov.stock) : Number(prod.stock !== undefined ? prod.stock : (masterRef.stock !== undefined ? masterRef.stock : 1));
 
       // Publication logic: in /panel/sitio-web, an item can be published or hidden
@@ -1491,7 +1490,6 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
             <div class="nike-price-row">
               <div>
                 <div class="nike-price-main">${fmt(p.webPrice)}</div>
-                <div class="nike-fee-note">Incluye comisión web (3.5%)</div>
               </div>
               <div style="font-size:0.75rem; color:#34c759; font-weight:600; text-align:right;">
                 ${isFreeShipping ? 'Envío gratis en Playa' : 'Envío $80 MXN'}

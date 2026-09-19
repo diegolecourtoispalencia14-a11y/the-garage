@@ -69,7 +69,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       return new Response(JSON.stringify({ error: 'Cuerpo de solicitud JSON malformado.' }), { status: 400, headers: corsHeaders });
     }
 
-    const parseResult = OrderBodySchema.safeParse(rawBody);
+    const parseResult = PreferenceBodySchema.safeParse(rawBody);
     if (!parseResult.success) {
       const errorDetails = parseResult.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).join(', ');
       logSecurityEvent(request, 'INVALID_INPUT_DETECTED', 'WARN', { details: errorDetails });
@@ -80,6 +80,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     }
 
     const { items, payer, delivery, address, orderId } = parseResult.data;
+    const allowedOrigin = env.PUBLIC_SITE_URL || 'https://the-garage-dw4.pages.dev';
 
     // Server-Side Price Authority: Recalculate price from authoritative catalog
     const authoritativeItems = items.map(item => {
@@ -93,7 +94,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       // If item is recognized in official catalog, enforce official price.
       // Otherwise use submitted price but strictly sanitized.
       const realUnitPrice = catalogMatch ? catalogMatch.price : item.price;
-      const finalUnitPrice = Number((realUnitPrice * 1.035).toFixed(2)); // +3.5% online fee
+      const finalUnitPrice = Number(realUnitPrice.toFixed(2));
 
       return {
         id: catalogMatch ? catalogMatch.sku : item.id.replace(/[^a-zA-Z0-9_-]/g, ''),

@@ -140,7 +140,7 @@ import Base from '../../layouts/Base.astro';
         </div>
       `).join('')}
       <div style="margin-top:0.75rem; display:flex; flex-direction:column; gap:0.3rem;">
-        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#86868b;"><span>Comisión online</span><span>+${fmt(order.fee)}</span></div>
+        ${order.fee > 0 ? `<div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#86868b;"><span>Comisión online</span><span>+${fmt(order.fee)}</span></div>` : ''}
         <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#86868b;"><span>Envío</span><span>${order.shipping === 0 ? 'Gratis' : fmt(order.shipping)}</span></div>
         <div style="display:flex; justify-content:space-between; font-size:1.05rem; font-weight:700; color:#f5f5f7; margin-top:0.25rem; padding-top:0.5rem; border-top:1px solid rgba(255,255,255,0.08);"><span>Total de la orden</span><span>${fmt(order.total)}</span></div>
       </div>

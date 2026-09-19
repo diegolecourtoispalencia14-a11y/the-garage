@@ -37,8 +37,8 @@
       <div style="display:flex; justify-content:space-between; font-size:0.88rem; color:#86868b;">
         <span>Subtotal</span><span id="cart-subtotal">$0</span>
       </div>
-      <div style="display:flex; justify-content:space-between; font-size:0.88rem; color:#86868b;">
-        <span>Comisión pago en línea (3.5%)</span><span id="cart-fee">$0</span>
+      <div id="cart-fee-row" style="display:none; justify-content:space-between; font-size:0.88rem; color:#86868b;">
+        <span>Comisión pago en línea</span><span id="cart-fee">$0</span>
       </div>
       <div id="cart-shipping-row" style="display:flex; justify-content:space-between; font-size:0.88rem; color:#86868b;">
         <span>Envío (Didi Moto)</span><span id="cart-shipping">$80</span>
@@ -84,7 +84,7 @@
 <script is:inline>
 (function() {
   const CART_KEY = 'bicisaas_cart';
-  const COMMISSION = 0.035;
+  const COMMISSION = 0;
   const SHIPPING_THRESHOLD = 500;
   const SHIPPING_COST = 80;
 
