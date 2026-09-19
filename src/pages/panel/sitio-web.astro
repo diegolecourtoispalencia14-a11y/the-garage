@@ -1553,6 +1553,17 @@ https://g.page/r/thegarage-pdc/review
 
   /* ── Load Unified Inventory ── */
   function loadUnifiedCatalog() {
+    const CATALOG_VERSION = 'v3_official_drive_exact';
+    if (typeof localStorage !== 'undefined') {
+      try {
+        if (localStorage.getItem('tg_catalog_version_panel') !== CATALOG_VERSION) {
+          localStorage.setItem('tg_catalog_version_panel', CATALOG_VERSION);
+          localStorage.removeItem(INV_KEY);
+          localStorage.removeItem(WEB_KEY);
+        }
+      } catch(e) {}
+    }
+
     let inventory = JSON.parse(localStorage.getItem(INV_KEY) || '[]');
     const overrides = JSON.parse(localStorage.getItem(WEB_KEY) || '{}');
 
@@ -1562,6 +1573,17 @@ https://g.page/r/thegarage-pdc/review
     const masterNames = new Set(masterProducts.map(m => String(m.name || '').toLowerCase()));
 
     inventory = inventory.filter(p => masterIds.has(String(p.id || '').toLowerCase()) || masterSkus.has(String(p.sku || '').toLowerCase()) || masterNames.has(String(p.name || '').toLowerCase()));
+
+    // Always sync official master prices from Google Drive into inventory
+    masterProducts.forEach(mp => {
+      const idx = inventory.findIndex(p => p.sku === mp.sku || p.id === mp.id || (p.name && p.name.toLowerCase() === mp.name.toLowerCase()));
+      if (idx !== -1) {
+        inventory[idx].price = mp.price;
+        inventory[idx].name = mp.name;
+        inventory[idx].talla = mp.talla;
+        inventory[idx].specs = mp.specs;
+      }
+    });
 
     // Seed master catalogue if inventory is empty
     if (!inventory.length && masterProducts.length) {

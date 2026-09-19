@@ -1163,6 +1163,17 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
   });
 
   function getFullStoreProducts() {
+    const CATALOG_VERSION = 'v3_official_drive_exact';
+    if (typeof localStorage !== 'undefined') {
+      try {
+        if (localStorage.getItem('tg_catalog_version') !== CATALOG_VERSION) {
+          localStorage.setItem('tg_catalog_version', CATALOG_VERSION);
+          localStorage.removeItem(INV_KEY);
+          localStorage.removeItem(WEB_KEY);
+        }
+      } catch(e) {}
+    }
+
     let localInv = [];
     try {
       localInv = JSON.parse(localStorage.getItem(INV_KEY) || '[]');
@@ -1186,16 +1197,25 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
     });
 
     if (!localInv || !localInv.length) {
-      localInv = [...masterCatalog];
+      localInv = masterCatalog.map(m => ({ ...m }));
       try {
         localStorage.setItem(INV_KEY, JSON.stringify(localInv));
       } catch(e) {}
     } else {
-      // Ensure all master catalog items exist in local inventory
+      // Ensure all master catalog items exist in local inventory and have authoritative Drive prices
       masterCatalog.forEach(mp => {
         const mpKey = getCanonicalKey(mp);
-        const exists = localInv.find(item => getCanonicalKey(item) === mpKey || (item.name && item.name.toLowerCase() === mp.name.toLowerCase()));
-        if (!exists) localInv.push(mp);
+        const idx = localInv.findIndex(item => getCanonicalKey(item) === mpKey || (item.name && item.name.toLowerCase() === mp.name.toLowerCase()));
+        if (idx === -1) {
+          localInv.push({ ...mp });
+        } else {
+          localInv[idx].price = mp.price;
+          localInv[idx].precioRenta = mp.precioRenta;
+          localInv[idx].modalidad = mp.modalidad;
+          localInv[idx].talla = mp.talla;
+          localInv[idx].specs = mp.specs;
+          localInv[idx].fotos = mp.fotos;
+        }
       });
       try {
         localStorage.setItem(INV_KEY, JSON.stringify(localInv));
@@ -1232,7 +1252,7 @@ const initialBrands = ['all', ...new Set(initialProducts.map(p => p.brand).filte
       const ov = findProductOverride(prod, overrides);
       const masterRef = masterMap[sku] || masterMap[prod.id] || masterMap[canonicalSku] || {};
 
-      const basePrice = ov.price !== undefined ? Number(ov.price) : Number(prod.price || masterRef.price || 0);
+      const basePrice = masterRef.price !== undefined ? Number(masterRef.price) : Number(prod.price || 0);
       const webPrice = basePrice;
       const stock = ov.stock !== undefined ? Number(ov.stock) : Number(prod.stock !== undefined ? prod.stock : (masterRef.stock !== undefined ? masterRef.stock : 1));
 
